@@ -697,6 +697,47 @@ class UIHelper {
     }
 }
 
+// Adicionar ao ui.js
+validateAdvanced(formId) {
+    const form = document.getElementById(formId);
+    const errors = [];
+    
+    // Validar datas
+    const dateFields = form.querySelectorAll('input[type="date"]');
+    dateFields.forEach(field => {
+        if (field.value) {
+            const date = new Date(field.value);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            if (date < today) {
+                errors.push(`A data "${field.labels[0]?.textContent}" não pode ser no passado`);
+                this.highlightError(field);
+            }
+        }
+    });
+    
+    // Validar emails
+    const emailFields = form.querySelectorAll('input[type="email"]');
+    emailFields.forEach(field => {
+        if (field.value && !this.isValidEmail(field.value)) {
+            errors.push(`Email inválido: ${field.value}`);
+            this.highlightError(field);
+        }
+    });
+    
+    // Validar CPF (se houver)
+    const cpfFields = form.querySelectorAll('[data-mask="cpf"]');
+    cpfFields.forEach(field => {
+        if (field.value && !this.isValidCPF(field.value)) {
+            errors.push('CPF inválido');
+            this.highlightError(field);
+        }
+    });
+    
+    return { isValid: errors.length === 0, errors };
+}
+
 // Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
     window.uiHelper = new UIHelper();
