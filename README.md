@@ -29,3 +29,25 @@ Uma aplicação web completa para geração automática de documentos trabalhist
 
 ### Opção 1: Online
 Acesse o site [modelotrabalhista.com.br](https://modelotrabalhista.com.br) e comece a usar!
+
+
+# arvore
+
+modelotrabalhista/
+├── index.html                 # Página principal
+├── style.css                  # Estilos principais
+├── script.js                  # Lógica JavaScript
+├── README.md                  # Este arquivo
+├── LICENSE                    # Licença MIT
+├── .gitignore                 # Arquivos ignorados pelo Git
+├── robots.txt                 # Instruções para motores de busca
+├── sitemap.xml                # Mapa do site para SEO
+│
+├── assets/                    # Recursos estáticos
+│   ├── css/
+│   │   └── print.css          # Estilos para impressão
+│   ├── icons/                 # Ícones do site
+│   └── images/                # Imagens do site
+│
+└── models/                    # Modelos de documento
+    └── templates.json         # Templates em JSON
