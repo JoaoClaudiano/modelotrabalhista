@@ -1,0 +1,82 @@
+{
+  "templates": {
+    "demissao": {
+      "name": "Pedido de Demissão",
+      "description": "Modelo formal para solicitar desligamento voluntário da empresa",
+      "icon": "user-minus",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "dataEfetiva", "avisoPrevio"]
+      },
+      "keywords": ["demissão", "pedido", "desligamento", "rescisão", "trabalhista"],
+      "seo_title": "Modelo de Pedido de Demissão Pronto para Imprimir",
+      "seo_description": "Gere seu pedido de demissão com nosso modelo válido e profissional. Preencha e imprima em minutos."
+    },
+    "ferias": {
+      "name": "Solicitação de Férias",
+      "description": "Documento para requerer período de férias remuneradas",
+      "icon": "umbrella-beach",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data", "periodoFerias"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "diasFerias"]
+      },
+      "keywords": ["férias", "solicitação", "remuneradas", "descanso", "período"],
+      "seo_title": "Modelo de Solicitação de Férias para Imprimir",
+      "seo_description": "Solicite suas férias com nosso modelo profissional. Preencha o período desejado e imprima."
+    },
+    "advertencia": {
+      "name": "Advertência",
+      "description": "Comunicado formal de advertência a colaborador por infração",
+      "icon": "exclamation-triangle",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data", "motivoAdvertencia"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "dataOcorrencia", "gravidade"]
+      },
+      "keywords": ["advertência", "comunicado", "infração", "disciplinar", "trabalhista"],
+      "seo_title": "Modelo de Advertência Formal para Empregados",
+      "seo_description": "Crie advertências formais com nosso modelo válido. Documente infrações de forma profissional."
+    },
+    "atestado": {
+      "name": "Atestado Informal",
+      "description": "Modelo simples para atestar comparecimento ou justificar falta",
+      "icon": "file-medical",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data", "motivoAtestado"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "dataInicio", "dataFim"]
+      },
+      "keywords": ["atestado", "falta", "justificativa", "comparecimento", "informal"],
+      "seo_title": "Modelo de Atestado Informal para Justificar Faltas",
+      "seo_description": "Gere atestados informais para justificar faltas ao trabalho. Modelo simples e prático."
+    },
+    "rescisao": {
+      "name": "Acordo de Rescisão",
+      "description": "Documento para formalizar acordo de rescisão contratual",
+      "icon": "handshake",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "valorRescisao", "dataPagamento", "condicoesAdicionais"]
+      },
+      "keywords": ["acordo", "rescisão", "contratual", "termo", "trabalhista"],
+      "seo_title": "Modelo de Acordo de Rescisão Contratual",
+      "seo_description": "Formalize acordos de rescisão com nosso modelo válido. Proteja direitos de ambas as partes."
+    },
+    "reuniao": {
+      "name": "Convocatória de Reunião",
+      "description": "Formalize a convocação de reuniões com a equipe",
+      "icon": "users",
+      "fields": {
+        "required": ["empresaNome", "funcionarioNome", "data"],
+        "optional": ["empresaEndereco", "funcionarioCargo", "dataReuniao", "horaReuniao", "localReuniao", "pautaReuniao"]
+      },
+      "keywords": ["convocatória", "reunião", "equipe", "comunicação", "profissional"],
+      "seo_title": "Modelo de Convocatória de Reunião para Equipes",
+      "seo_description": "Convoque reuniões de forma profissional com nosso modelo. Inclua data, hora e pauta."
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2023-10-15",
+    "author": "ModeloTrabalhista",
+    "website": "https://modelotrabalhista.com.br"
+  }
+}
