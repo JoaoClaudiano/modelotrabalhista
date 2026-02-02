@@ -3,390 +3,580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModeloTrabalhista - Gerador de Documentos Trabalhistas Prontos</title>
-    <meta name="description" content="Gere automaticamente pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas com modelos prontos e válidos. Baixo esforço, alta eficiência.">
-    <meta name="keywords" content="modelo trabalhista, carta demissão, pedido férias, advertência, atestado, documento trabalhista, modelo pronto">
+    <title>ModeloTrabalhista | Gerador de Documentos Trabalhistas Gratuito</title>
+    <meta name="description" content="Gere pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas prontos em segundos. Modelos válidos e gratuitos.">
+    <meta name="keywords" content="modelo trabalhista, pedido de demissão, solicitação de férias, advertência, atestado, documento trabalhista, modelo pronto gratuito">
     <meta name="author" content="ModeloTrabalhista">
     
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://modelotrabalhista.com.br/">
-    <meta property="og:title" content="ModeloTrabalhista - Gerador de Documentos Trabalhistas">
-    <meta property="og:description" content="Gere automaticamente documentos trabalhistas com modelos prontos. Pedido de demissão, férias, advertência e mais.">
-    <meta property="og:image" content="https://modelotrabalhista.com.br/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://joaoclaudiano.github.io/modelotrabalhista/">
+    <meta property="og:title" content="ModeloTrabalhista | Gerador de Documentos Trabalhistas">
+    <meta property="og:description" content="Gere documentos trabalhistas prontos em segundos. Totalmente gratuito!">
+    <meta property="og:image" content="https://joaoclaudiano.github.io/modelotrabalhista/assets/og-image.png">
     
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://modelotrabalhista.com.br/">
-    <meta property="twitter:title" content="ModeloTrabalhista - Gerador de Documentos Trabalhistas">
-    <meta property="twitter:description" content="Gere automaticamente documentos trabalhistas com modelos prontos. Pedido de demissão, férias, advertência e mais.">
-    <meta property="twitter:image" content="https://modelotrabalhista.com.br/assets/images/og-image.jpg">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/print.css" media="print">
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css" media="screen and (max-width: 768px)">
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-file-contract"></i>
-                <span>ModeloTrabalhista</span>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    <h1>Modelo<span>Trabalhista</span></h1>
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#home" class="active"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="#gerador"><i class="fas fa-magic"></i> Gerar</a></li>
+                        <li><a href="#sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
+                        <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    </ul>
+                </nav>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="#gerador"><i class="fas fa-file-alt"></i> Gerar Documento</a></li>
-                    <li><a href="#modelos"><i class="fas fa-list"></i> Modelos</a></li>
-                    <li><a href="#sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
-                    <li><a href="#contato"><i class="fas fa-envelope"></i> Contato</a></li>
-                </ul>
-            </nav>
-            <button class="menu-toggle" aria-label="Abrir menu">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
     </header>
-    
-    <section class="hero">
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
         <div class="container">
-            <h1>Gerador de Documentos Trabalhistas</h1>
-            <p class="subtitle">Crie automaticamente pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas com modelos prontos e válidos.</p>
-            <p class="highlight">Preencha os dados, gere o documento e imprima ou salve em PDF. <strong>Totalmente gratuito!</strong></p>
-            <a href="#gerador" class="btn btn-large">
-                <i class="fas fa-rocket"></i> Começar Agora
-            </a>
-            <div class="stats">
-                <div class="stat">
-                    <span class="number">6+</span>
-                    <span class="label">Modelos</span>
-                </div>
-                <div class="stat">
-                    <span class="number">100%</span>
-                    <span class="label">Gratuito</span>
-                </div>
-                <div class="stat">
-                    <span class="number">Pronto</span>
-                    <span class="label">em Segundos</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="modelos" class="container">
-        <h2><i class="fas fa-file-signature"></i> Modelos Disponíveis</h2>
-        <p class="section-subtitle">Selecione um modelo abaixo ou use o formulário para gerar seu documento personalizado</p>
-        
-        <div class="document-types">
-            <div class="document-card" data-doc-type="demissao">
-                <div class="card-icon">
-                    <i class="fas fa-user-minus"></i>
-                </div>
-                <h3>Pedido de Demissão</h3>
-                <p>Modelo formal para solicitar desligamento voluntário da empresa. Inclui todos os direitos trabalhistas.</p>
-                <div class="card-tags">
-                    <span class="tag">Mais usado</span>
-                    <span class="tag">Formal</span>
-                </div>
-            </div>
-            
-            <div class="document-card" data-doc-type="ferias">
-                <div class="card-icon">
-                    <i class="fas fa-umbrella-beach"></i>
-                </div>
-                <h3>Solicitação de Férias</h3>
-                <p>Documento para requerer período de férias remuneradas conforme legislação trabalhista.</p>
-                <div class="card-tags">
-                    <span class="tag">Férias</span>
-                    <span class="tag">Remunerado</span>
-                </div>
-            </div>
-            
-            <div class="document-card" data-doc-type="advertencia">
-                <div class="card-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3>Advertência</h3>
-                <p>Comunicado formal de advertência a colaborador por infração. Modelo válido juridicamente.</p>
-                <div class="card-tags">
-                    <span class="tag">Empregador</span>
-                    <span class="tag">Formal</span>
-                </div>
-            </div>
-            
-            <div class="document-card" data-doc-type="atestado">
-                <div class="card-icon">
-                    <i class="fas fa-file-medical"></i>
-                </div>
-                <h3>Atestado Informal</h3>
-                <p>Modelo simples para atestar comparecimento ou justificar falta por motivos pessoais.</p>
-                <div class="card-tags">
-                    <span class="tag">Simples</span>
-                    <span class="tag">Rápido</span>
-                </div>
-            </div>
-            
-            <div class="document-card" data-doc-type="rescisao">
-                <div class="card-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <h3>Acordo de Rescisão</h3>
-                <p>Documento para formalizar acordo de rescisão contratual entre empregador e empregado.</p>
-                <div class="card-tags">
-                    <span class="tag">Acordo</span>
-                    <span class="tag">Legal</span>
-                </div>
-            </div>
-            
-            <div class="document-card" data-doc-type="reuniao">
-                <div class="card-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>Convocatória de Reunião</h3>
-                <p>Formalize a convocação de reuniões com a equipe. Modelo profissional e claro.</p>
-                <div class="card-tags">
-                    <span class="tag">Comunicação</span>
-                    <span class="tag">Profissional</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="gerador" class="container">
-        <div class="main-content">
-            <div class="document-form">
-                <div class="form-header">
-                    <h2><i class="fas fa-edit"></i> Preencha os Dados</h2>
-                    <p class="form-subtitle">Preencha os campos abaixo para gerar seu documento personalizado</p>
+            <div class="hero-content">
+                <h2>Documentos Trabalhistas Prontos em <span class="highlight">30 Segundos</span></h2>
+                <p class="hero-subtitle">Gere pedidos de demissão, solicitações de férias, advertências e outros documentos válidos. Totalmente gratuito!</p>
+                
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="number">6</span>
+                        <span class="label">Modelos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">100%</span>
+                        <span class="label">Gratuito</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">Pronto</span>
+                        <span class="label">em Segundos</span>
+                    </div>
                 </div>
                 
-                <form id="docForm">
-                    <div class="form-group">
-                        <label for="docType">
-                            <i class="fas fa-file-alt"></i> Tipo de Documento:
-                        </label>
-                        <select id="docType" class="form-control" required>
-                            <option value="" disabled selected>Selecione um modelo</option>
-                            <option value="demissao">Pedido de Demissão</option>
-                            <option value="ferias">Solicitação de Férias</option>
-                            <option value="advertencia">Advertência</option>
-                            <option value="atestado">Atestado Informal</option>
-                            <option value="rescisao">Acordo de Rescisão</option>
-                            <option value="reuniao">Convocatória de Reunião</option>
-                        </select>
+                <a href="#gerador" class="cta-button">
+                    <i class="fas fa-rocket"></i> Gerar Meu Documento Agora
+                </a>
+                
+                <div class="trust-badges">
+                    <div class="badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Seguro e Privado</span>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="empresaNome">
-                                <i class="fas fa-building"></i> Nome da Empresa:
-                            </label>
-                            <input type="text" id="empresaNome" class="form-control" placeholder="Ex: Tech Solutions Ltda" required>
+                    <div class="badge">
+                        <i class="fas fa-bolt"></i>
+                        <span>Sem Cadastro</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Válido Legalmente</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="document-preview-card">
+                    <div class="document-header">
+                        <i class="fas fa-file-contract"></i>
+                        <h3>Pedido de Demissão</h3>
+                    </div>
+                    <div class="document-content">
+                        <p><strong>Empresa:</strong> Tech Solutions Ltda</p>
+                        <p><strong>Funcionário:</strong> João da Silva</p>
+                        <p><strong>Cargo:</strong> Analista de Sistemas</p>
+                        <p><strong>Data:</strong> 15/10/2023</p>
+                    </div>
+                    <div class="document-status">
+                        <span class="status-badge">Pronto para usar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Models Section -->
+    <section id="modelos" class="models-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Modelos Disponíveis</h2>
+                <p class="section-subtitle">Selecione o documento que precisa e personalize com seus dados</p>
+            </div>
+            
+            <div class="models-grid">
+                <!-- Pedido de Demissão -->
+                <div class="model-card" data-model="demissao">
+                    <div class="model-icon">
+                        <i class="fas fa-user-minus"></i>
+                    </div>
+                    <h3>Pedido de Demissão</h3>
+                    <p>Comunique formalmente sua saída da empresa com todos os direitos trabalhistas garantidos.</p>
+                    <div class="model-tags">
+                        <span class="tag popular">Mais usado</span>
+                        <span class="tag">Empregado</span>
+                    </div>
+                    <button class="model-select-btn" data-model="demissao">
+                        Usar este modelo
+                    </button>
+                </div>
+                
+                <!-- Solicitação de Férias -->
+                <div class="model-card" data-model="ferias">
+                    <div class="model-icon">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <h3>Solicitação de Férias</h3>
+                    <p>Formalize seu pedido de férias remuneradas conforme a legislação trabalhista.</p>
+                    <div class="model-tags">
+                        <span class="tag">Férias</span>
+                        <span class="tag">Remunerado</span>
+                    </div>
+                    <button class="model-select-btn" data-model="ferias">
+                        Usar este modelo
+                    </button>
+                </div>
+                
+                <!-- Advertência -->
+                <div class="model-card" data-model="advertencia">
+                    <div class="model-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Advertência Formal</h3>
+                    <p>Documento oficial para advertir colaboradores sobre condutas inadequadas.</p>
+                    <div class="model-tags">
+                        <span class="tag">Empregador</span>
+                        <span class="tag">Formal</span>
+                    </div>
+                    <button class="model-select-btn" data-model="advertencia">
+                        Usar este modelo
+                    </button>
+                </div>
+                
+                <!-- Atestado -->
+                <div class="model-card" data-model="atestado">
+                    <div class="model-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3>Atestado Informal</h3>
+                    <p>Justifique faltas ou ateste comparecimento com este modelo simples e prático.</p>
+                    <div class="model-tags">
+                        <span class="tag">Simples</span>
+                        <span class="tag">Rápido</span>
+                    </div>
+                    <button class="model-select-btn" data-model="atestado">
+                        Usar este modelo
+                    </button>
+                </div>
+                
+                <!-- Acordo de Rescisão -->
+                <div class="model-card" data-model="rescisao">
+                    <div class="model-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Acordo de Rescisão</h3>
+                    <p>Formalize o término do contrato de trabalho de forma amigável e legal.</p>
+                    <div class="model-tags">
+                        <span class="tag">Acordo</span>
+                        <span class="tag">Legal</span>
+                    </div>
+                    <button class="model-select-btn" data-model="rescisao">
+                        Usar este modelo
+                    </button>
+                </div>
+                
+                <!-- Convocatória de Reunião -->
+                <div class="model-card" data-model="reuniao">
+                    <div class="model-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Convocatória de Reunião</h3>
+                    <p>Convoque reuniões de forma profissional com pauta e horário definidos.</p>
+                    <div class="model-tags">
+                        <span class="tag">Comunicação</span>
+                        <span class="tag">Profissional</span>
+                    </div>
+                    <button class="model-select-btn" data-model="reuniao">
+                        Usar este modelo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Generator Section -->
+    <section id="gerador" class="generator-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Gerador de Documentos</h2>
+                <p class="section-subtitle">Preencha os dados abaixo e gere seu documento personalizado</p>
+            </div>
+            
+            <div class="generator-wrapper">
+                <!-- Form Side -->
+                <div class="form-side">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <h3><i class="fas fa-edit"></i> Informações do Documento</h3>
+                            <p class="form-subtitle">Preencha todos os campos obrigatórios (*)</p>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="funcionarioNome">
-                                <i class="fas fa-user"></i> Nome do Funcionário:
-                            </label>
-                            <input type="text" id="funcionarioNome" class="form-control" placeholder="Ex: João da Silva" required>
-                        </div>
+                        <form id="documentForm">
+                            <div class="form-group">
+                                <label for="documentType">
+                                    <i class="fas fa-file-alt"></i> Tipo de Documento *
+                                </label>
+                                <select id="documentType" class="form-control" required>
+                                    <option value="">Selecione um modelo</option>
+                                    <option value="demissao">Pedido de Demissão</option>
+                                    <option value="ferias">Solicitação de Férias</option>
+                                    <option value="advertencia">Advertência Formal</option>
+                                    <option value="atestado">Atestado Informal</option>
+                                    <option value="rescisao">Acordo de Rescisão</option>
+                                    <option value="reuniao">Convocatória de Reunião</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="companyName">
+                                        <i class="fas fa-building"></i> Nome da Empresa *
+                                    </label>
+                                    <input type="text" id="companyName" class="form-control" 
+                                           placeholder="Ex: Tech Solutions Ltda" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="employeeName">
+                                        <i class="fas fa-user"></i> Nome do Funcionário *
+                                    </label>
+                                    <input type="text" id="employeeName" class="form-control" 
+                                           placeholder="Ex: João da Silva" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="companyAddress">
+                                    <i class="fas fa-map-marker-alt"></i> Endereço da Empresa
+                                </label>
+                                <input type="text" id="companyAddress" class="form-control" 
+                                       placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="employeePosition">
+                                        <i class="fas fa-briefcase"></i> Cargo
+                                    </label>
+                                    <input type="text" id="employeePosition" class="form-control" 
+                                           placeholder="Ex: Analista de Sistemas">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="documentDate">
+                                        <i class="fas fa-calendar-alt"></i> Data do Documento *
+                                    </label>
+                                    <input type="date" id="documentDate" class="form-control" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Dynamic Fields will be inserted here -->
+                            <div id="dynamicFields"></div>
+                            
+                            <div class="form-actions">
+                                <button type="button" id="generateBtn" class="btn-primary">
+                                    <i class="fas fa-magic"></i> Gerar Documento
+                                </button>
+                                <button type="button" id="loadExampleBtn" class="btn-secondary">
+                                    <i class="fas fa-eye"></i> Ver Exemplo
+                                </button>
+                                <button type="button" id="clearBtn" class="btn-outline">
+                                    <i class="fas fa-eraser"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="empresaEndereco">
-                            <i class="fas fa-map-marker-alt"></i> Endereço da Empresa:
-                        </label>
-                        <input type="text" id="empresaEndereco" class="form-control" placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="funcionarioCargo">
-                                <i class="fas fa-briefcase"></i> Cargo:
-                            </label>
-                            <input type="text" id="funcionarioCargo" class="form-control" placeholder="Ex: Analista de Sistemas">
+                </div>
+                
+                <!-- Preview Side -->
+                <div class="preview-side">
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <h3><i class="fas fa-search"></i> Pré-visualização</h3>
+                            <div class="preview-controls">
+                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button id="resetZoomBtn" class="control-btn" title="Zoom original">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="data">
-                                <i class="fas fa-calendar-alt"></i> Data: 
-                                <span class="tooltip">(?)
-                                    <span class="tooltiptext">Data atual preenchida automaticamente. Altere se necessário.</span>
-                                </span>
-                            </label>
-                            <input type="date" id="data" class="form-control" required>
+                        <div class="preview-content">
+                            <div id="documentPreview">
+                                <div class="empty-preview">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h4>Seu documento aparecerá aqui</h4>
+                                    <p>Preencha o formulário ao lado e clique em "Gerar Documento"</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Campos específicos dinâmicos -->
-                    <div class="doc-specific-fields">
-                        <!-- Serão preenchidos pelo JavaScript -->
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" id="btnGerar" class="btn btn-primary btn-large">
-                            <i class="fas fa-magic"></i> Gerar Documento
-                        </button>
-                        <button type="button" id="btnLimpar" class="btn btn-secondary">
-                            <i class="fas fa-eraser"></i> Limpar
-                        </button>
-                        <button type="button" id="btnExemplo" class="btn btn-outline">
-                            <i class="fas fa-eye"></i> Ver Exemplo
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <div class="document-preview">
-                <div class="preview-header">
-                    <h2><i class="fas fa-search"></i> Pré-visualização do Documento</h2>
-                    <div class="preview-controls">
-                        <button id="btnZoomIn" class="btn-icon" title="Aumentar zoom">
-                            <i class="fas fa-search-plus"></i>
-                        </button>
-                        <button id="btnZoomOut" class="btn-icon" title="Diminuir zoom">
-                            <i class="fas fa-search-minus"></i>
-                        </button>
-                        <button id="btnResetZoom" class="btn-icon" title="Redefinir zoom">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="preview-wrapper">
-                    <div class="preview-content" id="preview">
-                        <div class="preview-placeholder">
-                            <i class="fas fa-file-alt"></i>
-                            <h3>Seu documento aparecerá aqui</h3>
-                            <p>Preencha o formulário ao lado e clique em "Gerar Documento" para visualizar.</p>
+                        
+                        <div class="preview-actions">
+                            <button id="printBtn" class="btn-success" disabled>
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                            <button id="pdfBtn" class="btn-accent" disabled>
+                                <i class="fas fa-file-pdf"></i> Salvar como PDF
+                            </button>
+                            <button id="copyBtn" class="btn-outline" disabled>
+                                <i class="fas fa-copy"></i> Copiar Texto
+                            </button>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="preview-actions">
-                    <button type="button" id="btnImprimir" class="btn btn-success" disabled>
-                        <i class="fas fa-print"></i> Imprimir
-                    </button>
-                    <button type="button" id="btnPDF" class="btn btn-accent" disabled>
-                        <i class="fas fa-file-pdf"></i> Salvar como PDF
-                    </button>
-                    <button type="button" id="btnCopiar" class="btn btn-outline" disabled>
-                        <i class="fas fa-copy"></i> Copiar Texto
-                    </button>
-                </div>
-                
-                <div class="preview-info">
-                    <p><i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Revise todas as informações antes de imprimir ou salvar.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="seo-content" class="container">
-        <div class="seo-content">
-            <h2><i class="fas fa-graduation-cap"></i> Informações sobre Documentos Trabalhistas</h2>
-            <p class="section-subtitle">Aprenda mais sobre seus direitos e deveres trabalhistas</p>
-            
-            <div class="seo-articles">
-                <article class="seo-article">
-                    <h3><i class="fas fa-balance-scale"></i> Como fazer um pedido de demissão corretamente</h3>
-                    <p>O pedido de demissão deve ser formalizado por escrito, indicando claramente a vontade do funcionário em rescindir o contrato de trabalho. É importante cumprir o aviso prévio quando aplicável para garantir o recebimento de todos os direitos trabalhistas, incluindo férias proporcionais, 13º salário e multa do FGTS.</p>
-                    <a href="#gerador" class="article-link">Gerar pedido de demissão &rarr;</a>
-                </article>
-                
-                <article class="seo-article">
-                    <h3><i class="fas fa-sun"></i> Direitos do trabalhador nas férias</h3>
-                    <p>Todo trabalhador tem direito a férias remuneradas após cada período de 12 meses trabalhados (período aquisitivo). As férias devem ser concedidas em até 12 meses após este período e o valor deve ser pago com adicional de 1/3 constitucional. O período de férias pode ser dividido em até três períodos, sendo que um deles deve ser de no mínimo 14 dias.</p>
-                    <a href="#gerador" class="article-link">Solicitar férias &rarr;</a>
-                </article>
-                
-                <article class="seo-article">
-                    <h3><i class="fas fa-exclamation-circle"></i> Quando aplicar uma advertência formal</h3>
-                    <p>A advertência é uma medida disciplinar aplicada em casos de infrações leves ou médias. Ela deve ser formalizada por escrito e serve como documento comprobatório em processos trabalhistas. É importante que a advertência seja clara quanto ao motivo e às consequências em caso de reincidência, sempre respeitando os princípios da razoabilidade e proporcionalidade.</p>
-                    <a href="#gerador" class="article-link">Criar advertência &rarr;</a>
-                </article>
-            </div>
-            
-            <div class="seo-faq">
-                <h3><i class="fas fa-question-circle"></i> Perguntas Frequentes</h3>
-                <div class="faq-item">
-                    <button class="faq-question">Os modelos são válidos legalmente? <i class="fas fa-chevron-down"></i></button>
-                    <div class="faq-answer">
-                        <p>Sim, nossos modelos seguem a legislação trabalhista brasileira e são amplamente utilizados. No entanto, recomendamos consultar um advogado para casos específicos ou situações complexas.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">É preciso pagar para usar? <i class="fas fa-chevron-down"></i></button>
-                    <div class="faq-answer">
-                        <p>Não! O ModeloTrabalhista é completamente gratuito. Não cobramos pelos modelos nem limitamos o número de documentos gerados.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">Como posso salvar o documento? <i class="fas fa-chevron-down"></i></button>
-                    <div class="faq-answer">
-                        <p>Você pode imprimir diretamente do navegador (Ctrl+P) ou usar a função "Salvar como PDF" nas opções de impressão. Também oferecemos um botão dedicado para salvar como PDF.</p>
+                        
+                        <div class="preview-info">
+                            <p><i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Revise todas as informações antes de imprimir ou salvar.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
-    <footer id="contato">
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Por que usar o ModeloTrabalhista?</h2>
+                <p class="section-subtitle">Tudo que você precisa para documentos trabalhistas perfeitos</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Rápido e Prático</h3>
+                    <p>Gere documentos em menos de 30 segundos. Basta preencher o formulário e seu documento está pronto.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>100% Seguro</h3>
+                    <p>Não armazenamos seus dados. Todo o processamento é feito localmente no seu navegador.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Modelos Válidos</h3>
+                    <p>Todos os documentos seguem a legislação trabalhista brasileira e são amplamente aceitos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Totalmente Responsivo</h3>
+                    <p>Use no computador, tablet ou celular. A experiência é perfeita em qualquer dispositivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Perguntas Frequentes</h2>
+                <p class="section-subtitle">Tire suas dúvidas sobre o uso da plataforma</p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Os modelos são válidos legalmente?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim, todos os modelos seguem a legislação trabalhista brasileira (CLT) e são amplamente utilizados. No entanto, para casos específicos ou dúvidas complexas, recomendamos consultar um advogado trabalhista.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        É preciso pagar para usar?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Não! O ModeloTrabalhista é completamente gratuito. Não cobramos pelos modelos, não limitamos o número de documentos gerados e não pedimos cadastro.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Como posso salvar o documento gerado?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Você tem três opções: 1) Imprimir diretamente (botão "Imprimir"), 2) Salvar como PDF (use a opção "Salvar como PDF" na impressão do navegador), 3) Copiar o texto e colar em um editor de sua preferência.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Meus dados são armazenados?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Não! Todo o processamento é feito localmente no seu navegador. Não enviamos seus dados para nenhum servidor e não usamos cookies para rastreamento.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Posso modificar o documento após gerar?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim! Basta alterar os dados no formulário e clicar em "Gerar Documento" novamente. Você pode fazer quantas modificações precisar.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        O site funciona no celular?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim! O ModeloTrabalhista é totalmente responsivo e funciona perfeitamente em smartphones, tablets e computadores.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Sobre o ModeloTrabalhista</h2>
+                    <p>O ModeloTrabalhista nasceu com a missão de simplificar a burocracia trabalhista no Brasil. Sabemos que lidar com documentos formais pode ser complicado e demorado.</p>
+                    <p>Por isso, criamos uma plataforma que transforma horas de pesquisa e redação em apenas alguns cliques. Tudo de forma gratuita, segura e acessível a todos.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="number">1.000+</span>
+                            <span class="label">Documentos gerados</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">100%</span>
+                            <span class="label">Aprovação dos usuários</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image">
+                    <div class="image-card">
+                        <i class="fas fa-file-contract"></i>
+                        <h3>Simplificando a burocracia</h3>
+                        <p>Desde 2023 ajudando brasileiros com documentos trabalhistas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3><i class="fas fa-file-contract"></i> ModeloTrabalhista</h3>
-                    <p>Ferramenta online gratuita para criação de documentos trabalhistas válidos e profissionais. Simplificamos a burocracia para empregadores e empregados.</p>
+                    <div class="footer-logo">
+                        <i class="fas fa-file-contract"></i>
+                        <h3>Modelo<span>Trabalhista</span></h3>
+                    </div>
+                    <p>Gerador gratuito de documentos trabalhistas. Simples, rápido e seguro.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-link"></i> Links Rápidos</h3>
+                    <h4>Modelos</h4>
                     <ul>
-                        <li><a href="#gerador"><i class="fas fa-chevron-right"></i> Gerar Documento</a></li>
-                        <li><a href="#modelos"><i class="fas fa-chevron-right"></i> Modelos</a></li>
-                        <li><a href="#seo-content"><i class="fas fa-chevron-right"></i> Informações</a></li>
-                        <li><a href="#contato"><i class="fas fa-chevron-right"></i> Contato</a></li>
+                        <li><a href="#gerador" data-model="demissao">Pedido de Demissão</a></li>
+                        <li><a href="#gerador" data-model="ferias">Solicitação de Férias</a></li>
+                        <li><a href="#gerador" data-model="advertencia">Advertência</a></li>
+                        <li><a href="#gerador" data-model="atestado">Atestado</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-envelope"></i> Contato</h3>
-                    <ul class="contact-info">
-                        <li><i class="fas fa-envelope"></i> contato@modelotrabalhista.com.br</li>
-                        <li><i class="fas fa-phone"></i> (11) 99999-9999</li>
-                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#modelos">Modelos</a></li>
+                        <li><a href="#gerador">Gerador</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-newspaper"></i> Newsletter</h3>
-                    <p>Receba dicas e atualizações sobre direitos trabalhistas.</p>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Seu e-mail" required>
-                        <button type="submit" class="btn btn-small">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Aviso Legal</a></li>
+                    </ul>
                 </div>
             </div>
             
-            <div class="copyright">
+            <div class="footer-bottom">
                 <p>&copy; 2023 ModeloTrabalhista. Todos os direitos reservados.</p>
                 <p class="disclaimer">
-                    <i class="fas fa-exclamation-triangle"></i> Os modelos fornecidos são para fins informativos. Consulte um advogado para questões específicas ou situações complexas.
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.
                 </p>
             </div>
         </div>
     </footer>
-    
-    <script src="script.js"></script>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/generator.js"></script>
+    <script src="js/ui.js"></script>
 </body>
 </html>
