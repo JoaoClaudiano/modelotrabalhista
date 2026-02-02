@@ -1,14 +1,17 @@
 // Main Application Script for ModeloTrabalhista
 class ModeloTrabalhistaApp {
+// No constructor do ModeloTrabalhistaApp
     constructor() {
         this.currentModel = 'demissao';
         this.ui = window.uiHelper || new UIHelper();
         this.generator = window.DocumentGenerator ? new DocumentGenerator() : null;
         this.storage = window.StorageManager ? new StorageManager() : null;
         this.analytics = window.analytics || null;
+        this.accessibility = window.accessibilityManager || null; // ✅ Adicionado
         this.init();
     }
-
+    
+    // No método init() do ModeloTrabalhistaApp
     init() {
         this.setupEventListeners();
         this.setCurrentDate();
@@ -17,6 +20,37 @@ class ModeloTrabalhistaApp {
         this.setupSmoothScroll();
         this.loadDraft();
         this.trackPageView();
+        this.setupAccessibility(); // ✅ Adicionado
+    }
+    
+    // Novo método para configurar acessibilidade
+    setupAccessibility() {
+        if (!this.accessibility) return;
+        
+        // Configurar leitor de voz para ler notificações
+        const originalShowNotification = this.ui.showNotification;
+        this.ui.showNotification = (message, type, duration) => {
+            originalShowNotification.call(this.ui, message, type, duration);
+            
+            // Ler notificação com leitor de voz se estiver ativo
+            if (this.accessibility.currentSettings.voiceReader) {
+                setTimeout(() => {
+                    this.accessibility.speakText(message);
+                }, 500);
+            }
+        };
+        
+        // Adicionar descrições ARIA aos botões de geração
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.setAttribute('aria-describedby', 'generate-btn-description');
+            
+            const description = document.createElement('div');
+            description.id = 'generate-btn-description';
+            description.className = 'sr-only';
+            description.textContent = 'Clique para gerar o documento com base nos dados preenchidos';
+            generateBtn.parentNode.insertBefore(description, generateBtn.nextSibling);
+        }
     }
 
     setupEventListeners() {
