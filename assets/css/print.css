@@ -1,0 +1,125 @@
+/* print.css - Estilos para impressão */
+
+@media print {
+    /* Esconder elementos não essenciais */
+    header,
+    nav,
+    .hero,
+    .document-types,
+    .form-actions,
+    .preview-controls,
+    .preview-actions,
+    .preview-info,
+    .seo-content,
+    footer,
+    .notification,
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    /* Resetar margens e padding */
+    body {
+        margin: 0;
+        padding: 0;
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+    
+    /* Container principal */
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Conteúdo do documento */
+    .preview-content {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 1cm !important;
+        font-family: 'Times New Roman', serif !important;
+        font-size: 12pt !important;
+        line-height: 1.6 !important;
+        white-space: pre-wrap !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
+    /* Evitar quebra de página dentro de seções importantes */
+    .preview-content {
+        page-break-inside: avoid;
+    }
+    
+    /* Garantir que o documento ocupe toda a página */
+    .document-preview {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Remover fundos coloridos */
+    * {
+        background: transparent !important;
+        color: black !important;
+        text-shadow: none !important;
+    }
+    
+    /* Links */
+    a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+    
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 90%;
+    }
+    
+    /* Não mostrar URLs para links internos */
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+    
+    /* Adicionar informações de impressão */
+    .preview-content:after {
+        content: "\A\A---\A\AGerado por ModeloTrabalhista - " attr(data-generated-date);
+        display: block;
+        margin-top: 2cm;
+        font-size: 10pt;
+        color: #666;
+        text-align: center;
+    }
+    
+    /* Margens da página */
+    @page {
+        margin: 2cm;
+    }
+    
+    /* Evitar quebra após cabeçalhos */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    /* Quebra de página controlada */
+    .page-break {
+        page-break-before: always;
+    }
+    
+    /* Impressão frente e verso */
+    @page :left {
+        margin-left: 3cm;
+        margin-right: 2cm;
+    }
+    
+    @page :right {
+        margin-left: 2cm;
+        margin-right: 3cm;
+    }
+}
