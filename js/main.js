@@ -1,17 +1,19 @@
 // Main Application Script for ModeloTrabalhista
 class ModeloTrabalhistaApp {
-// No constructor do ModeloTrabalhistaApp
     constructor() {
         this.currentModel = 'demissao';
+        this.currentZoom = 100;
+        
+        // Inicializar módulos
         this.ui = window.uiHelper || new UIHelper();
         this.generator = window.DocumentGenerator ? new DocumentGenerator() : null;
         this.storage = window.StorageManager ? new StorageManager() : null;
-        this.analytics = window.analytics || null;
-        this.accessibility = window.accessibilityManager || null; // ✅ Adicionado
+        this.analytics = window.AnalyticsTracker ? new AnalyticsTracker() : null;
+        this.accessibility = window.AcessibilidadeManager ? new AcessibilidadeManager() : null;
+        
         this.init();
     }
-    
-    // No método init() do ModeloTrabalhistaApp
+
     init() {
         this.setupEventListeners();
         this.setCurrentDate();
@@ -19,51 +21,21 @@ class ModeloTrabalhistaApp {
         this.setupFAQ();
         this.setupSmoothScroll();
         this.loadDraft();
+        this.setupAccessibility();
         this.trackPageView();
-        this.setupAccessibility(); // ✅ Adicionado
-    }
-    
-    // Novo método para configurar acessibilidade
-    setupAccessibility() {
-        if (!this.accessibility) return;
-        
-        // Configurar leitor de voz para ler notificações
-        const originalShowNotification = this.ui.showNotification;
-        this.ui.showNotification = (message, type, duration) => {
-            originalShowNotification.call(this.ui, message, type, duration);
-            
-            // Ler notificação com leitor de voz se estiver ativo
-            if (this.accessibility.currentSettings.voiceReader) {
-                setTimeout(() => {
-                    this.accessibility.speakText(message);
-                }, 500);
-            }
-        };
-        
-        // Adicionar descrições ARIA aos botões de geração
-        const generateBtn = document.getElementById('generateBtn');
-        if (generateBtn) {
-            generateBtn.setAttribute('aria-describedby', 'generate-btn-description');
-            
-            const description = document.createElement('div');
-            description.id = 'generate-btn-description';
-            description.className = 'sr-only';
-            description.textContent = 'Clique para gerar o documento com base nos dados preenchidos';
-            generateBtn.parentNode.insertBefore(description, generateBtn.nextSibling);
-        }
     }
 
     setupEventListeners() {
-        // Model selection
+        // Model selection via cards
         document.querySelectorAll('.model-select-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const model = e.target.dataset.model;
+                const model = e.target.dataset.model || e.target.closest('[data-model]').dataset.model;
                 this.selectModel(model);
                 document.getElementById('gerador').scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Document type change
+        // Document type change in select
         document.getElementById('documentType').addEventListener('change', (e) => {
             this.currentModel = e.target.value;
             this.updateDynamicFields();
@@ -71,26 +43,22 @@ class ModeloTrabalhistaApp {
             this.saveDraft();
         });
 
-        // Generate document
+        // Generate document button
         document.getElementById('generateBtn').addEventListener('click', () => {
             this.generateDocument();
         });
 
-        // Load example
+        // Load example button
         document.getElementById('loadExampleBtn').addEventListener('click', () => {
             this.loadExampleData();
         });
 
-        // Clear form
+        // Clear form button
         document.getElementById('clearBtn').addEventListener('click', () => {
-            if (this.ui.showModal) {
-                this.ui.showModal('confirmClearModal');
-            } else {
-                this.clearForm();
-            }
+            this.showClearConfirmation();
         });
 
-        // Auto-save on input
+        // Auto-save on input (with debounce)
         const form = document.getElementById('documentForm');
         let saveTimeout;
         form.addEventListener('input', () => {
@@ -126,7 +94,7 @@ class ModeloTrabalhistaApp {
             });
         });
 
-        // Confirm clear modal
+        // Confirm clear modal (if exists)
         document.getElementById('confirmClearBtn')?.addEventListener('click', () => {
             this.clearForm();
             this.ui.hideModal('confirmClearModal');
@@ -136,12 +104,11 @@ class ModeloTrabalhistaApp {
             this.ui.hideModal('confirmClearModal');
         });
 
-        // Export history button
+        // History controls (if exists)
         document.getElementById('exportHistoryBtn')?.addEventListener('click', () => {
             this.exportHistory();
         });
 
-        // Import history button
         document.getElementById('importHistoryBtn')?.addEventListener('click', () => {
             document.getElementById('historyFileInput')?.click();
         });
@@ -149,6 +116,9 @@ class ModeloTrabalhistaApp {
         document.getElementById('historyFileInput')?.addEventListener('change', (e) => {
             this.importHistory(e.target.files[0]);
         });
+
+        // Keyboard shortcuts
+        this.setupKeyboardShortcuts();
     }
 
     selectModel(model) {
@@ -158,16 +128,19 @@ class ModeloTrabalhistaApp {
         this.updateSelectedCard();
         this.saveDraft();
         
+        // Track analytics
         if (this.analytics) {
             this.analytics.trackModelSelected(model);
         }
     }
 
     updateSelectedCard() {
+        // Remove selected class from all cards
         document.querySelectorAll('.model-card').forEach(card => {
             card.classList.remove('selected');
         });
 
+        // Add selected class to current model card
         const selectedCard = document.querySelector(`.model-card[data-model="${this.currentModel}"]`);
         if (selectedCard) {
             selectedCard.classList.add('selected');
@@ -267,7 +240,7 @@ class ModeloTrabalhistaApp {
                         <label for="paymentDate">
                             <i class="fas fa-calendar-alt"></i> Data para Pagamento
                         </label>
-                        <input type="date" id="paymentDate" class="form-control">
+                            <input type="date" id="paymentDate" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="additionalConditions">
@@ -346,8 +319,12 @@ class ModeloTrabalhistaApp {
         container.innerHTML = html;
         
         // Initialize UI components for new fields
-        this.ui.initInputMasks();
-        this.ui.initAutoResizeTextareas();
+        if (this.ui.initInputMasks) {
+            this.ui.initInputMasks();
+        }
+        if (this.ui.initAutoResizeTextareas) {
+            this.ui.initAutoResizeTextareas();
+        }
     }
 
     generateDocument() {
@@ -356,27 +333,33 @@ class ModeloTrabalhistaApp {
             return;
         }
 
-        const data = this.collectFormData();
-        const documentContent = this.generateDocumentContent(data);
-        
-        this.displayDocument(documentContent);
-        this.enableActionButtons(true);
-        this.ui.showNotification('Documento gerado com sucesso!', 'success');
-        
-        // Save to history
-        if (this.storage) {
-            this.storage.addToHistory({
-                model: this.currentModel,
-                data: data,
-                content: documentContent,
-                generatedAt: new Date().toISOString()
-            });
-        }
-        
-        // Track analytics
-        if (this.analytics) {
-            this.analytics.trackDocumentGenerated(this.currentModel, data);
-        }
+        // Show loading state
+        this.ui.showLoading('generateBtn', 'Gerando documento...');
+
+        setTimeout(() => {
+            const data = this.collectFormData();
+            const documentContent = this.generateDocumentContent(data);
+            
+            this.displayDocument(documentContent);
+            this.enableActionButtons(true);
+            this.ui.hideLoading('generateBtn');
+            this.ui.showNotification('Documento gerado com sucesso!', 'success');
+            
+            // Save to history
+            if (this.storage && this.storage.addToHistory) {
+                this.storage.addToHistory({
+                    model: this.currentModel,
+                    data: data,
+                    content: documentContent,
+                    generatedAt: new Date().toISOString()
+                });
+            }
+            
+            // Track analytics
+            if (this.analytics && this.analytics.trackDocumentGenerated) {
+                this.analytics.trackDocumentGenerated(this.currentModel, data);
+            }
+        }, 500);
     }
 
     collectFormData() {
@@ -427,38 +410,43 @@ class ModeloTrabalhistaApp {
     }
 
     generateDocumentContent(data) {
-        if (this.generator) {
+        if (this.generator && this.generator.generateDocument) {
             return this.generator.generateDocument(data);
         }
         
-        // Fallback to built-in generator
-        const generators = {
-            demissao: this.generateResignationLetter,
-            ferias: this.generateVacationRequest,
-            advertencia: this.generateWarningLetter,
-            atestado: this.generateCertificate,
-            rescisao: this.generateSeveranceAgreement,
-            reuniao: this.generateMeetingConvocation
-        };
-
-        const generator = generators[this.currentModel] || this.generateResignationLetter;
-        return generator.call(this, data);
+        // Fallback to built-in generator methods
+        switch (this.currentModel) {
+            case 'demissao':
+                return this.generateResignationLetter(data);
+            case 'ferias':
+                return this.generateVacationRequest(data);
+            case 'advertencia':
+                return this.generateWarningLetter(data);
+            case 'atestado':
+                return this.generateCertificate(data);
+            case 'rescisao':
+                return this.generateSeveranceAgreement(data);
+            case 'reuniao':
+                return this.generateMeetingConvocation(data);
+            default:
+                return this.generateResignationLetter(data);
+        }
     }
 
+    // Built-in generator methods (fallback)
     generateResignationLetter(data) {
         const effectiveDate = data.effectiveDate ? this.formatDate(data.effectiveDate) : '(a definir)';
         const noticePeriodText = this.getNoticePeriodText(data.noticePeriod);
 
-        return `
-${data.companyName.toUpperCase()}
+        return `${data.companyName.toUpperCase()}
 ${data.companyAddress}
 
-================================================================================
+${'='.repeat(80)}
                                PEDIDO DE DEMISSÃO
-================================================================================
+${'='.repeat(80)}
 
-Eu, ${data.employeeName}, brasileiro(a), portador(a) do CPF (informar número) 
-e Carteira de Trabalho (informar número), na função de ${data.employeePosition}, 
+Eu, ${data.employeeName}, brasileiro(a), portador(a) do CPF [INFORME AQUI] 
+e Carteira de Trabalho [INFORME AQUI], na função de ${data.employeePosition}, 
 venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
 ocupo nesta empresa.
 
@@ -475,32 +463,30 @@ Declaro que estou ciente das implicações legais deste pedido e que estarei
 disponível para os procedimentos de desligamento conforme estabelecido pela 
 legislação trabalhista e normas internas da empresa.
 
-================================================================================
+${'='.repeat(80)}
 
 Data: ${data.documentDateFormatted}
 
-__________________________________________
+${'_'.repeat(42)}
 Assinatura do Funcionário
 
-================================================================================
+${'='.repeat(80)}
 
-Recebido por: __________________________________________
-Cargo: _________________________________________________
-Data: ____/____/______
-`;
+Recebido por: ${'_'.repeat(42)}
+Cargo: ${'_'.repeat(48)}
+Data: __/__/______`;
     }
 
     generateVacationRequest(data) {
         const period = data.vacationPeriod || '(período a ser definido)';
         const days = data.vacationDays || '30';
 
-        return `
-${data.companyName.toUpperCase()}
+        return `${data.companyName.toUpperCase()}
 ${data.companyAddress}
 
-================================================================================
+${'='.repeat(80)}
                            SOLICITAÇÃO DE FÉRIAS
-================================================================================
+${'='.repeat(80)}
 
 Eu, ${data.employeeName}, funcionário(a) desta empresa no cargo de 
 ${data.employeePosition}, venho por meio deste solicitar o gozo de minhas 
@@ -514,20 +500,196 @@ Declaro estar ciente de que, conforme legislação trabalhista:
 2. Receberei o valor correspondente com o adicional de 1/3 constitucional
 3. O período de férias pode ser dividido conforme acordo entre as partes
 
-================================================================================
+${'='.repeat(80)}
 
 Data: ${data.documentDateFormatted}
 
-__________________________________________
+${'_'.repeat(42)}
 Assinatura do Funcionário
 
-================================================================================
+${'='.repeat(80)}
 
-Parecer do Departamento Pessoal: __________________________________________
-Data de Agendamento: ____/____/______
-`;
+Parecer do Departamento Pessoal: ${'_'.repeat(42)}
+Data de Agendamento: __/__/______`;
     }
 
+    generateWarningLetter(data) {
+        const severityText = this.getSeverityText(data.severity);
+        const incidentDate = data.incidentDate ? this.formatDate(data.incidentDate) : data.documentDateFormatted;
+
+        return `${data.companyName.toUpperCase()}
+${data.companyAddress}
+
+${'='.repeat(80)}
+                             ADVERTÊNCIA FORMAL
+${'='.repeat(80)}
+
+Para: ${data.employeeName}
+Cargo: ${data.employeePosition}
+Data da Ocorrência: ${incidentDate}
+Data do Documento: ${data.documentDateFormatted}
+Gravidade: ${severityText}
+
+${'='.repeat(80)}
+                         COMUNICADO DE ADVERTÊNCIA
+${'='.repeat(80)}
+
+A direção da empresa vem, por meio deste documento, formalizar uma advertência 
+por:
+
+"${data.warningReason || 'Conduta inadequada no ambiente de trabalho.'}"
+
+Esta advertência serve como medida disciplinar e tem como objetivo alertar 
+sobre a necessidade de adequação de conduta, conforme estabelecido no 
+regulamento interno da empresa e na legislação trabalhista vigente.
+
+Consequências em caso de reincidência:
+1. Suspensão temporária
+2. Advertência formal gravíssima
+3. Dispensa por justa causa
+
+${'='.repeat(80)}
+
+O funcionário está ciente das implicações desta advertência e deverá assinar 
+este documento em duas vias, ficando uma com a empresa e outra em seu poder.
+
+${'_'.repeat(42)}
+Assinatura do Representante da Empresa
+Cargo: ${'_'.repeat(40)}
+
+${'='.repeat(80)}
+                            CIÊNCIA DO FUNCIONÁRIO
+
+Declaro ter recebido e compreendido o conteúdo desta advertência.
+
+Data: __/__/______
+
+${'_'.repeat(42)}
+Assinatura do Funcionário`;
+    }
+
+    generateCertificate(data) {
+        const startDate = this.formatDate(data.certificateStart);
+        const endDate = this.formatDate(data.certificateEnd);
+        const period = startDate === endDate 
+            ? `na data de ${startDate}`
+            : `no período de ${startDate} a ${endDate}`;
+
+        return `${data.companyName.toUpperCase()}
+${data.companyAddress}
+
+${'='.repeat(80)}
+                                  ATESTADO
+${'='.repeat(80)}
+
+Atesto para os devidos fins que o(a) Sr(a). ${data.employeeName}, 
+ocupante do cargo de ${data.employeePosition} nesta empresa, não compareceu 
+ao trabalho ${period} devido a:
+
+"${data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.'}"
+
+Este documento serve como justificativa para a ausência e não implica em 
+qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
+acordo ou convenção coletiva.
+
+${'='.repeat(80)}
+
+Data: ${data.documentDateFormatted}
+
+${'_'.repeat(42)}
+Assinatura do Responsável
+
+Cargo: ${'_'.repeat(42)}`;
+    }
+
+    generateSeveranceAgreement(data) {
+        const value = data.severanceValue ? `R$ ${parseFloat(data.severanceValue).toFixed(2).replace('.', ',')}` : 'a ser definido';
+        const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
+        const conditions = data.additionalConditions ? `6. ${data.additionalConditions}` : '';
+
+        return `${data.companyName.toUpperCase()}
+${data.companyAddress}
+
+${'='.repeat(80)}
+                       ACORDO DE RESCISÃO CONTRATUAL
+${'='.repeat(80)}
+
+Entre ${data.companyName}, com sede em ${data.companyAddress}, doravante 
+denominada EMPRESA, e ${data.employeeName}, portador(a) do CPF [INFORME AQUI] 
+e Carteira de Trabalho [INFORME AQUI], ocupante do cargo de 
+${data.employeePosition}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
+o presente acordo de rescisão contratual, sob as seguintes condições:
+
+1. As partes, de comum acordo, resolvem o contrato de trabalho vigente.
+2. A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de ${value}, 
+   correspondente a todos os direitos trabalhistas decorrentes da rescisão.
+3. Data para pagamento: ${paymentDate}
+4. O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
+   acordo, renuncia a qualquer ação trabalhista referente ao período 
+   contratual.
+5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
+   até a data do desligamento.
+${conditions}
+
+As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
+vias de igual teor.
+
+${'='.repeat(80)}
+
+Data: ${data.documentDateFormatted}
+
+${'_'.repeat(42)}
+Representante Legal da Empresa
+Cargo: ${'_'.repeat(40)}
+
+${'_'.repeat(42)}
+${data.employeeName}`;
+    }
+
+    generateMeetingConvocation(data) {
+        const meetingDate = data.meetingDate ? this.formatDate(data.meetingDate) : '(a definir)';
+        const time = data.meetingTime || '(horário a definir)';
+        const location = data.meetingLocation || 'Sala de Reuniões';
+        const agenda = data.meetingAgenda || 
+            '1. Abertura e apresentação dos objetivos\n2. Discussão sobre metas trimestrais\n3. Ajustes de processos internos\n4. Feedbacks e sugestões\n5. Encerramento';
+
+        return `${data.companyName.toUpperCase()}
+${data.companyAddress}
+
+${'='.repeat(80)}
+                        CONVOCATÓRIA PARA REUNIÃO
+${'='.repeat(80)}
+
+Para: Todos os funcionários do departamento
+De: ${data.employeeName} - ${data.employeePosition}
+Data do Documento: ${data.documentDateFormatted}
+
+${'='.repeat(80)}
+                               CONVOCAÇÃO
+${'='.repeat(80)}
+
+Convocamos todos os membros do departamento para uma reunião que será 
+realizada:
+
+Data: ${meetingDate}
+Hora: ${time}
+Local: ${location}
+
+Pauta da Reunião:
+${agenda}
+
+Solicitamos a confirmação de presença até 24 horas antes da reunião.
+
+${'='.repeat(80)}
+
+Atenciosamente,
+
+${'_'.repeat(42)}
+${data.employeeName}
+${data.employeePosition}`;
+    }
+
+    // Helper methods for built-in generators
     getNoticePeriodText(type) {
         const texts = {
             trabalhado: 'Aviso prévio trabalhado',
@@ -537,10 +699,24 @@ Data de Agendamento: ____/____/______
         return texts[type] || 'Aviso prévio (conforme acordo)';
     }
 
+    getSeverityText(severity) {
+        const texts = {
+            leve: 'Leve',
+            media: 'Média',
+            grave: 'Grave'
+        };
+        return texts[severity] || 'Média';
+    }
+
     displayDocument(content) {
         const preview = document.getElementById('documentPreview');
-        preview.innerHTML = `<div class="document-content">${content}</div>`;
+        preview.innerHTML = `<div class="document-content" tabindex="0">${content}</div>`;
         preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        // Announce to screen readers
+        if (this.accessibility && this.accessibility.announceToScreenReader) {
+            this.accessibility.announceToScreenReader('Documento gerado com sucesso. Use Tab para navegar no conteúdo.');
+        }
     }
 
     validateForm() {
@@ -638,8 +814,18 @@ Data de Agendamento: ____/____/______
 
         this.ui.showNotification('Dados de exemplo carregados com sucesso!', 'success');
         
-        if (this.analytics) {
+        if (this.analytics && this.analytics.trackEvent) {
             this.analytics.trackEvent('example_loaded', { model: this.currentModel });
+        }
+    }
+
+    showClearConfirmation() {
+        if (this.ui.showModal) {
+            this.ui.showModal('confirmClearModal');
+        } else {
+            if (confirm('Tem certeza que deseja limpar todo o formulário? Todos os dados não salvos serão perdidos.')) {
+                this.clearForm();
+            }
         }
     }
 
@@ -649,8 +835,8 @@ Data de Agendamento: ____/____/______
         
         const preview = document.getElementById('documentPreview');
         preview.innerHTML = `
-            <div class="empty-preview">
-                <i class="fas fa-file-alt"></i>
+            <div class="empty-preview" tabindex="0">
+                <i class="fas fa-file-alt" aria-hidden="true"></i>
                 <h4>Seu documento aparecerá aqui</h4>
                 <p>Preencha o formulário ao lado e clique em "Gerar Documento"</p>
             </div>
@@ -664,28 +850,27 @@ Data de Agendamento: ____/____/______
         });
         
         // Clear draft
-        if (this.storage) {
+        if (this.storage && this.storage.clearDraft) {
             this.storage.clearDraft(this.currentModel);
         }
         
         this.ui.showNotification('Formulário limpo com sucesso!', 'info');
-    }
-
-    saveDraft() {
-        if (!this.storage) return;
         
-        const data = this.collectFormData();
-        this.storage.saveDraft(this.currentModel, data);
-        
-        // Show autosave notification (only first time)
-        if (!localStorage.getItem('modelotrabalhista_autosave_notified')) {
-            this.ui.showNotification('Rascunho salvo automaticamente', 'info', 2000);
-            localStorage.setItem('modelotrabalhista_autosave_notified', 'true');
+        // Announce to screen readers
+        if (this.accessibility && this.accessibility.announceToScreenReader) {
+            this.accessibility.announceToScreenReader('Formulário limpo. Todos os campos foram resetados.');
         }
     }
 
+    saveDraft() {
+        if (!this.storage || !this.storage.saveDraft) return;
+        
+        const data = this.collectFormData();
+        this.storage.saveDraft(this.currentModel, data);
+    }
+
     loadDraft() {
-        if (!this.storage) return;
+        if (!this.storage || !this.storage.loadDraft) return;
         
         const draft = this.storage.loadDraft(this.currentModel);
         if (draft && draft.data) {
@@ -706,7 +891,10 @@ Data de Agendamento: ____/____/______
 
     printDocument() {
         const content = document.querySelector('#documentPreview .document-content')?.innerHTML;
-        if (!content) return;
+        if (!content) {
+            this.ui.showNotification('Nenhum documento para imprimir. Gere um documento primeiro.', 'error');
+            return;
+        }
 
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
@@ -714,6 +902,7 @@ Data de Agendamento: ____/____/______
             <html>
             <head>
                 <title>ModeloTrabalhista - Documento Gerado</title>
+                <meta charset="UTF-8">
                 <style>
                     body { 
                         font-family: 'Courier New', monospace; 
@@ -723,6 +912,7 @@ Data de Agendamento: ____/____/______
                     }
                     @media print {
                         .no-print { display: none; }
+                        @page { margin: 2cm; }
                     }
                 </style>
             </head>
@@ -738,7 +928,7 @@ Data de Agendamento: ____/____/______
         `);
         printWindow.document.close();
         
-        if (this.analytics) {
+        if (this.analytics && this.analytics.trackEvent) {
             this.analytics.trackEvent('document_printed', { model: this.currentModel });
         }
     }
@@ -750,10 +940,13 @@ Data de Agendamento: ____/____/______
 
     async copyToClipboard() {
         const content = document.querySelector('#documentPreview .document-content')?.textContent;
-        if (!content) return;
+        if (!content) {
+            this.ui.showNotification('Nenhum documento para copiar. Gere um documento primeiro.', 'error');
+            return;
+        }
 
         const success = await this.ui.copyToClipboard(content);
-        if (success && this.analytics) {
+        if (success && this.analytics && this.analytics.trackEvent) {
             this.analytics.trackEvent('document_copied', { model: this.currentModel });
         }
     }
@@ -762,7 +955,10 @@ Data de Agendamento: ____/____/______
         const buttons = ['printBtn', 'pdfBtn', 'copyBtn'];
         buttons.forEach(btnId => {
             const btn = document.getElementById(btnId);
-            if (btn) btn.disabled = !enabled;
+            if (btn) {
+                btn.disabled = !enabled;
+                btn.setAttribute('aria-disabled', !enabled);
+            }
         });
     }
 
@@ -772,23 +968,26 @@ Data de Agendamento: ____/____/______
 
         if (menuBtn && nav) {
             menuBtn.addEventListener('click', () => {
-                nav.classList.toggle('active');
-                menuBtn.innerHTML = nav.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
+                const isOpen = nav.classList.toggle('active');
+                menuBtn.innerHTML = isOpen 
+                    ? '<i class="fas fa-times" aria-label="Fechar menu"></i>' 
+                    : '<i class="fas fa-bars" aria-label="Abrir menu"></i>';
+                menuBtn.setAttribute('aria-expanded', isOpen);
             });
 
             document.addEventListener('click', (e) => {
                 if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
                     nav.classList.remove('active');
-                    menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    menuBtn.innerHTML = '<i class="fas fa-bars" aria-label="Abrir menu"></i>';
+                    menuBtn.setAttribute('aria-expanded', false);
                 }
             });
 
             nav.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     nav.classList.remove('active');
-                    menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    menuBtn.innerHTML = '<i class="fas fa-bars" aria-label="Abrir menu"></i>';
+                    menuBtn.setAttribute('aria-expanded', false);
                 });
             });
         }
@@ -799,18 +998,40 @@ Data de Agendamento: ____/____/______
             question.addEventListener('click', () => {
                 const answer = question.nextElementSibling;
                 const icon = question.querySelector('i');
+                const isOpening = !answer.classList.contains('active');
                 
-                answer.classList.toggle('active');
-                icon.style.transform = answer.classList.contains('active') 
-                    ? 'rotate(180deg)' 
-                    : 'rotate(0deg)';
-                
+                // Close all other answers
                 document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
                     if (otherAnswer !== answer) {
                         otherAnswer.classList.remove('active');
                         otherAnswer.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
+                        otherAnswer.previousElementSibling.setAttribute('aria-expanded', false);
                     }
                 });
+                
+                // Toggle current answer
+                answer.classList.toggle('active');
+                if (isOpening) {
+                    icon.style.transform = 'rotate(180deg)';
+                    question.setAttribute('aria-expanded', true);
+                    
+                    // Announce to screen readers
+                    if (this.accessibility && this.accessibility.announceToScreenReader) {
+                        const answerText = answer.textContent.substring(0, 100) + '...';
+                        this.accessibility.announceToScreenReader(`Resposta expandida: ${answerText}`);
+                    }
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                    question.setAttribute('aria-expanded', false);
+                }
+            });
+            
+            // Add keyboard support
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    question.click();
+                }
             });
         });
     }
@@ -828,6 +1049,77 @@ Data de Agendamento: ____/____/______
                         behavior: 'smooth',
                         block: 'start'
                     });
+                    
+                    // Focus on target for keyboard users
+                    setTimeout(() => {
+                        if (targetElement.tabIndex >= 0) {
+                            targetElement.focus();
+                        }
+                    }, 1000);
+                }
+            });
+        });
+    }
+
+    setupAccessibility() {
+        if (!this.accessibility) return;
+        
+        // Integrate with notifications
+        const originalShowNotification = this.ui.showNotification;
+        this.ui.showNotification = (message, type = 'info', duration = 5000) => {
+            originalShowNotification.call(this.ui, message, type, duration);
+            
+            // Read notification with voice reader if active
+            if (this.accessibility.currentSettings?.voiceReader && this.accessibility.speakText) {
+                setTimeout(() => {
+                    this.accessibility.speakText(message);
+                }, 300);
+            }
+        };
+        
+        // Add ARIA labels to form elements
+        this.addAriaLabels();
+        
+        // Set focus to first form element on page load
+        setTimeout(() => {
+            const firstInput = document.querySelector('#companyName, input[type="text"], input[type="date"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 500);
+    }
+
+    addAriaLabels() {
+        // Add ARIA labels to form controls
+        const labels = {
+            'companyName': 'Nome da empresa',
+            'employeeName': 'Nome do funcionário',
+            'companyAddress': 'Endereço da empresa',
+            'employeePosition': 'Cargo do funcionário',
+            'documentDate': 'Data do documento',
+            'generateBtn': 'Gerar documento com base nos dados preenchidos',
+            'loadExampleBtn': 'Carregar dados de exemplo para teste',
+            'clearBtn': 'Limpar todos os campos do formulário'
+        };
+        
+        Object.entries(labels).forEach(([id, label]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.setAttribute('aria-label', label);
+            }
+        });
+        
+        // Add ARIA roles to document cards
+        document.querySelectorAll('.model-card').forEach(card => {
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-pressed', card.classList.contains('selected') ? 'true' : 'false');
+            
+            // Add keyboard support
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
                 }
             });
         });
@@ -835,57 +1127,106 @@ Data de Agendamento: ____/____/______
 
     formatDate(dateString) {
         if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR');
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        } catch (e) {
+            return dateString;
+        }
     }
 
     exportHistory() {
-        if (!this.storage) return;
+        if (!this.storage || !this.storage.exportData) return;
         
-        const history = this.storage.getHistory();
-        const exportData = {
-            version: '1.0',
-            exportedAt: new Date().toISOString(),
-            documents: history
-        };
-        
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `modelotrabalhista_history_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        this.ui.showNotification('Histórico exportado com sucesso!', 'success');
+        try {
+            const exportData = this.storage.exportData({ includeHistory: true });
+            const blob = new Blob([exportData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `modelotrabalhista_history_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            this.ui.showNotification('Histórico exportado com sucesso!', 'success');
+        } catch (error) {
+            this.ui.showNotification('Erro ao exportar histórico: ' + error.message, 'error');
+        }
     }
 
     async importHistory(file) {
-        if (!file || !this.storage) return;
+        if (!file || !this.storage || !this.storage.importData) return;
         
         try {
             const text = await file.text();
-            const importData = JSON.parse(text);
+            const result = this.storage.importData(text);
             
-            if (importData.documents && Array.isArray(importData.documents)) {
-                importData.documents.forEach(doc => {
-                    this.storage.addToHistory(doc);
-                });
-                
-                this.ui.showNotification(`${importData.documents.length} documentos importados com sucesso!`, 'success');
+            if (result.success) {
+                this.ui.showNotification(`${result.importedCount || 0} documentos importados com sucesso!`, 'success');
             } else {
-                throw new Error('Formato de arquivo inválido');
+                throw new Error(result.error || 'Formato de arquivo inválido');
             }
         } catch (error) {
             this.ui.showNotification('Erro ao importar histórico: ' + error.message, 'error');
         }
     }
 
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Enter = Generate document
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                this.generateDocument();
+            }
+            
+            // Ctrl/Cmd + S = Save draft
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.saveDraft();
+                this.ui.showNotification('Rascunho salvo automaticamente', 'info', 2000);
+            }
+            
+            // Ctrl/Cmd + E = Load example
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                this.loadExampleData();
+            }
+            
+            // Ctrl/Cmd + L = Clear form
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                this.showClearConfirmation();
+            }
+            
+            // Ctrl/Cmd + P = Print
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                this.printDocument();
+            }
+            
+            // Ctrl/Cmd + C = Copy (when in preview)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && 
+                document.activeElement.closest('#documentPreview')) {
+                e.preventDefault();
+                this.copyToClipboard();
+            }
+            
+            // Escape key closes modals
+            if (e.key === 'Escape') {
+                const modal = document.querySelector('.modal[style*="display: flex"], .modal[style*="display: block"]');
+                if (modal && this.ui.hideModal) {
+                    const modalId = modal.id;
+                    this.ui.hideModal(modalId);
+                }
+            }
+        });
+    }
+
     trackPageView() {
-        if (this.analytics) {
+        if (this.analytics && this.analytics.trackPageView) {
             this.analytics.trackPageView();
         }
     }
@@ -893,5 +1234,26 @@ Data de Agendamento: ____/____/______
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Check for required modules
+    if (typeof UIHelper === 'undefined') {
+        console.warn('UIHelper não encontrado. Carregando fallback...');
+        // Aqui você pode carregar dinamicamente se necessário
+    }
+    
+    if (typeof DocumentGenerator === 'undefined') {
+        console.warn('DocumentGenerator não encontrado. Usando geradores internos.');
+    }
+    
+    // Initialize app
     window.app = new ModeloTrabalhistaApp();
+    
+    // Expose for debugging
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        window.debug = {
+            app: window.app,
+            storage: window.storageManager,
+            analytics: window.analytics,
+            accessibility: window.accessibilityManager
+        };
+    }
 });
