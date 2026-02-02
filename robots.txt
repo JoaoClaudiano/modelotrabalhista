@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://modelotrabalhista.com.br/sitemap.xml
+
+# Desabilitar crawling de áreas administrativas
+Disallow: /admin/
+Disallow: /login/
+Disallow: /config/
+
+# Permitir todos os crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
