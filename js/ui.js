@@ -4,7 +4,6 @@ class UIHelper {
     constructor() {
         this.currentZoom = 100;
         this.notificationTimeout = null;
-        this.loadingTimeouts = {};
         this.init();
     }
 
@@ -13,6 +12,7 @@ class UIHelper {
         this.initTooltips();
         this.initInputMasks();
         this.initAutoResizeTextareas();
+        this.setupGlobalStyles();
     }
 
     setupEventListeners() {
@@ -30,33 +30,129 @@ class UIHelper {
             }
         });
 
-        // Fechar notificações ao clicar fora
+        // Fechar notificações
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.notification') && !e.target.closest('.notification-close')) {
+            if (e.target.closest('.notification-close')) {
                 this.hideNotification();
-            }
-        });
-
-        // Fechar menus dropdown ao clicar fora
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown-content.show').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                });
             }
         });
     }
 
+    setupGlobalStyles() {
+        if (!document.querySelector('#ui-global-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'ui-global-styles';
+            styles.textContent = `
+                .loading-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(255,255,255,0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    border-radius: inherit;
+                }
+                
+                .loading-spinner {
+                    text-align: center;
+                }
+                
+                .spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 3px solid #f3f4f6;
+                    border-top-color: #3b82f6;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin-bottom: 16px;
+                }
+                
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+                
+                .error-message {
+                    color: #ef4444;
+                    font-size: 0.85rem;
+                    margin-top: 4px;
+                }
+                
+                .custom-tooltip {
+                    position: fixed;
+                    background: #1f2937;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 0.85rem;
+                    z-index: 10001;
+                    pointer-events: none;
+                    max-width: 250px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                }
+                
+                .modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                .modal-content {
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 12px;
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                }
+                
+                .progress-bar {
+                    width: 100%;
+                    height: 8px;
+                    background: #f3f4f6;
+                    border-radius: 4px;
+                    overflow: hidden;
+                }
+                
+                .progress-bar-fill {
+                    height: 100%;
+                    background: #3b82f6;
+                    transition: width 0.3s ease;
+                }
+                
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+    }
+
     // ========== NOTIFICAÇÕES ==========
     showNotification(message, type = 'info', duration = 5000) {
-        // Remover notificação existente
         this.hideNotification();
 
-        // Criar notificação
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         
-        // Ícone baseado no tipo
         const icons = {
             success: 'check-circle',
             error: 'exclamation-circle',
@@ -74,7 +170,6 @@ class UIHelper {
             </button>
         `;
 
-        // Estilos dinâmicos
         const styles = {
             success: { bg: '#10b981', icon: '#059669' },
             error: { bg: '#ef4444', icon: '#dc2626' },
@@ -102,7 +197,6 @@ class UIHelper {
             font-weight: 500;
         `;
 
-        // Botão de fechar
         const closeBtn = notification.querySelector('.notification-close');
         closeBtn.style.cssText = `
             background: rgba(255,255,255,0.2);
@@ -120,40 +214,12 @@ class UIHelper {
         `;
 
         closeBtn.addEventListener('click', () => this.hideNotification());
-        closeBtn.addEventListener('mouseenter', () => {
-            closeBtn.style.background = 'rgba(255,255,255,0.3)';
-        });
-        closeBtn.addEventListener('mouseleave', () => {
-            closeBtn.style.background = 'rgba(255,255,255,0.2)';
-        });
 
-        // Adicionar ao DOM
         document.body.appendChild(notification);
 
-        // Auto remoção
         this.notificationTimeout = setTimeout(() => {
             this.hideNotification();
         }, duration);
-
-        // Animar entrada
-        notification.style.animation = 'slideIn 0.3s ease';
-
-        // Adicionar estilos de animação se não existirem
-        if (!document.querySelector('#notification-styles')) {
-            const styleEl = document.createElement('style');
-            styleEl.id = 'notification-styles';
-            styleEl.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(styleEl);
-        }
     }
 
     hideNotification() {
@@ -170,15 +236,12 @@ class UIHelper {
 
     // ========== TOOLTIPS ==========
     showTooltip(element, text) {
-        // Remover tooltip existente
         this.hideTooltip();
 
-        // Criar tooltip
         const tooltip = document.createElement('div');
         tooltip.className = 'custom-tooltip';
         tooltip.textContent = text;
 
-        // Posicionar
         const rect = element.getBoundingClientRect();
         tooltip.style.cssText = `
             position: fixed;
@@ -197,7 +260,6 @@ class UIHelper {
             white-space: nowrap;
         `;
 
-        // Seta do tooltip
         tooltip.innerHTML += `
             <div style="
                 position: absolute;
@@ -209,7 +271,6 @@ class UIHelper {
             "></div>
         `;
 
-        // Adicionar ao DOM
         document.body.appendChild(tooltip);
         element._tooltip = tooltip;
     }
@@ -219,12 +280,23 @@ class UIHelper {
         if (tooltip) tooltip.remove();
     }
 
+    initTooltips() {
+        // Inicialização automática de tooltips
+        document.querySelectorAll('[data-tooltip]').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                this.showTooltip(element, element.dataset.tooltip);
+            });
+            element.addEventListener('mouseleave', () => {
+                this.hideTooltip();
+            });
+        });
+    }
+
     // ========== LOADING STATES ==========
     showLoading(elementId, message = 'Processando...') {
         const element = document.getElementById(elementId);
         if (!element) return;
 
-        // Remover loading anterior
         this.hideLoading(elementId);
 
         const loadingDiv = document.createElement('div');
@@ -237,7 +309,6 @@ class UIHelper {
             </div>
         `;
 
-        // Estilos
         loadingDiv.style.cssText = `
             position: absolute;
             top: 0;
@@ -265,18 +336,6 @@ class UIHelper {
 
         element.style.position = 'relative';
         element.appendChild(loadingDiv);
-
-        // Adicionar estilos de animação se não existirem
-        if (!document.querySelector('#loading-styles')) {
-            const styleEl = document.createElement('style');
-            styleEl.id = 'loading-styles';
-            styleEl.textContent = `
-                @keyframes spin {
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(styleEl);
-        }
     }
 
     hideLoading(elementId) {
@@ -304,18 +363,6 @@ class UIHelper {
             }
         });
 
-        // Validações específicas
-        const emailFields = form.querySelectorAll('input[type="email"]');
-        emailFields.forEach(field => {
-            if (field.value && !this.isValidEmail(field.value)) {
-                errors.push({
-                    field: field.id,
-                    message: 'Email inválido'
-                });
-                this.highlightError(field);
-            }
-        });
-
         return {
             isValid: errors.length === 0,
             errors
@@ -323,10 +370,11 @@ class UIHelper {
     }
 
     highlightError(element) {
+        if (!element) return;
+        
         element.style.borderColor = '#ef4444';
         element.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
         
-        // Adicionar mensagem de erro
         let errorMsg = element.parentNode.querySelector('.error-message');
         if (!errorMsg) {
             errorMsg = document.createElement('div');
@@ -338,20 +386,17 @@ class UIHelper {
             `;
             element.parentNode.appendChild(errorMsg);
         }
-        errorMsg.textContent = 'Este campo é obrigatório';
+        errorMsg.textContent = element.validationMessage || 'Este campo é obrigatório';
     }
 
     removeError(element) {
+        if (!element) return;
+        
         element.style.borderColor = '';
         element.style.boxShadow = '';
         
         const errorMsg = element.parentNode.querySelector('.error-message');
         if (errorMsg) errorMsg.remove();
-    }
-
-    isValidEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
     }
 
     // ========== INPUT MASKS ==========
@@ -408,19 +453,20 @@ class UIHelper {
         document.querySelectorAll('[data-mask="money"]').forEach(input => {
             input.addEventListener('input', (e) => {
                 let value = e.target.value.replace(/\D/g, '');
+                if (value === '') {
+                    e.target.value = '';
+                    return;
+                }
+                
                 value = (parseInt(value) / 100).toFixed(2);
                 value = value.replace('.', ',');
                 value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 
-                if (value === '0,00') {
-                    e.target.value = '';
-                } else {
-                    e.target.value = `R$ ${value}`;
-                }
+                e.target.value = `R$ ${value}`;
             });
 
             input.addEventListener('blur', (e) => {
-                if (e.target.value === 'R$ ') {
+                if (e.target.value === 'R$ 0,00' || e.target.value === 'R$ ') {
                     e.target.value = '';
                 }
             });
@@ -430,38 +476,43 @@ class UIHelper {
     // ========== TEXTAREA AUTO-RESIZE ==========
     initAutoResizeTextareas() {
         document.querySelectorAll('textarea.auto-resize').forEach(textarea => {
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
+            const resize = () => {
+                textarea.style.height = 'auto';
+                textarea.style.height = (textarea.scrollHeight) + 'px';
+            };
             
-            // Trigger inicial
-            textarea.dispatchEvent(new Event('input'));
+            textarea.addEventListener('input', resize);
+            resize(); // Initial resize
         });
     }
 
     // ========== MODALS ==========
     showModal(modalId) {
         const modal = document.getElementById(modalId);
-        if (!modal) return;
+        if (!modal) {
+            console.warn(`Modal ${modalId} não encontrado`);
+            return;
+        }
 
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
-        // Fechar ao clicar fora
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
+        const closeHandler = (e) => {
+            if (e.target === modal || e.target.closest('.modal-close')) {
                 this.hideModal(modalId);
             }
-        });
+        };
+        
+        modal._closeHandler = closeHandler;
+        modal.addEventListener('click', closeHandler);
 
-        // Fechar com ESC
         const escHandler = (e) => {
             if (e.key === 'Escape') {
                 this.hideModal(modalId);
-                document.removeEventListener('keydown', escHandler);
             }
         };
+        
+        modal._escHandler = escHandler;
         document.addEventListener('keydown', escHandler);
     }
 
@@ -470,22 +521,15 @@ class UIHelper {
         if (modal) {
             modal.style.display = 'none';
             document.body.style.overflow = '';
-        }
-    }
-
-    // ========== DROPDOWNS ==========
-    toggleDropdown(dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
-        if (!dropdown) return;
-
-        dropdown.classList.toggle('show');
-        
-        // Fechar outros dropdowns
-        document.querySelectorAll('.dropdown-content').forEach(other => {
-            if (other !== dropdown && other.classList.contains('show')) {
-                other.classList.remove('show');
+            
+            if (modal._closeHandler) {
+                modal.removeEventListener('click', modal._closeHandler);
             }
-        });
+            
+            if (modal._escHandler) {
+                document.removeEventListener('keydown', modal._escHandler);
+            }
+        }
     }
 
     // ========== ZOOM CONTROLS ==========
@@ -517,10 +561,10 @@ class UIHelper {
         element.style.transform = `scale(${this.currentZoom / 100})`;
         element.style.transformOrigin = 'top left';
         
-        // Ajustar container para o zoom
         const container = element.parentElement;
         if (container) {
-            container.style.height = `${element.scrollHeight * (this.currentZoom / 100)}px`;
+            const originalHeight = element.scrollHeight;
+            container.style.height = `${originalHeight * (this.currentZoom / 100)}px`;
         }
     }
 
@@ -549,7 +593,7 @@ class UIHelper {
         } catch (err) {
             console.error('Erro ao copiar:', err);
             
-            // Fallback para navegadores antigos
+            // Fallback
             try {
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
@@ -656,114 +700,6 @@ class UIHelper {
 // Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
     window.uiHelper = new UIHelper();
-    
-    // Adicionar estilos globais
-    const styles = document.createElement('style');
-    styles.textContent = `
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            border-radius: inherit;
-        }
-        
-        .loading-spinner {
-            text-align: center;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f4f6;
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .error-message {
-            color: #ef4444;
-            font-size: 0.85rem;
-            margin-top: 4px;
-        }
-        
-        .custom-tooltip {
-            position: fixed;
-            background: #1f2937;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            z-index: 10001;
-            pointer-events: none;
-            max-width: 250px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            z-index: 1000;
-            min-width: 200px;
-        }
-        
-        .dropdown-content.show {
-            display: block;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #f3f4f6;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: #3b82f6;
-            transition: width 0.3s ease;
-        }
-    `;
-    document.head.appendChild(styles);
 });
 
 // Exportar para uso global
