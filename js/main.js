@@ -2,7 +2,10 @@
 class ModeloTrabalhistaApp {
     constructor() {
         this.currentModel = 'demissao';
-        this.currentZoom = 100;
+        this.ui = window.uiHelper || new UIHelper();
+        this.generator = window.DocumentGenerator ? new DocumentGenerator() : null;
+        this.storage = window.StorageManager ? new StorageManager() : null;
+        this.analytics = window.analytics || null;
         this.init();
     }
 
@@ -12,6 +15,7 @@ class ModeloTrabalhistaApp {
         this.setupMobileMenu();
         this.setupFAQ();
         this.setupSmoothScroll();
+        this.loadDraft();
         this.trackPageView();
     }
 
@@ -30,6 +34,7 @@ class ModeloTrabalhistaApp {
             this.currentModel = e.target.value;
             this.updateDynamicFields();
             this.updateSelectedCard();
+            this.saveDraft();
         });
 
         // Generate document
@@ -44,13 +49,33 @@ class ModeloTrabalhistaApp {
 
         // Clear form
         document.getElementById('clearBtn').addEventListener('click', () => {
-            this.clearForm();
+            if (this.ui.showModal) {
+                this.ui.showModal('confirmClearModal');
+            } else {
+                this.clearForm();
+            }
+        });
+
+        // Auto-save on input
+        const form = document.getElementById('documentForm');
+        let saveTimeout;
+        form.addEventListener('input', () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                this.saveDraft();
+            }, 1500);
         });
 
         // Preview controls
-        document.getElementById('zoomInBtn').addEventListener('click', () => this.zoomIn());
-        document.getElementById('zoomOutBtn').addEventListener('click', () => this.zoomOut());
-        document.getElementById('resetZoomBtn').addEventListener('click', () => this.resetZoom());
+        document.getElementById('zoomInBtn').addEventListener('click', () => {
+            this.ui.zoomIn('documentPreview');
+        });
+        document.getElementById('zoomOutBtn').addEventListener('click', () => {
+            this.ui.zoomOut('documentPreview');
+        });
+        document.getElementById('resetZoomBtn').addEventListener('click', () => {
+            this.ui.resetZoom('documentPreview');
+        });
 
         // Action buttons
         document.getElementById('printBtn').addEventListener('click', () => this.printDocument());
@@ -66,6 +91,30 @@ class ModeloTrabalhistaApp {
                 document.getElementById('gerador').scrollIntoView({ behavior: 'smooth' });
             });
         });
+
+        // Confirm clear modal
+        document.getElementById('confirmClearBtn')?.addEventListener('click', () => {
+            this.clearForm();
+            this.ui.hideModal('confirmClearModal');
+        });
+
+        document.getElementById('cancelClearBtn')?.addEventListener('click', () => {
+            this.ui.hideModal('confirmClearModal');
+        });
+
+        // Export history button
+        document.getElementById('exportHistoryBtn')?.addEventListener('click', () => {
+            this.exportHistory();
+        });
+
+        // Import history button
+        document.getElementById('importHistoryBtn')?.addEventListener('click', () => {
+            document.getElementById('historyFileInput')?.click();
+        });
+
+        document.getElementById('historyFileInput')?.addEventListener('change', (e) => {
+            this.importHistory(e.target.files[0]);
+        });
     }
 
     selectModel(model) {
@@ -73,16 +122,18 @@ class ModeloTrabalhistaApp {
         document.getElementById('documentType').value = model;
         this.updateDynamicFields();
         this.updateSelectedCard();
-        this.trackEvent('model_selected', { model });
+        this.saveDraft();
+        
+        if (this.analytics) {
+            this.analytics.trackModelSelected(model);
+        }
     }
 
     updateSelectedCard() {
-        // Remove selected class from all cards
         document.querySelectorAll('.model-card').forEach(card => {
             card.classList.remove('selected');
         });
 
-        // Add selected class to current model card
         const selectedCard = document.querySelector(`.model-card[data-model="${this.currentModel}"]`);
         if (selectedCard) {
             selectedCard.classList.add('selected');
@@ -97,7 +148,7 @@ class ModeloTrabalhistaApp {
             case 'ferias':
                 html = `
                     <div class="form-group">
-                        <label for="vacationPeriod">
+                        <label for="vacationPeriod" data-tooltip="Informe o período desejado para as férias">
                             <i class="fas fa-calendar-check"></i> Período de Férias *
                         </label>
                         <input type="text" id="vacationPeriod" class="form-control" 
@@ -116,10 +167,10 @@ class ModeloTrabalhistaApp {
             case 'advertencia':
                 html = `
                     <div class="form-group">
-                        <label for="warningReason">
+                        <label for="warningReason" data-tooltip="Descreva detalhadamente o motivo da advertência">
                             <i class="fas fa-exclamation-circle"></i> Motivo da Advertência *
                         </label>
-                        <textarea id="warningReason" class="form-control" rows="4"
+                        <textarea id="warningReason" class="form-control auto-resize" rows="4"
                                   placeholder="Descreva detalhadamente o motivo da advertência..." required></textarea>
                     </div>
                     <div class="form-row">
@@ -146,10 +197,10 @@ class ModeloTrabalhistaApp {
             case 'atestado':
                 html = `
                     <div class="form-group">
-                        <label for="certificateReason">
+                        <label for="certificateReason" data-tooltip="Informe o motivo da ausência">
                             <i class="fas fa-stethoscope"></i> Motivo do Atestado *
                         </label>
-                        <textarea id="certificateReason" class="form-control" rows="3"
+                        <textarea id="certificateReason" class="form-control auto-resize" rows="3"
                                   placeholder="Informe o motivo da ausência..." required></textarea>
                     </div>
                     <div class="form-row">
@@ -176,7 +227,7 @@ class ModeloTrabalhistaApp {
                             <i class="fas fa-money-bill-wave"></i> Valor da Rescisão (R$)
                         </label>
                         <input type="number" id="severanceValue" class="form-control" 
-                               placeholder="Ex: 5000.00" step="0.01" min="0">
+                               placeholder="Ex: 5000.00" step="0.01" min="0" data-mask="money">
                     </div>
                     <div class="form-group">
                         <label for="paymentDate">
@@ -188,7 +239,7 @@ class ModeloTrabalhistaApp {
                         <label for="additionalConditions">
                             <i class="fas fa-clipboard-list"></i> Condições Adicionais
                         </label>
-                        <textarea id="additionalConditions" class="form-control" rows="3"
+                        <textarea id="additionalConditions" class="form-control auto-resize" rows="3"
                                   placeholder="Informe condições adicionais do acordo..."></textarea>
                     </div>
                 `;
@@ -222,10 +273,10 @@ class ModeloTrabalhistaApp {
                                placeholder="Ex: Sala de Reuniões 1">
                     </div>
                     <div class="form-group">
-                        <label for="meetingAgenda">
+                        <label for="meetingAgenda" data-tooltip="Liste os tópicos que serão discutidos">
                             <i class="fas fa-list-alt"></i> Pauta da Reunião
                         </label>
-                        <textarea id="meetingAgenda" class="form-control" rows="4"
+                        <textarea id="meetingAgenda" class="form-control auto-resize" rows="4"
                                   placeholder="Liste os tópicos que serão discutidos..."></textarea>
                     </div>
                 `;
@@ -259,11 +310,15 @@ class ModeloTrabalhistaApp {
         }
 
         container.innerHTML = html;
+        
+        // Initialize UI components for new fields
+        this.ui.initInputMasks();
+        this.ui.initAutoResizeTextareas();
     }
 
     generateDocument() {
         if (!this.validateForm()) {
-            this.showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
+            this.ui.showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
             return;
         }
 
@@ -272,9 +327,22 @@ class ModeloTrabalhistaApp {
         
         this.displayDocument(documentContent);
         this.enableActionButtons(true);
-        this.showNotification('Documento gerado com sucesso!', 'success');
+        this.ui.showNotification('Documento gerado com sucesso!', 'success');
         
-        this.trackEvent('document_generated', { model: this.currentModel });
+        // Save to history
+        if (this.storage) {
+            this.storage.addToHistory({
+                model: this.currentModel,
+                data: data,
+                content: documentContent,
+                generatedAt: new Date().toISOString()
+            });
+        }
+        
+        // Track analytics
+        if (this.analytics) {
+            this.analytics.trackDocumentGenerated(this.currentModel, data);
+        }
     }
 
     collectFormData() {
@@ -325,6 +393,11 @@ class ModeloTrabalhistaApp {
     }
 
     generateDocumentContent(data) {
+        if (this.generator) {
+            return this.generator.generateDocument(data);
+        }
+        
+        // Fallback to built-in generator
         const generators = {
             demissao: this.generateResignationLetter,
             ferias: this.generateVacationRequest,
@@ -442,10 +515,10 @@ Data de Agendamento: ____/____/______
         for (const fieldId of requiredFields) {
             const field = document.getElementById(fieldId);
             if (!field || !field.value.trim()) {
-                field?.classList.add('error');
+                this.ui.highlightError(field);
                 return false;
             }
-            field?.classList.remove('error');
+            this.ui.removeError(field);
         }
 
         // Validate model-specific required fields
@@ -453,21 +526,21 @@ Data de Agendamento: ____/____/______
             case 'ferias':
                 const periodField = document.getElementById('vacationPeriod');
                 if (periodField && !periodField.value.trim()) {
-                    periodField.classList.add('error');
+                    this.ui.highlightError(periodField);
                     return false;
                 }
                 break;
             case 'advertencia':
                 const reasonField = document.getElementById('warningReason');
                 if (reasonField && !reasonField.value.trim()) {
-                    reasonField.classList.add('error');
+                    this.ui.highlightError(reasonField);
                     return false;
                 }
                 break;
             case 'atestado':
                 const certReasonField = document.getElementById('certificateReason');
                 if (certReasonField && !certReasonField.value.trim()) {
-                    certReasonField.classList.add('error');
+                    this.ui.highlightError(certReasonField);
                     return false;
                 }
                 break;
@@ -529,8 +602,11 @@ Data de Agendamento: ____/____/______
             document.getElementById('meetingDate').value = tomorrow.toISOString().split('T')[0];
         }
 
-        this.showNotification('Dados de exemplo carregados com sucesso!', 'success');
-        this.trackEvent('example_loaded', { model: this.currentModel });
+        this.ui.showNotification('Dados de exemplo carregados com sucesso!', 'success');
+        
+        if (this.analytics) {
+            this.analytics.trackEvent('example_loaded', { model: this.currentModel });
+        }
     }
 
     clearForm() {
@@ -547,44 +623,51 @@ Data de Agendamento: ____/____/______
         `;
         
         this.enableActionButtons(false);
-        this.resetZoom();
+        this.ui.resetZoom('documentPreview');
         
         document.querySelectorAll('.model-card').forEach(card => {
             card.classList.remove('selected');
         });
         
-        this.showNotification('Formulário limpo com sucesso!', 'info');
+        // Clear draft
+        if (this.storage) {
+            this.storage.clearDraft(this.currentModel);
+        }
+        
+        this.ui.showNotification('Formulário limpo com sucesso!', 'info');
+    }
+
+    saveDraft() {
+        if (!this.storage) return;
+        
+        const data = this.collectFormData();
+        this.storage.saveDraft(this.currentModel, data);
+        
+        // Show autosave notification (only first time)
+        if (!localStorage.getItem('modelotrabalhista_autosave_notified')) {
+            this.ui.showNotification('Rascunho salvo automaticamente', 'info', 2000);
+            localStorage.setItem('modelotrabalhista_autosave_notified', 'true');
+        }
+    }
+
+    loadDraft() {
+        if (!this.storage) return;
+        
+        const draft = this.storage.loadDraft(this.currentModel);
+        if (draft && draft.data) {
+            // Fill form fields with draft data
+            Object.keys(draft.data).forEach(key => {
+                const element = document.getElementById(key);
+                if (element && draft.data[key]) {
+                    element.value = draft.data[key];
+                }
+            });
+        }
     }
 
     setCurrentDate() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('documentDate').value = today;
-    }
-
-    zoomIn() {
-        if (this.currentZoom < 150) {
-            this.currentZoom += 10;
-            this.updateZoom();
-        }
-    }
-
-    zoomOut() {
-        if (this.currentZoom > 70) {
-            this.currentZoom -= 10;
-            this.updateZoom();
-        }
-    }
-
-    resetZoom() {
-        this.currentZoom = 100;
-        this.updateZoom();
-    }
-
-    updateZoom() {
-        const preview = document.getElementById('documentPreview');
-        if (preview) {
-            preview.style.fontSize = `${this.currentZoom}%`;
-        }
     }
 
     printDocument() {
@@ -621,11 +704,13 @@ Data de Agendamento: ____/____/______
         `);
         printWindow.document.close();
         
-        this.trackEvent('document_printed', { model: this.currentModel });
+        if (this.analytics) {
+            this.analytics.trackEvent('document_printed', { model: this.currentModel });
+        }
     }
 
     saveAsPDF() {
-        this.showNotification('Para salvar como PDF, use a opção "Salvar como PDF" na janela de impressão.', 'info');
+        this.ui.showNotification('Para salvar como PDF, use a opção "Salvar como PDF" na janela de impressão.', 'info');
         this.printDocument();
     }
 
@@ -633,13 +718,9 @@ Data de Agendamento: ____/____/______
         const content = document.querySelector('#documentPreview .document-content')?.textContent;
         if (!content) return;
 
-        try {
-            await navigator.clipboard.writeText(content);
-            this.showNotification('Texto copiado para a área de transferência!', 'success');
-            this.trackEvent('document_copied', { model: this.currentModel });
-        } catch (err) {
-            console.error('Erro ao copiar:', err);
-            this.showNotification('Erro ao copiar texto. Tente novamente.', 'error');
+        const success = await this.ui.copyToClipboard(content);
+        if (success && this.analytics) {
+            this.analytics.trackEvent('document_copied', { model: this.currentModel });
         }
     }
 
@@ -649,30 +730,6 @@ Data de Agendamento: ____/____/______
             const btn = document.getElementById(btnId);
             if (btn) btn.disabled = !enabled;
         });
-    }
-
-    showNotification(message, type = 'info') {
-        // Remove existing notification
-        const existing = document.querySelector('.notification');
-        if (existing) existing.remove();
-
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        `;
-
-        document.body.appendChild(notification);
-
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'slideIn 0.3s ease reverse';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, 5000);
     }
 
     setupMobileMenu() {
@@ -687,7 +744,6 @@ Data de Agendamento: ____/____/______
                     : '<i class="fas fa-bars"></i>';
             });
 
-            // Close menu when clicking outside
             document.addEventListener('click', (e) => {
                 if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
                     nav.classList.remove('active');
@@ -695,7 +751,6 @@ Data de Agendamento: ____/____/______
                 }
             });
 
-            // Close menu on link click
             nav.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     nav.classList.remove('active');
@@ -711,13 +766,11 @@ Data de Agendamento: ____/____/______
                 const answer = question.nextElementSibling;
                 const icon = question.querySelector('i');
                 
-                // Toggle current answer
                 answer.classList.toggle('active');
                 icon.style.transform = answer.classList.contains('active') 
                     ? 'rotate(180deg)' 
                     : 'rotate(0deg)';
                 
-                // Close other answers
                 document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
                     if (otherAnswer !== answer) {
                         otherAnswer.classList.remove('active');
@@ -752,36 +805,54 @@ Data de Agendamento: ____/____/______
         return date.toLocaleDateString('pt-BR');
     }
 
-    trackPageView() {
-        this.trackEvent('page_view', {
-            path: window.location.pathname,
-            referrer: document.referrer
-        });
+    exportHistory() {
+        if (!this.storage) return;
+        
+        const history = this.storage.getHistory();
+        const exportData = {
+            version: '1.0',
+            exportedAt: new Date().toISOString(),
+            documents: history
+        };
+        
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `modelotrabalhista_history_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.ui.showNotification('Histórico exportado com sucesso!', 'success');
     }
 
-    trackEvent(eventName, eventData = {}) {
-        // Basic analytics tracking
-        console.log(`[Analytics] ${eventName}:`, eventData);
+    async importHistory(file) {
+        if (!file || !this.storage) return;
         
-        // Save to localStorage for basic analytics
         try {
-            const analytics = JSON.parse(localStorage.getItem('modelotrabalhista_analytics') || '{"events":[]}');
-            analytics.events.push({
-                event: eventName,
-                data: eventData,
-                timestamp: new Date().toISOString(),
-                url: window.location.href,
-                userAgent: navigator.userAgent
-            });
+            const text = await file.text();
+            const importData = JSON.parse(text);
             
-            // Keep only last 100 events
-            if (analytics.events.length > 100) {
-                analytics.events = analytics.events.slice(-100);
+            if (importData.documents && Array.isArray(importData.documents)) {
+                importData.documents.forEach(doc => {
+                    this.storage.addToHistory(doc);
+                });
+                
+                this.ui.showNotification(`${importData.documents.length} documentos importados com sucesso!`, 'success');
+            } else {
+                throw new Error('Formato de arquivo inválido');
             }
-            
-            localStorage.setItem('modelotrabalhista_analytics', JSON.stringify(analytics));
-        } catch (e) {
-            console.error('Error saving analytics:', e);
+        } catch (error) {
+            this.ui.showNotification('Erro ao importar histórico: ' + error.message, 'error');
+        }
+    }
+
+    trackPageView() {
+        if (this.analytics) {
+            this.analytics.trackPageView();
         }
     }
 }
