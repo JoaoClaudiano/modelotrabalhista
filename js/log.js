@@ -16,8 +16,7 @@ class AppLogger {
             'main.js',
             'analytics.js', 
             'acessibilidade.js',
-            'vlibras-plugin.js',
-            'fontawesome.js' // Adicione outros scripts esperados
+
         ];
         
         this.init();
