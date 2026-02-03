@@ -4,10 +4,10 @@ class AnalyticsTracker {
     constructor() {
         this.storageKey = 'modelotrabalhista_analytics_v3';
         this.sessionId = this.generateSessionId();
-        this.userId = this.getUserId();
         this.pageStartTime = Date.now();
-        this.eventsQueue = [];
+        this.eventsQueue = []; // MOVI ESTA LINHA PARA CIMA - ANTES DE getUserId()
         this.isSending = false;
+        this.userId = this.getUserId(); // AGORA A FILA JÁ ESTÁ INICIALIZADA
         this.init();
     }
     // inicio
@@ -188,6 +188,11 @@ class AnalyticsTracker {
 
     // ========== FILA DE EVENTOS ==========
     addToQueue(event) {
+        // GARANTIR QUE A FILA EXISTE (defesa adicional)
+        if (!this.eventsQueue) {
+            this.eventsQueue = [];
+        }
+        
         this.eventsQueue.push(event);
         
         // Limitar fila a 100 eventos
