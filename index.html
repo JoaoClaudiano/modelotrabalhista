@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,8 +27,62 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css" media="screen and (max-width: 768px)">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="js/main.js" as="script">
+    <link rel="preload" href="js/ui.js" as="script">
+    
+    <!-- Loading styles -->
+    <style>
+        .app-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .app-loaded .app-loading {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div class="app-loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Carregando ModeloTrabalhista...</div>
+    </div>
+    
     <!-- Header -->
     <header class="main-header">
         <div class="container">
@@ -575,9 +629,73 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="js/main.js"></script>
-    <script src="js/generator.js"></script>
+    <!-- Módulo de UI primeiro (dependência base) -->
     <script src="js/ui.js"></script>
+    
+    <!-- Módulos de funcionalidade -->
+    <script src="js/generator.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/tour.js"></script>
+    
+    <!-- Módulos avançados (podem carregar de forma assíncrona) -->
+    <script src="js/analytics.js" async></script>
+    <script src="js/acessibilidade.js" async></script>
+    
+    <!-- Aplicação principal (depende dos módulos acima) -->
+    <script src="js/main.js"></script>
+    
+    <!-- Script de inicialização -->
+    <script>
+        // Remover loading quando tudo carregar
+        window.addEventListener('load', function() {
+            document.body.classList.add('app-loaded');
+            
+            // Remover completamente após animação
+            setTimeout(function() {
+                const loading = document.querySelector('.app-loading');
+                if (loading) {
+                    loading.remove();
+                }
+            }, 500);
+        });
+        
+        // Fallback se algo der errado
+        setTimeout(function() {
+            document.body.classList.add('app-loaded');
+        }, 10000); // 10 segundos de timeout
+        
+        // Verificar se há erros de carregamento
+        window.addEventListener('error', function(e) {
+            console.error('Erro ao carregar recurso:', e);
+            
+            // Mostrar mensagem amigável se for um script crítico
+            const criticalScripts = ['js/ui.js', 'js/main.js'];
+            if (criticalScripts.some(script => e.target.src && e.target.src.includes(script))) {
+                const loading = document.querySelector('.app-loading');
+                if (loading) {
+                    loading.innerHTML = `
+                        <div style="text-align: center; color: white;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 style="margin-bottom: 1rem;">Ocorreu um erro ao carregar</h3>
+                            <p style="margin-bottom: 1rem;">Por favor, atualize a página ou tente novamente mais tarde.</p>
+                            <button onclick="location.reload()" style="
+                                background: white;
+                                color: #764ba2;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 5px;
+                                font-weight: bold;
+                                cursor: pointer;
+                            ">
+                                <i class="fas fa-redo"></i> Recarregar Página
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }, true);
+    </script>
     
     <!-- Modal de Confirmação -->
     <div id="confirmClearModal" class="modal" style="display: none;">
