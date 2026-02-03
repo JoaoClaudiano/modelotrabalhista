@@ -18,15 +18,8 @@ class DocumentExporter {
             script.onload = () => {
                 console.log('jsPDF carregado');
             };
-            document.head.appendChild(script);
-        }
-
-        // html2canvas para capturar elementos DOM
-        if (typeof window.html2canvas === 'undefined') {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            script.onload = () => {
-                console.log('html2canvas carregado');
+            script.onerror = () => {
+                console.warn('Falha ao carregar jsPDF, usando fallback');
             };
             document.head.appendChild(script);
         }
@@ -38,88 +31,208 @@ class DocumentExporter {
             script.onload = () => {
                 console.log('docx carregado');
             };
+            script.onerror = () => {
+                console.warn('Falha ao carregar docx.js, usando fallback');
+            };
             document.head.appendChild(script);
         }
     }
 
     setupEventListeners() {
-        // Event listeners serão adicionados pelo main.js
-        // Adicionando fallback para evitar erros
+        // Adicionar listeners com delay para garantir que os botões existam
         setTimeout(() => {
             this.attachExportButtons();
         }, 1000);
     }
 
-    // Método para anexar automaticamente os botões de exportação
+    // Método para anexar automaticamente os botões de exportação usando IDs corretos
     attachExportButtons() {
-        // Botão de PDF
-        const pdfBtn = document.getElementById('export-pdf') || 
-                      document.querySelector('[data-export="pdf"]') ||
-                      document.querySelector('button:contains("PDF")');
+        // Botão de PDF (id: pdfBtn)
+        const pdfBtn = document.getElementById('pdfBtn');
         
-        if (pdfBtn && !pdfBtn.hasAttribute('data-listener-attached')) {
-            pdfBtn.setAttribute('data-listener-attached', 'true');
-            pdfBtn.addEventListener('click', (e) => {
+        if (pdfBtn && !pdfBtn.hasAttribute('data-export-listener')) {
+            pdfBtn.setAttribute('data-export-listener', 'true');
+            
+            // Remover event listeners antigos para evitar duplicação
+            const newPdfBtn = pdfBtn.cloneNode(true);
+            pdfBtn.parentNode.replaceChild(newPdfBtn, pdfBtn);
+            
+            newPdfBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const content = this.getDocumentContent();
-                this.exportToPDF(content, 'ModeloTrabalhista');
+                if (newPdfBtn.disabled) return;
+                
+                // Mostrar loading
+                const originalText = newPdfBtn.innerHTML;
+                newPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PDF...';
+                newPdfBtn.disabled = true;
+                
+                try {
+                    const content = this.getDocumentContent();
+                    await this.exportToPDF(content, 'ModeloTrabalhista');
+                } catch (error) {
+                    console.error('Erro ao exportar PDF:', error);
+                    this.showNotification('Erro ao gerar PDF. Tente novamente.', 'error');
+                } finally {
+                    // Restaurar botão
+                    newPdfBtn.innerHTML = originalText;
+                    newPdfBtn.disabled = false;
+                }
             });
+            
+            // Adicionar tooltip
+            newPdfBtn.title = 'Salvar documento como PDF';
         }
 
-        // Botão de DOCX (substitui o botão de imprimir)
-        const docxBtn = document.getElementById('export-docx') ||
-                       document.querySelector('[data-export="docx"]') ||
-                       document.querySelector('button:contains("DOCX")') ||
-                       document.querySelector('button:contains("Imprimir")');
+        // Botão de DOCX (id: printBtn - renomeado para Gerar DOCX)
+        const docxBtn = document.getElementById('printBtn');
         
-        if (docxBtn && !docxBtn.hasAttribute('data-listener-attached')) {
-            docxBtn.setAttribute('data-listener-attached', 'true');
-            docxBtn.textContent = 'Gerar DOCX'; // Renomear o botão
-            docxBtn.addEventListener('click', (e) => {
+        if (docxBtn && !docxBtn.hasAttribute('data-export-listener')) {
+            docxBtn.setAttribute('data-export-listener', 'true');
+            
+            // Remover event listeners antigos para evitar duplicação
+            const newDocxBtn = docxBtn.cloneNode(true);
+            docxBtn.parentNode.replaceChild(newDocxBtn, docxBtn);
+            
+            // Atualizar texto e ícone do botão
+            newDocxBtn.innerHTML = '<i class="fas fa-file-word"></i> Gerar DOCX';
+            
+            newDocxBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const content = this.getDocumentContent();
-                this.exportToDOCX(content, 'ModeloTrabalhista');
+                if (newDocxBtn.disabled) return;
+                
+                // Mostrar loading
+                const originalText = newDocxBtn.innerHTML;
+                newDocxBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando DOCX...';
+                newDocxBtn.disabled = true;
+                
+                try {
+                    const content = this.getDocumentContent();
+                    await this.exportToDOCX(content, 'ModeloTrabalhista');
+                } catch (error) {
+                    console.error('Erro ao exportar DOCX:', error);
+                    this.showNotification('Erro ao gerar DOCX. Tente novamente.', 'error');
+                } finally {
+                    // Restaurar botão
+                    newDocxBtn.innerHTML = originalText;
+                    newDocxBtn.disabled = false;
+                }
             });
+            
+            // Atualizar tooltip
+            newDocxBtn.title = 'Gerar documento Word (DOCX)';
+        }
+
+        // Botão de copiar (id: copyBtn)
+        const copyBtn = document.getElementById('copyBtn');
+        
+        if (copyBtn && !copyBtn.hasAttribute('data-export-listener')) {
+            copyBtn.setAttribute('data-export-listener', 'true');
+            
+            // Remover event listeners antigos para evitar duplicação
+            const newCopyBtn = copyBtn.cloneNode(true);
+            copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
+            
+            newCopyBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (newCopyBtn.disabled) return;
+                
+                try {
+                    const content = this.getDocumentContent();
+                    const result = await this.copyToClipboard(content);
+                    
+                    // Feedback visual
+                    if (result.success) {
+                        const originalText = newCopyBtn.innerHTML;
+                        newCopyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                        newCopyBtn.disabled = true;
+                        
+                        setTimeout(() => {
+                            newCopyBtn.innerHTML = originalText;
+                            newCopyBtn.disabled = false;
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Erro ao copiar:', error);
+                    this.showNotification('Erro ao copiar texto.', 'error');
+                }
+            });
+            
+            // Adicionar tooltip
+            newCopyBtn.title = 'Copiar texto para área de transferência';
         }
     }
 
     // Obter conteúdo do documento
     getDocumentContent() {
-        // Tenta encontrar o conteúdo do documento em diferentes locais
-        const contentSelectors = [
-            '#document-content',
-            '.document-content',
-            '#conteudo',
-            '.conteudo',
-            '#texto',
-            '.texto',
+        // Prioridade: elemento específico do modelo
+        const modelSelectors = [
             '#modelo-text',
-            '#main-content',
-            'article',
-            'section'
+            '#document-content',
+            '#modeloContent',
+            '.modelo-content',
+            '#texto-gerado',
+            '.texto-gerado',
+            '#conteudo-modelo',
+            '#preview-content'
         ];
-
-        for (const selector of contentSelectors) {
+        
+        for (const selector of modelSelectors) {
             const element = document.querySelector(selector);
-            if (element && element.textContent.trim().length > 0) {
-                return element.textContent || element.innerText;
+            if (element) {
+                const text = element.textContent || element.innerText;
+                if (text && text.trim().length > 0) {
+                    return text.trim();
+                }
             }
         }
-
-        // Fallback: pegar todo o conteúdo da página, exceto cabeçalho, rodapé e menus
-        const mainContent = document.querySelector('main') || document.body;
-        const excludedTags = ['header', 'nav', 'footer', 'aside', 'script', 'style'];
-        let text = '';
         
+        // Fallback: pegar conteúdo da área principal
+        const mainContent = document.querySelector('main') || 
+                           document.querySelector('#main') || 
+                           document.querySelector('.main-content') ||
+                           document.querySelector('#content') ||
+                           document.body;
+        
+        // Tentar pegar apenas o texto relevante (excluir cabeçalhos, menus, etc.)
+        const excludedClasses = [
+            'header', 'nav', 'navbar', 'footer', 'sidebar',
+            'menu', 'actions', 'buttons', 'controls',
+            'preview-actions', 'export-buttons', 'toolbar'
+        ];
+        
+        const excludedTags = ['HEADER', 'NAV', 'FOOTER', 'ASIDE', 'SCRIPT', 'STYLE', 'BUTTON'];
+        
+        let text = '';
         const walker = document.createTreeWalker(
             mainContent,
             NodeFilter.SHOW_TEXT,
             {
                 acceptNode: function(node) {
-                    const parentTag = node.parentElement.tagName.toLowerCase();
-                    if (excludedTags.includes(parentTag)) {
+                    const parent = node.parentElement;
+                    if (!parent) return NodeFilter.FILTER_REJECT;
+                    
+                    // Rejeitar se parent está em tags excluídas
+                    if (excludedTags.includes(parent.tagName)) {
                         return NodeFilter.FILTER_REJECT;
                     }
+                    
+                    // Rejeitar se parent tem classes excluídas
+                    const parentClasses = parent.className || '';
+                    const hasExcludedClass = excludedClasses.some(cls => 
+                        parentClasses.includes(cls) || 
+                        parent.classList.contains(cls)
+                    );
+                    
+                    if (hasExcludedClass) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    
+                    // Rejeitar texto vazio ou muito curto
+                    const nodeText = node.textContent.trim();
+                    if (nodeText.length < 2) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    
                     return NodeFilter.FILTER_ACCEPT;
                 }
             }
@@ -129,20 +242,25 @@ class DocumentExporter {
         while (node = walker.nextNode()) {
             text += node.textContent + '\n';
         }
-
-        return text.trim() || 'Conteúdo não encontrado.';
+        
+        return text.trim() || 'Conteúdo do documento não encontrado.';
     }
 
     // Exportar para PDF com jsPDF
-    async exportToPDF(content, filename = 'documento') {
+    async exportToPDF(content, filename = 'ModeloTrabalhista') {
         try {
             // Verificar se jsPDF está carregado
             if (typeof window.jspdf === 'undefined') {
-                await new Promise(resolve => {
-                    const check = setInterval(() => {
+                await new Promise((resolve, reject) => {
+                    let attempts = 0;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
                         if (typeof window.jspdf !== 'undefined') {
-                            clearInterval(check);
+                            clearInterval(checkInterval);
                             resolve();
+                        } else if (attempts > 50) { // 5 segundos
+                            clearInterval(checkInterval);
+                            reject(new Error('jsPDF não carregado'));
                         }
                     }, 100);
                 });
@@ -195,6 +313,8 @@ class DocumentExporter {
                     doc.setFont('helvetica', 'italic');
                     doc.text(`Continuação...`, pageWidth / 2, y, { align: 'center' });
                     y += 10;
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'normal');
                 }
                 
                 doc.text(lines[i], margin, y);
@@ -212,16 +332,16 @@ class DocumentExporter {
             }
             
             // Salvar o PDF
-            doc.save(`${filename.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            doc.save(`${safeFilename}.pdf`);
             
             // Notificar sucesso
             this.showNotification('PDF gerado com sucesso!', 'success');
             
-            return { success: true, filename: `${filename}.pdf` };
+            return { success: true, filename: `${safeFilename}.pdf` };
             
         } catch (error) {
             console.error('Erro ao gerar PDF:', error);
-            this.showNotification('Erro ao gerar PDF. Tente novamente.', 'error');
             
             // Fallback: método antigo
             return this.exportToPDFFallback(content, filename);
@@ -233,7 +353,7 @@ class DocumentExporter {
         try {
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
-                throw new Error('Não foi possível abrir janela para impressão');
+                throw new Error('Não foi possível abrir janela para impressão. Verifique se há bloqueadores de popup.');
             }
             
             printWindow.document.write(`
@@ -276,6 +396,13 @@ class DocumentExporter {
                             cursor: pointer;
                             margin: 20px;
                         }
+                        .instructions {
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin: 20px 0;
+                            border-left: 4px solid #3b82f6;
+                        }
                     </style>
                 </head>
                 <body>
@@ -288,35 +415,52 @@ class DocumentExporter {
                         <p>Gerado por ModeloTrabalhista - ${window.location.origin}</p>
                     </div>
                     <div class="no-print" style="text-align: center; margin-top: 2cm;">
-                        <p>Use Ctrl+P para imprimir ou salvar como PDF</p>
-                        <button onclick="window.print()">Imprimir/Salvar como PDF</button>
-                        <button onclick="window.close()">Fechar</button>
+                        <div class="instructions">
+                            <p><strong>Instruções:</strong> Use Ctrl+P para abrir a caixa de impressão, depois selecione "Salvar como PDF" como destino da impressão.</p>
+                        </div>
+                        <button onclick="window.print()">Abrir Caixa de Impressão</button>
+                        <button onclick="window.close()">Fechar Janela</button>
                     </div>
+                    <script>
+                        // Auto-focar na janela
+                        window.focus();
+                        
+                        // Auto-print após 1 segundo (opcional)
+                        setTimeout(() => {
+                            window.print();
+                        }, 1000);
+                    </script>
                 </body>
                 </html>
             `);
             printWindow.document.close();
             
-            // Focar na janela para impressão
-            printWindow.focus();
-            
-            return { success: true, message: 'Janela de impressão aberta. Use Ctrl+P para salvar como PDF.' };
+            return { 
+                success: true, 
+                message: 'Janela de impressão aberta. Use Ctrl+P para salvar como PDF.' 
+            };
         } catch (error) {
             console.error('Erro no fallback do PDF:', error);
+            this.showNotification('Erro ao gerar PDF. Tente usar o modo de impressão do navegador.', 'error');
             return { success: false, error: error.message };
         }
     }
 
     // Exportar para DOCX real com docx.js
-    async exportToDOCX(content, filename = 'documento') {
+    async exportToDOCX(content, filename = 'ModeloTrabalhista') {
         try {
             // Verificar se docx está carregado
             if (typeof window.docx === 'undefined') {
-                await new Promise(resolve => {
-                    const check = setInterval(() => {
+                await new Promise((resolve, reject) => {
+                    let attempts = 0;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
                         if (typeof window.docx !== 'undefined') {
-                            clearInterval(check);
+                            clearInterval(checkInterval);
                             resolve();
+                        } else if (attempts > 50) { // 5 segundos
+                            clearInterval(checkInterval);
+                            reject(new Error('docx.js não carregado'));
                         }
                     }, 100);
                 });
@@ -339,6 +483,19 @@ class DocumentExporter {
                     },
                 });
             });
+
+            // Se não houver parágrafos, adicionar um com mensagem
+            if (paragraphs.length === 0) {
+                paragraphs.push(new docx.Paragraph({
+                    children: [
+                        new docx.TextRun({
+                            text: 'Conteúdo vazio',
+                            font: 'Arial',
+                            size: 24,
+                        })
+                    ]
+                }));
+            }
 
             // Criar documento
             const doc = new docx.Document({
@@ -402,7 +559,8 @@ class DocumentExporter {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${filename.replace(/[^a-z0-9]/gi, '_')}.docx`;
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -411,11 +569,10 @@ class DocumentExporter {
             // Notificar sucesso
             this.showNotification('Documento DOCX gerado com sucesso!', 'success');
             
-            return { success: true, filename: `${filename}.docx` };
+            return { success: true, filename: `${safeFilename}.docx` };
             
         } catch (error) {
             console.error('Erro ao gerar DOCX:', error);
-            this.showNotification('Erro ao gerar DOCX. Tente novamente.', 'error');
             
             // Fallback: método antigo (HTML como DOCX)
             return this.exportToDOCXFallback(content, filename);
@@ -431,6 +588,7 @@ class DocumentExporter {
                 <head>
                     <meta charset="UTF-8">
                     <title>${filename}</title>
+                    <meta name="generator" content="ModeloTrabalhista">
                     <style>
                         body { 
                             font-family: 'Arial', sans-serif; 
@@ -474,35 +632,39 @@ class DocumentExporter {
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${filename.replace(/[^a-z0-9]/gi, '_')}.docx`;
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            return { success: true, filename: `${filename}.docx` };
+            this.showNotification('Documento DOCX (fallback) gerado com sucesso!', 'success');
+            return { success: true, filename: `${safeFilename}.docx` };
         } catch (error) {
             console.error('Erro no fallback do DOCX:', error);
+            this.showNotification('Erro ao gerar DOCX.', 'error');
             return { success: false, error: error.message };
         }
     }
 
-    // Métodos existentes mantidos para compatibilidade
-    exportToTXT(content, filename) {
+    // Métodos de exportação adicionais (mantidos para compatibilidade)
+    exportToTXT(content, filename = 'ModeloTrabalhista') {
         try {
             const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${filename.replace(/[^a-z0-9]/gi, '_')}.txt`;
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            a.download = `${safeFilename}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
             this.showNotification('Documento TXT gerado com sucesso!', 'success');
-            return { success: true, filename: `${filename}.txt` };
+            return { success: true, filename: `${safeFilename}.txt` };
         } catch (error) {
             console.error('Erro ao exportar TXT:', error);
             this.showNotification('Erro ao gerar TXT.', 'error');
@@ -510,7 +672,7 @@ class DocumentExporter {
         }
     }
 
-    exportToHTML(content, filename) {
+    exportToHTML(content, filename = 'ModeloTrabalhista') {
         try {
             const htmlContent = `
                 <!DOCTYPE html>
@@ -573,14 +735,15 @@ class DocumentExporter {
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${filename.replace(/[^a-z0-9]/gi, '_')}.html`;
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            a.download = `${safeFilename}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
             this.showNotification('Documento HTML gerado com sucesso!', 'success');
-            return { success: true, filename: `${filename}.html` };
+            return { success: true, filename: `${safeFilename}.html` };
         } catch (error) {
             console.error('Erro ao exportar HTML:', error);
             this.showNotification('Erro ao gerar HTML.', 'error');
@@ -592,7 +755,6 @@ class DocumentExporter {
     async copyToClipboard(content) {
         try {
             await navigator.clipboard.writeText(content);
-            this.showNotification('Conteúdo copiado para área de transferência!', 'success');
             return { success: true, message: 'Conteúdo copiado para área de transferência!' };
         } catch (error) {
             console.error('Erro ao copiar para clipboard:', error);
@@ -612,43 +774,17 @@ class DocumentExporter {
                 document.body.removeChild(textArea);
                 
                 if (success) {
-                    this.showNotification('Conteúdo copiado para área de transferência!', 'success');
                     return { success: true, message: 'Conteúdo copiado para área de transferência!' };
                 } else {
                     throw new Error('Falha no comando de cópia');
                 }
             } catch (fallbackError) {
-                this.showNotification('Não foi possível copiar. Tente selecionar manualmente (Ctrl+A, Ctrl+C).', 'error');
                 return { 
                     success: false, 
                     error: 'Não foi possível copiar. Tente selecionar manualmente (Ctrl+A, Ctrl+C).' 
                 };
             }
         }
-    }
-
-    // Método para compartilhar
-    async shareDocument(content, filename) {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: filename,
-                    text: content.substring(0, 100) + '...',
-                    url: window.location.href
-                });
-                this.showNotification('Documento compartilhado com sucesso!', 'success');
-                return { success: true, message: 'Documento compartilhado com sucesso!' };
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Erro ao compartilhar:', error);
-                    this.showNotification('Erro ao compartilhar documento', 'error');
-                    return { success: false, error: 'Erro ao compartilhar documento' };
-                }
-            }
-        }
-        
-        // Fallback: copiar link
-        return await this.copyToClipboard(window.location.href);
     }
 
     // Mostrar notificação
@@ -679,16 +815,35 @@ class DocumentExporter {
             z-index: 10000;
             font-family: 'Arial', sans-serif;
             font-size: 14px;
-            animation: fadeIn 0.3s ease-in;
-            ${type === 'success' ? 'background: #10b981; color: white;' : 'background: #ef4444; color: white;'}
+            animation: exportFadeIn 0.3s ease-in;
+            ${type === 'success' ? 
+                'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;' : 
+                'background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;'}
         `;
 
         document.body.appendChild(notification);
 
+        // Adicionar animações CSS se não existirem
+        if (!document.querySelector('#export-notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'export-notification-styles';
+            style.textContent = `
+                @keyframes exportFadeIn {
+                    from { opacity: 0; transform: translateY(-20px) translateX(20px); }
+                    to { opacity: 1; transform: translateY(0) translateX(0); }
+                }
+                @keyframes exportFadeOut {
+                    from { opacity: 1; transform: translateY(0) translateX(0); }
+                    to { opacity: 0; transform: translateY(-20px) translateX(20px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // Remover após 3 segundos
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.style.animation = 'fadeOut 0.3s ease-out';
+                notification.style.animation = 'exportFadeOut 0.3s ease-out';
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.remove();
@@ -696,20 +851,22 @@ class DocumentExporter {
                 }, 300);
             }
         }, 3000);
+    }
 
-        // Adicionar animações CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-20px); }
-                to { opacity: 1; transform: translateY(0); }
+    // Método auxiliar para verificar se os botões estão habilitados
+    enableExportButtons(enable = true) {
+        const buttons = ['pdfBtn', 'printBtn', 'copyBtn'];
+        buttons.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.disabled = !enable;
             }
-            @keyframes fadeOut {
-                from { opacity: 1; transform: translateY(0); }
-                to { opacity: 0; transform: translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
+        });
+    }
+
+    // Método para forçar a atualização dos listeners (útil quando conteúdo é dinâmico)
+    refreshExportButtons() {
+        this.attachExportButtons();
     }
 }
 
@@ -718,6 +875,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.documentExporter) {
         window.documentExporter = new DocumentExporter();
         console.log('DocumentExporter inicializado com sucesso!');
+        
+        // Expor métodos para debug em desenvolvimento
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1') ||
+            window.location.hostname.includes('github.io')) {
+            window.debugExport = {
+                exporter: window.documentExporter,
+                getContent: () => window.documentExporter.getDocumentContent(),
+                testPDF: () => window.documentExporter.exportToPDF('Teste de conteúdo', 'Teste'),
+                testDOCX: () => window.documentExporter.exportToDOCX('Teste de conteúdo', 'Teste'),
+                enableButtons: (enable) => window.documentExporter.enableExportButtons(enable),
+                refresh: () => window.documentExporter.refreshExportButtons()
+            };
+            console.log('🔧 Debug export disponível em window.debugExport');
+        }
     }
 });
 
