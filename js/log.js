@@ -12,12 +12,12 @@ class AppLogger {
             resources: {}
         };
         
-        this.expectedScripts = [
-            'main.js',
-            'analytics.js', 
-            'acessibilidade.js',
+        //this.expectedScripts = [
+         //   'main.js',
+        //    'analytics.js', 
+        //    'acessibilidade.js',
 
-        ];
+      //  ];
         
         this.init();
     }
