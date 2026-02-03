@@ -1,23 +1,764 @@
-<section class="container" style="padding: 60px 0; max-width: 900px;">
-    <h1 style="margin-bottom: 30px;">Isenção de Responsabilidade (Disclaimer)</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <div class="alert alert-warning" role="alert" style="padding: 20px; font-size: 1.1em;">
-        <strong>Atenção:</strong> As informações contidas neste site não constituem aconselhamento jurídico.
+    <!-- Meta Tags Otimizadas para SEO -->
+    <title>Isenção de Responsabilidade (Disclaimer) | ModeloTrabalhista</title>
+    <meta name="description" content="Disclaimer completo do ModeloTrabalhista. Informações sobre limitações de responsabilidade, caráter educativo dos modelos e importância da consultoria jurídica especializada.">
+    <meta name="keywords" content="disclaimer jurídico, isenção de responsabilidade, aviso legal, documentos trabalhistas, consultoria jurídica, CLT, direito do trabalho">
+    <meta name="author" content="ModeloTrabalhista">
+    
+    <!-- Open Graph Tags para redes sociais -->
+    <meta property="og:title" content="Isenção de Responsabilidade (Disclaimer) | ModeloTrabalhista">
+    <meta property="og:description" content="Informações importantes sobre limitações de uso dos modelos trabalhistas e necessidade de consultoria jurídica especializada.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    
+    <!-- Links para CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="institucional.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Estilos específicos para esta página -->
+    <style>
+        /* Estilos para alertas e destaques */
+        .disclaimer-alert {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-left: 6px solid #f59e0b;
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            margin: var(--space-xl) 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .disclaimer-alert.important {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: #ef4444;
+            border-left-color: #ef4444;
+        }
+        
+        .disclaimer-alert.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #10b981;
+            border-left-color: #10b981;
+        }
+        
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .alert-header i {
+            font-size: 1.5rem;
+        }
+        
+        .disclaimer-alert.warning .alert-header i {
+            color: #f59e0b;
+        }
+        
+        .disclaimer-alert.important .alert-header i {
+            color: #ef4444;
+        }
+        
+        .disclaimer-alert.success .alert-header i {
+            color: #10b981;
+        }
+        
+        /* Estilos para lista de limitações */
+        .limitations-list {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+        }
+        
+        .limitation-item {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .limitation-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .limitation-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+        
+        /* Estilos para exemplos de casos */
+        .case-example {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .case-example .case-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        /* Tabela de comparação */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-lg) 0;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: var(--space-md);
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .comparison-table .recommendation-yes {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .comparison-table .recommendation-no {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        /* Estilos para recursos úteis */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: var(--space-md);
+            border: 1px solid #e2e8f0;
+            transition: transform var(--transition-fast);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .resource-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: var(--space-sm);
+        }
+        
+        /* Responsividade para tabela */
+        @media (max-width: 768px) {
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Identificado ao Index -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html#home" class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    Modelo<span>Trabalhista</span>
+                </a>
+                
+                <button class="mobile-menu-btn" aria-label="Abrir menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="../index.html#home"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="../index.html#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerador</a></li>
+                        <li><a href="../index.html#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="../index.html#sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
+                        <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal do Disclaimer -->
+    <main class="institucional-main">
+        <div class="institucional-container">
+            <article class="content-card">
+                <header class="content-header">
+                    <h1>Isenção de Responsabilidade (Disclaimer) - ModeloTrabalhista</h1>
+                    <p class="last-updated"><strong>Última atualização:</strong> 03 de Fevereiro de 2026</p>
+                    <p class="page-description">Declaração completa de limitações de responsabilidade, esclarecimentos sobre o caráter educativo da plataforma e recomendações essenciais para uso responsável.</p>
+                </header>
+                
+                <div class="content-body">
+                    <!-- Alerta Principal -->
+                    <div class="disclaimer-alert important">
+                        <div class="alert-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Aviso Crítico: Leia Atentamente</h3>
+                        </div>
+                        <p><strong>ATENÇÃO:</strong> As informações, modelos de documentos e conteúdos disponibilizados no ModeloTrabalhista <strong>NÃO CONSTITUEM ACONSELHAMENTO JURÍDICO PROFISSIONAL</strong>. Esta plataforma é uma ferramenta de autoajuda tecnológica com finalidade exclusivamente educativa e informativa.</p>
+                    </div>
+
+                    <section>
+                        <h2>1. Natureza e Alcance da Plataforma</h2>
+                        <p>O <strong>ModeloTrabalhista</strong> é uma plataforma digital que oferece modelos pré-formatados de documentos trabalhistas e informações relacionadas à Consolidação das Leis do Trabalho (CLT) e legislação correlata. É crucial compreender os seguintes aspectos fundamentais sobre nossa natureza:</p>
+                        
+                        <div class="limitations-list">
+                            <div class="limitation-item">
+                                <i class="fas fa-graduation-cap limitation-icon"></i>
+                                <div>
+                                    <h3>Caráter Educativo e Informativo</h3>
+                                    <p>Todo o conteúdo disponibilizado - incluindo textos explicativos, modelos de documentos, guias passo a passo e artigos informativos - é fornecido <strong>apenas para fins educacionais e de referência</strong>. Nosso objetivo é facilitar o entendimento sobre procedimentos trabalhistas básicos, não substituir aconselhamento profissional.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="limitation-item">
+                                <i class="fas fa-balance-scale limitation-icon"></i>
+                                <div>
+                                    <h3>Atualização e Precisão Limitada</h3>
+                                    <p>A legislação trabalhista brasileira é complexa e está em constante evolução. Embora nos esforcemos para manter as informações atualizadas de acordo com as últimas alterações legais e jurisprudenciais:</p>
+                                    <ul>
+                                        <li>Leis e regulamentos podem mudar sem aviso prévio</li>
+                                        <li>Interpretações judiciais variam entre regiões e instâncias</li>
+                                        <li>Casos específicos podem ter particularidades não abrangidas por modelos genéricos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>2. Limitações de Responsabilidade</h2>
+                        
+                        <div class="disclaimer-alert warning">
+                            <div class="alert-header">
+                                <i class="fas fa-hand-paper"></i>
+                                <h3>Isenção Expressa de Responsabilidade</h3>
+                            </div>
+                            <p>O ModeloTrabalhista, seus desenvolvedores, colaboradores e parceiros <strong>NÃO SE RESPONSABILIZAM</strong> por quaisquer das seguintes situações:</p>
+                        </div>
+                        
+                        <h3>2.1. Consequências do Uso dos Documentos</h3>
+                        <p>Ao utilizar nossos modelos de documentos, você assume total responsabilidade por:</p>
+                        
+                        <div class="case-example">
+                            <div class="case-title">
+                                <i class="fas fa-file-contract"></i>
+                                Consequências Legais e Financeiras
+                            </div>
+                            <p>Quaisquer perdas, danos, prejuízos financeiros, problemas legais ou consequências adversas decorrentes do uso ou da confiança nas informações ou documentos gerados através da plataforma.</p>
+                        </div>
+                        
+                        <div class="case-example">
+                            <div class="case-title">
+                                <i class="fas fa-user-check"></i>
+                                Verificação de Adequação
+                            </div>
+                            <p>A adequação do documento à sua situação específica, incluindo a verificação de que todas as cláusulas são aplicáveis, válidas e apropriadas para seu caso concreto.</p>
+                        </div>
+
+                        <h3>2.2. Inexistência de Relação Profissional</h3>
+                        <p>É fundamental entender que:</p>
+                        <ul>
+                            <li><strong>Não há vínculo advogado-cliente</strong> entre você e o ModeloTrabalhista</li>
+                            <li><strong>Não há relação contador-cliente</strong> ou qualquer outra relação fiduciária</li>
+                            <li><strong>Não prestamos serviços jurídicos</strong> ou de contabilidade</li>
+                            <li><strong>Não representamos</strong> usuários em quaisquer procedimentos administrativos ou judiciais</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>3. Quando Consultar um Profissional</h2>
+                        <p>Determinadas situações exigem imperativamente a consulta a um profissional qualificado. Utilize a seguinte tabela como guia:</p>
+                        
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Situação</th>
+                                    <th>Uso do Modelo</th>
+                                    <th>Consulta Profissional</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Acordos de rescisão acima de R$ 5.000</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Processos judiciais em andamento</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Casos com doenças ocupacionais</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Acidentes de trabalho</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Assédio moral ou sexual</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Situações disciplinares complexas</td>
+                                    <td class="recommendation-no">Não Recomendado</td>
+                                    <td class="recommendation-yes">Obrigatório</td>
+                                </tr>
+                                <tr>
+                                    <td>Documentos simples de rotina</td>
+                                    <td class="recommendation-yes">Adequado</td>
+                                    <td class="recommendation-no">Opcional</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3>3.1. Situações que Requerem Consultoria Especializada</h3>
+                        <p>Recomendamos <strong>fortemente</strong> que você consulte um advogado trabalhista especializado ou o sindicato de sua categoria antes de:</p>
+                        
+                        <div class="limitations-list">
+                            <div class="limitation-item">
+                                <i class="fas fa-gavel limitation-icon"></i>
+                                <div>
+                                    <h4>Assinar Acordos Complexos</h4>
+                                    <p>Qualquer acordo que envolva valores significativos, renúncia de direitos ou termos complexos que possam afetar seus direitos futuros.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="limitation-item">
+                                <i class="fas fa-balance-scale limitation-icon"></i>
+                                <div>
+                                    <h4>Tomar Decisões Financeiras Importantes</h4>
+                                    <p>Decisões que envolvam quantias substanciais de dinheiro, pensões, indenizações ou benefícios de longo prazo.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="limitation-item">
+                                <i class="fas fa-landmark limitation-icon"></i>
+                                <div>
+                                    <h4>Utilizar Documentos em Processos Judiciais</h4>
+                                    <p>Documentos que serão apresentados em juízo, em audiências ou em quaisquer procedimentos legais formais.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>4. Limitações dos Modelos Genéricos</h2>
+                        
+                        <div class="disclaimer-alert">
+                            <div class="alert-header">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <h3>Documentos Não São "Tamanho Único"</h3>
+                            </div>
+                            <p>Cada situação trabalhista possui particularidades que podem exigir cláusulas específicas, ajustes personalizados ou procedimentos distintos dos modelos padrão.</p>
+                        </div>
+                        
+                        <h3>4.1. Fatores que Afetam a Adequação</h3>
+                        <p>Os seguintes fatores podem tornar nossos modelos inadequados para sua situação específica:</p>
+                        
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <h4>Características Pessoais</h4>
+                                <p>Idade, tempo de serviço, categoria profissional, salário, horas extras acumuladas, entre outros fatores individuais.</p>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <h4>Características da Empresa</h4>
+                                <p>Tamanho da empresa, regime tributário, convenções coletivas específicas, políticas internas, etc.</p>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <h4>Jurisdição e Localidade</h4>
+                                <p>Leis estaduais ou municipais específicas, interpretações regionais da legislação, práticas locais do mercado.</p>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h4>Histórico e Contexto</h4>
+                                <p>Relações anteriores, acordos prévios, situações disciplinares passadas, contexto específico da demissão ou acordo.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>5. Responsabilidades do Usuário</h2>
+                        <p>Ao utilizar o ModeloTrabalhista, você assume as seguintes responsabilidades:</p>
+                        
+                        <h3>5.1. Verificação e Validação</h3>
+                        <ul>
+                            <li><strong>Verificar a atualidade</strong> das informações frente à legislação vigente</li>
+                            <li><strong>Confirmar a aplicabilidade</strong> do modelo à sua situação específica</li>
+                            <li><strong>Validar a completude</strong> e adequação de todas as cláusulas</li>
+                            <li><strong>Checar cálculos</strong> matemáticos e valores mencionados</li>
+                        </ul>
+                        
+                        <h3>5.2. Uso Adequado e Ético</h3>
+                        <ul>
+                            <li>Utilizar os documentos apenas para fins legítimos</li>
+                            <li>Não empregar as informações para atividades fraudulentas ou ilegais</li>
+                            <li>Respeitar direitos de terceiros ao utilizar os documentos</li>
+                            <li>Manter cópias de segurança dos documentos importantes</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>6. Recursos Úteis e Apoio</h2>
+                        
+                        <div class="disclaimer-alert success">
+                            <div class="alert-header">
+                                <i class="fas fa-hands-helping"></i>
+                                <h3>Onde Encontrar Ajuda Profissional</h3>
+                            </div>
+                            <p>Se você precisa de assistência profissional, considere os seguintes recursos:</p>
+                        </div>
+                        
+                        <h3>6.1. Órgãos e Instituições</h3>
+                        
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h4>Defensoria Pública</h4>
+                                <p>Assistência jurídica gratuita para quem comprova insuficiência de recursos.</p>
+                                <a href="https://www.defensoria.xx.def.br" target="_blank" rel="nofollow noopener">Site Oficial →</a>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <h4>Sindicatos</h4>
+                                <p>Assessoria específica para cada categoria profissional.</p>
+                                <a href="https://www.sindicato.com.br" target="_blank" rel="nofollow noopener">Encontrar Sindicato →</a>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-gavel"></i>
+                                </div>
+                                <h4>OAB - Seccionais</h4>
+                                <p>Lista de advogados especializados em direito do trabalho.</p>
+                                <a href="https://www.oab.org.br" target="_blank" rel="nofollow noopener">Ordem dos Advogados →</a>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <h4>Juizados Especiais</h4>
+                                <p>Para causas de menor complexidade até 40 salários mínimos.</p>
+                                <a href="https://www.jej.xx.gov.br" target="_blank" rel="nofollow noopener">Juizados Especiais →</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>7. Termos de Aceitação</h2>
+                        
+                        <div class="disclaimer-alert important">
+                            <div class="alert-header">
+                                <i class="fas fa-file-signature"></i>
+                                <h3>Aceitação dos Termos</h3>
+                            </div>
+                            <p>Ao utilizar o ModeloTrabalhista, você declara que:</p>
+                            <ul>
+                                <li>Leu, compreendeu e concorda com todos os termos deste Disclaimer</li>
+                                <li>Reconhece que as informações são apenas educativas</li>
+                                <li>Assume total responsabilidade pelo uso dos modelos</li>
+                                <li>Compreende a necessidade de consultoria profissional em casos complexos</li>
+                            </ul>
+                        </div>
+                        
+                        <h3>7.1. Continuidade do Uso como Aceitação</h3>
+                        <p>O uso contínuo do ModeloTrabalhista após quaisquer alterações nesta Isenção de Responsabilidade constitui aceitação das mudanças. Recomendamos que revise periodicamente este documento para se manter informado sobre nossos termos.</p>
+                        
+                        <h3>7.2. Revogação de Uso</h3>
+                        <p>Reservamo-nos o direito de restringir ou revogar o acesso à plataforma a qualquer usuário que, a nosso exclusivo critério, esteja utilizando os serviços de maneira contrária a este Disclaimer ou à legislação aplicável.</p>
+                    </section>
+
+                    <section class="conclusion">
+                        <h2>8. Considerações Finais</h2>
+                        
+                        <div class="disclaimer-alert">
+                            <div class="alert-header">
+                                <i class="fas fa-lightbulb"></i>
+                                <h3>Uso Responsável e Informado</h3>
+                            </div>
+                            <p>O ModeloTrabalhista foi criado para <strong>empoderar trabalhadores e empregadores</strong> com informações básicas sobre direitos e obrigações trabalhistas. No entanto, o conhecimento básico não substitui a expertise profissional em situações complexas.</p>
+                            <p>Encorageamos o <strong>uso responsável</strong> de nossa plataforma como ponto de partida para entendimento, sempre complementado por aconselhamento profissional quando necessário.</p>
+                        </div>
+                        
+                        <h3>8.1. Nosso Compromisso</h3>
+                        <p>Estamos comprometidos em:</p>
+                        <ul>
+                            <li>Fornecer informações claras e transparentes sobre nossas limitações</li>
+                            <li>Manter os modelos atualizados conforme mudanças legislativas</li>
+                            <li>Educar os usuários sobre a importância do aconselhamento profissional</li>
+                            <li>Melhorar continuamente a precisão e utilidade de nossos recursos</li>
+                        </ul>
+                        
+                        <h3>8.2. Seu Papel como Usuário Responsável</h3>
+                        <p>Como usuário, você desempenha um papel crucial:</p>
+                        <ul>
+                            <li>Utilize esta isenção de responsabilidade como guia para uso adequado</li>
+                            <li>Consulte profissionais quando sua situação ultrapassar o escopo de modelos genéricos</li>
+                            <li>Compartilhe feedback para nos ajudar a melhorar</li>
+                            <li>Divulgue informações responsáveis sobre direitos trabalhistas</li>
+                        </ul>
+                        
+                        <p class="highlight-box" style="margin-top: var(--space-xl);">
+                            <strong>Lembre-se:</strong> Um documento legal adequado pode prevenir anos de litígio e prejuízos significativos. Quando em dúvida, sempre opte pela consultoria profissional.
+                        </p>
+                    </section>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer Identificado ao Index -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-file-contract"></i>
+                        <h3>Modelo<span>Trabalhista</span></h3>
+                    </div>
+                    <p>Gerador gratuito de documentos trabalhistas. Simples, rápido e seguro.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Institucional</h4>
+                    <ul>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Fale Conosco</a></li>
+                        <li><a href="termos.html">Termos de Uso</a></li>
+                        <li><a href="privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="disclaimer.html">Aviso Legal</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Modelos</h4>
+                    <ul>
+                        <li><a href="../index.html#gerador" data-model="demissao">Pedido de Demissão</a></li>
+                        <li><a href="../index.html#gerador" data-model="ferias">Solicitação de Férias</a></li>
+                        <li><a href="../index.html#gerador" data-model="advertencia">Advertência</a></li>
+                        <li><a href="../index.html#gerador" data-model="atestado">Atestado</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#modelos">Modelos</a></li>
+                        <li><a href="../index.html#gerador">Gerador</a></li>
+                        <li><a href="../index.html#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.</p>
+                <p class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante "Voltar ao Topo" -->
+    <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Widget VLibras para Acessibilidade -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
     </div>
 
-    <h3>1. Caráter Educativo e Informativo</h3>
-    <p>O conteúdo disponibilizado no <strong>ModeloTrabalhista</strong>, incluindo textos, modelos de documentos e guias, é fornecido apenas para fins informativos e educacionais. Embora nos esforcemos para manter as informações atualizadas e corretas de acordo com a legislação brasileira (CLT), leis e regulamentos mudam com frequência e podem variar dependendo da interpretação judicial.</p>
-
-    <h3>2. Inexistência de Vínculo Profissional</h3>
-    <p>O uso de nossa ferramenta <strong>não cria</strong> qualquer vínculo de advogado-cliente, contador-cliente ou qualquer outra relação fiduciária entre você e o ModeloTrabalhista. Somos uma ferramenta de autoajuda tecnológica.</p>
-
-    <h3>3. Recomendação de Consultoria Especializada</h3>
-    <p>Documentos legais não são "tamanho único". Situações específicas podem exigir cláusulas adicionais ou procedimentos distintos. Recomendamos fortemente que você consulte um advogado ou o sindicato da sua categoria antes de:</p>
-    <ul>
-        <li>Assinar acordos de rescisão complexos;</li>
-        <li>Tomar decisões que envolvam grandes quantias financeiras;</li>
-        <li>Utilizar documentos em processos judiciais.</li>
-    </ul>
-
-    <p>O ModeloTrabalhista não se responsabiliza por quaisquer perdas, danos ou consequências decorrentes do uso das informações ou documentos gerados nesta plataforma.</p>
-</section>
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        // VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        
+        // Atualizar ano no copyright
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Botão "Voltar ao Topo"
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'flex';
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.style.display = 'none';
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Menu mobile
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.querySelector('.main-nav ul');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+            });
+            
+            // Fechar menu ao clicar em um link
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                });
+            });
+        }
+        
+        // Estilos dinâmicos para o botão "Voltar ao Topo"
+        const style = document.createElement('style');
+        style.textContent = `
+            .back-to-top-btn {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 50px;
+                height: 50px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                box-shadow: var(--shadow-lg);
+                z-index: 999;
+                transition: all var(--transition-normal);
+            }
+            
+            .back-to-top-btn:hover {
+                background: var(--primary-dark);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .back-to-top-btn.visible {
+                display: flex;
+                animation: fadeIn 0.3s ease;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            /* Responsividade */
+            @media (max-width: 768px) {
+                .back-to-top-btn {
+                    bottom: 20px;
+                    right: 20px;
+                    width: 45px;
+                    height: 45px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .back-to-top-btn {
+                    bottom: 15px;
+                    right: 15px;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
