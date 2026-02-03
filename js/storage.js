@@ -17,6 +17,9 @@ class StorageManager {
         if (!this.getSettings()) {
             this.setDefaultSettings();
         }
+        
+        // Limpeza inicial de dados antigos
+        this.cleanupOldItems();
     }
 
     // ========== DADOS DO FORMULÁRIO ==========
@@ -49,6 +52,7 @@ class StorageManager {
     clearDraft(model) {
         const key = `${this.prefix}draft_${model}`;
         localStorage.removeItem(key);
+        return true;
     }
 
     getAllDrafts() {
@@ -130,10 +134,17 @@ class StorageManager {
 
     clearHistory() {
         localStorage.removeItem(`${this.prefix}history`);
+        return true;
     }
 
     setHistory(history) {
-        localStorage.setItem(`${this.prefix}history`, JSON.stringify(history));
+        try {
+            localStorage.setItem(`${this.prefix}history`, JSON.stringify(history));
+            return true;
+        } catch (e) {
+            console.error('Erro ao salvar histórico:', e);
+            return false;
+        }
     }
 
     // ========== CONFIGURAÇÕES ==========
@@ -397,9 +408,6 @@ class StorageManager {
 
 // Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
-    window.StorageManager = StorageManager;
-    
-    // Criar instância global
     if (!window.storageManager) {
         window.storageManager = new StorageManager();
         
