@@ -50,15 +50,9 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js" as="script">
     <link rel="preload" href="js/ui.js" as="script">
-    <!-- Vlibras independente -->
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" defer></script>
-    <script>
-        window.addEventListener('load', function() {
-            if (window.VLibras) {
-                new window.VLibras.Widget('https://vlibras.gov.br/app');
-            }
-        });
-    </script>
+    <!-- VLibras Widget -->
+    <link rel="stylesheet" href="https://vlibras.gov.br/app/vlibras-plugin.css">
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
