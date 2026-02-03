@@ -28,7 +28,7 @@ Uma aplicação web completa para geração automática de documentos trabalhist
 ## 🚀 Como Usar
 
 ### Opção 1: Online
-Acesse o site [modelotrabalhista.com.br](https://modelotrabalhista.com.br) e comece a usar!
+Acesse o site [modelotrabalhista.com.br](https://joaoclaudiano.github.io/modelotrabalhista/#home) e comece a usar!
 
 
 # arvore
