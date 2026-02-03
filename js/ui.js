@@ -4,6 +4,7 @@ class UIHelper {
     constructor() {
         this.currentZoom = 100;
         this.notificationTimeout = null;
+        this.modalHandlers = new Map();
         this.init();
     }
 
@@ -575,7 +576,8 @@ class UIHelper {
             }
         };
         
-        modal._closeHandler = closeHandler;
+        // Salvar handler para remover depois
+        this.modalHandlers.set(modalId, closeHandler);
         modal.addEventListener('click', closeHandler);
 
         const escHandler = (e) => {
@@ -584,8 +586,9 @@ class UIHelper {
             }
         };
         
-        modal._escHandler = escHandler;
         document.addEventListener('keydown', escHandler);
+        // Salvar esc handler
+        modal._escHandler = escHandler;
     }
 
     hideModal(modalId) {
@@ -594,12 +597,16 @@ class UIHelper {
             modal.style.display = 'none';
             document.body.style.overflow = '';
             
-            if (modal._closeHandler) {
-                modal.removeEventListener('click', modal._closeHandler);
+            // Remover event listeners
+            const closeHandler = this.modalHandlers.get(modalId);
+            if (closeHandler) {
+                modal.removeEventListener('click', closeHandler);
+                this.modalHandlers.delete(modalId);
             }
             
             if (modal._escHandler) {
                 document.removeEventListener('keydown', modal._escHandler);
+                delete modal._escHandler;
             }
         }
     }
