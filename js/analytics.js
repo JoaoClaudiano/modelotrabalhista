@@ -11,7 +11,6 @@ class AnalyticsTracker {
         this.init();
     }
 
-    
     init() {
         this.setupEventListeners();
         this.trackSessionStart();
