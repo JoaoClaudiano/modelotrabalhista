@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Título e descrição específicos para cada artigo -->
+    <title>Título do Artigo | ModeloTrabalhista Blog</title>
+    <meta name="description" content="Descrição do artigo para SEO">
+    
+    <!-- CSS base e template -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/article-template.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header (igual ao do site principal) -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html#home" class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    Modelo<span>Trabalhista</span>
+                </a>
+                
+                <button class="mobile-menu-btn" aria-label="Abrir menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="../index.html#home"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="../index.html#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerador</a></li>
+                        <li><a href="artigos.html" class="active"><i class="fas fa-newspaper"></i> Artigos</a></li>
+                        <li><a href="../index.html#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo do Artigo -->
+    <main class="articles-main">
+        <div class="articles-container">
+            <article class="article-content">
+                <!-- Cabeçalho do artigo -->
+                <header class="article-header">
+                    <!-- Meta dados, título, tags -->
+                </header>
+                
+                <!-- Corpo do artigo -->
+                <div class="article-body">
+                    <!-- Seções do artigo -->
+                </div>
+                
+                <!-- Rodapé do artigo -->
+                <footer class="article-footer">
+                    <!-- Compartilhamento e autor -->
+                </footer>
+            </article>
+            
+            <!-- Sidebar -->
+            <aside class="articles-sidebar">
+                <!-- Widgets: artigos relacionados, newsletter, etc. -->
+            </aside>
+            
+            <!-- Navegação entre artigos -->
+            <div class="article-navigation">
+                <!-- Links para artigo anterior e próximo -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (igual ao do site principal) -->
+    <footer class="main-footer">
+        <!-- Conteúdo do footer -->
+    </footer>
+
+    <!-- Botão Voltar ao Topo -->
+    <button id="back-to-top-article" class="back-to-top-article" aria-label="Voltar ao topo">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="../js/article-template.js"></script>
+    <script>
+        // VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        
+        // Atualizar ano no copyright
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Menu mobile (se necessário)
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.querySelector('.main-nav ul');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+            });
+            
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
