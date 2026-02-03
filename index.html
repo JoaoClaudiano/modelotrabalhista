@@ -50,7 +50,18 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js" as="script">
     <link rel="preload" href="js/ui.js" as="script">
-    
+    <!-- Vlibras independente -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" defer></script>
+    <script>
+        window.addEventListener('load', function() {
+            if (window.VLibras) {
+                new window.VLibras.Widget('https://vlibras.gov.br/app');
+            }
+        });
+    </script>
+
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Loading styles -->
     <style>
         .app-loading {
@@ -605,7 +616,15 @@
                         <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                
+                <div class="footer-accessibility-notice">
+                    <p style="font-size: 14px; color: #666; margin: 0;">
+                        <i class="fas fa-universal-access" style="margin-right: 5px; color: #3b82f6;"></i>
+                        Este site segue as diretrizes de acessibilidade digital. 
+                        <span style="margin: 0 5px; color: #ccc;">•</span>
+                        <i class="fas fa-cookie-bite" style="margin-right: 5px; color: #8b5cf6;"></i>
+                        Utilizamos cookies em conformidade com a LGPD.
+                    </p>
+                </div>
                 <div class="footer-section">
                     <h4>Modelos</h4>
                     <ul>
@@ -638,7 +657,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2023 ModeloTrabalhista. Todos os direitos reservados.</p>
+                <p>&copy; 2026 ModeloTrabalhista. Todos os direitos reservados.</p>
                 <p class="disclaimer">
                     <i class="fas fa-exclamation-triangle"></i> 
                     Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.
@@ -650,6 +669,9 @@
     <!-- JavaScript -->
     <!-- Módulo de UI primeiro (dependência base) -->
     <script src="js/log.js"></script>
+    <script src="js/analytics.js" async></script>
+    <script src="js/acessibilidade.js" async></script>
+    <script src="js/main.js"></script>
     <script src="js/ui.js"></script>
     
     <!-- Módulos de funcionalidade -->
@@ -657,14 +679,7 @@
     <script src="js/storage.js"></script>
     <script src="js/export.js"></script>
     <script src="js/tour.js"></script>
-    
-    <!-- Módulos avançados (podem carregar de forma assíncrona) -->
-    <script src="js/analytics.js" async></script>
-    <script src="js/acessibilidade.js" async></script>
-    
-    <!-- Aplicação principal (depende dos módulos acima) -->
-    <script src="js/main.js"></script>
-    
+        
     <!-- Script de inicialização -->
     <script>
         // Remover loading quando tudo carregar
