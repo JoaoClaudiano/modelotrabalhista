@@ -1,31 +1,24 @@
-// acessibilidade.js - Sistema completo e robusto de acessibilidade para ModeloTrabalhista
+// acessibilidade.js - Sistema simplificado e robusto de acessibilidade
 
 class AcessibilidadeManager {
     constructor() {
         this.prefix = 'modelotrabalhista_accessibility_';
         
-        // Configurações padrão otimizadas
+        // Configurações padrão
         this.defaultSettings = {
             theme: 'light',
             fontSize: 16,
             highContrast: false,
             reducedMotion: false,
-            dyslexiaFriendly: false,
-            cursorSize: 'normal',
-            voiceReader: false,
-            voiceReaderRate: 1.0,
-            vlibrasEnabled: true, // Vlibras ativo por padrão
+            vlibrasEnabled: true,
             focusHighlight: true,
             readableFonts: false,
-            linkUnderline: false // Sublinhado desativado por padrão
+            linkUnderline: false
         };
         
         this.currentSettings = {};
-        this.speechSynthesis = window.speechSynthesis;
-        this.speechVoices = [];
         this.vlibrasInitialized = false;
         this.vlibrasScriptLoaded = false;
-        this.initialized = false;
         
         // Inicialização segura
         setTimeout(() => this.safeInit(), 100);
@@ -42,7 +35,6 @@ class AcessibilidadeManager {
 
     init() {
         this.loadSettings();
-        this.loadSpeechVoices();
         this.setupEventListeners();
         this.createAccessibilityPanel();
         this.applyAllSettings();
@@ -50,87 +42,86 @@ class AcessibilidadeManager {
         // Inicializar Vlibras com fallback
         this.initVlibrasWithFallback();
         
-        this.initialized = true;
+        // Log de sucesso
+        if (window.appLogger) {
+            window.appLogger.info('Sistema de acessibilidade carregado com sucesso');
+        }
     }
 
-    // ========== VLIBRAS ROBUSTO ==========
+    // ========== CONFIGURAÇÕES ==========
+    loadSettings() {
+        try {
+            const saved = localStorage.getItem(`${this.prefix}settings`);
+            this.currentSettings = saved ? 
+                { ...this.defaultSettings, ...JSON.parse(saved) } : 
+                { ...this.defaultSettings };
+        } catch (e) {
+            this.currentSettings = { ...this.defaultSettings };
+        }
+    }
+
+    saveSettings() {
+        try {
+            localStorage.setItem(`${this.prefix}settings`, JSON.stringify(this.currentSettings));
+        } catch (e) {
+            console.error('Erro ao salvar configurações:', e);
+        }
+    }
+
+    updateSetting(key, value) {
+        this.currentSettings[key] = value;
+        this.saveSettings();
+        this.applySetting(key, value);
+        return true;
+    }
+
+    // ========== VLIBRAS ==========
     initVlibrasWithFallback() {
-        // Verificar se já existe o script
         if (document.querySelector('#vlibras-script')) {
             this.checkAndInitVlibras();
             return;
         }
         
-        // Carregar script com timeout
-        const loadPromise = new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.id = 'vlibras-script';
-            script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
-            script.async = true;
-            script.defer = true;
-            
-            script.onload = () => {
-                this.vlibrasScriptLoaded = true;
-                setTimeout(() => this.checkAndInitVlibras(), 500);
-                resolve(true);
-            };
-            
-            script.onerror = () => {
-                console.warn('Não foi possível carregar o Vlibras. Tentando alternativa...');
-                this.loadVlibrasAlternative();
-                resolve(false);
-            };
-            
-            document.head.appendChild(script);
-        });
+        const script = document.createElement('script');
+        script.id = 'vlibras-script';
+        script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
+        script.async = true;
+        script.defer = true;
         
-        // Timeout de 10 segundos
-        setTimeout(() => {
-            if (!this.vlibrasInitialized && !document.querySelector('.vlibras-widget')) {
-                console.warn('Timeout no carregamento do Vlibras. Carregando alternativa.');
-                this.loadVlibrasAlternative();
-            }
-        }, 10000);
+        script.onload = () => {
+            this.vlibrasScriptLoaded = true;
+            setTimeout(() => this.checkAndInitVlibras(), 500);
+        };
+        
+        script.onerror = () => {
+            console.warn('Vlibras não carregado. Carregando alternativa...');
+            this.loadVlibrasAlternative();
+        };
+        
+        document.head.appendChild(script);
     }
 
     checkAndInitVlibras() {
         if (this.vlibrasInitialized) return;
         
-        // Verificar várias vezes se o VLibras está disponível
-        let attempts = 0;
-        const maxAttempts = 5;
-        
-        const tryInit = () => {
-            attempts++;
-            
-            if (window.VLibras && typeof window.VLibras.Widget === 'function') {
-                try {
-                    new window.VLibras.Widget('https://vlibras.gov.br/app');
-                    this.vlibrasInitialized = true;
-                    
-                    // Estilo para posicionamento
-                    this.addVlibrasStyles();
-                    
-                    console.log('VLibras inicializado com sucesso');
-                } catch (error) {
-                    console.error('Erro ao criar widget do Vlibras:', error);
-                    this.loadVlibrasAlternative();
-                }
-            } else if (attempts < maxAttempts) {
-                setTimeout(tryInit, 500);
-            } else {
-                console.warn('VLibras não disponível após tentativas. Usando alternativa.');
+        if (window.VLibras && typeof window.VLibras.Widget === 'function') {
+            try {
+                new window.VLibras.Widget('https://vlibras.gov.br/app');
+                this.vlibrasInitialized = true;
+                this.addVlibrasStyles();
+            } catch (error) {
                 this.loadVlibrasAlternative();
             }
-        };
-        
-        setTimeout(tryInit, 1000);
+        } else {
+            setTimeout(() => this.checkAndInitVlibras(), 500);
+        }
     }
 
     loadVlibrasAlternative() {
-        // Widget alternativo se o Vlibras oficial falhar
-        const widgetHtml = `
-            <div id="vlibras-alternative" class="vlibras-alternative" style="
+        const widget = document.createElement('div');
+        widget.id = 'vlibras-alternative';
+        widget.innerHTML = `
+            <div style="
                 position: fixed;
                 bottom: 100px;
                 right: 20px;
@@ -139,27 +130,19 @@ class AcessibilidadeManager {
                 box-shadow: 0 4px 20px rgba(0,0,0,0.15);
                 z-index: 9990;
                 padding: 10px;
-                display: ${this.currentSettings.vlibrasEnabled ? 'block' : 'none'};
                 border: 2px solid #3b82f6;
+                display: ${this.currentSettings.vlibrasEnabled ? 'block' : 'none'};
             ">
                 <div style="text-align: center; padding: 10px;">
                     <div style="font-size: 24px; margin-bottom: 5px;">👐</div>
-                    <div style="font-weight: bold; color: #3b82f6;">Acessibilidade em Libras</div>
+                    <div style="font-weight: bold; color: #3b82f6;">Acessibilidade</div>
                     <div style="font-size: 12px; color: #666; margin-top: 5px;">
-                        Para tradução completa, acesse: 
-                        <a href="https://www.vlibras.gov.br" target="_blank" style="color: #3b82f6;">
-                            vlibras.gov.br
-                        </a>
+                        Para recursos de acessibilidade, use o menu ♿
                     </div>
                 </div>
             </div>
         `;
-        
-        const container = document.createElement('div');
-        container.innerHTML = widgetHtml;
-        document.body.appendChild(container);
-        
-        console.log('Widget alternativo de Libras carregado');
+        document.body.appendChild(widget);
     }
 
     addVlibrasStyles() {
@@ -180,14 +163,6 @@ class AcessibilidadeManager {
                 .vlibras-widget {
                     bottom: 90px !important;
                     right: 10px !important;
-                    transform: scale(0.85);
-                }
-                
-                .accessibility-toggle {
-                    bottom: 20px !important;
-                    right: 15px !important;
-                    width: 55px !important;
-                    height: 55px !important;
                 }
             }
         `;
@@ -198,190 +173,11 @@ class AcessibilidadeManager {
         const enabled = !this.currentSettings.vlibrasEnabled;
         this.updateSetting('vlibrasEnabled', enabled);
         
-        // Mostrar/ocultar widget
         const widget = document.querySelector('.vlibras-widget');
         const altWidget = document.getElementById('vlibras-alternative');
         
-        if (widget) {
-            widget.style.display = enabled ? 'block' : 'none';
-        }
-        
-        if (altWidget) {
-            altWidget.style.display = enabled ? 'block' : 'none';
-        }
-        
-        return enabled;
-    }
-
-    // ========== INICIALIZAÇÃO MÍNIMA ==========
-    initializeMinimalFeatures() {
-        try {
-            this.loadSettings();
-            this.createAccessibilityButton();
-            this.applyTheme(this.currentSettings.theme);
-            console.log('Funcionalidades mínimas de acessibilidade carregadas');
-        } catch (error) {
-            console.error('Falha crítica na inicialização mínima:', error);
-        }
-    }
-
-    createAccessibilityButton() {
-        // Botão mínimo de acessibilidade
-        const button = document.createElement('button');
-        button.id = 'minimal-accessibility-toggle';
-        button.innerHTML = '♿';
-        button.title = 'Acessibilidade';
-        button.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        `;
-        
-        button.onclick = () => {
-            alert('Recursos de acessibilidade:\n\n1. Vlibras (Libras)\n2. Ajuste de texto\n3. Alto contraste\n\nPara mais opções, recarregue a página.');
-        };
-        
-        document.body.appendChild(button);
-    }
-
-    // ========== CONFIGURAÇÕES BÁSICAS ==========
-    loadSettings() {
-        try {
-            const saved = localStorage.getItem(`${this.prefix}settings`);
-            if (saved) {
-                this.currentSettings = { ...this.defaultSettings, ...JSON.parse(saved) };
-            } else {
-                this.currentSettings = { ...this.defaultSettings };
-            }
-        } catch (e) {
-            console.error('Erro ao carregar configurações:', e);
-            this.currentSettings = { ...this.defaultSettings };
-        }
-    }
-
-    saveSettings() {
-        try {
-            localStorage.setItem(`${this.prefix}settings`, JSON.stringify(this.currentSettings));
-        } catch (e) {
-            console.error('Erro ao salvar configurações:', e);
-        }
-    }
-
-    updateSetting(key, value) {
-        this.currentSettings[key] = value;
-        this.saveSettings();
-        this.applySetting(key, value);
-        return true;
-    }
-
-    // ========== TEMAS SIMPLIFICADOS ==========
-    applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        
-        const styleId = 'current-theme-style';
-        let style = document.getElementById(styleId);
-        if (!style) {
-            style = document.createElement('style');
-            style.id = styleId;
-            document.head.appendChild(style);
-        }
-        
-        if (theme === 'dark') {
-            style.textContent = `
-                body {
-                    background-color: #1a1a1a !important;
-                    color: #f0f0f0 !important;
-                }
-                
-                a {
-                    color: #60a5fa !important;
-                }
-            `;
-        } else if (theme === 'high-contrast') {
-            style.textContent = `
-                body {
-                    background: black !important;
-                    color: white !important;
-                }
-                
-                a, button, input {
-                    border: 2px solid yellow !important;
-                }
-                
-                a {
-                    color: yellow !important;
-                    text-decoration: underline !important;
-                }
-            `;
-        } else {
-            style.textContent = `
-                body {
-                    background-color: white !important;
-                    color: #333 !important;
-                }
-            `;
-        }
-    }
-
-    toggleTheme() {
-        const themes = ['light', 'dark', 'high-contrast'];
-        const currentIndex = themes.indexOf(this.currentSettings.theme);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const nextTheme = themes[nextIndex];
-        
-        this.updateSetting('theme', nextTheme);
-        return nextTheme;
-    }
-
-    // ========== CONTROLE DE FONTE ==========
-    adjustFontSize(direction) {
-        let newSize = this.currentSettings.fontSize;
-        
-        if (direction === 'increase' && newSize < 24) newSize += 2;
-        else if (direction === 'decrease' && newSize > 12) newSize -= 2;
-        else if (direction === 'reset') newSize = this.defaultSettings.fontSize;
-        
-        this.updateSetting('fontSize', newSize);
-        
-        // Aplicar diretamente
-        document.documentElement.style.fontSize = `${newSize}px`;
-        
-        return newSize;
-    }
-
-    // ========== SUBLINHADO CONTROLADO ==========
-    toggleLinkUnderline() {
-        const enabled = !this.currentSettings.linkUnderline;
-        this.updateSetting('linkUnderline', enabled);
-        
-        if (enabled) {
-            const style = document.createElement('style');
-            style.id = 'link-underline-style';
-            style.textContent = `
-                a:not(.btn):not(.button):not(.nav-link) {
-                    text-decoration: underline !important;
-                }
-                
-                h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
-                .navbar a, .nav a {
-                    text-decoration: none !important;
-                }
-            `;
-            document.head.appendChild(style);
-        } else {
-            const style = document.getElementById('link-underline-style');
-            if (style) style.remove();
-        }
+        if (widget) widget.style.display = enabled ? 'block' : 'none';
+        if (altWidget) altWidget.style.display = enabled ? 'block' : 'none';
         
         return enabled;
     }
@@ -400,7 +196,7 @@ class AcessibilidadeManager {
             </div>
             <div class="accessibility-content">
                 <div class="accessibility-section">
-                    <h4>📱 Controles Rápidos</h4>
+                    <h4>📱 Controles</h4>
                     
                     <div class="accessibility-control">
                         <button class="accessibility-btn" data-action="increase-font">
@@ -415,19 +211,20 @@ class AcessibilidadeManager {
                         <button class="accessibility-btn" data-action="toggle-theme">
                             <span>🌙</span> Alternar Tema
                         </button>
-                        <button class="accessibility-btn" data-action="toggle-contrast">
-                            <span>⚫</span> Alto Contraste
-                        </button>
-                    </div>
-                    
-                    <div class="accessibility-control">
                         <button class="accessibility-btn ${this.currentSettings.vlibrasEnabled ? 'active' : ''}" 
                                 data-action="toggle-vlibras">
                             <span>👐</span> Libras ${this.currentSettings.vlibrasEnabled ? '(ON)' : '(OFF)'}
                         </button>
+                    </div>
+                    
+                    <div class="accessibility-control">
                         <button class="accessibility-btn ${this.currentSettings.linkUnderline ? 'active' : ''}" 
                                 data-action="toggle-underline">
                             <span>🔗</span> Sublinhar Links
+                        </button>
+                        <button class="accessibility-btn ${this.currentSettings.readableFonts ? 'active' : ''}" 
+                                data-action="toggle-fonts">
+                            <span>🔤</span> Fontes Especiais
                         </button>
                     </div>
                 </div>
@@ -452,7 +249,6 @@ class AcessibilidadeManager {
         button.className = 'accessibility-toggle';
         button.innerHTML = '♿';
         button.title = 'Abrir configurações de acessibilidade';
-        
         button.onclick = () => this.togglePanel();
         document.body.appendChild(button);
     }
@@ -471,10 +267,8 @@ class AcessibilidadeManager {
     }
 
     setupPanelEvents() {
-        // Botão de fechar
         document.getElementById('accessibility-close').onclick = () => this.togglePanel();
         
-        // Botões de ação
         document.querySelectorAll('[data-action]').forEach(btn => {
             btn.onclick = (e) => {
                 const action = e.target.closest('[data-action]').dataset.action;
@@ -482,9 +276,8 @@ class AcessibilidadeManager {
             };
         });
         
-        // Reset
         document.getElementById('reset-settings').onclick = () => {
-            if (confirm('Restaurar todas as configurações?')) {
+            if (confirm('Restaurar configurações padrão?')) {
                 this.currentSettings = { ...this.defaultSettings };
                 this.saveSettings();
                 this.applyAllSettings();
@@ -504,9 +297,6 @@ class AcessibilidadeManager {
             case 'toggle-theme':
                 this.toggleTheme();
                 break;
-            case 'toggle-contrast':
-                this.toggleHighContrast();
-                break;
             case 'toggle-vlibras':
                 const vlibrasEnabled = this.toggleVlibras();
                 button.innerHTML = `<span>👐</span> Libras ${vlibrasEnabled ? '(ON)' : '(OFF)'}`;
@@ -517,17 +307,107 @@ class AcessibilidadeManager {
                 button.innerHTML = `<span>🔗</span> Sublinhar Links`;
                 button.classList.toggle('active', underlineEnabled);
                 break;
+            case 'toggle-fonts':
+                const fontsEnabled = this.toggleReadableFonts();
+                button.innerHTML = `<span>🔤</span> Fontes Especiais`;
+                button.classList.toggle('active', fontsEnabled);
+                break;
         }
     }
 
-    toggleHighContrast() {
-        const current = this.currentSettings.theme;
-        const newTheme = current === 'high-contrast' ? 'light' : 'high-contrast';
-        this.updateSetting('theme', newTheme);
-        this.applyTheme(newTheme);
+    // ========== CONTROLES ==========
+    toggleTheme() {
+        const themes = ['light', 'dark', 'high-contrast'];
+        const currentIndex = themes.indexOf(this.currentSettings.theme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const nextTheme = themes[nextIndex];
+        
+        this.updateSetting('theme', nextTheme);
+        this.applyTheme(nextTheme);
     }
 
-    // ========== ESTILOS DO PAINEL ==========
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        
+        const styleId = 'theme-style';
+        let style = document.getElementById(styleId);
+        if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            document.head.appendChild(style);
+        }
+        
+        if (theme === 'dark') {
+            style.textContent = `body { background: #1a1a1a !important; color: #f0f0f0 !important; }`;
+        } else if (theme === 'high-contrast') {
+            style.textContent = `
+                body { background: black !important; color: white !important; }
+                a { color: yellow !important; text-decoration: underline !important; }
+            `;
+        } else {
+            style.textContent = `body { background: white !important; color: #333 !important; }`;
+        }
+    }
+
+    adjustFontSize(direction) {
+        let newSize = this.currentSettings.fontSize;
+        if (direction === 'increase' && newSize < 24) newSize += 2;
+        else if (direction === 'decrease' && newSize > 12) newSize -= 2;
+        else if (direction === 'reset') newSize = this.defaultSettings.fontSize;
+        
+        this.updateSetting('fontSize', newSize);
+        document.documentElement.style.fontSize = `${newSize}px`;
+        return newSize;
+    }
+
+    toggleLinkUnderline() {
+        const enabled = !this.currentSettings.linkUnderline;
+        this.updateSetting('linkUnderline', enabled);
+        
+        const styleId = 'link-underline-style';
+        let style = document.getElementById(styleId);
+        
+        if (enabled) {
+            if (!style) {
+                style = document.createElement('style');
+                style.id = styleId;
+                document.head.appendChild(style);
+            }
+            style.textContent = `a:not(.btn):not(.button) { text-decoration: underline !important; }`;
+        } else if (style) {
+            style.remove();
+        }
+        
+        return enabled;
+    }
+
+    toggleReadableFonts() {
+        const enabled = !this.currentSettings.readableFonts;
+        this.updateSetting('readableFonts', enabled);
+        
+        const styleId = 'readable-fonts-style';
+        let style = document.getElementById(styleId);
+        
+        if (enabled) {
+            if (!style) {
+                style = document.createElement('style');
+                style.id = styleId;
+                document.head.appendChild(style);
+            }
+            style.textContent = `
+                body, p, li, span, a {
+                    font-family: Arial, sans-serif !important;
+                    letter-spacing: 0.5px !important;
+                }
+            `;
+        } else if (style) {
+            style.remove();
+        }
+        
+        return enabled;
+    }
+
+    // ========== ESTILOS ==========
     addPanelStyles() {
         const styles = document.createElement('style');
         styles.textContent = `
@@ -553,7 +433,6 @@ class AcessibilidadeManager {
             
             .accessibility-toggle:hover {
                 transform: scale(1.1);
-                box-shadow: 0 6px 25px rgba(0,0,0,0.2);
             }
             
             .accessibility-toggle.active {
@@ -571,7 +450,6 @@ class AcessibilidadeManager {
                 z-index: 9999;
                 transition: right 0.3s;
                 overflow-y: auto;
-                font-family: Arial, sans-serif;
             }
             
             .accessibility-panel.open {
@@ -641,7 +519,6 @@ class AcessibilidadeManager {
             
             .accessibility-btn:hover {
                 background: #e2e8f0;
-                border-color: #cbd5e1;
             }
             
             .accessibility-btn.active {
@@ -688,7 +565,7 @@ class AcessibilidadeManager {
         document.head.appendChild(styles);
     }
 
-    // ========== APLICAÇÃO DE CONFIGURAÇÕES ==========
+    // ========== APLICAÇÃO ==========
     applySetting(key, value) {
         switch(key) {
             case 'theme':
@@ -699,6 +576,9 @@ class AcessibilidadeManager {
                 break;
             case 'linkUnderline':
                 this.toggleLinkUnderline();
+                break;
+            case 'readableFonts':
+                this.toggleReadableFonts();
                 break;
             case 'vlibrasEnabled':
                 this.toggleVlibras();
@@ -712,46 +592,22 @@ class AcessibilidadeManager {
         });
     }
 
-    // ========== EVENT LISTENERS SEGUROS ==========
-    setupEventListeners() {
-        // Atalhos de teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key === 'a') {
-                e.preventDefault();
-                this.togglePanel();
-            }
-        });
-        
-        // Tratamento de erros
-        window.addEventListener('error', (e) => {
-            console.warn('Erro capturado pelo sistema de acessibilidade:', e.error);
-        });
+    // ========== INICIALIZAÇÃO MÍNIMA ==========
+    initializeMinimalFeatures() {
+        try {
+            this.loadSettings();
+            this.createAccessibilityButton();
+            this.applyTheme(this.currentSettings.theme);
+        } catch (error) {
+            console.error('Falha crítica:', error);
+        }
     }
 
-    // ========== MÉTODOS PÚBLICOS ==========
-    show() {
-        this.togglePanel();
-    }
-    
-    hide() {
-        const panel = document.getElementById('accessibility-panel');
-        if (panel) panel.classList.remove('open');
-    }
-}
-
-// Inicialização segura e não-bloqueante
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        // Aguardar um pouco para não bloquear a renderização
-        setTimeout(() => {
-            window.accessibility = new AcessibilidadeManager();
-            console.log('Sistema de acessibilidade carregado com sucesso');
-        }, 500);
-    } catch (error) {
-        console.error('Falha crítica no carregamento da acessibilidade:', error);
-        // Criar botão mínimo mesmo em caso de erro
+    createAccessibilityButton() {
         const button = document.createElement('button');
+        button.id = 'minimal-accessibility-toggle';
         button.innerHTML = '♿';
+        button.title = 'Acessibilidade';
         button.style.cssText = `
             position: fixed;
             bottom: 20px;
@@ -760,18 +616,37 @@ document.addEventListener('DOMContentLoaded', () => {
             height: 50px;
             background: #3b82f6;
             color: white;
-            border-radius: 50%;
             border: none;
+            border-radius: 50%;
             font-size: 24px;
             cursor: pointer;
             z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         `;
-        button.onclick = () => alert('Acessibilidade: Recursos disponíveis após recarregar a página.');
+        button.onclick = () => alert('Recursos de acessibilidade disponíveis');
         document.body.appendChild(button);
+    }
+
+    setupEventListeners() {
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key === 'a') {
+                e.preventDefault();
+                this.togglePanel();
+            }
+        });
+    }
+}
+
+// Inicialização segura
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        setTimeout(() => {
+            window.accessibility = new AcessibilidadeManager();
+            console.log('Acessibilidade inicializada');
+        }, 500);
+    } catch (error) {
+        console.error('Erro na acessibilidade:', error);
     }
 });
 
-// Exportar para uso global
-if (typeof window !== 'undefined') {
-    window.AcessibilidadeManager = AcessibilidadeManager;
-}
+window.AcessibilidadeManager = AcessibilidadeManager;
