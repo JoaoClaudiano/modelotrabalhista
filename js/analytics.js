@@ -1,16 +1,22 @@
-// analytics.js - Sistema de analytics aprimorado para ModeloTrabalhista
+// analytics.js - Sistema de analytics aprimorado e integrado com log.js
 
 class AnalyticsTracker {
     constructor() {
         this.storageKey = 'modelotrabalhista_analytics_v3';
         this.sessionId = this.generateSessionId();
         this.pageStartTime = Date.now();
-        this.eventsQueue = []; // MOVI ESTA LINHA PARA CIMA - ANTES DE getUserId()
+        this.eventsQueue = [];
         this.isSending = false;
-        this.userId = this.getUserId(); // AGORA A FILA JÁ ESTÁ INICIALIZADA
+        this.userId = this.getUserId();
+        
+        // Integração com log.js - verificar se já existe logger
+        if (window.appLogger) {
+            window.appLogger.info('AnalyticsTracker inicializando...');
+        }
+        
         this.init();
     }
-    // inicio
+    
     init() {
         this.setupEventListeners();
         this.trackSessionStart();
@@ -19,7 +25,7 @@ class AnalyticsTracker {
         this.processQueue();
         
         // Enviar eventos pendentes periodicamente
-        setInterval(() => this.processQueue(), 30000); // A cada 30 segundos
+        setInterval(() => this.processQueue(), 30000);
     }
 
     // ========== TRACKING DE EVENTOS ==========
@@ -59,9 +65,13 @@ class AnalyticsTracker {
             this.sendEvent(event);
         }
 
-        // Log em desenvolvimento
+        // Log em desenvolvimento (integrado com log.js)
         if (this.isDevelopment()) {
-            console.log(`[Analytics] ${eventName}:`, event.properties);
+            if (window.appLogger) {
+                window.appLogger.info(`[Analytics] ${eventName}`, properties);
+            } else {
+                console.log(`[Analytics] ${eventName}:`, event.properties);
+            }
         }
 
         return event;
@@ -103,12 +113,37 @@ class AnalyticsTracker {
     }
 
     trackError(error, context = {}) {
+        // MODIFICAÇÃO: Aceita string ou objeto Error
+        let errorMessage, errorType, errorStack;
+        
+        if (error instanceof Error) {
+            errorMessage = error.message;
+            errorType = error.name;
+            errorStack = error.stack;
+        } else if (typeof error === 'string') {
+            errorMessage = error;
+            errorType = 'StringError';
+            errorStack = null;
+        } else {
+            errorMessage = 'Erro desconhecido';
+            errorType = 'UnknownError';
+            errorStack = null;
+        }
+        
         this.trackEvent('error_occurred', {
-            error_message: error.message,
-            error_type: error.name,
-            error_stack: error.stack,
+            error_message: errorMessage,
+            error_type: errorType,
+            error_stack: errorStack,
             ...context
         }, { immediate: true });
+        
+        // Log no logger se disponível
+        if (window.appLogger) {
+            window.appLogger.error(`[Analytics] Erro: ${errorMessage}`, {
+                type: errorType,
+                ...context
+            });
+        }
     }
 
     trackUserAction(action, details = {}) {
@@ -391,14 +426,9 @@ class AnalyticsTracker {
             });
         });
 
-        // Rastrear erros JavaScript
-        window.addEventListener('error', (e) => {
-            this.trackError(e.error, {
-                filename: e.filename,
-                lineno: e.lineno,
-                colno: e.colno
-            });
-        });
+        // MODIFICAÇÃO: REMOVIDO o listener de erros globais
+        // O log.js já captura todos os erros e chama trackError se disponível
+        // Isso evita duplicação de logs de erro
 
         // Rastrear beforeunload
         window.addEventListener('beforeunload', () => {
@@ -417,6 +447,58 @@ class AnalyticsTracker {
                 this.trackEvent('page_visible');
             }
         });
+        
+        // NOVO: Rastrear uso do sistema de acessibilidade
+        document.addEventListener('accessibility_toggled', (e) => {
+            if (e.detail) {
+                this.trackEvent('accessibility_used', {
+                    feature: e.detail.feature,
+                    state: e.detail.state,
+                    source: e.detail.source || 'panel'
+                });
+            }
+        });
+        
+        // NOVO: Rastrear uso do Vlibras
+        document.addEventListener('vlibras_used', (e) => {
+            this.trackEvent('vlibras_activated', {
+                action: e.detail?.action || 'toggle'
+            });
+        });
+    }
+
+    // ========== MÉTODOS ADICIONAIS PARA INTEGRAÇÃO ==========
+    
+    // Rastrear performance da página (integrado com log.js)
+    trackPerformance(metrics) {
+        this.trackEvent('performance_metrics', {
+            load_time: metrics.loadTime,
+            dom_content_loaded: metrics.domContentLoaded,
+            first_paint: metrics.firstPaint,
+            first_contentful_paint: metrics.firstContentfulPaint,
+            time_to_interactive: metrics.timeToInteractive
+        }, { immediate: true });
+    }
+    
+    // Rastrear scripts carregados (do log.js)
+    trackScriptLoad(scriptInfo) {
+        this.trackEvent('script_loaded', {
+            script_name: scriptInfo.name,
+            load_time: scriptInfo.loadTime,
+            status: scriptInfo.status,
+            size: scriptInfo.size
+        });
+    }
+    
+    // Rastrear status do aplicativo (do log.js)
+    trackAppHealth(healthStatus) {
+        this.trackEvent('app_health_check', {
+            status: healthStatus.status,
+            error_count: healthStatus.errorCount,
+            warning_count: healthStatus.warningCount,
+            scripts_loaded: healthStatus.scriptsLoaded,
+            load_time: healthStatus.loadTime
+        }, { immediate: true });
     }
 
     // ========== RELATÓRIOS E ESTATÍSTICAS ==========
@@ -557,6 +639,12 @@ class AnalyticsTracker {
         const lastEvent = new Date(analytics.stats.last_event || analytics.first_seen);
         const hoursSinceLastEvent = (now - lastEvent) / (1000 * 60 * 60);
         
+        // Integrar com log.js se disponível
+        let appHealth = 'unknown';
+        if (window.appLogger && typeof window.appLogger.getStatus === 'function') {
+            appHealth = window.appLogger.getStatus();
+        }
+        
         return {
             status: 'healthy',
             last_event: analytics.stats.last_event,
@@ -565,27 +653,71 @@ class AnalyticsTracker {
             queue_size: this.eventsQueue.length,
             user_id_present: !!this.userId,
             session_active: !!this.sessionId,
-            opted_out: this.isOptedOut()
+            opted_out: this.isOptedOut(),
+            app_health: appHealth, // NOVO: integração com log.js
+            scripts_loaded: window.appLogger ? Object.keys(window.appLogger.performance.scripts || {}).length : 'unknown'
         };
     }
 }
 
-// Inicializar automaticamente (com opt-out check)
+// Inicializar automaticamente (com opt-out check) - MODIFICADO
 document.addEventListener('DOMContentLoaded', () => {
-    if (!localStorage.getItem('modelotrabalhista_analytics_opt_out')) {
-        window.analytics = new AnalyticsTracker();
-        
-        // Expor métodos globais para debugging
-        if (window.location.hostname === 'localhost') {
-            window.debugAnalytics = {
-                getReports: () => window.analytics.getReports(),
-                getHealth: () => window.analytics.checkHealth(),
-                clearData: () => window.analytics.clearUserData(),
-                optOut: () => window.analytics.optOut(),
-                optIn: () => window.analytics.optIn()
-            };
+    // Aguardar um pouco para o log.js carregar primeiro
+    setTimeout(() => {
+        if (!localStorage.getItem('modelotrabalhista_analytics_opt_out')) {
+            try {
+                window.analytics = new AnalyticsTracker();
+                
+                // Log no logger se disponível
+                if (window.appLogger) {
+                    window.appLogger.info('AnalyticsTracker inicializado com sucesso');
+                }
+                
+                // Expor métodos globais para debugging
+                if (window.location.hostname === 'localhost' || 
+                    window.location.hostname.includes('127.0.0.1')) {
+                    window.debugAnalytics = {
+                        getReports: () => window.analytics.getReports(),
+                        getHealth: () => window.analytics.checkHealth(),
+                        clearData: () => window.analytics.clearUserData(),
+                        optOut: () => window.analytics.optOut(),
+                        optIn: () => window.analytics.optIn(),
+                        testError: () => window.analytics.trackError(new Error('Erro de teste')),
+                        testEvent: () => window.analytics.trackEvent('test_event', { test: true })
+                    };
+                    
+                    if (window.appLogger) {
+                        window.appLogger.info('Debug tools do analytics disponíveis em window.debugAnalytics');
+                    }
+                }
+                
+                // Integração com log.js: enviar métricas de performance
+                if (window.appLogger && window.appLogger.performance && window.appLogger.performance.pageLoadTime) {
+                    setTimeout(() => {
+                        window.analytics.trackPerformance({
+                            loadTime: window.appLogger.performance.pageLoadTime,
+                            timing: window.appLogger.performance.timing
+                        });
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Falha ao inicializar AnalyticsTracker:', error);
+                
+                // Registrar no logger se disponível
+                if (window.appLogger) {
+                    window.appLogger.error('Falha ao inicializar AnalyticsTracker', {
+                        error: error.message,
+                        stack: error.stack
+                    });
+                }
+            }
+        } else {
+            if (window.appLogger) {
+                window.appLogger.info('AnalyticsTracker opt-out ativo - não inicializado');
+            }
         }
-    }
+    }, 500); // Aguarda 500ms para garantir que log.js carregou
 });
 
 // Exportar para uso global
