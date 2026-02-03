@@ -590,7 +590,6 @@
     </section>
 
     <!-- Footer -->
-    <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
@@ -620,7 +619,29 @@
                     </div>
                 </div>
     
-                <!-- Coluna 2: Modelos -->
+                <!-- Coluna 2: Links Institucionais (NOVO) -->
+                <div class="footer-section">
+                    <h4 class="footer-title">Institucional</h4>
+                    <ul class="footer-links">
+                        <li class="footer-link-item">
+                            <a href="pages/sobre.html" class="footer-link">Sobre Nós</a>
+                        </li>
+                        <li class="footer-link-item">
+                            <a href="pages/contato.html" class="footer-link">Fale Conosco</a>
+                        </li>
+                        <li class="footer-link-item">
+                            <a href="pages/termos.html" class="footer-link">Termos de Uso</a>
+                        </li>
+                        <li class="footer-link-item">
+                            <a href="pages/privacidade.html" class="footer-link">Política de Privacidade</a>
+                        </li>
+                        <li class="footer-link-item">
+                            <a href="pages/disclaimer.html" class="footer-link">Aviso Legal (Disclaimer)</a>
+                        </li>
+                    </ul>
+                </div>
+    
+                <!-- Coluna 3: Modelos -->
                 <div class="footer-section">
                     <h4 class="footer-title">Modelos</h4>
                     <ul class="footer-links">
@@ -647,9 +668,9 @@
                     </ul>
                 </div>
     
-                <!-- Coluna 3: Links Úteis -->
+                <!-- Coluna 4: Links Úteis -->
                 <div class="footer-section">
-                    <h4 class="footer-title">Links Úteis</h4>
+                    <h4 class="footer-title">Navegação</h4>
                     <ul class="footer-links">
                         <li class="footer-link-item">
                             <a href="#home" class="footer-link">Início</a>
@@ -661,26 +682,7 @@
                             <a href="#gerador" class="footer-link">Gerador</a>
                         </li>
                         <li class="footer-link-item">
-                            <a href="#faq" class="footer-link">FAQ</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#sobre" class="footer-link">Sobre</a>
-                        </li>
-                    </ul>
-                </div>
-    
-                <!-- Coluna 4: Legal -->
-                <div class="footer-section">
-                    <h4 class="footer-title">Legal</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Termos de Uso</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Política de Privacidade</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Aviso Legal</a>
+                            <a href="#faq" class="footer-link">Perguntas Frequentes (FAQ)</a>
                         </li>
                     </ul>
                 </div>
@@ -706,7 +708,7 @@
             <!-- Rodapé Inferior -->
             <div class="footer-bottom">
                 <p class="copyright">
-                    &copy; 2026 ModeloTrabalhista. Todos os direitos reservados.
+                    &copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.
                 </p>
                 <p class="disclaimer">
                     <i class="fas fa-exclamation-triangle disclaimer-icon"></i>
@@ -716,6 +718,11 @@
             </div>
         </div>
     </footer>
+    
+    <script>
+        // Script para atualizar o ano no copyright automaticamente
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 
     <!-- JavaScript -->
     <!-- Módulo de UI primeiro (dependência base) -->
