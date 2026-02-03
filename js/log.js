@@ -11,13 +11,8 @@ class AppLogger {
             scripts: {},
             resources: {}
         };
-        
-        //this.expectedScripts = [
-         //   'main.js',
-        //    'analytics.js', 
-        //    'acessibilidade.js',
-
-      //  ];
+        // Lista de scripts será preenchida automaticamente
+        this.expectedScripts = [];
         
         this.init();
     }
@@ -26,6 +21,7 @@ class AppLogger {
         this.setupErrorHandling();
         this.setupPerformanceMonitoring();
         this.setupResourceTracking();
+        this.detectScripts(); // Detectar scripts automaticamente primeiro
         this.checkScripts();
         this.setupConsoleOverride();
         this.setupHeartbeat();
@@ -39,43 +35,111 @@ class AppLogger {
         });
     }
     
+    // ========== DETECÇÃO AUTOMÁTICA DE SCRIPTS ==========
+    detectScripts() {
+        try {
+            const scripts = document.querySelectorAll('script[src]');
+            const detected = [];
+            
+            // Verificar se encontrou scripts
+            if (!scripts || scripts.length === 0) {
+                this.warning('Nenhum script com src encontrado na página');
+                this.expectedScripts = [];
+                return detected;
+            }
+            
+            // Converter NodeList para Array para compatibilidade
+            const scriptArray = Array.from(scripts);
+            
+            scriptArray.forEach(script => {
+                if (script.src) {
+                    const filename = script.src.split('/').pop();
+                    if (filename) {
+                        detected.push(filename);
+                    }
+                }
+            });
+            
+            this.expectedScripts = detected;
+            this.info('Scripts detectados automaticamente', { 
+                scripts: detected,
+                count: detected.length 
+            });
+            
+            return detected;
+        } catch (error) {
+            this.error('Erro ao detectar scripts', { error: error.message });
+            this.expectedScripts = [];
+            return [];
+        }
+    }
+    
     // ========== MONITORAMENTO DE SCRIPTS ==========
     checkScripts() {
-        // Verificar scripts já carregados
-        const scripts = document.querySelectorAll('script[src]');
-        const loadedScripts = new Set();
-        
-        scripts.forEach(script => {
-            const src = script.src;
-            const filename = src.split('/').pop();
-            loadedScripts.add(filename);
+        try {
+            // Verificar scripts já carregados
+            const scripts = document.querySelectorAll('script[src]');
+            const loadedScripts = new Set();
             
-            // Medir tempo de carregamento
-            script.addEventListener('load', () => {
-                this.performance.scripts[filename] = {
-                    loaded: true,
-                    loadTime: performance.now() - this.performance.startTime,
-                    size: this.getResourceSize(src)
-                };
-                this.info(`Script carregado: ${filename}`);
-            });
-            
-            script.addEventListener('error', (e) => {
-                this.error(`Falha ao carregar script: ${filename}`, {
-                    src,
-                    error: e.error
-                });
-            });
-        });
-        
-        // Verificar scripts esperados mas não carregados
-        this.expectedScripts.forEach(script => {
-            if (!loadedScripts.has(script)) {
-                this.warning(`Script esperado não encontrado: ${script}`);
+            // Verificação de segurança
+            if (!scripts || scripts.length === 0) {
+                this.warning('Nenhum script com src encontrado durante o check');
+                return Array.from(loadedScripts);
             }
-        });
-        
-        return Array.from(loadedScripts);
+            
+            // Converter NodeList para Array
+            const scriptArray = Array.from(scripts);
+            
+            scriptArray.forEach(script => {
+                const src = script.src;
+                const filename = src.split('/').pop();
+                loadedScripts.add(filename);
+                
+                // Verificar se o script já foi carregado (pode ter carregado antes do listener)
+                if (script.readyState === 'complete' || script.readyState === 'loaded' || !script.readyState) {
+                    // Script já carregado
+                    this.performance.scripts[filename] = {
+                        loaded: true,
+                        loadTime: performance.now() - this.performance.startTime,
+                        size: this.getResourceSize(src)
+                    };
+                    this.info(`Script já carregado: ${filename}`);
+                } else {
+                    // Adicionar listeners para scripts ainda carregando
+                    script.addEventListener('load', () => {
+                        this.performance.scripts[filename] = {
+                            loaded: true,
+                            loadTime: performance.now() - this.performance.startTime,
+                            size: this.getResourceSize(src)
+                        };
+                        this.info(`Script carregado: ${filename}`);
+                    });
+                    
+                    script.addEventListener('error', (e) => {
+                        this.error(`Falha ao carregar script: ${filename}`, {
+                            src,
+                            error: e.error
+                        });
+                    });
+                }
+            });
+            
+            // Verificar scripts esperados mas não carregados - COM VERIFICAÇÃO DE SEGURANÇA
+            if (this.expectedScripts && Array.isArray(this.expectedScripts)) {
+                this.expectedScripts.forEach(script => {
+                    if (!loadedScripts.has(script)) {
+                        this.warning(`Script esperado não encontrado: ${script}`);
+                    }
+                });
+            } else {
+                this.warning('Lista de scripts esperados não está definida ou não é um array');
+            }
+            
+            return Array.from(loadedScripts);
+        } catch (error) {
+            this.error('Erro ao verificar scripts', { error: error.message });
+            return [];
+        }
     }
     
     // ========== MONITORAMENTO DE RECURSOS ==========
@@ -83,44 +147,50 @@ class AppLogger {
         // Monitorar imagens
         document.addEventListener('DOMContentLoaded', () => {
             const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('load', () => {
-                    this.performance.resources[img.src] = {
-                        type: 'image',
-                        loaded: true,
-                        dimensions: `${img.naturalWidth}x${img.naturalHeight}`
-                    };
+            if (images && images.length > 0) {
+                Array.from(images).forEach(img => {
+                    img.addEventListener('load', () => {
+                        this.performance.resources[img.src] = {
+                            type: 'image',
+                            loaded: true,
+                            dimensions: `${img.naturalWidth}x${img.naturalHeight}`
+                        };
+                    });
+                    
+                    img.addEventListener('error', () => {
+                        this.error(`Falha ao carregar imagem: ${img.src || img.alt || 'Sem src'}`);
+                    });
                 });
-                
-                img.addEventListener('error', () => {
-                    this.error(`Falha ao carregar imagem: ${img.src || img.alt || 'Sem src'}`);
-                });
-            });
+            }
         });
         
         // Monitorar CSS
         const links = document.querySelectorAll('link[rel="stylesheet"]');
-        links.forEach(link => {
-            link.addEventListener('load', () => {
-                this.info(`CSS carregado: ${link.href.split('/').pop()}`);
+        if (links && links.length > 0) {
+            Array.from(links).forEach(link => {
+                link.addEventListener('load', () => {
+                    this.info(`CSS carregado: ${link.href.split('/').pop()}`);
+                });
+                
+                link.addEventListener('error', () => {
+                    this.error(`Falha ao carregar CSS: ${link.href}`);
+                });
             });
-            
-            link.addEventListener('error', () => {
-                this.error(`Falha ao carregar CSS: ${link.href}`);
-            });
-        });
+        }
         
         // Monitorar fontes
         const fonts = document.querySelectorAll('link[rel*="font"], link[href*="font"], link[href*="fonts.googleapis.com"]');
-        fonts.forEach(font => {
-            font.addEventListener('load', () => {
-                this.info(`Fonte carregada: ${font.href.split('/').pop()}`);
+        if (fonts && fonts.length > 0) {
+            Array.from(fonts).forEach(font => {
+                font.addEventListener('load', () => {
+                    this.info(`Fonte carregada: ${font.href.split('/').pop()}`);
+                });
+                
+                font.addEventListener('error', () => {
+                    this.error(`Falha ao carregar fonte: ${font.href}`);
+                });
             });
-            
-            font.addEventListener('error', () => {
-                this.error(`Falha ao carregar fonte: ${font.href}`);
-            });
-        });
+        }
     }
     
     // ========== MONITORAMENTO DE PERFORMANCE ==========
@@ -364,9 +434,9 @@ class AppLogger {
     
     getStatus() {
         const criticalErrors = this.errors.filter(e => 
-            e.message.includes('Uncaught') || 
+            e.message && (e.message.includes('Uncaught') || 
             e.message.includes('Cannot read') ||
-            e.message.includes('is not defined')
+            e.message.includes('is not defined'))
         );
         
         if (criticalErrors.length > 0) {
@@ -436,7 +506,7 @@ class AppLogger {
     // ========== HEARTBEAT ==========
     setupHeartbeat() {
         // Verificar periodicamente o status da aplicação
-        setInterval(() => {
+        this.heartbeatInterval = setInterval(() => {
             const health = this.checkHealth();
             
             // Se status for crítico, tentar recuperação
@@ -504,11 +574,27 @@ class AppLogger {
         let csv = 'Tipo,Mensagem,Timestamp\n';
         
         [...data.logs, ...data.errors, ...data.warnings].forEach(entry => {
-            const message = entry.message.replace(/"/g, '""');
+            const message = entry.message ? entry.message.replace(/"/g, '""') : '';
             csv += `"${entry.type}","${message}","${entry.timestamp}"\n`;
         });
         
         return csv;
+    }
+    
+    // ========== MÉTODO PARA ATUALIZAR SCRIPTS ESPERADOS ==========
+    updateExpectedScripts(scripts) {
+        if (Array.isArray(scripts)) {
+            this.expectedScripts = scripts;
+            this.info('Lista de scripts esperados atualizada manualmente', { 
+                scripts: scripts,
+                count: scripts.length 
+            });
+        } else {
+            this.error('Tentativa de atualizar scripts esperados com valor não-array', { 
+                received: typeof scripts,
+                value: scripts 
+            });
+        }
     }
     
     // ========== DESTRUIÇÃO ==========
@@ -533,34 +619,60 @@ class AppLogger {
 
 // Inicialização automática
 document.addEventListener('DOMContentLoaded', () => {
-    // Aguardar um pouco para capturar erros iniciais
+    // Aguardar um pouco mais para garantir que todos os scripts começaram a carregar
     setTimeout(() => {
         try {
-            window.appLogger = new AppLogger();
-            
-            // Expor métodos de debug globalmente (apenas em desenvolvimento)
-            if (window.location.hostname.includes('localhost') || 
-                window.location.hostname.includes('127.0.0.1')) {
-                window.debugApp = {
-                    health: () => window.appLogger.checkHealth(),
-                    report: () => window.appLogger.getReport(),
-                    errors: () => window.appLogger.errors,
-                    warnings: () => window.appLogger.warnings,
-                    scripts: () => window.appLogger.performance.scripts,
-                    debug: (script) => window.appLogger.debug(script),
-                    export: (format) => window.appLogger.exportLogs(format)
-                };
+            // Verificar se já existe um logger (evitar duplicação)
+            if (!window.appLogger) {
+                window.appLogger = new AppLogger();
                 
-                console.log('🔧 Debug tools disponíveis em window.debugApp');
+                // DEBUG: expor métodos em desenvolvimento
+                if (window.location.hostname.includes('localhost') || 
+                    window.location.hostname.includes('127.0.0.1') ||
+                    window.location.hostname === 'joaoclaudiano.github.io') {
+                    
+                    window.debugApp = {
+                        health: () => window.appLogger.checkHealth(),
+                        report: () => window.appLogger.getReport(),
+                        errors: () => window.appLogger.errors,
+                        warnings: () => window.appLogger.warnings,
+                        scripts: () => window.appLogger.performance.scripts,
+                        debug: (script) => window.appLogger.debug(script),
+                        export: (format) => window.appLogger.exportLogs(format),
+                        updateScripts: (scripts) => window.appLogger.updateExpectedScripts(scripts),
+                        detectScripts: () => window.appLogger.detectScripts()
+                    };
+                    
+                    console.log('🔧 Debug tools disponíveis em window.debugApp');
+                    console.log('📝 Para verificar a saúde do app: debugApp.health()');
+                    console.log('📊 Para ver relatório completo: debugApp.report()');
+                }
             }
             
-            // Verificar saúde inicial
-            setTimeout(() => window.appLogger.checkHealth(), 2000);
+            // Verificar saúde após 3 segundos (tempo para carregamento)
+            setTimeout(() => {
+                if (window.appLogger && window.appLogger.checkHealth) {
+                    window.appLogger.checkHealth();
+                }
+            }, 3000);
             
         } catch (error) {
-            console.error('Falha ao inicializar AppLogger:', error);
+            console.error('Falha crítica ao inicializar AppLogger:', error);
+            
+            // Fallback mínimo para logging básico
+            window.appLogger = {
+                logs: [],
+                errors: [],
+                warnings: [],
+                performance: {},
+                log: (msg, data) => console.log('[FALLBACK LOG]', msg, data),
+                error: (msg, data) => console.error('[FALLBACK ERROR]', msg, data),
+                warning: (msg, data) => console.warn('[FALLBACK WARNING]', msg, data),
+                info: (msg, data) => console.info('[FALLBACK INFO]', msg, data),
+                checkHealth: () => ({ status: 'FALLBACK_MODE', healthy: false })
+            };
         }
-    }, 100);
+    }, 500); // Aumente o delay para 500ms
 });
 
 // Exportar para uso global
