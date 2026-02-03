@@ -10,6 +10,8 @@ class ModeloTrabalhistaApp {
         this.storage = window.StorageManager ? new StorageManager() : null;
         this.analytics = window.AnalyticsTracker ? new AnalyticsTracker() : null;
         this.accessibility = window.AcessibilidadeManager ? new AcessibilidadeManager() : null;
+        this.exporter = window.DocumentExporter ? new DocumentExporter() : null;
+        this.tour = window.AppTour ? new AppTour() : null;
         
         this.init();
     }
@@ -36,53 +38,89 @@ class ModeloTrabalhistaApp {
         });
 
         // Document type change in select
-        document.getElementById('documentType').addEventListener('change', (e) => {
-            this.currentModel = e.target.value;
-            this.updateDynamicFields();
-            this.updateSelectedCard();
-            this.saveDraft();
-        });
+        const documentTypeSelect = document.getElementById('documentType');
+        if (documentTypeSelect) {
+            documentTypeSelect.addEventListener('change', (e) => {
+                this.currentModel = e.target.value;
+                this.updateDynamicFields();
+                this.updateSelectedCard();
+                this.saveDraft();
+            });
+        }
 
         // Generate document button
-        document.getElementById('generateBtn').addEventListener('click', () => {
-            this.generateDocument();
-        });
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
+                this.generateDocument();
+            });
+        }
 
         // Load example button
-        document.getElementById('loadExampleBtn').addEventListener('click', () => {
-            this.loadExampleData();
-        });
+        const loadExampleBtn = document.getElementById('loadExampleBtn');
+        if (loadExampleBtn) {
+            loadExampleBtn.addEventListener('click', () => {
+                this.loadExampleData();
+            });
+        }
 
         // Clear form button
-        document.getElementById('clearBtn').addEventListener('click', () => {
-            this.showClearConfirmation();
-        });
+        const clearBtn = document.getElementById('clearBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                this.showClearConfirmation();
+            });
+        }
 
         // Auto-save on input (with debounce)
         const form = document.getElementById('documentForm');
-        let saveTimeout;
-        form.addEventListener('input', () => {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                this.saveDraft();
-            }, 1500);
-        });
+        if (form) {
+            let saveTimeout;
+            form.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    this.saveDraft();
+                }, 1500);
+            });
+        }
 
         // Preview controls
-        document.getElementById('zoomInBtn').addEventListener('click', () => {
-            this.ui.zoomIn('documentPreview');
-        });
-        document.getElementById('zoomOutBtn').addEventListener('click', () => {
-            this.ui.zoomOut('documentPreview');
-        });
-        document.getElementById('resetZoomBtn').addEventListener('click', () => {
-            this.ui.resetZoom('documentPreview');
-        });
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+                this.ui.zoomIn('documentPreview');
+            });
+        }
+
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+                this.ui.zoomOut('documentPreview');
+            });
+        }
+
+        const resetZoomBtn = document.getElementById('resetZoomBtn');
+        if (resetZoomBtn) {
+            resetZoomBtn.addEventListener('click', () => {
+                this.ui.resetZoom('documentPreview');
+            });
+        }
 
         // Action buttons
-        document.getElementById('printBtn').addEventListener('click', () => this.printDocument());
-        document.getElementById('pdfBtn').addEventListener('click', () => this.saveAsPDF());
-        document.getElementById('copyBtn').addEventListener('click', () => this.copyToClipboard());
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => this.printDocument());
+        }
+
+        const pdfBtn = document.getElementById('pdfBtn');
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', () => this.saveAsPDF());
+        }
+
+        const copyBtn = document.getElementById('copyBtn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => this.copyToClipboard());
+        }
 
         // Footer model links
         document.querySelectorAll('footer a[data-model]').forEach(link => {
@@ -95,27 +133,42 @@ class ModeloTrabalhistaApp {
         });
 
         // Confirm clear modal (if exists)
-        document.getElementById('confirmClearBtn')?.addEventListener('click', () => {
-            this.clearForm();
-            this.ui.hideModal('confirmClearModal');
-        });
+        const confirmClearBtn = document.getElementById('confirmClearBtn');
+        if (confirmClearBtn) {
+            confirmClearBtn.addEventListener('click', () => {
+                this.clearForm();
+                this.ui.hideModal('confirmClearModal');
+            });
+        }
 
-        document.getElementById('cancelClearBtn')?.addEventListener('click', () => {
-            this.ui.hideModal('confirmClearModal');
-        });
+        const cancelClearBtn = document.getElementById('cancelClearBtn');
+        if (cancelClearBtn) {
+            cancelClearBtn.addEventListener('click', () => {
+                this.ui.hideModal('confirmClearModal');
+            });
+        }
 
         // History controls (if exists)
-        document.getElementById('exportHistoryBtn')?.addEventListener('click', () => {
-            this.exportHistory();
-        });
+        const exportHistoryBtn = document.getElementById('exportHistoryBtn');
+        if (exportHistoryBtn) {
+            exportHistoryBtn.addEventListener('click', () => {
+                this.exportHistory();
+            });
+        }
 
-        document.getElementById('importHistoryBtn')?.addEventListener('click', () => {
-            document.getElementById('historyFileInput')?.click();
-        });
+        const importHistoryBtn = document.getElementById('importHistoryBtn');
+        if (importHistoryBtn) {
+            importHistoryBtn.addEventListener('click', () => {
+                document.getElementById('historyFileInput')?.click();
+            });
+        }
 
-        document.getElementById('historyFileInput')?.addEventListener('change', (e) => {
-            this.importHistory(e.target.files[0]);
-        });
+        const historyFileInput = document.getElementById('historyFileInput');
+        if (historyFileInput) {
+            historyFileInput.addEventListener('change', (e) => {
+                this.importHistory(e.target.files[0]);
+            });
+        }
 
         // Keyboard shortcuts
         this.setupKeyboardShortcuts();
@@ -123,7 +176,10 @@ class ModeloTrabalhistaApp {
 
     selectModel(model) {
         this.currentModel = model;
-        document.getElementById('documentType').value = model;
+        const documentTypeSelect = document.getElementById('documentType');
+        if (documentTypeSelect) {
+            documentTypeSelect.value = model;
+        }
         this.updateDynamicFields();
         this.updateSelectedCard();
         this.saveDraft();
@@ -149,6 +205,8 @@ class ModeloTrabalhistaApp {
 
     updateDynamicFields() {
         const container = document.getElementById('dynamicFields');
+        if (!container) return;
+        
         let html = '';
 
         switch (this.currentModel) {
@@ -337,72 +395,88 @@ class ModeloTrabalhistaApp {
         this.ui.showLoading('generateBtn', 'Gerando documento...');
 
         setTimeout(() => {
-            const data = this.collectFormData();
-            const documentContent = this.generateDocumentContent(data);
-            
-            this.displayDocument(documentContent);
-            this.enableActionButtons(true);
-            this.ui.hideLoading('generateBtn');
-            this.ui.showNotification('Documento gerado com sucesso!', 'success');
-            
-            // Save to history
-            if (this.storage && this.storage.addToHistory) {
-                this.storage.addToHistory({
-                    model: this.currentModel,
-                    data: data,
-                    content: documentContent,
-                    generatedAt: new Date().toISOString()
-                });
-            }
-            
-            // Track analytics
-            if (this.analytics && this.analytics.trackDocumentGenerated) {
-                this.analytics.trackDocumentGenerated(this.currentModel, data);
+            try {
+                const data = this.collectFormData();
+                const documentContent = this.generateDocumentContent(data);
+                
+                this.displayDocument(documentContent);
+                this.enableActionButtons(true);
+                this.ui.hideLoading('generateBtn');
+                this.ui.showNotification('Documento gerado com sucesso!', 'success');
+                
+                // Save to history
+                if (this.storage && this.storage.addToHistory) {
+                    this.storage.addToHistory({
+                        model: this.currentModel,
+                        data: data,
+                        content: documentContent,
+                        generatedAt: new Date().toISOString()
+                    });
+                }
+                
+                // Track analytics
+                if (this.analytics && this.analytics.trackDocumentGenerated) {
+                    this.analytics.trackDocumentGenerated(this.currentModel, data);
+                }
+            } catch (error) {
+                console.error('Erro ao gerar documento:', error);
+                this.ui.hideLoading('generateBtn');
+                this.ui.showNotification('Erro ao gerar documento. Tente novamente.', 'error');
+                
+                // Track error
+                if (this.analytics && this.analytics.trackError) {
+                    this.analytics.trackError(error, { context: 'generateDocument' });
+                }
             }
         }, 500);
     }
 
     collectFormData() {
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
         const data = {
             model: this.currentModel,
-            companyName: document.getElementById('companyName').value,
-            employeeName: document.getElementById('employeeName').value,
-            companyAddress: document.getElementById('companyAddress').value,
-            employeePosition: document.getElementById('employeePosition').value,
-            documentDate: document.getElementById('documentDate').value,
-            documentDateFormatted: this.formatDate(document.getElementById('documentDate').value)
+            companyName: getValue('companyName'),
+            employeeName: getValue('employeeName'),
+            companyAddress: getValue('companyAddress'),
+            employeePosition: getValue('employeePosition'),
+            documentDate: getValue('documentDate'),
+            documentDateFormatted: this.formatDate(getValue('documentDate'))
         };
 
         // Add model-specific fields
         switch (this.currentModel) {
             case 'demissao':
-                data.effectiveDate = document.getElementById('effectiveDate')?.value || '';
-                data.noticePeriod = document.getElementById('noticePeriod')?.value || 'trabalhado';
+                data.effectiveDate = getValue('effectiveDate');
+                data.noticePeriod = getValue('noticePeriod') || 'trabalhado';
                 break;
             case 'ferias':
-                data.vacationPeriod = document.getElementById('vacationPeriod')?.value || '';
-                data.vacationDays = document.getElementById('vacationDays')?.value || '30';
+                data.vacationPeriod = getValue('vacationPeriod');
+                data.vacationDays = getValue('vacationDays') || '30';
                 break;
             case 'advertencia':
-                data.warningReason = document.getElementById('warningReason')?.value || '';
-                data.incidentDate = document.getElementById('incidentDate')?.value || '';
-                data.severity = document.getElementById('severity')?.value || 'media';
+                data.warningReason = getValue('warningReason');
+                data.incidentDate = getValue('incidentDate');
+                data.severity = getValue('severity') || 'media';
                 break;
             case 'atestado':
-                data.certificateReason = document.getElementById('certificateReason')?.value || '';
-                data.certificateStart = document.getElementById('certificateStart')?.value || data.documentDate;
-                data.certificateEnd = document.getElementById('certificateEnd')?.value || data.documentDate;
+                data.certificateReason = getValue('certificateReason');
+                data.certificateStart = getValue('certificateStart') || data.documentDate;
+                data.certificateEnd = getValue('certificateEnd') || data.documentDate;
                 break;
             case 'rescisao':
-                data.severanceValue = document.getElementById('severanceValue')?.value || '';
-                data.paymentDate = document.getElementById('paymentDate')?.value || '';
-                data.additionalConditions = document.getElementById('additionalConditions')?.value || '';
+                data.severanceValue = getValue('severanceValue');
+                data.paymentDate = getValue('paymentDate');
+                data.additionalConditions = getValue('additionalConditions');
                 break;
             case 'reuniao':
-                data.meetingDate = document.getElementById('meetingDate')?.value || '';
-                data.meetingTime = document.getElementById('meetingTime')?.value || '';
-                data.meetingLocation = document.getElementById('meetingLocation')?.value || '';
-                data.meetingAgenda = document.getElementById('meetingAgenda')?.value || '';
+                data.meetingDate = getValue('meetingDate');
+                data.meetingTime = getValue('meetingTime');
+                data.meetingLocation = getValue('meetingLocation');
+                data.meetingAgenda = getValue('meetingAgenda');
                 break;
         }
 
@@ -410,7 +484,7 @@ class ModeloTrabalhistaApp {
     }
 
     generateDocumentContent(data) {
-        if (this.generator && this.generator.generateDocument) {
+        if (this.generator && typeof this.generator.generateDocument === 'function') {
             return this.generator.generateDocument(data);
         }
         
@@ -607,7 +681,7 @@ Cargo: ${'_'.repeat(42)}`;
         const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
         const conditions = data.additionalConditions ? `6. ${data.additionalConditions}` : '';
 
-        return `${data.companyName.toUpperCase()}
+        let agreement = `${data.companyName.toUpperCase()}
 ${data.companyAddress}
 
 ${'='.repeat(80)}
@@ -628,8 +702,13 @@ o presente acordo de rescisão contratual, sob as seguintes condições:
    acordo, renuncia a qualquer ação trabalhista referente ao período 
    contratual.
 5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-   até a data do desligamento.
-${conditions}
+   até a data do desligamento.`;
+
+        if (conditions) {
+            agreement += `\n${conditions}`;
+        }
+
+        agreement += `
 
 As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
 vias de igual teor.
@@ -644,6 +723,8 @@ Cargo: ${'_'.repeat(40)}
 
 ${'_'.repeat(42)}
 ${data.employeeName}`;
+
+        return agreement;
     }
 
     generateMeetingConvocation(data) {
@@ -710,6 +791,8 @@ ${data.employeePosition}`;
 
     displayDocument(content) {
         const preview = document.getElementById('documentPreview');
+        if (!preview) return;
+        
         preview.innerHTML = `<div class="document-content" tabindex="0">${content}</div>`;
         preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         
@@ -787,7 +870,10 @@ ${data.employeePosition}`;
         const nextMonth = new Date(today);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-        document.getElementById('documentDate').value = today.toISOString().split('T')[0];
+        const documentDateField = document.getElementById('documentDate');
+        if (documentDateField) {
+            documentDateField.value = today.toISOString().split('T')[0];
+        }
         
         if (document.getElementById('effectiveDate')) {
             document.getElementById('effectiveDate').value = nextMonth.toISOString().split('T')[0];
@@ -830,17 +916,22 @@ ${data.employeePosition}`;
     }
 
     clearForm() {
-        document.getElementById('documentForm').reset();
+        const form = document.getElementById('documentForm');
+        if (form) {
+            form.reset();
+        }
         this.setCurrentDate();
         
         const preview = document.getElementById('documentPreview');
-        preview.innerHTML = `
-            <div class="empty-preview" tabindex="0">
-                <i class="fas fa-file-alt" aria-hidden="true"></i>
-                <h4>Seu documento aparecerá aqui</h4>
-                <p>Preencha o formulário ao lado e clique em "Gerar Documento"</p>
-            </div>
-        `;
+        if (preview) {
+            preview.innerHTML = `
+                <div class="empty-preview" tabindex="0">
+                    <i class="fas fa-file-alt" aria-hidden="true"></i>
+                    <h4>Seu documento aparecerá aqui</h4>
+                    <p>Preencha o formulário ao lado e clique em "Gerar Documento"</p>
+                </div>
+            `;
+        }
         
         this.enableActionButtons(false);
         this.ui.resetZoom('documentPreview');
@@ -886,17 +977,26 @@ ${data.employeePosition}`;
 
     setCurrentDate() {
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('documentDate').value = today;
+        const documentDateField = document.getElementById('documentDate');
+        if (documentDateField) {
+            documentDateField.value = today;
+        }
     }
 
     printDocument() {
-        const content = document.querySelector('#documentPreview .document-content')?.innerHTML;
-        if (!content) {
+        const contentElement = document.querySelector('#documentPreview .document-content');
+        if (!contentElement) {
             this.ui.showNotification('Nenhum documento para imprimir. Gere um documento primeiro.', 'error');
             return;
         }
 
+        const content = contentElement.innerHTML;
         const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            this.ui.showNotification('Permita pop-ups para imprimir o documento.', 'error');
+            return;
+        }
+        
         printWindow.document.write(`
             <!DOCTYPE html>
             <html>
@@ -939,12 +1039,13 @@ ${data.employeePosition}`;
     }
 
     async copyToClipboard() {
-        const content = document.querySelector('#documentPreview .document-content')?.textContent;
-        if (!content) {
+        const contentElement = document.querySelector('#documentPreview .document-content');
+        if (!contentElement) {
             this.ui.showNotification('Nenhum documento para copiar. Gere um documento primeiro.', 'error');
             return;
         }
 
+        const content = contentElement.textContent;
         const success = await this.ui.copyToClipboard(content);
         if (success && this.analytics && this.analytics.trackEvent) {
             this.analytics.trackEvent('document_copied', { model: this.currentModel });
@@ -1004,7 +1105,10 @@ ${data.employeePosition}`;
                 document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
                     if (otherAnswer !== answer) {
                         otherAnswer.classList.remove('active');
-                        otherAnswer.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
+                        const otherIcon = otherAnswer.previousElementSibling.querySelector('i');
+                        if (otherIcon) {
+                            otherIcon.style.transform = 'rotate(0deg)';
+                        }
                         otherAnswer.previousElementSibling.setAttribute('aria-expanded', false);
                     }
                 });
@@ -1012,7 +1116,9 @@ ${data.employeePosition}`;
                 // Toggle current answer
                 answer.classList.toggle('active');
                 if (isOpening) {
-                    icon.style.transform = 'rotate(180deg)';
+                    if (icon) {
+                        icon.style.transform = 'rotate(180deg)';
+                    }
                     question.setAttribute('aria-expanded', true);
                     
                     // Announce to screen readers
@@ -1021,7 +1127,9 @@ ${data.employeePosition}`;
                         this.accessibility.announceToScreenReader(`Resposta expandida: ${answerText}`);
                     }
                 } else {
-                    icon.style.transform = 'rotate(0deg)';
+                    if (icon) {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
                     question.setAttribute('aria-expanded', false);
                 }
             });
