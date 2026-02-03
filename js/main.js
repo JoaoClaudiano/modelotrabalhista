@@ -3,7 +3,10 @@ class ModeloTrabalhistaApp {
     constructor() {
         this.currentModel = 'demissao';
         this.currentZoom = 100;
-        
+        // Verificar se o logger está disponível
+        if (window.appLogger) {
+            window.appLogger.info('ModeloTrabalhistaApp inicializando...');
+        }
         // Inicializar módulos
         this.ui = window.uiHelper || new UIHelper();
         this.generator = window.DocumentGenerator ? new DocumentGenerator() : null;
