@@ -1,4 +1,4 @@
-// ui.js - Gerenciamento de interface e interações do usuário
+// ui.js - Gerenciamento de interface e interações do usuário - CORRIGIDO
 
 class UIHelper {
     constructor() {
@@ -103,7 +103,6 @@ class UIHelper {
                     height: 100%;
                     background: rgba(0,0,0,0.5);
                     z-index: 10000;
-                    display: flex;
                     align-items: center;
                     justify-content: center;
                 }
@@ -397,6 +396,79 @@ class UIHelper {
         
         const errorMsg = element.parentNode.querySelector('.error-message');
         if (errorMsg) errorMsg.remove();
+    }
+
+    // ========== VALIDAÇÃO AVANÇADA ==========
+    validateAdvanced(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return { isValid: false, errors: [] };
+        
+        const errors = [];
+        
+        // Validar datas
+        const dateFields = form.querySelectorAll('input[type="date"]');
+        dateFields.forEach(field => {
+            if (field.value) {
+                const date = new Date(field.value);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                if (date < today) {
+                    errors.push(`A data "${field.labels[0]?.textContent || field.name}" não pode ser no passado`);
+                    this.highlightError(field);
+                }
+            }
+        });
+        
+        // Validar emails
+        const emailFields = form.querySelectorAll('input[type="email"]');
+        emailFields.forEach(field => {
+            if (field.value && !this.isValidEmail(field.value)) {
+                errors.push(`Email inválido: ${field.value}`);
+                this.highlightError(field);
+            }
+        });
+        
+        // Validar CPF (se houver)
+        const cpfFields = form.querySelectorAll('[data-mask="cpf"]');
+        cpfFields.forEach(field => {
+            if (field.value && !this.isValidCPF(field.value)) {
+                errors.push('CPF inválido');
+                this.highlightError(field);
+            }
+        });
+        
+        return { isValid: errors.length === 0, errors };
+    }
+
+    isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    isValidCPF(cpf) {
+        // Implementação básica de validação de CPF
+        cpf = cpf.replace(/[^\d]+/g, '');
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+        
+        // Validação dos dígitos verificadores
+        let add = 0;
+        for (let i = 0; i < 9; i++) {
+            add += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let rev = 11 - (add % 11);
+        if (rev === 10 || rev === 11) rev = 0;
+        if (rev !== parseInt(cpf.charAt(9))) return false;
+        
+        add = 0;
+        for (let i = 0; i < 10; i++) {
+            add += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        rev = 11 - (add % 11);
+        if (rev === 10 || rev === 11) rev = 0;
+        if (rev !== parseInt(cpf.charAt(10))) return false;
+        
+        return true;
     }
 
     // ========== INPUT MASKS ==========
@@ -695,47 +767,6 @@ class UIHelper {
             announcement.remove();
         }, 1000);
     }
-}
-
-// Adicionar ao ui.js
-validateAdvanced(formId) {
-    const form = document.getElementById(formId);
-    const errors = [];
-    
-    // Validar datas
-    const dateFields = form.querySelectorAll('input[type="date"]');
-    dateFields.forEach(field => {
-        if (field.value) {
-            const date = new Date(field.value);
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            
-            if (date < today) {
-                errors.push(`A data "${field.labels[0]?.textContent}" não pode ser no passado`);
-                this.highlightError(field);
-            }
-        }
-    });
-    
-    // Validar emails
-    const emailFields = form.querySelectorAll('input[type="email"]');
-    emailFields.forEach(field => {
-        if (field.value && !this.isValidEmail(field.value)) {
-            errors.push(`Email inválido: ${field.value}`);
-            this.highlightError(field);
-        }
-    });
-    
-    // Validar CPF (se houver)
-    const cpfFields = form.querySelectorAll('[data-mask="cpf"]');
-    cpfFields.forEach(field => {
-        if (field.value && !this.isValidCPF(field.value)) {
-            errors.push('CPF inválido');
-            this.highlightError(field);
-        }
-    });
-    
-    return { isValid: errors.length === 0, errors };
 }
 
 // Inicializar quando o DOM estiver carregado
