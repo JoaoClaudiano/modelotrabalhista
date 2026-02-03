@@ -10,7 +10,7 @@ class AnalyticsTracker {
         this.isSending = false;
         this.init();
     }
-
+    // inicio
     init() {
         this.setupEventListeners();
         this.trackSessionStart();
