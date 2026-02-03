@@ -1,24 +1,20 @@
-// acessibilidade.js - Sistema simplificado e robusto de acessibilidade
+// acessibilidade.js - Sistema de acessibilidade com botão único e card flutuante
 
 class AcessibilidadeManager {
     constructor() {
         this.prefix = 'modelotrabalhista_accessibility_';
         
-        // Configurações padrão
+        // Configurações padrão (sem Vlibras)
         this.defaultSettings = {
             theme: 'light',
             fontSize: 16,
             highContrast: false,
-            reducedMotion: false,
-            vlibrasEnabled: true,
-            focusHighlight: true,
             readableFonts: false,
             linkUnderline: false
         };
         
         this.currentSettings = {};
-        this.vlibrasInitialized = false;
-        this.vlibrasScriptLoaded = false;
+        this.cardVisible = false;
         
         // Inicialização segura
         setTimeout(() => this.safeInit(), 100);
@@ -29,18 +25,14 @@ class AcessibilidadeManager {
             this.init();
         } catch (error) {
             console.error('Erro na inicialização do sistema de acessibilidade:', error);
-            this.initializeMinimalFeatures();
         }
     }
 
     init() {
         this.loadSettings();
         this.setupEventListeners();
-        this.createAccessibilityPanel();
+        this.createAccessibilityButton();
         this.applyAllSettings();
-        
-        // Inicializar Vlibras com fallback
-        this.initVlibrasWithFallback();
         
         // Log de sucesso
         if (window.appLogger) {
@@ -75,218 +67,178 @@ class AcessibilidadeManager {
         return true;
     }
 
-    // ========== VLIBRAS ==========
-    initVlibrasWithFallback() {
-        if (document.querySelector('#vlibras-script')) {
-            this.checkAndInitVlibras();
-            return;
-        }
+    // ========== BOTÃO ÚNICO ==========
+    createAccessibilityButton() {
+        // Remover botões antigos se existirem
+        const oldButton = document.getElementById('accessibility-toggle');
+        const oldPanel = document.getElementById('accessibility-panel');
+        const oldMinimal = document.getElementById('minimal-accessibility-toggle');
         
-        const script = document.createElement('script');
-        script.id = 'vlibras-script';
-        script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
-        script.async = true;
-        script.defer = true;
+        if (oldButton) oldButton.remove();
+        if (oldPanel) oldPanel.remove();
+        if (oldMinimal) oldMinimal.remove();
         
-        script.onload = () => {
-            this.vlibrasScriptLoaded = true;
-            setTimeout(() => this.checkAndInitVlibras(), 500);
-        };
+        // Criar botão único
+        const button = document.createElement('button');
+        button.id = 'accessibility-toggle';
+        button.className = 'accessibility-toggle';
+        button.innerHTML = '<i class="fas fa-universal-access"></i>';
+        button.title = 'Acessibilidade';
+        button.setAttribute('aria-label', 'Abrir menu de acessibilidade');
         
-        script.onerror = () => {
-            console.warn('Vlibras não carregado. Carregando alternativa...');
-            this.loadVlibrasAlternative();
-        };
+        button.onclick = () => this.toggleCard();
+        document.body.appendChild(button);
         
-        document.head.appendChild(script);
+        // Criar card flutuante
+        this.createFloatingCard();
+        this.addStyles();
     }
 
-    checkAndInitVlibras() {
-        if (this.vlibrasInitialized) return;
+    // ========== CARD FLUTUANTE ==========
+    createFloatingCard() {
+        const card = document.createElement('div');
+        card.id = 'accessibility-card';
+        card.className = 'accessibility-card';
+        card.setAttribute('aria-hidden', 'true');
+        card.setAttribute('role', 'dialog');
+        card.setAttribute('aria-label', 'Opções de acessibilidade');
         
-        if (window.VLibras && typeof window.VLibras.Widget === 'function') {
-            try {
-                new window.VLibras.Widget('https://vlibras.gov.br/app');
-                this.vlibrasInitialized = true;
-                this.addVlibrasStyles();
-            } catch (error) {
-                this.loadVlibrasAlternative();
-            }
-        } else {
-            setTimeout(() => this.checkAndInitVlibras(), 500);
-        }
-    }
-
-    loadVlibrasAlternative() {
-        const widget = document.createElement('div');
-        widget.id = 'vlibras-alternative';
-        widget.innerHTML = `
-            <div style="
-                position: fixed;
-                bottom: 100px;
-                right: 20px;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                z-index: 9990;
-                padding: 10px;
-                border: 2px solid #3b82f6;
-                display: ${this.currentSettings.vlibrasEnabled ? 'block' : 'none'};
-            ">
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 24px; margin-bottom: 5px;">👐</div>
-                    <div style="font-weight: bold; color: #3b82f6;">Acessibilidade</div>
-                    <div style="font-size: 12px; color: #666; margin-top: 5px;">
-                        Para recursos de acessibilidade, use o menu ♿
-                    </div>
-                </div>
+        card.innerHTML = `
+            <div class="accessibility-card-header">
+                <h3><i class="fas fa-universal-access"></i> Acessibilidade</h3>
+                <button class="accessibility-card-close" aria-label="Fechar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-        `;
-        document.body.appendChild(widget);
-    }
-
-    addVlibrasStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .vlibras-widget {
-                z-index: 9990 !important;
-                bottom: 100px !important;
-                right: 20px !important;
-            }
             
-            .accessibility-toggle {
-                bottom: 30px !important;
-                z-index: 9999 !important;
-            }
-            
-            @media (max-width: 768px) {
-                .vlibras-widget {
-                    bottom: 90px !important;
-                    right: 10px !important;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    toggleVlibras() {
-        const enabled = !this.currentSettings.vlibrasEnabled;
-        this.updateSetting('vlibrasEnabled', enabled);
-        
-        const widget = document.querySelector('.vlibras-widget');
-        const altWidget = document.getElementById('vlibras-alternative');
-        
-        if (widget) widget.style.display = enabled ? 'block' : 'none';
-        if (altWidget) altWidget.style.display = enabled ? 'block' : 'none';
-        
-        return enabled;
-    }
-
-    // ========== PAINEL SIMPLIFICADO ==========
-    createAccessibilityPanel() {
-        if (document.getElementById('accessibility-panel')) return;
-        
-        const panel = document.createElement('div');
-        panel.id = 'accessibility-panel';
-        panel.className = 'accessibility-panel';
-        panel.innerHTML = `
-            <div class="accessibility-header">
-                <button id="accessibility-close" class="accessibility-close">×</button>
-                <h3>♿ Acessibilidade</h3>
-            </div>
-            <div class="accessibility-content">
-                <div class="accessibility-section">
-                    <h4>📱 Controles</h4>
-                    
-                    <div class="accessibility-control">
-                        <button class="accessibility-btn" data-action="increase-font">
-                            <span>A+</span> Aumentar Texto
+            <div class="accessibility-card-content">
+                <div class="accessibility-card-section">
+                    <h4><i class="fas fa-text-height"></i> Tamanho do Texto</h4>
+                    <div class="accessibility-card-controls">
+                        <button class="accessibility-card-btn" data-action="decrease-font" title="Diminuir texto">
+                            <i class="fas fa-minus"></i> A-
                         </button>
-                        <button class="accessibility-btn" data-action="decrease-font">
-                            <span>A-</span> Diminuir Texto
+                        <span class="accessibility-card-value" id="font-size-value">${this.currentSettings.fontSize}px</span>
+                        <button class="accessibility-card-btn" data-action="increase-font" title="Aumentar texto">
+                            A+ <i class="fas fa-plus"></i>
                         </button>
-                    </div>
-                    
-                    <div class="accessibility-control">
-                        <button class="accessibility-btn" data-action="toggle-theme">
-                            <span>🌙</span> Alternar Tema
-                        </button>
-                        <button class="accessibility-btn ${this.currentSettings.vlibrasEnabled ? 'active' : ''}" 
-                                data-action="toggle-vlibras">
-                            <span>👐</span> Libras ${this.currentSettings.vlibrasEnabled ? '(ON)' : '(OFF)'}
-                        </button>
-                    </div>
-                    
-                    <div class="accessibility-control">
-                        <button class="accessibility-btn ${this.currentSettings.linkUnderline ? 'active' : ''}" 
-                                data-action="toggle-underline">
-                            <span>🔗</span> Sublinhar Links
-                        </button>
-                        <button class="accessibility-btn ${this.currentSettings.readableFonts ? 'active' : ''}" 
-                                data-action="toggle-fonts">
-                            <span>🔤</span> Fontes Especiais
+                        <button class="accessibility-card-btn small" data-action="reset-font" title="Tamanho padrão">
+                            <i class="fas fa-redo"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div class="accessibility-actions">
-                    <button id="reset-settings" class="reset-btn">
-                        🔄 Restaurar Padrões
+                <div class="accessibility-card-section">
+                    <h4><i class="fas fa-palette"></i> Tema</h4>
+                    <div class="accessibility-card-buttons">
+                        <button class="accessibility-card-btn theme-btn ${this.currentSettings.theme === 'light' ? 'active' : ''}" 
+                                data-action="set-theme" data-value="light" title="Tema claro">
+                            <i class="fas fa-sun"></i> Claro
+                        </button>
+                        <button class="accessibility-card-btn theme-btn ${this.currentSettings.theme === 'dark' ? 'active' : ''}" 
+                                data-action="set-theme" data-value="dark" title="Tema escuro">
+                            <i class="fas fa-moon"></i> Escuro
+                        </button>
+                        <button class="accessibility-card-btn theme-btn ${this.currentSettings.theme === 'high-contrast' ? 'active' : ''}" 
+                                data-action="set-theme" data-value="high-contrast" title="Alto contraste">
+                            <i class="fas fa-adjust"></i> Contraste
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="accessibility-card-section">
+                    <h4><i class="fas fa-cog"></i> Outras Opções</h4>
+                    <div class="accessibility-card-switches">
+                        <label class="accessibility-card-switch">
+                            <input type="checkbox" id="link-underline-switch" ${this.currentSettings.linkUnderline ? 'checked' : ''}>
+                            <span class="slider"></span>
+                            <span class="switch-label">
+                                <i class="fas fa-underline"></i> Sublinhar links
+                            </span>
+                        </label>
+                        
+                        <label class="accessibility-card-switch">
+                            <input type="checkbox" id="readable-fonts-switch" ${this.currentSettings.readableFonts ? 'checked' : ''}>
+                            <span class="slider"></span>
+                            <span class="switch-label">
+                                <i class="fas fa-font"></i> Fontes legíveis
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="accessibility-card-footer">
+                    <button class="accessibility-card-reset" data-action="reset-all">
+                        <i class="fas fa-redo"></i> Restaurar Padrões
                     </button>
                 </div>
             </div>
         `;
         
-        document.body.appendChild(panel);
-        this.createAccessibilityToggle();
-        this.setupPanelEvents();
-        this.addPanelStyles();
+        document.body.appendChild(card);
+        this.setupCardEvents();
     }
 
-    createAccessibilityToggle() {
-        const button = document.createElement('button');
-        button.id = 'accessibility-toggle';
-        button.className = 'accessibility-toggle';
-        button.innerHTML = '♿';
-        button.title = 'Abrir configurações de acessibilidade';
-        button.onclick = () => this.togglePanel();
-        document.body.appendChild(button);
-    }
-
-    togglePanel() {
-        const panel = document.getElementById('accessibility-panel');
-        const toggle = document.getElementById('accessibility-toggle');
+    toggleCard() {
+        const card = document.getElementById('accessibility-card');
+        const button = document.getElementById('accessibility-toggle');
         
-        if (panel.classList.contains('open')) {
-            panel.classList.remove('open');
-            toggle.classList.remove('active');
+        if (this.cardVisible) {
+            card.classList.remove('visible');
+            button.classList.remove('active');
+            card.setAttribute('aria-hidden', 'true');
+            this.cardVisible = false;
         } else {
-            panel.classList.add('open');
-            toggle.classList.add('active');
+            card.classList.add('visible');
+            button.classList.add('active');
+            card.setAttribute('aria-hidden', 'false');
+            this.cardVisible = true;
         }
     }
 
-    setupPanelEvents() {
-        document.getElementById('accessibility-close').onclick = () => this.togglePanel();
+    setupCardEvents() {
+        // Botão de fechar
+        document.querySelector('.accessibility-card-close').onclick = () => this.toggleCard();
         
+        // Botões de ação
         document.querySelectorAll('[data-action]').forEach(btn => {
             btn.onclick = (e) => {
                 const action = e.target.closest('[data-action]').dataset.action;
-                this.handlePanelAction(action, e.target);
+                const value = e.target.closest('[data-value]')?.dataset.value;
+                this.handleCardAction(action, value, e.target);
             };
         });
         
-        document.getElementById('reset-settings').onclick = () => {
-            if (confirm('Restaurar configurações padrão?')) {
-                this.currentSettings = { ...this.defaultSettings };
-                this.saveSettings();
-                this.applyAllSettings();
-                location.reload();
-            }
+        // Switches
+        document.getElementById('link-underline-switch').onchange = (e) => {
+            this.updateSetting('linkUnderline', e.target.checked);
         };
+        
+        document.getElementById('readable-fonts-switch').onchange = (e) => {
+            this.updateSetting('readableFonts', e.target.checked);
+        };
+        
+        // Fechar ao clicar fora
+        document.addEventListener('click', (e) => {
+            const card = document.getElementById('accessibility-card');
+            const button = document.getElementById('accessibility-toggle');
+            
+            if (this.cardVisible && 
+                !card.contains(e.target) && 
+                !button.contains(e.target)) {
+                this.toggleCard();
+            }
+        });
+        
+        // Fechar com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.cardVisible) {
+                this.toggleCard();
+            }
+        });
     }
 
-    handlePanelAction(action, button) {
+    handleCardAction(action, value, button) {
         switch(action) {
             case 'increase-font':
                 this.adjustFontSize('increase');
@@ -294,36 +246,28 @@ class AcessibilidadeManager {
             case 'decrease-font':
                 this.adjustFontSize('decrease');
                 break;
-            case 'toggle-theme':
-                this.toggleTheme();
+            case 'reset-font':
+                this.adjustFontSize('reset');
                 break;
-            case 'toggle-vlibras':
-                const vlibrasEnabled = this.toggleVlibras();
-                button.innerHTML = `<span>👐</span> Libras ${vlibrasEnabled ? '(ON)' : '(OFF)'}`;
-                button.classList.toggle('active', vlibrasEnabled);
+            case 'set-theme':
+                this.setTheme(value);
+                // Atualizar botões ativos
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
                 break;
-            case 'toggle-underline':
-                const underlineEnabled = this.toggleLinkUnderline();
-                button.innerHTML = `<span>🔗</span> Sublinhar Links`;
-                button.classList.toggle('active', underlineEnabled);
-                break;
-            case 'toggle-fonts':
-                const fontsEnabled = this.toggleReadableFonts();
-                button.innerHTML = `<span>🔤</span> Fontes Especiais`;
-                button.classList.toggle('active', fontsEnabled);
+            case 'reset-all':
+                if (confirm('Restaurar todas as configurações para os valores padrão?')) {
+                    this.resetSettings();
+                }
                 break;
         }
     }
 
-    // ========== CONTROLES ==========
-    toggleTheme() {
-        const themes = ['light', 'dark', 'high-contrast'];
-        const currentIndex = themes.indexOf(this.currentSettings.theme);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const nextTheme = themes[nextIndex];
-        
-        this.updateSetting('theme', nextTheme);
-        this.applyTheme(nextTheme);
+    // ========== FUNÇÕES DE ACESSIBILIDADE ==========
+    setTheme(theme) {
+        this.updateSetting('theme', theme);
     }
 
     applyTheme(theme) {
@@ -338,32 +282,69 @@ class AcessibilidadeManager {
         }
         
         if (theme === 'dark') {
-            style.textContent = `body { background: #1a1a1a !important; color: #f0f0f0 !important; }`;
+            style.textContent = `
+                body {
+                    background-color: #1a1a1a !important;
+                    color: #f0f0f0 !important;
+                }
+                
+                a {
+                    color: #60a5fa !important;
+                }
+            `;
         } else if (theme === 'high-contrast') {
             style.textContent = `
-                body { background: black !important; color: white !important; }
-                a { color: yellow !important; text-decoration: underline !important; }
+                body {
+                    background: black !important;
+                    color: white !important;
+                }
+                
+                a {
+                    color: yellow !important;
+                    text-decoration: underline !important;
+                }
+                
+                button, input {
+                    border: 2px solid yellow !important;
+                }
             `;
         } else {
-            style.textContent = `body { background: white !important; color: #333 !important; }`;
+            style.textContent = `
+                body {
+                    background-color: white !important;
+                    color: #333 !important;
+                }
+            `;
         }
     }
 
     adjustFontSize(direction) {
         let newSize = this.currentSettings.fontSize;
-        if (direction === 'increase' && newSize < 24) newSize += 2;
-        else if (direction === 'decrease' && newSize > 12) newSize -= 2;
-        else if (direction === 'reset') newSize = this.defaultSettings.fontSize;
+        
+        if (direction === 'increase' && newSize < 24) {
+            newSize += 2;
+        } else if (direction === 'decrease' && newSize > 12) {
+            newSize -= 2;
+        } else if (direction === 'reset') {
+            newSize = this.defaultSettings.fontSize;
+        }
         
         this.updateSetting('fontSize', newSize);
-        document.documentElement.style.fontSize = `${newSize}px`;
+        
+        // Atualizar display
+        const display = document.getElementById('font-size-value');
+        if (display) {
+            display.textContent = `${newSize}px`;
+        }
+        
         return newSize;
     }
 
-    toggleLinkUnderline() {
-        const enabled = !this.currentSettings.linkUnderline;
-        this.updateSetting('linkUnderline', enabled);
-        
+    applyFontSize(size) {
+        document.documentElement.style.fontSize = `${size}px`;
+    }
+
+    applyLinkUnderline(enabled) {
         const styleId = 'link-underline-style';
         let style = document.getElementById(styleId);
         
@@ -373,18 +354,26 @@ class AcessibilidadeManager {
                 style.id = styleId;
                 document.head.appendChild(style);
             }
-            style.textContent = `a:not(.btn):not(.button) { text-decoration: underline !important; }`;
+            style.textContent = `
+                a:not(.btn):not(.button):not(.navbar-brand) {
+                    text-decoration: underline !important;
+                    text-decoration-thickness: 1px !important;
+                }
+                
+                /* Exceções para elementos que não devem ser sublinhados */
+                h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+                .navbar a, .nav a,
+                .btn a, .button a,
+                .card-title a, .title a {
+                    text-decoration: none !important;
+                }
+            `;
         } else if (style) {
             style.remove();
         }
-        
-        return enabled;
     }
 
-    toggleReadableFonts() {
-        const enabled = !this.currentSettings.readableFonts;
-        this.updateSetting('readableFonts', enabled);
-        
+    applyReadableFonts(enabled) {
         const styleId = 'readable-fonts-style';
         let style = document.getElementById(styleId);
         
@@ -395,174 +384,15 @@ class AcessibilidadeManager {
                 document.head.appendChild(style);
             }
             style.textContent = `
-                body, p, li, span, a {
-                    font-family: Arial, sans-serif !important;
+                body, p, li, span, a, input, textarea, select, button {
+                    font-family: Arial, Helvetica, sans-serif !important;
                     letter-spacing: 0.5px !important;
+                    line-height: 1.6 !important;
                 }
             `;
         } else if (style) {
             style.remove();
         }
-        
-        return enabled;
-    }
-
-    // ========== ESTILOS ==========
-    addPanelStyles() {
-        const styles = document.createElement('style');
-        styles.textContent = `
-            .accessibility-toggle {
-                position: fixed;
-                bottom: 30px;
-                right: 20px;
-                width: 60px;
-                height: 60px;
-                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-                color: white;
-                border: none;
-                border-radius: 50%;
-                cursor: pointer;
-                z-index: 9998;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                font-size: 28px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s;
-            }
-            
-            .accessibility-toggle:hover {
-                transform: scale(1.1);
-            }
-            
-            .accessibility-toggle.active {
-                background: linear-gradient(135deg, #ef4444, #f97316);
-            }
-            
-            .accessibility-panel {
-                position: fixed;
-                top: 0;
-                right: -320px;
-                width: 300px;
-                height: 100vh;
-                background: white;
-                box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-                z-index: 9999;
-                transition: right 0.3s;
-                overflow-y: auto;
-            }
-            
-            .accessibility-panel.open {
-                right: 0;
-            }
-            
-            .accessibility-header {
-                padding: 20px;
-                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-                color: white;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .accessibility-header h3 {
-                margin: 0;
-                font-size: 1.3rem;
-            }
-            
-            .accessibility-close {
-                background: rgba(255,255,255,0.2);
-                border: none;
-                color: white;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                font-size: 24px;
-                cursor: pointer;
-                line-height: 1;
-            }
-            
-            .accessibility-content {
-                padding: 20px;
-            }
-            
-            .accessibility-section {
-                margin-bottom: 25px;
-            }
-            
-            .accessibility-section h4 {
-                margin: 0 0 15px 0;
-                color: #3b82f6;
-            }
-            
-            .accessibility-control {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                margin-bottom: 15px;
-            }
-            
-            .accessibility-btn {
-                padding: 12px;
-                background: #f1f5f9;
-                border: 2px solid #e2e8f0;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 500;
-                text-align: center;
-                transition: all 0.2s;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
-            }
-            
-            .accessibility-btn:hover {
-                background: #e2e8f0;
-            }
-            
-            .accessibility-btn.active {
-                background: #3b82f6;
-                color: white;
-                border-color: #3b82f6;
-            }
-            
-            .accessibility-btn span {
-                font-size: 20px;
-            }
-            
-            .accessibility-actions {
-                margin-top: 25px;
-                text-align: center;
-            }
-            
-            .reset-btn {
-                padding: 12px 24px;
-                background: #fef2f2;
-                color: #dc2626;
-                border: 2px solid #fca5a5;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: bold;
-                width: 100%;
-            }
-            
-            @media (max-width: 768px) {
-                .accessibility-panel {
-                    width: 100%;
-                    right: -100%;
-                }
-                
-                .accessibility-toggle {
-                    bottom: 20px;
-                    right: 15px;
-                    width: 55px;
-                    height: 55px;
-                    font-size: 24px;
-                }
-            }
-        `;
-        document.head.appendChild(styles);
     }
 
     // ========== APLICAÇÃO ==========
@@ -572,16 +402,13 @@ class AcessibilidadeManager {
                 this.applyTheme(value);
                 break;
             case 'fontSize':
-                document.documentElement.style.fontSize = `${value}px`;
+                this.applyFontSize(value);
                 break;
             case 'linkUnderline':
-                this.toggleLinkUnderline();
+                this.applyLinkUnderline(value);
                 break;
             case 'readableFonts':
-                this.toggleReadableFonts();
-                break;
-            case 'vlibrasEnabled':
-                this.toggleVlibras();
+                this.applyReadableFonts(value);
                 break;
         }
     }
@@ -592,52 +419,345 @@ class AcessibilidadeManager {
         });
     }
 
-    // ========== INICIALIZAÇÃO MÍNIMA ==========
-    initializeMinimalFeatures() {
-        try {
-            this.loadSettings();
-            this.createAccessibilityButton();
-            this.applyTheme(this.currentSettings.theme);
-        } catch (error) {
-            console.error('Falha crítica:', error);
-        }
+    resetSettings() {
+        this.currentSettings = { ...this.defaultSettings };
+        this.saveSettings();
+        this.applyAllSettings();
+        
+        // Atualizar UI
+        setTimeout(() => {
+            const underlineSwitch = document.getElementById('link-underline-switch');
+            const fontsSwitch = document.getElementById('readable-fonts-switch');
+            const fontSizeDisplay = document.getElementById('font-size-value');
+            
+            if (underlineSwitch) underlineSwitch.checked = false;
+            if (fontsSwitch) fontsSwitch.checked = false;
+            if (fontSizeDisplay) fontSizeDisplay.textContent = `${this.defaultSettings.fontSize}px`;
+            
+            // Atualizar botões de tema
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === 'light') {
+                    btn.classList.add('active');
+                }
+            });
+        }, 100);
     }
 
-    createAccessibilityButton() {
-        const button = document.createElement('button');
-        button.id = 'minimal-accessibility-toggle';
-        button.innerHTML = '♿';
-        button.title = 'Acessibilidade';
-        button.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    // ========== ESTILOS ==========
+    addStyles() {
+        const styles = document.createElement('style');
+        styles.textContent = `
+            /* Botão flutuante */
+            .accessibility-toggle {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                z-index: 9995;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .accessibility-toggle:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            }
+            
+            .accessibility-toggle.active {
+                background: linear-gradient(135deg, #ef4444, #f97316);
+                transform: scale(1.1);
+            }
+            
+            /* Card flutuante */
+            .accessibility-card {
+                position: fixed;
+                bottom: 90px;
+                right: 20px;
+                width: 320px;
+                max-width: calc(100vw - 40px);
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                z-index: 9994;
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                pointer-events: none;
+                overflow: hidden;
+            }
+            
+            .accessibility-card.visible {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: all;
+            }
+            
+            .accessibility-card-header {
+                padding: 20px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                color: white;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .accessibility-card-header h3 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .accessibility-card-close {
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                transition: background 0.2s;
+            }
+            
+            .accessibility-card-close:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            .accessibility-card-content {
+                padding: 20px;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            
+            .accessibility-card-section {
+                margin-bottom: 24px;
+            }
+            
+            .accessibility-card-section h4 {
+                margin: 0 0 12px 0;
+                color: #374151;
+                font-size: 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .accessibility-card-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 8px;
+            }
+            
+            .accessibility-card-btn {
+                flex: 1;
+                padding: 10px 12px;
+                background: #f3f4f6;
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                color: #374151;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                transition: all 0.2s;
+            }
+            
+            .accessibility-card-btn:hover {
+                background: #e5e7eb;
+                border-color: #d1d5db;
+            }
+            
+            .accessibility-card-btn.active {
+                background: #3b82f6;
+                color: white;
+                border-color: #3b82f6;
+            }
+            
+            .accessibility-card-btn.small {
+                flex: 0 0 auto;
+                width: 40px;
+            }
+            
+            .accessibility-card-value {
+                flex: 0 0 60px;
+                text-align: center;
+                font-weight: 600;
+                color: #3b82f6;
+                font-size: 14px;
+            }
+            
+            .accessibility-card-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 8px;
+            }
+            
+            .accessibility-card-switches {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 8px;
+            }
+            
+            .accessibility-card-switch {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+            }
+            
+            .accessibility-card-switch input {
+                display: none;
+            }
+            
+            .accessibility-card-switch .slider {
+                position: relative;
+                width: 44px;
+                height: 24px;
+                background: #e5e7eb;
+                border-radius: 12px;
+                transition: background 0.2s;
+            }
+            
+            .accessibility-card-switch .slider::before {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 20px;
+                height: 20px;
+                background: white;
+                border-radius: 50%;
+                transition: transform 0.2s;
+            }
+            
+            .accessibility-card-switch input:checked + .slider {
+                background: #3b82f6;
+            }
+            
+            .accessibility-card-switch input:checked + .slider::before {
+                transform: translateX(20px);
+            }
+            
+            .switch-label {
+                flex: 1;
+                color: #374151;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .accessibility-card-footer {
+                margin-top: 24px;
+                padding-top: 20px;
+                border-top: 1px solid #e5e7eb;
+                text-align: center;
+            }
+            
+            .accessibility-card-reset {
+                padding: 10px 20px;
+                background: #fef2f2;
+                color: #dc2626;
+                border: 2px solid #fca5a5;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 14px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s;
+            }
+            
+            .accessibility-card-reset:hover {
+                background: #fee2e2;
+            }
+            
+            /* Responsivo */
+            @media (max-width: 768px) {
+                .accessibility-toggle {
+                    bottom: 16px;
+                    right: 16px;
+                    width: 52px;
+                    height: 52px;
+                    font-size: 22px;
+                }
+                
+                .accessibility-card {
+                    bottom: 80px;
+                    right: 16px;
+                    left: 16px;
+                    width: auto;
+                }
+                
+                .accessibility-card-buttons {
+                    grid-template-columns: 1fr;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .accessibility-card-section h4 {
+                    font-size: 13px;
+                }
+                
+                .accessibility-card-btn {
+                    font-size: 13px;
+                    padding: 8px 10px;
+                }
+                
+                .accessibility-card-value {
+                    font-size: 13px;
+                }
+            }
+            
+            /* Animações reduzidas */
+            @media (prefers-reduced-motion: reduce) {
+                .accessibility-toggle,
+                .accessibility-card {
+                    transition: none;
+                }
+            }
         `;
-        button.onclick = () => alert('Recursos de acessibilidade disponíveis');
-        document.body.appendChild(button);
+        document.head.appendChild(styles);
     }
 
+    // ========== EVENT LISTENERS ==========
     setupEventListeners() {
+        // Atalho de teclado: Alt + A
         document.addEventListener('keydown', (e) => {
             if (e.altKey && e.key === 'a') {
                 e.preventDefault();
-                this.togglePanel();
+                this.toggleCard();
             }
         });
     }
 }
 
-// Inicialização segura
+// Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     try {
         setTimeout(() => {
