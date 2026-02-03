@@ -220,21 +220,10 @@ class AppLogger {
                 loadTime: `${loadTime.toFixed(2)}ms`,
                 performance: this.performance.timing
             });
+            
+            // Agendar health check único após o carregamento completo
+            this.scheduleHealthCheck();
         });
-        
-        // Monitorar memória (se suportado)
-        if (performance.memory) {
-            setInterval(() => {
-                const memory = performance.memory;
-                if (memory.usedJSHeapSize > 100 * 1024 * 1024) { // > 100MB
-                    this.warning('Uso alto de memória JavaScript', {
-                        used: this.formatBytes(memory.usedJSHeapSize),
-                        total: this.formatBytes(memory.totalJSHeapSize),
-                        limit: this.formatBytes(memory.jsHeapSizeLimit)
-                    });
-                }
-            }, 30000);
-        }
     }
     
     // ========== TRATAMENTO DE ERROS ==========
@@ -370,7 +359,14 @@ class AppLogger {
             timestamp: new Date().toISOString()
         };
         this.logs.push(entry);
-        console.info(`[INFO] ${message}`, data);
+        
+        // Melhorar formatação do console
+        console.groupCollapsed(`%c[INFO] ${message}`, 'color: #2196F3; font-weight: bold;');
+        if (Object.keys(data).length > 0) {
+            console.log('Detalhes:', data);
+        }
+        console.groupEnd();
+        
         return entry;
     }
     
@@ -382,7 +378,13 @@ class AppLogger {
             timestamp: new Date().toISOString()
         };
         this.warnings.push(entry);
-        console.warn(`[WARNING] ${message}`, data);
+        
+        console.groupCollapsed(`%c[WARNING] ${message}`, 'color: #FF9800; font-weight: bold;');
+        if (Object.keys(data).length > 0) {
+            console.warn('Detalhes:', data);
+        }
+        console.groupEnd();
+        
         return entry;
     }
     
@@ -394,7 +396,12 @@ class AppLogger {
             timestamp: new Date().toISOString()
         };
         this.errors.push(entry);
-        console.error(`[ERROR] ${message}`, data);
+        
+        console.groupCollapsed(`%c[ERROR] ${message}`, 'color: #F44336; font-weight: bold;');
+        if (Object.keys(data).length > 0) {
+            console.error('Detalhes:', data);
+        }
+        console.groupEnd();
         
         // Enviar para analytics se disponível
         if (window.analytics && typeof window.analytics.trackError === 'function') {
@@ -453,24 +460,58 @@ class AppLogger {
     checkHealth() {
         const report = this.getReport();
         const status = this.getStatus();
+        const scripts = Object.keys(this.performance.scripts);
         
-        console.group('🩺 Health Check do Aplicativo');
-        console.log(`Status: ${status}`);
-        console.log(`Scripts carregados: ${Object.keys(this.performance.scripts).length}`);
-        console.log(`Erros: ${this.errors.length}`);
-        console.log(`Warnings: ${this.warnings.length}`);
+        console.groupCollapsed(`%c🩺 Health Check do Aplicativo - ${status}`, 
+            status === 'HEALTHY' ? 'color: #4CAF50; font-weight: bold;' :
+            status === 'WITH_WARNINGS' ? 'color: #FF9800; font-weight: bold;' :
+            status === 'WITH_ERRORS' ? 'color: #F44336; font-weight: bold;' :
+            'color: #9C27B0; font-weight: bold;');
+        
+        console.log(`📊 Status: ${status}`);
+        console.log(`📦 Scripts carregados: ${scripts.length}`);
+        console.log(`❌ Erros: ${this.errors.length}`);
+        console.log(`⚠️  Warnings: ${this.warnings.length}`);
         
         if (this.performance.pageLoadTime) {
-            console.log(`Tempo de carregamento: ${this.performance.pageLoadTime.toFixed(2)}ms`);
+            console.log(`⏱️  Tempo de carregamento: ${this.performance.pageLoadTime.toFixed(2)}ms`);
         }
         
-        // Listar scripts não carregados
+        // Mostrar scripts carregados
+        if (scripts.length > 0) {
+            console.groupCollapsed('📁 Scripts carregados:');
+            scripts.forEach((script, index) => {
+                const data = this.performance.scripts[script];
+                console.log(`${index + 1}. ${script}: ${data.loaded ? '✅' : '❌'} ${data.loadTime ? `(${data.loadTime.toFixed(2)}ms)` : ''}`);
+            });
+            console.groupEnd();
+        }
+        
+        // Listar scripts esperados mas não carregados
         const missingScripts = this.expectedScripts.filter(script => 
             !this.performance.scripts[script]
         );
         
         if (missingScripts.length > 0) {
-            console.warn('Scripts ausentes:', missingScripts);
+            console.warn('🔍 Scripts esperados mas não encontrados:', missingScripts);
+        }
+        
+        // Mostrar erros recentes se houver
+        if (this.errors.length > 0) {
+            console.groupCollapsed(`❌ Últimos ${Math.min(3, this.errors.length)} erros:`);
+            this.errors.slice(-3).forEach((error, index) => {
+                console.log(`${index + 1}. ${error.message || 'Erro sem mensagem'}`);
+            });
+            console.groupEnd();
+        }
+        
+        // Mostrar warnings recentes se houver
+        if (this.warnings.length > 0) {
+            console.groupCollapsed(`⚠️  Últimos ${Math.min(3, this.warnings.length)} warnings:`);
+            this.warnings.slice(-3).forEach((warning, index) => {
+                console.log(`${index + 1}. ${warning.message || 'Warning sem mensagem'}`);
+            });
+            console.groupEnd();
         }
         
         console.groupEnd();
@@ -478,8 +519,25 @@ class AppLogger {
         return {
             status,
             report,
-            healthy: status === 'HEALTHY' || status === 'WITH_WARNINGS'
+            healthy: status === 'HEALTHY' || status === 'WITH_WARNINGS',
+            timestamp: new Date().toISOString()
         };
+    }
+    
+    // ========== AGENDAR HEALTH CHECK ==========
+    scheduleHealthCheck() {
+        // Verificar se já há um health check agendado
+        if (this.healthCheckScheduled) {
+            return;
+        }
+        
+        this.healthCheckScheduled = true;
+        
+        // Agendar health check único após 2 segundos
+        setTimeout(() => {
+            this.checkHealth();
+            this.healthCheckScheduled = false;
+        }, 2000);
     }
     
     // ========== UTILITÁRIOS ==========
@@ -505,7 +563,7 @@ class AppLogger {
     
     // ========== HEARTBEAT ==========
     setupHeartbeat() {
-        // Verificar periodicamente o status da aplicação
+        // Verificar periodicamente o status da aplicação (a cada 5 minutos)
         this.heartbeatInterval = setInterval(() => {
             const health = this.checkHealth();
             
@@ -518,7 +576,7 @@ class AppLogger {
                     location.reload();
                 }
             }
-        }, 60000); // A cada minuto
+        }, 300000); // A cada 5 minutos
     }
     
     // ========== DEBUG ==========
@@ -643,18 +701,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         detectScripts: () => window.appLogger.detectScripts()
                     };
                     
-                    console.log('🔧 Debug tools disponíveis em window.debugApp');
-                    console.log('📝 Para verificar a saúde do app: debugApp.health()');
-                    console.log('📊 Para ver relatório completo: debugApp.report()');
+                    console.log('%c🔧 Debug tools disponíveis em window.debugApp', 'color: #4CAF50; font-weight: bold;');
+                    console.log('%c📝 Para verificar a saúde do app: debugApp.health()', 'color: #2196F3;');
+                    console.log('%c📊 Para ver relatório completo: debugApp.report()', 'color: #2196F3;');
                 }
             }
-            
-            // Verificar saúde após 3 segundos (tempo para carregamento)
-            setTimeout(() => {
-                if (window.appLogger && window.appLogger.checkHealth) {
-                    window.appLogger.checkHealth();
-                }
-            }, 3000);
             
         } catch (error) {
             console.error('Falha crítica ao inicializar AppLogger:', error);
