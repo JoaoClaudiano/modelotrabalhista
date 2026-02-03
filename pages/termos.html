@@ -1,34 +1,880 @@
-<section class="container" style="padding: 60px 0; max-width: 900px;">
-    <h1 style="margin-bottom: 30px;">Termos e Condições de Uso | ModeloTrabalhista</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta Tags Otimizadas para SEO -->
+    <title>Termos e Condições de Uso | ModeloTrabalhista - Contrato de Uso da Plataforma</title>
+    <meta name="description" content="Termos e Condições completos do ModeloTrabalhista. Leia o contrato de uso da plataforma, direitos, responsabilidades, propriedade intelectual e políticas de serviço.">
+    <meta name="keywords" content="termos de uso, condições de uso, contrato de serviço, direitos do usuário, propriedade intelectual, limitação de responsabilidade, modelo trabalhista">
+    <meta name="author" content="ModeloTrabalhista">
+    
+    <!-- Open Graph Tags para redes sociais -->
+    <meta property="og:title" content="Termos e Condições de Uso | ModeloTrabalhista">
+    <meta property="og:description" content="Contrato completo de uso da plataforma de documentos trabalhistas. Conheça seus direitos e responsabilidades.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    
+    <!-- Links para CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="institucional.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Estilos específicos para esta página -->
+    <style>
+        /* Estilos para termos legais */
+        .terms-alert {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid var(--primary-color);
+            border-left: 6px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            margin: var(--space-xl) 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .terms-alert.important {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: #ef4444;
+            border-left-color: #ef4444;
+        }
+        
+        .terms-alert.warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #f59e0b;
+            border-left-color: #f59e0b;
+        }
+        
+        .terms-alert.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #10b981;
+            border-left-color: #10b981;
+        }
+        
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .alert-header i {
+            font-size: 1.5rem;
+        }
+        
+        /* Estilos para cláusulas e seções */
+        .clause-container {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .clause-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .clause-number {
+            background: var(--primary-color);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* Estilos para definições importantes */
+        .definition-box {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .definition-term {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: var(--space-xs);
+        }
+        
+        /* Tabela de comparação de direitos */
+        .rights-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-lg) 0;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .rights-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: var(--space-md);
+            text-align: left;
+        }
+        
+        .rights-table td {
+            padding: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .rights-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .right-allowed {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .right-prohibited {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        /* Estilos para exemplos de uso */
+        .usage-example {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .example-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: var(--space-xs);
+        }
+        
+        /* Estilos para licença MIT */
+        .license-box {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .rights-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .clause-container {
+                padding: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Identificado ao Index -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html#home" class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    Modelo<span>Trabalhista</span>
+                </a>
+                
+                <button class="mobile-menu-btn" aria-label="Abrir menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="../index.html#home"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="../index.html#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerador</a></li>
+                        <li><a href="../index.html#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="../index.html#sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
+                        <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <h3>1. Aceitação dos Termos</h3>
-    <p>Ao acessar e utilizar o site <strong>ModeloTrabalhista</strong>, você concorda em cumprir e estar vinculado aos seguintes termos e condições de uso. Se você não concordar com qualquer parte destes termos, não deverá utilizar nossos serviços.</p>
+    <!-- Conteúdo Principal dos Termos e Condições -->
+    <main class="institucional-main">
+        <div class="institucional-container">
+            <article class="content-card">
+                <header class="content-header">
+                    <h1>Termos e Condições de Uso do ModeloTrabalhista</h1>
+                    <p class="last-updated"><strong>Última atualização:</strong> 03 de Fevereiro de 2026</p>
+                    <p class="page-description">Contrato completo que rege o uso da plataforma ModeloTrabalhista. Leia atentamente antes de utilizar nossos serviços.</p>
+                    
+                    <div class="terms-alert important">
+                        <div class="alert-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Aviso Importante: Aceitação dos Termos</h3>
+                        </div>
+                        <p>Ao acessar, navegar ou utilizar de qualquer forma o site <strong>ModeloTrabalhista</strong>, você concorda expressamente em cumprir e estar vinculado a todos os termos e condições estabelecidos neste documento. Se você não concorda com qualquer parte destes termos, deverá imediatamente cessar o uso de nossos serviços.</p>
+                    </div>
+                </header>
+                
+                <div class="content-body">
+                    <section>
+                        <h2>1. Definições e Interpretação</h2>
+                        
+                        <div class="definition-box">
+                            <div class="definition-term">"Plataforma" ou "Site"</div>
+                            <p>Refere-se ao website ModeloTrabalhista, disponível em https://joaoclaudiano.github.io/modelotrabalhista/, incluindo todas as suas páginas, subdomínios, funcionalidades e serviços associados.</p>
+                        </div>
+                        
+                        <div class="definition-box">
+                            <div class="definition-term">"Usuário"</div>
+                            <p>Qualquer pessoa física ou jurídica que acesse, navegue ou utilize de qualquer forma os serviços oferecidos pela Plataforma.</p>
+                        </div>
+                        
+                        <div class="definition-box">
+                            <div class="definition-term">"Serviços"</div>
+                            <p>As funcionalidades oferecidas pela Plataforma, incluindo mas não se limitando à geração de modelos de documentos trabalhistas, informações jurídicas educativas e ferramentas de apoio à documentação trabalhista.</p>
+                        </div>
+                        
+                        <div class="definition-box">
+                            <div class="definition-term">"Conteúdo Gerado"</div>
+                            <p>Os documentos, textos, formulários e quaisquer outros materiais produzidos através da utilização das ferramentas da Plataforma.</p>
+                        </div>
+                    </section>
 
-    <h3>2. Descrição do Serviço</h3>
-    <p>O ModeloTrabalhista fornece uma ferramenta online automatizada que permite aos usuários gerarem rascunhos de documentos trabalhistas (como pedidos de demissão, recibos e advertências) baseados em modelos predefinidos. O serviço é oferecido de forma gratuita e "como está" (as is), sem garantias de qualquer tipo.</p>
+                    <section>
+                        <h2>2. Aceitação e Modificação dos Termos</h2>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">2.1</div>
+                                <h3>Aceitação Expressa</h3>
+                            </div>
+                            <p>Ao utilizar a Plataforma, você declara que:</p>
+                            <ul>
+                                <li>Leu, compreendeu e concordou com todos os termos aqui estabelecidos</li>
+                                <li>Possui capacidade legal para celebrar este acordo (maioridade civil conforme legislação brasileira)</li>
+                                <li>Utilizará os serviços apenas para fins lícitos e permitidos</li>
+                                <li>Fornecerá informações verdadeiras e precisas quando necessário</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">2.2</div>
+                                <h3>Modificações dos Termos</h3>
+                            </div>
+                            <p>Reservamo-nos o direito de modificar, alterar ou atualizar estes Termos e Condições a qualquer momento, a nosso exclusivo critério. As alterações entrarão em vigor imediatamente após sua publicação na Plataforma.</p>
+                            <div class="terms-alert">
+                                <div class="alert-header">
+                                    <i class="fas fa-info-circle"></i>
+                                    <h4>Continuidade do Uso como Aceitação</h4>
+                                </div>
+                                <p>O uso contínuo da Plataforma após a publicação de quaisquer alterações constitui aceitação tácita dos novos termos. Recomendamos que você revise periodicamente esta página para se manter informado sobre eventuais atualizações.</p>
+                            </div>
+                        </div>
+                    </section>
 
-    <h3>3. Limitação de Responsabilidade</h3>
-    <p>É fundamental compreender que o <strong>ModeloTrabalhista não é um escritório de advocacia</strong> e não oferece consultoria jurídica.</p>
-    <ul>
-        <li><strong>Natureza Informativa:</strong> Os documentos gerados servem como modelos padrão e podem não cobrir todas as nuances legais específicas do seu caso, convenção coletiva ou contrato de trabalho.</li>
-        <li><strong>Responsabilidade do Usuário:</strong> O usuário assume total responsabilidade pela revisão, edição e uso dos documentos gerados. Recomendamos a revisão por um profissional qualificado antes de qualquer assinatura.</li>
-        <li><strong>Danos:</strong> Em nenhuma circunstância o ModeloTrabalhista será responsável por quaisquer danos diretos, indiretos, incidentais ou consequenciais resultantes do uso ou da incapacidade de usar os documentos gerados.</li>
-    </ul>
+                    <section>
+                        <h2>3. Descrição dos Serviços</h2>
+                        
+                        <div class="terms-alert">
+                            <div class="alert-header">
+                                <i class="fas fa-cogs"></i>
+                                <h3>Natureza dos Serviços Oferecidos</h3>
+                            </div>
+                            <p>O ModeloTrabalhista é uma plataforma digital que oferece ferramentas automatizadas para geração de rascunhos de documentos trabalhistas. É fundamental compreender a natureza exata de nossos serviços:</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">3.1</div>
+                                <h3>Ferramenta de Autoajuda Tecnológica</h3>
+                            </div>
+                            <p>A Plataforma funciona como uma ferramenta de autoajuda tecnológica que permite aos usuários gerarem rascunhos de documentos trabalhistas com base em modelos predefinidos. Os serviços incluem:</p>
+                            <ul>
+                                <li>Modelos de documentos trabalhistas padrão</li>
+                                <li>Formulários interativos para preenchimento de dados</li>
+                                <li>Geração automatizada de documentos em múltiplos formatos</li>
+                                <li>Informações educativas sobre legislação trabalhista</li>
+                                <li>Guias passo a passo para procedimentos trabalhistas básicos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">3.2</div>
+                                <h3>Licença de Uso do Serviço</h3>
+                            </div>
+                            <p>Concedemos a você uma licença pessoal, não exclusiva, intransferível e revogável para utilizar nossos serviços, sujeita ao cumprimento destes Termos. Esta licença não inclui:</p>
+                            <ul>
+                                <li>Direito de revender, sublicenciar ou distribuir nossos serviços</li>
+                                <li>Direito de realizar engenharia reversa ou descompilar qualquer parte da Plataforma</li>
+                                <li>Direito de utilizar nossos serviços para desenvolver produtos concorrentes</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">3.3</div>
+                                <h3>Serviço "Como Está" (As Is)</h3>
+                            </div>
+                            <div class="terms-alert warning">
+                                <div class="alert-header">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <h4>Ausência de Garantias</h4>
+                                </div>
+                                <p>Os serviços são fornecidos <strong>"COMO ESTÃO" (AS IS)</strong> e <strong>"CONFORME DISPONÍVEL" (AS AVAILABLE)</strong>, sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que:</p>
+                                <ul>
+                                    <li>Os serviços atenderão a todos os seus requisitos</li>
+                                    <li>Os serviços serão ininterruptos, oportunos, seguros ou livres de erros</li>
+                                    <li>Os resultados obtidos do uso dos serviços serão precisos ou confiáveis</li>
+                                    <li>Quaisquer erros nos serviços serão corrigidos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
 
-    <h3>4. Propriedade Intelectual</h3>
-    <p>O código-fonte do gerador, o design da interface, o logotipo e os textos explicativos são de propriedade do ModeloTrabalhista e protegidos pelas leis de direitos autorais. O código do projeto é Open Source sob licença MIT, conforme detalhado em nosso repositório oficial, permitindo estudo e colaboração, mas vedando o uso da marca para confundir o consumidor final.</p>
+                    <section>
+                        <h2>4. Limitações de Responsabilidade</h2>
+                        
+                        <div class="terms-alert important">
+                            <div class="alert-header">
+                                <i class="fas fa-hand-paper"></i>
+                                <h3>Isenção Expressa de Responsabilidade Jurídica</h3>
+                            </div>
+                            <p>É fundamental compreender que o <strong>MODELOTRABALHISTA NÃO É UM ESCRITÓRIO DE ADVOCACIA</strong> e <strong>NÃO OFERECE CONSULTORIA JURÍDICA PROFISSIONAL</strong>. Declaramos expressamente:</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">4.1</div>
+                                <h3>Natureza Exclusivamente Informativa</h3>
+                            </div>
+                            <p>Os documentos gerados pela Plataforma servem como modelos padrão e podem não cobrir todas as nuances legais específicas do seu caso particular. Fatores que podem afetar a adequação incluem:</p>
+                            <ul>
+                                <li>Convenções coletivas específicas da sua categoria profissional</li>
+                                <li>Cláusulas particulares do seu contrato de trabalho</li>
+                                <li>Jurisprudência regional ou específica do tribunal competente</li>
+                                <li>Circunstâncias pessoais únicas do seu caso</li>
+                                <li>Alterações legislativas recentes não incorporadas aos modelos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">4.2</div>
+                                <h3>Responsabilidade do Usuário</h3>
+                            </div>
+                            <p>O usuário assume total e exclusiva responsabilidade por:</p>
+                            
+                            <div class="usage-example">
+                                <div class="example-header">
+                                    <i class="fas fa-user-check"></i>
+                                    Revisão e Validação
+                                </div>
+                                <p>Revisar, editar, validar e verificar a adequação dos documentos gerados à sua situação específica antes de qualquer uso formal.</p>
+                            </div>
+                            
+                            <div class="usage-example">
+                                <div class="example-header">
+                                    <i class="fas fa-balance-scale"></i>
+                                    Consultoria Profissional
+                                </div>
+                                <p>Buscar aconselhamento jurídico profissional qualificado para revisão dos documentos em casos complexos ou que envolvam valores significativos.</p>
+                            </div>
+                            
+                            <div class="usage-example">
+                                <div class="example-header">
+                                    <i class="fas fa-file-signature"></i>
+                                    Uso Adequado
+                                </div>
+                                <p>Utilizar os documentos apenas para fins lícitos e de acordo com a legislação aplicável.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">4.3</div>
+                                <h3>Limitação de Danos</h3>
+                            </div>
+                            <div class="terms-alert warning">
+                                <div class="alert-header">
+                                    <i class="fas fa-ban"></i>
+                                    <h4>Exclusão de Responsabilidade por Danos</h4>
+                                </div>
+                                <p>Em nenhuma circunstância o ModeloTrabalhista, seus desenvolvedores, colaboradores, diretores, funcionários ou parceiros serão responsáveis por quaisquer:</p>
+                                <ul>
+                                    <li><strong>Danos diretos:</strong> Perdas financeiras imediatas resultantes do uso dos serviços</li>
+                                    <li><strong>Danos indiretos:</strong> Perdas de oportunidades, lucros cessantes ou danos à reputação</li>
+                                    <li><strong>Danos incidentais:</strong> Custos não previstos decorrentes do uso dos serviços</li>
+                                    <li><strong>Danos consequenciais:</strong> Prejuízos resultantes de decisões tomadas com base nos documentos gerados</li>
+                                    <li><strong>Danos punitivos:</strong> Qualquer forma de penalidade ou multa</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
 
-    <h3>5. Uso Proibido</h3>
-    <p>Você concorda em não usar o site para:</p>
-    <ul>
-        <li>Gerar documentos com finalidade de fraude ou falsificação ideológica;</li>
-        <li>Inserir dados ofensivos, ilegais ou que violem direitos de terceiros;</li>
-        <li>Tentar violar a segurança do site ou realizar engenharia reversa para fins maliciosos.</li>
-    </ul>
+                    <section>
+                        <h2>5. Propriedade Intelectual</h2>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">5.1</div>
+                                <h3>Direitos Autorais da Plataforma</h3>
+                            </div>
+                            <p>Todos os elementos da Plataforma, incluindo mas não se limitando a:</p>
+                            <ul>
+                                <li>Código-fonte, scripts e algoritmos do gerador de documentos</li>
+                                <li>Design da interface, layout e experiência do usuário</li>
+                                <li>Logotipo, identidade visual e elementos gráficos</li>
+                                <li>Textos explicativos, artigos e conteúdo educacional</li>
+                                <li>Estrutura de modelos de documentos</li>
+                            </ul>
+                            <p>São de propriedade exclusiva do ModeloTrabalhista e estão protegidos pelas leis de direitos autorais brasileiras (Lei nº 9.610/98) e tratados internacionais.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">5.2</div>
+                                <h3>Licença MIT - Código Aberto</h3>
+                            </div>
+                            <p>O código-fonte do projeto está disponível como código aberto sob a <strong>Licença MIT</strong>. Esta licença permite:</p>
+                            
+                            <div class="license-box">
+                                MIT License
 
-    <h3>6. Modificações</h3>
-    <p>Reservamo-nos o direito de revisar estes termos a qualquer momento. As alterações entrarão em vigor imediatamente após a publicação no site. O uso continuado da plataforma após as alterações constitui aceitação dos novos termos.</p>
+                                Copyright (c) 2026 ModeloTrabalhista
 
-    <h3>7. Foro</h3>
-    <p>Fica eleito o foro da comarca de Fortaleza - Ceará, Brasil, para dirimir quaisquer dúvidas decorrentes destes Termos de Uso.</p>
-</section>
+                                Permission is hereby granted, free of charge, to any person obtaining a copy
+                                of this software and associated documentation files (the "Software"), to deal
+                                in the Software without restriction, including without limitation the rights
+                                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                                copies of the Software, and to permit persons to whom the Software is
+                                furnished to do so, subject to the following conditions:
+
+                                The above copyright notice and this permission notice shall be included in all
+                                copies or substantial portions of the Software.
+
+                                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                                SOFTWARE.
+                            </div>
+                            
+                            <div class="terms-alert">
+                                <div class="alert-header">
+                                    <i class="fas fa-code"></i>
+                                    <h4>Restrições Importantes</h4>
+                                </div>
+                                <p>Apesar da licença MIT para o código, são expressamente vedados:</p>
+                                <ul>
+                                    <li>Uso da marca "ModeloTrabalhista" para confundir consumidores</li>
+                                    <li>Apresentação de versões modificadas como oficiais</li>
+                                    <li>Uso comercial direto do nome e identidade visual sem autorização</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">5.3</div>
+                                <h3>Conteúdo Gerado pelo Usuário</h3>
+                            </div>
+                            <p>Em relação ao conteúdo gerado através do uso de nossas ferramentas:</p>
+                            <ul>
+                                <li><strong>Propriedade:</strong> Você mantém todos os direitos sobre os dados específicos que insere e o documento final gerado</li>
+                                <li><strong>Licença:</strong> Concede-nos uma licença não exclusiva para usar dados anonimizados para melhorias estatísticas</li>
+                                <li><strong>Armazenamento:</strong> Não armazenamos o conteúdo dos documentos gerados (consulte nossa Política de Privacidade)</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>6. Uso Permitido e Proibido</h2>
+                        
+                        <table class="rights-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Uso</th>
+                                    <th>Permitido</th>
+                                    <th>Proibido</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Geração de documentos pessoais</td>
+                                    <td class="right-allowed">✓ Permitido</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                </tr>
+                                <tr>
+                                    <td>Uso comercial dos modelos</td>
+                                    <td class="right-allowed">✓ Com restrições</td>
+                                    <td class="right-prohibited">✗ Revenda direta</td>
+                                </tr>
+                                <tr>
+                                    <td>Modificação do código-fonte</td>
+                                    <td class="right-allowed">✓ Licença MIT</td>
+                                    <td class="right-prohibited">✗ Uso da marca</td>
+                                </tr>
+                                <tr>
+                                    <td>Documentos para fraude</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                </tr>
+                                <tr>
+                                    <td>Dados ofensivos/ilegais</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                </tr>
+                                <tr>
+                                    <td>Engenharia reversa maliciosa</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                    <td class="right-prohibited">✗ Proibido</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">6.1</div>
+                                <h3>Usos Expressamente Proibidos</h3>
+                            </div>
+                            <p>Você concorda em NÃO utilizar a Plataforma para:</p>
+                            <ul>
+                                <li><strong>Fraude ou falsificação:</strong> Gerar documentos com finalidade de fraude, falsificação ideológica ou qualquer ato ilícito</li>
+                                <li><strong>Conteúdo ilegal:</strong> Inserir dados ofensivos, difamatórios, obscenos, ilegais ou que violem direitos de terceiros</li>
+                                <li><strong>Ataques à plataforma:</strong> Tentar violar a segurança do site, realizar engenharia reversa para fins maliciosos, ou sobrecarregar os servidores</li>
+                                <li><strong>Spam ou marketing abusivo:</strong> Utilizar a Plataforma para envio de spam ou práticas de marketing não solicitadas</li>
+                                <li><strong>Atividades automatizadas maliciosas:</strong> Utilizar bots, crawlers ou scripts para atividades que prejudiquem a Plataforma</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">6.2</div>
+                                <h3>Consequências do Uso Improprio</h3>
+                            </div>
+                            <div class="terms-alert important">
+                                <div class="alert-header">
+                                    <i class="fas fa-gavel"></i>
+                                    <h4>Suspensão e Responsabilização</h4>
+                                </div>
+                                <p>Reservamo-nos o direito de, a nosso exclusivo critério:</p>
+                                <ul>
+                                    <li>Suspender ou encerrar seu acesso à Plataforma</li>
+                                    <li>Remover qualquer conteúdo que viole estes Termos</li>
+                                    <li>Tomar medidas legais cabíveis, incluindo notificação às autoridades competentes</li>
+                                    <li>Exigir indenização por quaisquer danos causados</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>7. Privacidade e Proteção de Dados</h2>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">7.1</div>
+                                <h3>Referência à Política de Privacidade</h3>
+                            </div>
+                            <p>O tratamento de dados pessoais na Plataforma é regido por nossa <a href="privacidade.html">Política de Privacidade</a>, que é parte integrante destes Termos. Ao utilizar nossos serviços, você concorda com as práticas de coleta e uso de informações descritas na Política de Privacidade.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">7.2</div>
+                                <h3>Conformidade com a LGPD</h3>
+                            </div>
+                            <p>A Plataforma opera em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). Para exercer seus direitos de titular de dados, consulte nossa Política de Privacidade ou entre em contato através do e-mail: <strong>jooclaudiano@gmail.com</strong>.</p>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>8. Disposições Gerais</h2>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">8.1</div>
+                                <h3>Foro e Legislação Aplicável</h3>
+                            </div>
+                            <p>Estes Termos serão regidos e interpretados de acordo com as leis da República Federativa do Brasil. Para a solução de quaisquer controvérsias decorrentes destes Termos, as partes elegem o foro da comarca de <strong>Fortaleza - Ceará, Brasil</strong>, com expressa renúncia a qualquer outro, por mais privilegiado que seja.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">8.2</div>
+                                <h3>Integralidade do Acordo</h3>
+                            </div>
+                            <p>Estes Termos, juntamente com nossa Política de Privacidade e Disclaimer, constituem o acordo completo entre você e o ModeloTrabalhista em relação ao uso da Plataforma, substituindo todos os acordos anteriores ou contemporâneos, comunicações e propostas, sejam orais ou escritas.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">8.3</div>
+                                <h3>Divisibilidade das Cláusulas</h3>
+                            </div>
+                            <p>Caso qualquer disposição destes Termos seja considerada inválida, ilegal ou inexequível por um tribunal competente, a validade, legalidade e exequibilidade das demais disposições não serão afetadas ou prejudicadas. A disposição inválida será substituída por uma disposição válida que melhor reflita a intenção original.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">8.4</div>
+                                <h3>Tolerância e Renúncia</h3>
+                            </div>
+                            <p>A falha do ModeloTrabalhista em exercer ou fazer valer qualquer direito ou disposição destes Termos não constituirá uma renúncia a tal direito ou disposição. Nenhuma renúncia a qualquer violação destes Termos constituirá uma renúncia a qualquer violação subsequente.</p>
+                        </div>
+                    </section>
+
+                    <section class="conclusion">
+                        <h2>9. Contato e Dúvidas</h2>
+                        
+                        <div class="terms-alert success">
+                            <div class="alert-header">
+                                <i class="fas fa-question-circle"></i>
+                                <h3>Dúvidas sobre Estes Termos</h3>
+                            </div>
+                            <p>Se você tiver quaisquer dúvidas, questões ou preocupações sobre estes Termos e Condições, entre em contato conosco através dos seguintes canais:</p>
+                            <ul>
+                                <li><strong>E-mail:</strong> jooclaudiano@gmail.com</li>
+                                <li><strong>Página de Contato:</strong> <a href="contato.html">Formulário de Contato</a></li>
+                            </ul>
+                            <p>Comprometemo-nos a responder a todas as consultas relacionadas a estes Termos no prazo máximo de 15 dias úteis.</p>
+                        </div>
+                        
+                        <div class="clause-container">
+                            <div class="clause-title">
+                                <div class="clause-number">9.1</div>
+                                <h3>Aceitação Final</h3>
+                            </div>
+                            <p>Ao utilizar a Plataforma ModeloTrabalhista, você declara que:</p>
+                            <ol>
+                                <li>Leu atentamente e compreendeu integralmente estes Termos e Condições</li>
+                                <li>Concorda em ficar vinculado por todos os termos aqui estabelecidos</li>
+                                <li>Reconhece que estes Termos constituem um contrato legalmente vinculativo</li>
+                                <li>Assume total responsabilidade pelo uso adequado da Plataforma</li>
+                                <li>Compreende a importância de buscar aconselhamento profissional quando necessário</li>
+                            </ol>
+                            
+                            <div class="terms-alert" style="margin-top: var(--space-md);">
+                                <div class="alert-header">
+                                    <i class="fas fa-handshake"></i>
+                                    <h4>Uso Responsável e Construtivo</h4>
+                                </div>
+                                <p>Agradecemos por escolher o ModeloTrabalhista. Nosso objetivo é fornecer ferramentas úteis que empoderem trabalhadores e empregadores no cumprimento de suas obrigações trabalhistas. Esperamos que você utilize nossos serviços de forma responsável, ética e construtiva.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer Identificado ao Index -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-file-contract"></i>
+                        <h3>Modelo<span>Trabalhista</span></h3>
+                    </div>
+                    <p>Gerador gratuito de documentos trabalhistas. Simples, rápido e seguro.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Institucional</h4>
+                    <ul>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Fale Conosco</a></li>
+                        <li><a href="termos.html">Termos de Uso</a></li>
+                        <li><a href="privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="disclaimer.html">Aviso Legal</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Modelos</h4>
+                    <ul>
+                        <li><a href="../index.html#gerador" data-model="demissao">Pedido de Demissão</a></li>
+                        <li><a href="../index.html#gerador" data-model="ferias">Solicitação de Férias</a></li>
+                        <li><a href="../index.html#gerador" data-model="advertencia">Advertência</a></li>
+                        <li><a href="../index.html#gerador" data-model="atestado">Atestado</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#modelos">Modelos</a></li>
+                        <li><a href="../index.html#gerador">Gerador</a></li>
+                        <li><a href="../index.html#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.</p>
+                <p class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante "Voltar ao Topo" -->
+    <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Widget VLibras para Acessibilidade -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        // VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        
+        // Atualizar ano no copyright
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Botão "Voltar ao Topo"
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'flex';
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.style.display = 'none';
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Menu mobile
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.querySelector('.main-nav ul');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+            });
+            
+            // Fechar menu ao clicar em um link
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                });
+            });
+        }
+        
+        // Estilos dinâmicos para o botão "Voltar ao Topo"
+        const style = document.createElement('style');
+        style.textContent = `
+            .back-to-top-btn {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 50px;
+                height: 50px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                box-shadow: var(--shadow-lg);
+                z-index: 999;
+                transition: all var(--transition-normal);
+            }
+            
+            .back-to-top-btn:hover {
+                background: var(--primary-dark);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .back-to-top-btn.visible {
+                display: flex;
+                animation: fadeIn 0.3s ease;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            /* Responsividade */
+            @media (max-width: 768px) {
+                .back-to-top-btn {
+                    bottom: 20px;
+                    right: 20px;
+                    width: 45px;
+                    height: 45px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .back-to-top-btn {
+                    bottom: 15px;
+                    right: 15px;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
