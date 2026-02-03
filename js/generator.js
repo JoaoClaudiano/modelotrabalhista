@@ -3,22 +3,32 @@
 class DocumentGenerator {
     constructor() {
         this.templates = {
-            demissao: this.generateResignationLetter,
-            ferias: this.generateVacationRequest,
-            advertencia: this.generateWarningLetter,
-            atestado: this.generateCertificate,
-            rescisao: this.generateSeveranceAgreement,
-            reuniao: this.generateMeetingConvocation
+            demissao: this.generateResignationLetter.bind(this),
+            ferias: this.generateVacationRequest.bind(this),
+            advertencia: this.generateWarningLetter.bind(this),
+            atestado: this.generateCertificate.bind(this),
+            rescisao: this.generateSeveranceAgreement.bind(this),
+            reuniao: this.generateMeetingConvocation.bind(this)
         };
     }
 
     // Gerador principal
     generateDocument(data) {
+        if (!data || !data.model) {
+            throw new Error('Dados incompletos para gerar documento');
+        }
+        
         const generator = this.templates[data.model];
         if (!generator) {
             throw new Error('Tipo de documento não suportado');
         }
-        return generator.call(this, data);
+        
+        try {
+            return generator(data);
+        } catch (error) {
+            console.error('Erro ao gerar documento:', error);
+            throw new Error(`Falha ao gerar documento: ${error.message}`);
+        }
     }
 
     // 1. PEDIDO DE DEMISSÃO
@@ -26,15 +36,15 @@ class DocumentGenerator {
         const effectiveDate = data.effectiveDate ? this.formatDate(data.effectiveDate) : '(a definir)';
         const noticePeriodText = this.getNoticePeriodText(data.noticePeriod);
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                                PEDIDO DE DEMISSÃO
 ${'='.repeat(80)}
 
-Eu, ${data.employeeName}, brasileiro(a), portador(a) do CPF [INFORME AQUI] 
-e Carteira de Trabalho [INFORME AQUI], na função de ${data.employeePosition}, 
+Eu, ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, brasileiro(a), portador(a) do CPF [INFORME AQUI] 
+e Carteira de Trabalho [INFORME AQUI], na função de ${data.employeePosition || '[CARGO]'}, 
 venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
 ocupo nesta empresa.
 
@@ -53,7 +63,7 @@ legislação trabalhista e normas internas da empresa.
 
 ${'='.repeat(80)}
 
-Data: ${data.documentDateFormatted}
+Data: ${data.documentDateFormatted || this.formatDate(new Date())}
 
 ${'_'.repeat(42)}
 Assinatura do Funcionário
@@ -70,15 +80,15 @@ Data: __/__/______`;
         const period = data.vacationPeriod || '(período a ser definido)';
         const days = data.vacationDays || '30';
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                            SOLICITAÇÃO DE FÉRIAS
 ${'='.repeat(80)}
 
-Eu, ${data.employeeName}, funcionário(a) desta empresa no cargo de 
-${data.employeePosition}, venho por meio deste solicitar o gozo de minhas 
+Eu, ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, funcionário(a) desta empresa no cargo de 
+${data.employeePosition || '[CARGO]'}, venho por meio deste solicitar o gozo de minhas 
 férias referentes ao período aquisitivo vigente.
 
 Solicito que as férias sejam concedidas no seguinte período: ${period}
@@ -91,7 +101,7 @@ Declaro estar ciente de que, conforme legislação trabalhista:
 
 ${'='.repeat(80)}
 
-Data: ${data.documentDateFormatted}
+Data: ${data.documentDateFormatted || this.formatDate(new Date())}
 
 ${'_'.repeat(42)}
 Assinatura do Funcionário
@@ -105,19 +115,19 @@ Data de Agendamento: __/__/______`;
     // 3. ADVERTÊNCIA FORMAL
     generateWarningLetter(data) {
         const severityText = this.getSeverityText(data.severity);
-        const incidentDate = data.incidentDate ? this.formatDate(data.incidentDate) : data.documentDateFormatted;
+        const incidentDate = data.incidentDate ? this.formatDate(data.incidentDate) : data.documentDateFormatted || this.formatDate(new Date());
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                              ADVERTÊNCIA FORMAL
 ${'='.repeat(80)}
 
-Para: ${data.employeeName}
-Cargo: ${data.employeePosition}
+Para: ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}
+Cargo: ${data.employeePosition || '[CARGO]'}
 Data da Ocorrência: ${incidentDate}
-Data do Documento: ${data.documentDateFormatted}
+Data do Documento: ${data.documentDateFormatted || this.formatDate(new Date())}
 Gravidade: ${severityText}
 
 ${'='.repeat(80)}
@@ -166,15 +176,15 @@ Assinatura do Funcionário`;
             ? `na data de ${startDate}`
             : `no período de ${startDate} a ${endDate}`;
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                                   ATESTADO
 ${'='.repeat(80)}
 
-Atesto para os devidos fins que o(a) Sr(a). ${data.employeeName}, 
-ocupante do cargo de ${data.employeePosition} nesta empresa, não compareceu 
+Atesto para os devidos fins que o(a) Sr(a). ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, 
+ocupante do cargo de ${data.employeePosition || '[CARGO]'} nesta empresa, não compareceu 
 ao trabalho ${period} devido a:
 
 "${data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.'}"
@@ -185,7 +195,7 @@ acordo ou convenção coletiva.
 
 ${'='.repeat(80)}
 
-Data: ${data.documentDateFormatted}
+Data: ${data.documentDateFormatted || this.formatDate(new Date())}
 
 ${'_'.repeat(42)}
 Assinatura do Responsável
@@ -197,19 +207,19 @@ Cargo: ${'_'.repeat(42)}`;
     generateSeveranceAgreement(data) {
         const value = data.severanceValue ? `R$ ${parseFloat(data.severanceValue).toFixed(2).replace('.', ',')}` : 'a ser definido';
         const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
-        const conditions = data.additionalConditions ? `6. ${data.additionalConditions}` : '';
+        const conditions = data.additionalConditions ? `\n6. ${data.additionalConditions}` : '';
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                        ACORDO DE RESCISÃO CONTRATUAL
 ${'='.repeat(80)}
 
-Entre ${data.companyName}, com sede em ${data.companyAddress}, doravante 
-denominada EMPRESA, e ${data.employeeName}, portador(a) do CPF [INFORME AQUI] 
+Entre ${data.companyName || '[NOME DA EMPRESA]'}, com sede em ${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}, doravante 
+denominada EMPRESA, e ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, portador(a) do CPF [INFORME AQUI] 
 e Carteira de Trabalho [INFORME AQUI], ocupante do cargo de 
-${data.employeePosition}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
+${data.employeePosition || '[CARGO]'}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
 o presente acordo de rescisão contratual, sob as seguintes condições:
 
 1. As partes, de comum acordo, resolvem o contrato de trabalho vigente.
@@ -220,22 +230,21 @@ o presente acordo de rescisão contratual, sob as seguintes condições:
    acordo, renuncia a qualquer ação trabalhista referente ao período 
    contratual.
 5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-   até a data do desligamento.
-${conditions}
+   até a data do desligamento.${conditions}
 
 As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
 vias de igual teor.
 
 ${'='.repeat(80)}
 
-Data: ${data.documentDateFormatted}
+Data: ${data.documentDateFormatted || this.formatDate(new Date())}
 
 ${'_'.repeat(42)}
 Representante Legal da Empresa
 Cargo: ${'_'.repeat(40)}
 
 ${'_'.repeat(42)}
-${data.employeeName}`;
+${data.employeeName || '[NOME DO FUNCIONÁRIO]'}`;
     }
 
     // 6. CONVOCATÓRIA DE REUNIÃO
@@ -246,16 +255,16 @@ ${data.employeeName}`;
         const agenda = data.meetingAgenda || 
             '1. Abertura e apresentação dos objetivos\n2. Discussão sobre metas trimestrais\n3. Ajustes de processos internos\n4. Feedbacks e sugestões\n5. Encerramento';
 
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
+        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
+${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
 
 ${'='.repeat(80)}
                         CONVOCATÓRIA PARA REUNIÃO
 ${'='.repeat(80)}
 
 Para: Todos os funcionários do departamento
-De: ${data.employeeName} - ${data.employeePosition}
-Data do Documento: ${data.documentDateFormatted}
+De: ${data.employeeName || '[NOME DO FUNCIONÁRIO]'} - ${data.employeePosition || '[CARGO]'}
+Data do Documento: ${data.documentDateFormatted || this.formatDate(new Date())}
 
 ${'='.repeat(80)}
                                CONVOCAÇÃO
@@ -278,8 +287,8 @@ ${'='.repeat(80)}
 Atenciosamente,
 
 ${'_'.repeat(42)}
-${data.employeeName}
-${data.employeePosition}`;
+${data.employeeName || '[NOME DO FUNCIONÁRIO]'}
+${data.employeePosition || '[CARGO]'}`;
     }
 
     // FUNÇÕES AUXILIARES
@@ -353,11 +362,21 @@ ${data.employeePosition}`;
                 examples.meetingLocation = 'Sala de Reuniões Principal';
                 examples.meetingAgenda = '1. Abertura e boas-vindas\n2. Apresentação dos resultados do trimestre\n3. Discussão sobre novas metas\n4. Feedbacks da equipe\n5. Encerramento';
                 break;
+            default:
+                examples.effectiveDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                examples.noticePeriod = 'trabalhado';
         }
 
         return this.generateDocument(examples);
     }
 }
+
+// Inicializar quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.documentGenerator) {
+        window.documentGenerator = new DocumentGenerator();
+    }
+});
 
 // Exportar para uso global
 window.DocumentGenerator = DocumentGenerator;
