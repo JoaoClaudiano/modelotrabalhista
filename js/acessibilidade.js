@@ -18,7 +18,7 @@ class AcessibilidadeManager {
             vlibrasEnabled: false,
             focusHighlight: true,
             readableFonts: false,
-            linkUnderline: true
+            linkUnderline: false
         };
         
         this.currentSettings = {};
