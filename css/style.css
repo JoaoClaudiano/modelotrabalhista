@@ -1143,7 +1143,61 @@ textarea.auto-resize {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.footer-notices {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0 1rem 0;
+    font-size: 0.9rem;
+    color: #ddd;
+}
 
+.notice-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.notice-icon {
+    font-size: 0.9rem;
+    color: #4dabf7;
+}
+
+.notice-separator {
+    color: #666;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 1rem 0;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Para telas menores, ajuste o layout */
+@media (max-width: 768px) {
+    .footer-notices {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .notice-separator {
+        display: none;
+    }
+    
+    .notice-item {
+        white-space: normal;
+        text-align: center;
+        justify-content: center;
+    }
+}
 /* Responsividade */
 @media (max-width: 768px) {
     .modal-content {
