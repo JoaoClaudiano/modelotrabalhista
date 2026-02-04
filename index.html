@@ -1,831 +1,1261 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModeloTrabalhista | Gerador de Documentos Trabalhistas Gratuito</title>
-    <meta name="description" content="Gere pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas prontos em segundos. Modelos válidos e gratuitos.">
-    <meta name="keywords" content="modelo trabalhista, pedido de demissão, solicitação de férias, advertência, atestado, documento trabalhista, modelo pronto gratuito">
+    
+    <!-- Meta Tags Otimizadas para SEO -->
+    <title>Pedido de Demissão CLT 2026: Passo a Passo com Direitos e Modelo Gratuito</title>
+    <meta name="description" content="Guia completo do pedido de demissão CLT 2026 com diagramas visuais. Entenda direitos trabalhistas, TRCT, fluxograma do processo e baixe modelo atualizado para download gratuito.">
+    <meta name="keywords" content="pedido de demissão CLT, TRCT, direitos rescisão, fluxograma demissão, verbas rescisórias, aviso prévio, cálculo rescisão, multa 40% FGTS">
     <meta name="author" content="ModeloTrabalhista">
     
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://joaoclaudiano.github.io/modelotrabalhista/">
-    <meta property="og:title" content="ModeloTrabalhista | Gerador de Documentos Trabalhistas">
-    <meta property="og:description" content="Gere documentos trabalhistas prontos em segundos. Totalmente gratuito!">
-    <meta property="og:image" content="https://joaoclaudiano.github.io/modelotrabalhista/assets/og-image.png">
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Pedido de Demissão CLT 2026: Passo a Passo com Diagramas e Modelo Gratuito">
+    <meta property="og:description" content="Guia visual completo: fluxograma do processo, comparação de verbas, direitos no TRCT e modelo gratuito de pedido de demissão 2026.">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="pt_BR">
     
-    <!-- Favicon -->
-    <!-- Favicon tradicional (para navegadores antigos) -->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://joaoclaudiano.github.io/modelotrabalhista/artigos/pedido-demissao.html">
     
-    <!-- Favicon moderno em PNG (96x96) -->
-    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96x96.png">
-    
-    <!-- Favicon SVG (para navegadores mais recentes) -->
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    
-    <!-- Apple Touch Icon (iPhone/iPad) -->
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-    
-    <!-- Manifest para PWA (Android/Chrome) -->
-    <link rel="manifest" href="assets/manifest.json">
-    
-    <!-- Meta tags para PWA -->
-    <meta name="theme-color" content="#000000">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Pedido de Demissão CLT 2026: Passo a Passo com Diagramas e Modelo Gratuito",
+        "description": "Guia visual completo sobre pedido de demissão na CLT com fluxograma do processo, comparação de verbas rescisórias e modelo atualizado para 2026.",
+        "author": {
+            "@type": "Organization",
+            "name": "ModeloTrabalhista",
+            "url": "https://joaoclaudiano.github.io/modelotrabalhista/"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "ModeloTrabalhista",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://joaoclaudiano.github.io/modelotrabalhista/assets/icons/icon-192x192.png"
+            }
+        },
+        "datePublished": "2026-02-03",
+        "dateModified": "2026-02-03",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://joaoclaudiano.github.io/modelotrabalhista/artigos/pedido-demissao.html"
+        },
+        "keywords": "pedido de demissão CLT, TRCT, fluxograma demissão, verbas rescisórias, aviso prévio, multa FGTS",
+        "wordCount": "2200",
+        "timeRequired": "PT10M"
+    }
+    </script>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css" media="screen and (max-width: 768px)">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="js/main.js" as="script">
-    <link rel="preload" href="js/ui.js" as="script">
-    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="template.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Loading styles -->
-    <style>
-        .app-loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        .loading-text {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .app-loaded .app-loading {
-            opacity: 0;
-            pointer-events: none;
-        }
-    </style>
+    
+    <!-- Fontes com atributos otimizados -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+    
+    <!-- Mermaid.js para diagramas -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    
+    <!-- Google AdSense (substitua com seu próprio código) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_CLIENT_ID" crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- Loading overlay -->
-    <div class="app-loading">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Carregando ModeloTrabalhista...</div>
-    </div>
-    
     <!-- Header -->
     <header class="main-header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
+                <a href="../index.html#home" class="logo">
                     <i class="fas fa-file-contract"></i>
-                    <h1>Modelo<span>Trabalhista</span></h1>
-                </div>
+                    Modelo<span>Trabalhista</span>
+                </a>
+                
+                <button class="mobile-menu-btn" aria-label="Abrir menu">
+                    <i class="fas fa-bars"></i>
+                </button>
                 
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="#home" class="active"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
-                        <li><a href="#gerador"><i class="fas fa-magic"></i> Gerar</a></li>
-                        <li><a href="#sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
-                        <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="../index.html#home"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="../index.html#modelos"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerador</a></li>
+                        <li><a href="artigos.html" class="active"><i class="fas fa-newspaper"></i> Artigos</a></li>
+                        <li><a href="../index.html#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
                     </ul>
                 </nav>
-                
-                <button class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Documentos Trabalhistas Prontos em 30 segundos!</h2>
-                <p class="hero-subtitle">Gere pedidos de demissão, solicitações de férias, advertências e outros documentos válidos. Totalmente gratuito!</p>
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs container">
+        <nav aria-label="Navegação estrutural">
+            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="../index.html#home" itemprop="item">
+                        <span itemprop="name">Início</span>
+                    </a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="artigos.html" itemprop="item">
+                        <span itemprop="name">Artigos</span>
+                    </a>
+                    <meta itemprop="position" content="2" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span itemprop="name">Pedido de Demissão CLT</span>
+                    <meta itemprop="position" content="3" />
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Conteúdo do Artigo -->
+    <main class="articles-main">
+        <div class="articles-container">
+            <article class="article-content" itemscope itemtype="https://schema.org/Article">
+                <header class="article-header">
+                    <div class="article-meta">
+                        <span class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <time datetime="2026-02-03" itemprop="datePublished">03 de Fevereiro de 2026</time>
+                        </span>
+                        <span class="meta-item">
+                            <i class="far fa-clock"></i>
+                            <span itemprop="timeRequired">10 min de leitura</span>
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-sync-alt"></i>
+                            Conteúdo revisado conforme as regras de 2026
+                        </span>
+                        <span class="meta-item">
+                            <i class="far fa-user"></i>
+                            <span itemprop="author">Por Equipe ModeloTrabalhista</span>
+                        </span>
+                    </div>
+                    
+                    <h1 class="article-title" itemprop="headline">Pedido de Demissão CLT 2026: Guia Visual Completo com Modelo Gratuito</h1>
+                    
+                    <p class="article-excerpt" itemprop="description">
+                        Aprenda com diagramas visuais todo o processo de pedido de demissão. Fluxograma passo a passo, 
+                        comparação de verbas rescisórias, explicação do TRCT e modelo atualizado para download.
+                    </p>
+                    
+                    <div class="article-tags">
+                        <span class="article-tag" itemprop="keywords">Pedido de Demissão</span>
+                        <span class="article-tag" itemprop="keywords">TRCT</span>
+                        <span class="article-tag" itemprop="keywords">Fluxograma Processo</span>
+                        <span class="article-tag" itemprop="keywords">Verbas Rescisórias</span>
+                        <span class="article-tag" itemprop="keywords">Multa 40% FGTS</span>
+                        <span class="article-tag" itemprop="keywords">Aviso Prévio 2026</span>
+                    </div>
+                </header>
                 
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="number">6</span>
-                        <span class="label">Modelos</span>
+                <!-- AdSense Banner Top -->
+                <div class="ad-container responsive-ad" style="margin: 20px 0; text-align: center;">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-SEU_CLIENT_ID"
+                         data-ad-slot="1234567890"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+                
+                <div class="article-body" itemprop="articleBody">
+                    <!-- CTA Principal -->
+                    <div class="article-cta">
+                        <h3><i class="fas fa-file-download"></i> Gere seu Pedido de Demissão em 2 Minutos</h3>
+                        <p>Use nosso gerador automático para criar um documento personalizado e válido para 2026.</p>
+                        <a href="../index.html#gerador" class="btn-primary" style="background-color: white; color: var(--primary-color); margin-top: var(--space-md);">
+                            <i class="fas fa-magic"></i> Gerar Pedido de Demissão Agora
+                        </a>
                     </div>
-                    <div class="stat">
-                        <span class="number">100%</span>
-                        <span class="label">Gratuito</span>
+
+                    <!-- Seção 1: Fluxograma do Processo -->
+                    <section class="article-section">
+                        <h2><i class="fas fa-project-diagram"></i> 1. Fluxograma: O Caminho do Desligamento Seguro</h2>
+                        
+                        <p>Visualize todo o processo de pedido de demissão em um fluxograma passo a passo. Siga cada etapa para garantir um desligamento correto e dentro da lei:</p>
+                        
+                        <div class="mermaid-diagram">
+                            <div class="mermaid">
+                                graph TD
+                                    A[🎯 Decisão e Elaboração da Carta<br><small>Use nosso gerador para criar o documento</small>]
+                                    --> B[📄 Entrega Formal<br><small>Protocolo com assinatura de recebimento da empresa</small>]
+                                    
+                                    B --> C{📅 Período de Aviso Prévio}
+                                    C --> D[⏰ Trabalhado<br><small>30 dias trabalhando normalmente</small>]
+                                    C --> E[💰 Indenizado<br><small>Empresa paga e dispensa do trabalho</small>]
+                                    
+                                    D --> F[🏥 Exame Demissional<br><small>Obrigatório por conta da empresa</small>]
+                                    E --> F
+                                    
+                                    F --> G[✅ Pagamento e Assinatura do TRCT<br><small>Prazo máximo de 10 dias após aviso prévio</small>]
+                                    
+                                    G --> H[🎉 Desligamento Concluído<br><small>Carteira assinada e verbas recebidas</small>]
+
+                                style A fill:#e3f2fd,stroke:#1565c0
+                                style B fill:#e8f5e8,stroke:#2e7d32
+                                style C fill:#fff3e0,stroke:#ef6c00
+                                style D fill:#f3e5f5,stroke:#7b1fa2
+                                style E fill:#f3e5f5,stroke:#7b1fa2
+                                style F fill:#e0f2f1,stroke:#00695c
+                                style G fill:#fce4ec,stroke:#c2185b
+                                style H fill:#e8f5e8,stroke:#2e7d32
+                            </div>
+                            
+                            <p class="image-caption"><strong>Figura 1:</strong> Fluxograma completo do processo de pedido de demissão. Siga cada etapa sequencialmente para um desligamento seguro.</p>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <h4><i class="fas fa-play-circle"></i> Como Usar Este Fluxograma</h4>
+                            <p><strong>Imagine que você trabalha há 2 anos e quer sair na quarta-feira:</strong></p>
+                            <ol>
+                                <li><strong>Quarta-feira (Dia 1):</strong> Use nosso gerador para criar seu pedido de demissão (Etapa A)</li>
+                                <li><strong>Quinta-feira (Dia 2):</strong> Entregue formalmente ao RH e peça cópia assinada (Etapa B)</li>
+                                <li><strong>Sexta-feira (Dia 3):</strong> Defina com a empresa se cumprirá ou não o aviso prévio (Etapa C)</li>
+                                <li><strong>Próximas 4 semanas:</strong> Período de aviso prévio (Etapas D/E)</li>
+                                <li><strong>Última semana:</strong> Realize exame demissional (Etapa F)</li>
+                                <li><strong>10 dias após:</strong> Receba TRCT e pagamentos (Etapa G)</li>
+                            </ol>
+                        </div>
+                    </section>
+                    
+                    <!-- AdSense In-Article -->
+                    <div class="in-content-ad" style="margin: 30px 0; text-align: center;">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <ins class="adsbygoogle"
+                             style="display:block; text-align:center;"
+                             data-ad-layout="in-article"
+                             data-ad-format="fluid"
+                             data-ad-client="ca-pub-SEU_CLIENT_ID"
+                             data-ad-slot="0987654321"></ins>
+                        <script>
+                             (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
                     </div>
-                    <div class="stat">
-                        <span class="number">Pronto</span>
-                        <span class="label">em Segundos</span>
+                    
+                    <!-- Seção 2: Diagrama de Comparação de Verbas -->
+                    <section class="article-section">
+                        <h2><i class="fas fa-chart-pie"></i> 2. Diagrama: Comparação Visual das Verbas Rescisórias</h2>
+                        
+                        <p>Entenda visualmente quais verbas você <strong>recebe</strong> e quais <strong>ficam retidas</strong> no pedido de demissão:</p>
+                        
+                        <div class="comparison-diagram">
+                            <div class="mermaid">
+                                pie title Verbas no Pedido de Demissão CLT
+                                    "Saldo de Salário" : 25
+                                    "13º Salário Proporcional" : 20
+                                    "Férias Proporcionais + 1/3" : 25
+                                    "Multa 40% FGTS (Não Recebe)" : 15
+                                    "Seguro-Desemprego (Não Recebe)" : 15
+
+                                style "Saldo de Salário" fill:#4caf50
+                                style "13º Salário Proporcional" fill:#8bc34a
+                                style "Férias Proporcionais + 1/3" fill:#cddc39
+                                style "Multa 40% FGTS (Não Recebe)" fill:#f44336
+                                style "Seguro-Desemprego (Não Recebe)" fill:#ff9800
+                            </div>
+                            
+                            <p class="image-caption"><strong>Figura 2:</strong> Distribuição das verbas rescisórias no pedido de demissão. Em verde, o que você RECEBE; em vermelho/laranja, o que NÃO RECEBE.</p>
+                        </div>
+                        
+                        <div class="highlight-box success">
+                            <h4><i class="fas fa-check-circle"></i> O Que Você RECEBE (Lado Verde)</h4>
+                            <ul>
+                                <li><strong>Saldo de Salário:</strong> Dias trabalhados no mês da demissão</li>
+                                <li><strong>13º Salário Proporcional:</strong> Correspondente aos meses trabalhados no ano</li>
+                                <li><strong>Férias Proporcionais + 1/3:</strong> Direito constitucional sobre férias não gozadas</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="highlight-box warning">
+                            <h4><i class="fas fa-times-circle"></i> O Que Fica RETIDO (Lado Vermelho)</h4>
+                            <ul>
+                                <li><strong>Saque do FGTS:</strong> Continua depositado na sua conta do FGTS</li>
+                                <li><strong>Multa de 40% sobre FGTS:</strong> Direito apenas em demissão sem justa causa</li>
+                                <li><strong>Seguro-Desemprego:</strong> Benefício exclusivo para demissão sem justa causa</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="highlight-box info">
+                            <h4><i class="fas fa-file-contract"></i> Importante: O TRCT é Crucial</h4>
+                            <p>O <strong>TRCT (Termo de Rescisão do Contrato de Trabalho)</strong> é o documento oficial onde todas as verbas listadas acima são detalhadas para sua assinatura. Ele deve ser fornecido pela empresa e conter:</p>
+                            <ul>
+                                <li>Cálculo individual de cada verba</li>
+                                <li>Data de pagamento de cada item</li>
+                                <li>Assinatura do empregador e espaço para sua assinatura</li>
+                                <li>Comprovante de entrega da carteira de trabalho</li>
+                            </ul>
+                            <p><strong>Nunca assine o TRCT sem conferir todos os cálculos!</strong> Em caso de dúvida, peça para revisar com calma ou consulte um especialista.</p>
+                        </div>
+                    </section>
+                    
+                    <!-- Seção 3: Exemplo Prático Completo -->
+                    <section class="article-section">
+                        <h2><i class="fas fa-user-check"></i> 3. Exemplo Prático: Maria, 2 Anos de Empresa, Salário R$ 3.500</h2>
+                        
+                        <p>Vamos acompanhar <strong>Maria</strong>, que trabalha há 2 anos com salário de R$ 3.500 e decidiu pedir demissão:</p>
+                        
+                        <div class="example-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Dia 1</div>
+                                <div class="timeline-content">
+                                    <h4>📝 Decisão e Documento</h4>
+                                    <p>Maria usa nosso <a href="../index.html#gerador">gerador automático</a> para criar seu pedido de demissão personalizado. O documento já sai com:</p>
+                                    <ul>
+                                        <li>Seus dados completos</li>
+                                        <li>Dados da empresa</li>
+                                        <li>Data do pedido: 01/03/2026</li>
+                                        <li>Último dia: 31/03/2026 (com aviso prévio)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-date">Dia 2</div>
+                                <div class="timeline-content">
+                                    <h4>📄 Entrega Formal com Protocolo</h4>
+                                    <p>Maria entrega ao RH e recebe cópia autenticada. Ela <strong>negocia o aviso prévio</strong>:</p>
+                                    <ul>
+                                        <li>Opção A: Trabalhar 30 dias (até 31/03)</li>
+                                        <li>Opção B: Receber indenizado e sair antes</li>
+                                    </ul>
+                                    <p>Ela escolhe trabalhar os 30 dias para garantir transição tranquila.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-date">Dias 3-30</div>
+                                <div class="timeline-content">
+                                    <h4>⏰ Aviso Prévio Trabalhado</h4>
+                                    <p>Durante este período:</p>
+                                    <ul>
+                                        <li>Maria tem direito a <strong>2 horas diárias reduzidas</strong> (art. 488 CLT)</li>
+                                        <li>Pode faltar <strong>7 dias</strong> para buscar novo emprego</li>
+                                        <li>Recebe salário normalmente</li>
+                                        <li>Prepara transição para seu substituto</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-date">Dia 28</div>
+                                <div class="timeline-content">
+                                    <h4>🏥 Exame Demissional</h4>
+                                    <p>A empresa agenda e paga pelo exame. Maria recebe atestado de aptidão.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-date">Dia 31</div>
+                                <div class="timeline-content">
+                                    <h4>💰 Cálculo das Verbas</h4>
+                                    <p>No último dia, Maria recebe o <strong>TRCT</strong> com:</p>
+                                    <table class="calculation-table">
+                                        <tr>
+                                            <td>Saldo de salário (10 dias de março)</td>
+                                            <td>R$ 1.166,67</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Férias proporcionais (24/12 meses × R$ 3.500)</td>
+                                            <td>R$ 7.000,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1/3 constitucional sobre férias</td>
+                                            <td>R$ 2.333,33</td>
+                                        </tr>
+                                        <tr>
+                                            <td>13º proporcional (3/12 meses × R$ 3.500)</td>
+                                            <td>R$ 875,00</td>
+                                        </tr>
+                                        <tr class="total">
+                                            <td><strong>TOTAL A RECEBER</strong></td>
+                                            <td><strong>R$ 11.375,00</strong></td>
+                                        </tr>
+                                    </table>
+                                    <p class="note">Nota: FGTS continua depositado (R$ 2.800 × 24 meses = R$ 67.200)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Seção 4: Tabela Completa de Verbas -->
+                    <section class="article-section">
+                        <h2><i class="fas fa-table"></i> 4. Tabela Completa: Direitos no Pedido de Demissão 2026</h2>
+                        
+                        <div class="styled-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Verba Rescisória</th>
+                                        <th>Pedido de Demissão</th>
+                                        <th>Demissão Sem Justa Causa</th>
+                                        <th>Como Calcular (Exemplo R$ 3.500)</th>
+                                        <th>Observações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Saldo de Salário</strong></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>(10 ÷ 30) × 3.500 = R$ 1.166,67</td>
+                                        <td>Dias trabalhados no mês</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>13º Proporcional</strong></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>(3 ÷ 12) × 3.500 = R$ 875,00</td>
+                                        <td>Meses trabalhados no ano</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Férias Proporcionais</strong></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>(24 ÷ 12) × 3.500 = R$ 7.000,00</td>
+                                        <td>+ 1/3 constitucional</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Multa 40% FGTS</strong></td>
+                                        <td><span class="right-no">NÃO</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>40% × R$ 67.200 = R$ 26.880,00</td>
+                                        <td>Diferença mais significativa</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Seguro-Desemprego</strong></td>
+                                        <td><span class="right-no">NÃO</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>Até R$ 2.106,08 por parcela</td>
+                                        <td>3 a 5 parcelas conforme tempo</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Saque FGTS</strong></td>
+                                        <td><span class="right-conditional">CONDICIONAL</span></td>
+                                        <td><span class="right-yes">SIM</span></td>
+                                        <td>Saldo total disponível</td>
+                                        <td>Apenas em situações específicas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <h4><i class="fas fa-calculator"></i> Use Nossa Calculadora de Rescisão</h4>
+                            <p>Calcule exatamente quanto você deve receber com base no seu salário e tempo de empresa:</p>
+                            <a href="../index.html#calculadora" class="btn-outline" style="margin-top: 10px;">
+                                <i class="fas fa-calculator"></i> Calcular Minha Rescisão
+                            </a>
+                        </div>
+                    </section>
+                    
+                    <!-- Seção 5: Erros Comuns e Como Evitar -->
+                    <section class="article-section">
+                        <h2><i class="fas fa-exclamation-triangle"></i> 5. Erros Comuns no Pedido de Demissão (e Como Evitá-los)</h2>
+                        
+                        <div class="errors-grid">
+                            <div class="error-card">
+                                <div class="error-icon danger">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <h4>Erro 1: Não Guardar Cópia do Documento</h4>
+                                <p><strong>Consequência:</strong> Sem comprovação da data e termos do desligamento.</p>
+                                <p><strong>Solução:</strong> Sempre pegue cópia autenticada (carimbada e assinada).</p>
+                            </div>
+                            
+                            <div class="error-card">
+                                <div class="error-icon warning">
+                                    <i class="fas fa-exclamation"></i>
+                                </div>
+                                <h4>Erro 2: Assinar TRCT Sem Conferir</h4>
+                                <p><strong>Consequência:</strong> Pode receber menos do que tem direito.</p>
+                                <p><strong>Solução:</strong> Leve o TRCT para casa, confira cada item, só então assine.</p>
+                            </div>
+                            
+                            <div class="error-card">
+                                <div class="error-icon danger">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <h4>Erro 3: Não Negociar Aviso Prévio</h4>
+                                <p><strong>Consequência:</strong> Perde oportunidade de sair antes recebendo.</p>
+                                <p><strong>Solução:</strong> Proponha acordo de aviso prévio indenizado.</p>
+                            </div>
+                            
+                            <div class="error-card">
+                                <div class="error-icon warning">
+                                    <i class="fas fa-exclamation"></i>
+                                </div>
+                                <h4>Erro 4: Esquecer Benefícios</h4>
+                                <p><strong>Consequência:</strong> Deixa de receber VR, VT, etc.</p>
+                                <p><strong>Solução:</strong> Inclua no acordo rescisão de todos os benefícios.</p>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- CTA Final -->
+                    <div class="article-cta" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));">
+                        <h3><i class="fas fa-rocket"></i> Pronto Para Fazer Seu Pedido de Demissão?</h3>
+                        <p>Gere seu documento personalizado, válido e pronto para impressão em menos de 2 minutos.</p>
+                        <div class="cta-buttons">
+                            <a href="../index.html#gerador" class="btn-primary" style="background-color: white; color: var(--primary-color);">
+                                <i class="fas fa-magic"></i> Gerar Documento Agora
+                            </a>
+                            <a href="../index.html#calculadora" class="btn-outline" style="border-color: white; color: white; margin-left: 15px;">
+                                <i class="fas fa-calculator"></i> Calcular Minha Rescisão
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
-                <a href="#gerador" class="cta-button">
-                    <i class="fas fa-rocket"></i> Gerar Meu Documento Agora
+                <!-- Footer do Artigo -->
+                <footer class="article-footer">
+                    <div class="article-share">
+                        <span class="share-label">Compartilhe este guia completo:</span>
+                        <div class="share-buttons">
+                            <a href="#" class="share-btn facebook" aria-label="Compartilhar no Facebook" onclick="shareOnFacebook()" rel="noopener">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="share-btn twitter" aria-label="Compartilhar no Twitter" onclick="shareOnTwitter()" rel="noopener">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="share-btn linkedin" aria-label="Compartilhar no LinkedIn" onclick="shareOnLinkedIn()" rel="noopener">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://api.whatsapp.com/send?text=Confira%20este%20guia%20completo%20sobre%20Pedido%20de%20Demissão%20CLT%202026:%20https://joaoclaudiano.github.io/modelotrabalhista/artigos/pedido-demissao.html" class="share-btn whatsapp" aria-label="Compartilhar no WhatsApp" target="_blank" rel="noopener">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Card do Autor Simplificado -->
+                    <div class="author-card-simple">
+                        <div class="author-content">
+                            <h4><i class="fas fa-users"></i> Equipe ModeloTrabalhista</h4>
+                            <p class="author-bio">
+                                Nosso objetivo é democratizar o acesso a documentos trabalhistas válidos e de qualidade, 
+                                ajudando tanto empregadores quanto empregados a navegarem com segurança pela legislação trabalhista brasileira.
+                            </p>
+                            <div class="author-links">
+                                <a href="artigos.html">Mais Artigos</a> • 
+                                <a href="../index.html#gerador">Gerador de Documentos</a> • 
+                                <a href="contato.html">Fale Conosco</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </article>
+            
+            <!-- Sidebar -->
+            <aside class="articles-sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">Artigos Relacionados</h3>
+                    <ul class="related-articles">
+                        <li class="related-article">
+                            <a href="#">
+                                <h4>Entendendo o TRCT: Guia Completo do Documento</h4>
+                                <span class="related-date">28 Jan 2026</span>
+                            </a>
+                        </li>
+                        <li class="related-article">
+                            <a href="#">
+                                <h4>Calculadora de Rescisão: Saiba Exatamente Quanto Receber</h4>
+                                <span class="related-date">25 Jan 2026</span>
+                            </a>
+                        </li>
+                        <li class="related-article">
+                            <a href="#">
+                                <h4>Aviso Prévio 2026: Novas Regras e Como Negociar</h4>
+                                <span class="related-date">20 Jan 2026</span>
+                            </a>
+                        </li>
+                        <li class="related-article">
+                            <a href="#">
+                                <h4>FGTS: Saques, Multas 40% e Direitos Atualizados</h4>
+                                <span class="related-date">15 Jan 2026</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- AdSense Sidebar -->
+                <div class="sidebar-widget ad-widget">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-SEU_CLIENT_ID"
+                         data-ad-slot="1122334455"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+                
+                <!-- Newsletter Form CORRIGIDO com Web3Forms -->
+                <div class="sidebar-widget newsletter-widget">
+                    <h3 class="sidebar-title">Receba Mais Conteúdo</h3>
+                    <p style="margin-bottom: var(--space-md); opacity: 0.9;">Inscreva-se para receber nossos melhores guias sobre direito trabalhista.</p>
+                    
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="hidden" name="access_key" value="dda02135-5247-43ee-b75c-5b259ae11f5b">
+                        <input type="hidden" name="subject" value="Novo cadastro na newsletter - ModeloTrabalhista">
+                        <input type="hidden" name="from_name" value="ModeloTrabalhista Newsletter">
+                        
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Seu nome (opcional)">
+                        </div>
+                        
+                        <!-- Anti-spam honeypot field -->
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                        
+                        <!-- Campo oculto para identificar origem -->
+                        <input type="hidden" name="source" value="artigo-pedido-demissao">
+                        
+                        <button type="submit" class="btn-primary" id="submitBtn">
+                            <i class="fas fa-envelope"></i> Quero Receber Conteúdo
+                        </button>
+                        
+                        <!-- Mensagem de resultado -->
+                        <div id="newsletter-result" style="
+                            margin-top: 15px;
+                            padding: 10px;
+                            border-radius: var(--border-radius);
+                            display: none;
+                            font-size: 0.9rem;
+                        "></div>
+                    </form>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">Ferramentas Gratuitas</h3>
+                    <div class="tools-list">
+                        <a href="../index.html#gerador" class="tool-item">
+                            <i class="fas fa-file-contract"></i>
+                            <span>Gerador de Pedido de Demissão</span>
+                        </a>
+                        <a href="../index.html#calculadora" class="tool-item">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calculadora de Rescisão</span>
+                        </a>
+                        <a href="../index.html#modelos" class="tool-item">
+                            <i class="fas fa-download"></i>
+                            <span>Modelos para Download</span>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Navegação entre Artigos -->
+            <div class="article-navigation" style="grid-column: 1 / -1;">
+                <a href="#" class="nav-item prev">
+                    <i class="fas fa-arrow-left nav-icon"></i>
+                    <div class="nav-content">
+                        <h4>Artigo Anterior</h4>
+                        <span>Calculadora de Rescisão: Saiba Exatamente Quanto Receber</span>
+                    </div>
                 </a>
                 
-                <div class="trust-badges">
-                    <div class="badge">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Seguro e Privado</span>
+                <a href="#" class="nav-item next">
+                    <i class="fas fa-arrow-right nav-icon"></i>
+                    <div class="nav-content">
+                        <h4>Próximo Artigo</h4>
+                        <span>Entendendo o TRCT: Guia Completo do Documento</span>
                     </div>
-                    <div class="badge">
-                        <i class="fas fa-bolt"></i>
-                        <span>Sem Cadastro</span>
-                    </div>
-                    <div class="badge">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Válido Legalmente</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="hero-image">
-                <div class="document-preview-card">
-                    <div class="document-header">
-                        <i class="fas fa-file-contract"></i>
-                        <h3>Pedido de Demissão</h3>
-                    </div>
-                    <div class="document-content">
-                        <p><strong>Empresa:</strong> Tech Solutions Ltda</p>
-                        <p><strong>Funcionário:</strong> João da Silva</p>
-                        <p><strong>Cargo:</strong> Analista de Sistemas</p>
-                        <p><strong>Data:</strong> 15/10/2023</p>
-                    </div>
-                    <div class="document-status">
-                        <span class="status-badge">Pronto para usar</span>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
-    </section>
-
-    <!-- Document Models Section -->
-    <section id="modelos" class="models-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Modelos Disponíveis</h2>
-                <p class="section-subtitle">Selecione o documento que precisa e personalize com seus dados</p>
-            </div>
-            
-            <div class="models-grid">
-                <!-- Pedido de Demissão -->
-                <div class="model-card" data-model="demissao">
-                    <div class="model-icon">
-                        <i class="fas fa-user-minus"></i>
-                    </div>
-                    <h3>Pedido de Demissão</h3>
-                    <p>Comunique formalmente sua saída da empresa com todos os direitos trabalhistas garantidos.</p>
-                    <div class="model-tags">
-                        <span class="tag popular">Mais usado</span>
-                        <span class="tag">Empregado</span>
-                    </div>
-                    <button class="model-select-btn" data-model="demissao">
-                        Usar este modelo
-                    </button>
-                </div>
-                
-                <!-- Solicitação de Férias -->
-                <div class="model-card" data-model="ferias">
-                    <div class="model-icon">
-                        <i class="fas fa-umbrella-beach"></i>
-                    </div>
-                    <h3>Solicitação de Férias</h3>
-                    <p>Formalize seu pedido de férias remuneradas conforme a legislação trabalhista.</p>
-                    <div class="model-tags">
-                        <span class="tag">Férias</span>
-                        <span class="tag">Remunerado</span>
-                    </div>
-                    <button class="model-select-btn" data-model="ferias">
-                        Usar este modelo
-                    </button>
-                </div>
-                
-                <!-- Advertência -->
-                <div class="model-card" data-model="advertencia">
-                    <div class="model-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3>Advertência Formal</h3>
-                    <p>Documento oficial para advertir colaboradores sobre condutas inadequadas.</p>
-                    <div class="model-tags">
-                        <span class="tag">Empregador</span>
-                        <span class="tag">Formal</span>
-                    </div>
-                    <button class="model-select-btn" data-model="advertencia">
-                        Usar este modelo
-                    </button>
-                </div>
-                
-                <!-- Atestado -->
-                <div class="model-card" data-model="atestado">
-                    <div class="model-icon">
-                        <i class="fas fa-file-medical"></i>
-                    </div>
-                    <h3>Atestado Informal</h3>
-                    <p>Justifique faltas ou ateste comparecimento com este modelo simples e prático.</p>
-                    <div class="model-tags">
-                        <span class="tag">Simples</span>
-                        <span class="tag">Rápido</span>
-                    </div>
-                    <button class="model-select-btn" data-model="atestado">
-                        Usar este modelo
-                    </button>
-                </div>
-                
-                <!-- Acordo de Rescisão -->
-                <div class="model-card" data-model="rescisao">
-                    <div class="model-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h3>Acordo de Rescisão</h3>
-                    <p>Formalize o término do contrato de trabalho de forma amigável e legal.</p>
-                    <div class="model-tags">
-                        <span class="tag">Acordo</span>
-                        <span class="tag">Legal</span>
-                    </div>
-                    <button class="model-select-btn" data-model="rescisao">
-                        Usar este modelo
-                    </button>
-                </div>
-                
-                <!-- Convocatória de Reunião -->
-                <div class="model-card" data-model="reuniao">
-                    <div class="model-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Convocatória de Reunião</h3>
-                    <p>Convoque reuniões de forma profissional com pauta e horário definidos.</p>
-                    <div class="model-tags">
-                        <span class="tag">Comunicação</span>
-                        <span class="tag">Profissional</span>
-                    </div>
-                    <button class="model-select-btn" data-model="reuniao">
-                        Usar este modelo
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Document Generator Section -->
-    <section id="gerador" class="generator-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Gerador de Documentos</h2>
-                <p class="section-subtitle">Preencha os dados abaixo e gere seu documento personalizado</p>
-            </div>
-            
-            <div class="generator-wrapper">
-                <!-- Form Side -->
-                <div class="form-side">
-                    <div class="form-card">
-                        <div class="form-header">
-                            <h3><i class="fas fa-edit"></i> Informações do Documento</h3>
-                            <p class="form-subtitle">Preencha todos os campos obrigatórios (*)</p>
-                        </div>
-                        
-                        <form id="documentForm">
-                            <div class="form-group">
-                                <label for="documentType">
-                                    <i class="fas fa-file-alt"></i> Tipo de Documento *
-                                </label>
-                                <select id="documentType" class="form-control" required>
-                                    <option value="">Selecione um modelo</option>
-                                    <option value="demissao">Pedido de Demissão</option>
-                                    <option value="ferias">Solicitação de Férias</option>
-                                    <option value="advertencia">Advertência Formal</option>
-                                    <option value="atestado">Atestado Informal</option>
-                                    <option value="rescisao">Acordo de Rescisão</option>
-                                    <option value="reuniao">Convocatória de Reunião</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="companyName">
-                                        <i class="fas fa-building"></i> Nome da Empresa *
-                                    </label>
-                                    <input type="text" id="companyName" class="form-control" 
-                                           placeholder="Ex: Tech Solutions Ltda" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="employeeName">
-                                        <i class="fas fa-user"></i> Nome do Funcionário *
-                                    </label>
-                                    <input type="text" id="employeeName" class="form-control" 
-                                           placeholder="Ex: João da Silva" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="companyAddress">
-                                    <i class="fas fa-map-marker-alt"></i> Endereço da Empresa
-                                </label>
-                                <input type="text" id="companyAddress" class="form-control" 
-                                       placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="employeePosition">
-                                        <i class="fas fa-briefcase"></i> Cargo
-                                    </label>
-                                    <input type="text" id="employeePosition" class="form-control" 
-                                           placeholder="Ex: Analista de Sistemas">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="documentDate">
-                                        <i class="fas fa-calendar-alt"></i> Data do Documento *
-                                    </label>
-                                    <input type="date" id="documentDate" class="form-control" required>
-                                </div>
-                            </div>
-                            
-                            <!-- Dynamic Fields will be inserted here -->
-                            <div id="dynamicFields"></div>
-                            
-                            <div class="form-actions">
-                                <button type="button" id="generateBtn" class="btn-primary">
-                                    <i class="fas fa-magic"></i> Gerar Documento
-                                </button>
-                                <button type="button" id="loadExampleBtn" class="btn-secondary">
-                                    <i class="fas fa-eye"></i> Ver Exemplo
-                                </button>
-                                <button type="button" id="clearBtn" class="btn-outline">
-                                    <i class="fas fa-eraser"></i> Limpar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- Preview Side -->
-                <div class="preview-side">
-                    <div class="preview-card">
-                        <div class="preview-header">
-                            <h3><i class="fas fa-search"></i> Pré-visualização</h3>
-                            <div class="preview-controls">
-                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom">
-                                    <i class="fas fa-search-plus"></i>
-                                </button>
-                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom">
-                                    <i class="fas fa-search-minus"></i>
-                                </button>
-                                <button id="resetZoomBtn" class="control-btn" title="Zoom original">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="preview-content">
-                            <div id="documentPreview">
-                                <div class="empty-preview">
-                                    <i class="fas fa-file-alt"></i>
-                                    <h4>Seu documento aparecerá aqui</h4>
-                                    <p>Preencha o formulário ao lado e clique em "Gerar Documento"</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="preview-actions">
-                            <button id="printBtn" class="btn-success" disabled>
-                                <i class="fas fa-file-word"></i> Gerar DOCX
-                            </button>
-                            <button id="pdfBtn" class="btn-accent" disabled>
-                                <i class="fas fa-file-pdf"></i> Salvar como PDF
-                            </button>
-                            <button id="copyBtn" class="btn-outline" disabled>
-                                <i class="fas fa-copy"></i> Copiar Texto
-                            </button>
-                        </div>
-                        
-                        <div class="preview-info">
-                            <p><i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Revise todas as informações antes de imprimir ou salvar.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Por que usar o ModeloTrabalhista?</h2>
-                <p class="section-subtitle">Tudo que você precisa para documentos trabalhistas perfeitos</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>Rápido e Prático</h3>
-                    <p>Gere documentos em menos de 30 segundos. Basta preencher o formulário e seu documento está pronto.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <h3>100% Seguro</h3>
-                    <p>Não armazenamos seus dados. Todo o processamento é feito localmente no seu navegador.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3>Modelos Válidos</h3>
-                    <p>Todos os documentos seguem a legislação trabalhista brasileira e são amplamente aceitos.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Totalmente Responsivo</h3>
-                    <p>Use no computador, tablet ou celular. A experiência é perfeita em qualquer dispositivo.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Perguntas Frequentes</h2>
-                <p class="section-subtitle">Tire suas dúvidas sobre o uso da plataforma</p>
-            </div>
-            
-            <div class="faq-container">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Os modelos são válidos legalmente?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Sim, todos os modelos seguem a legislação trabalhista brasileira (CLT) e são amplamente utilizados. No entanto, para casos específicos ou dúvidas complexas, recomendamos consultar um advogado trabalhista.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">
-                        É preciso pagar para usar?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Não! O ModeloTrabalhista é completamente gratuito. Não cobramos pelos modelos, não limitamos o número de documentos gerados e não pedimos cadastro.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Como posso salvar o documento gerado?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Você tem três opções: 1) Imprimir diretamente (botão "Imprimir"), 2) Salvar como PDF (use a opção "Salvar como PDF" na impressão do navegador), 3) Copiar o texto e colar em um editor de sua preferência.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Meus dados são armazenados?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Não! Todo o processamento é feito localmente no seu navegador. Não enviamos seus dados para nenhum servidor e não usamos cookies para rastreamento.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Posso modificar o documento após gerar?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Sim! Basta alterar os dados no formulário e clicar em "Gerar Documento" novamente. Você pode fazer quantas modificações precisar.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <button class="faq-question">
-                        O site funciona no celular?
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Sim! O ModeloTrabalhista é totalmente responsivo e funciona perfeitamente em smartphones, tablets e computadores.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="sobre" class="about-section">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Sobre o ModeloTrabalhista</h2>
-                    <p>O ModeloTrabalhista nasceu com a missão de simplificar a burocracia trabalhista no Brasil. Sabemos que lidar com documentos formais pode ser complicado e demorado.</p>
-                    <p>Por isso, criamos uma plataforma que transforma horas de pesquisa e redação em apenas alguns cliques. Tudo de forma gratuita, segura e acessível a todos.</p>
-                    <div class="about-stats">
-                        <div class="stat">
-                            <span class="number">1.000+</span>
-                            <span class="label">Documentos gerados</span>
-                        </div>
-                        <div class="stat">
-                            <span class="number">100%</span>
-                            <span class="label">Aprovação dos usuários</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="about-image">
-                    <div class="image-card">
-                        <i class="fas fa-file-contract"></i>
-                        <h3>Simplificando a burocracia</h3>
-                        <p>Desde 2023 ajudando brasileiros com documentos trabalhistas</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </main>
 
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
-                <!-- Coluna 1: Logo e Descrição -->
-                <div class="footer-section footer-brand">
+                <div class="footer-section">
                     <div class="footer-logo">
                         <i class="fas fa-file-contract"></i>
                         <h3>Modelo<span>Trabalhista</span></h3>
                     </div>
-                    <p class="footer-description">
-                        Gerador gratuito de documentos trabalhistas. 
-                        Simples, rápido e seguro.
-                    </p>
+                    <p>Gerador gratuito de documentos trabalhistas. Simples, rápido e seguro.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook" class="social-link">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" aria-label="Twitter" class="social-link">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" aria-label="Instagram" class="social-link">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" aria-label="LinkedIn" class="social-link">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
+                        <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        <a href="https://linkedin.com" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-    
-                <!-- Coluna 2: Links Institucionais (NOVO) -->
+                
                 <div class="footer-section">
-                    <h4 class="footer-title">Institucional</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link-item">
-                            <a href="pages/sobre.html" class="footer-link">Sobre Nós</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="pages/contato.html" class="footer-link">Fale Conosco</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="pages/termos.html" class="footer-link">Termos de Uso</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="pages/privacidade.html" class="footer-link">Política de Privacidade</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="pages/disclaimer.html" class="footer-link">Aviso Legal (Disclaimer)</a>
-                        </li>
+                    <h4>Institucional</h4>
+                    <ul>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="artigos.html">Artigos</a></li>
+                        <li><a href="contato.html">Fale Conosco</a></li>
+                        <li><a href="termos.html">Termos de Uso</a></li>
+                        <li><a href="privacidade.html">Política de Privacidade</a></li>
                     </ul>
                 </div>
-    
-                <!-- Coluna 3: Modelos -->
+                
                 <div class="footer-section">
-                    <h4 class="footer-title">Modelos</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link-item">
-                            <a href="#gerador" data-model="demissao" class="footer-link">
-                                Pedido de Demissão
-                            </a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#gerador" data-model="ferias" class="footer-link">
-                                Solicitação de Férias
-                            </a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#gerador" data-model="advertencia" class="footer-link">
-                                Advertência
-                            </a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#gerador" data-model="atestado" class="footer-link">
-                                Atestado
-                            </a>
-                        </li>
+                    <h4>Modelos</h4>
+                    <ul>
+                        <li><a href="../index.html#gerador" data-model="demissao">Pedido de Demissão</a></li>
+                        <li><a href="../index.html#gerador" data-model="ferias">Solicitação de Férias</a></li>
+                        <li><a href="../index.html#gerador" data-model="advertencia">Advertência</a></li>
+                        <li><a href="../index.html#gerador" data-model="atestado">Atestado</a></li>
                     </ul>
                 </div>
-    
-                <!-- Coluna 4: Links Úteis -->
+                
                 <div class="footer-section">
-                    <h4 class="footer-title">Navegação</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link-item">
-                            <a href="#home" class="footer-link">Início</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#modelos" class="footer-link">Modelos</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#gerador" class="footer-link">Gerador</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#faq" class="footer-link">Perguntas Frequentes (FAQ)</a>
-                        </li>
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#modelos">Modelos</a></li>
+                        <li><a href="../index.html#gerador">Gerador</a></li>
+                        <li><a href="artigos.html">Artigos</a></li>
+                        <li><a href="../index.html#faq">FAQ</a></li>
                     </ul>
-                </div>
-    
-                <!-- Aviso de Acessibilidade e Cookies (linha completa) -->
-                <div class="footer-accessibility-notice">
-                    <div class="notice-item">
-                        <i class="fas fa-universal-access notice-icon"></i>
-                        <span class="notice-text">
-                            Este site segue as diretrizes de acessibilidade digital
-                        </span>
-                    </div>
-                    <span class="notice-separator">•</span>
-                    <div class="notice-item">
-                        <i class="fas fa-cookie-bite notice-icon"></i>
-                        <span class="notice-text">
-                            Utilizamos cookies em conformidade com a LGPD
-                        </span>
-                    </div>
                 </div>
             </div>
-    
-            <!-- Rodapé Inferior -->
+            
             <div class="footer-bottom">
-                <p class="copyright">
-                    &copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.
-                </p>
+                <p>&copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.</p>
                 <p class="disclaimer">
-                    <i class="fas fa-exclamation-triangle disclaimer-icon"></i>
-                    Os modelos são fornecidos apenas para fins informativos. 
-                    Consulte um advogado para orientação jurídica específica.
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.
                 </p>
             </div>
         </div>
     </footer>
-    
-    <script>
-        // Script para atualizar o ano no copyright automaticamente
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-    </script>
 
-    <!-- JavaScript -->
-    <!-- Módulo de UI primeiro (dependência base) -->
-    <script src="js/log.js"></script>
-    <script src="js/analytics.js" async></script>
-    <script src="js/acessibilidade.js" async></script>
-    <script src="js/main.js"></script>
-    <script src="js/ui.js"></script>
-    
-    <!-- Módulos de funcionalidade -->
-    <script src="js/generator.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/export.js"></script>
-    <script src="js/tour.js"></script>
-        
-    <!-- Script de inicialização -->
-    <script>
-        // Remover loading quando tudo carregar
-        window.addEventListener('load', function() {
-            document.body.classList.add('app-loaded');
-            
-            // Remover completamente após animação
-            setTimeout(function() {
-                const loading = document.querySelector('.app-loading');
-                if (loading) {
-                    loading.remove();
-                }
-            }, 500);
-        });
-        
-        // Fallback se algo der errado
-        setTimeout(function() {
-            document.body.classList.add('app-loaded');
-        }, 10000); // 10 segundos de timeout
-        
-        // Verificar se há erros de carregamento
-        window.addEventListener('error', function(e) {
-            console.error('Erro ao carregar recurso:', e);
-            
-            // Mostrar mensagem amigável se for um script crítico
-            const criticalScripts = ['js/ui.js', 'js/main.js'];
-            if (criticalScripts.some(script => e.target.src && e.target.src.includes(script))) {
-                const loading = document.querySelector('.app-loading');
-                if (loading) {
-                    loading.innerHTML = `
-                        <div style="text-align: center; color: white;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <h3 style="margin-bottom: 1rem;">Ocorreu um erro ao carregar</h3>
-                            <p style="margin-bottom: 1rem;">Por favor, atualize a página ou tente novamente mais tarde.</p>
-                            <button onclick="location.reload()" style="
-                                background: white;
-                                color: #764ba2;
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: 5px;
-                                font-weight: bold;
-                                cursor: pointer;
-                            ">
-                                <i class="fas fa-redo"></i> Recarregar Página
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-        }, true);
-    </script>
-    
-    <!-- Modal de Confirmação -->
-    <div id="confirmClearModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Limpeza</h3>
-            <p>Tem certeza que deseja limpar todo o formulário? Todos os dados não salvos serão perdidos.</p>
-            <div class="modal-actions">
-                <button id="cancelClearBtn" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button id="confirmClearBtn" class="btn btn-danger">
-                    <i class="fas fa-trash"></i> Limpar Tudo
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Input para importar histórico (escondido) -->
-    <input type="file" id="historyFileInput" accept=".json" style="display: none;">
-    
-    <!-- Container para histórico (opcional) -->
-    <div id="historyContainer" style="display: none;">
-        <h3><i class="fas fa-history"></i> Histórico de Documentos</h3>
-        <div id="historyList"></div>
-    </div>
-    
-    <!-- VLIBRAS -->
+    <!-- Botão Voltar ao Topo -->
+    <button id="back-to-top-article" class="back-to-top-article" aria-label="Voltar ao topo">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- VLibras -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-    </script>
 
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="template.js"></script>
+    <script>
+        // VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        
+        // Atualizar ano no copyright
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Menu mobile
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.querySelector('.main-nav ul');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+            });
+            
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                });
+            });
+        }
+        
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const answer = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                
+                answer.classList.toggle('active');
+                
+                if (answer.classList.contains('active')) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+        
+        // Inicializar Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#fff',
+                primaryTextColor: '#000',
+                primaryBorderColor: '#000',
+                lineColor: '#000',
+                secondaryColor: '#f0f0f0',
+                tertiaryColor: '#fff'
+            },
+            flowchart: {
+                curve: 'basis'
+            }
+        });
+        
+        // Funções de Compartilhamento
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Confira este guia completo sobre Pedido de Demissão CLT 2026');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank', 'width=600,height=400');
+        }
+        
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Confira este guia completo sobre Pedido de Demissão CLT 2026');
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+        }
+        
+        function shareOnLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'width=600,height=400');
+        }
+        
+        // Newsletter Form Submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            const resultDiv = document.getElementById('newsletter-result');
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerHTML;
+
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Mudar botão para estado de carregamento
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                    submitBtn.disabled = true;
+                    
+                    // Limpar mensagem anterior
+                    resultDiv.style.display = 'none';
+                    resultDiv.innerHTML = '';
+                    
+                    // Coletar dados do formulário
+                    const formData = new FormData(newsletterForm);
+                    
+                    try {
+                        const response = await fetch("https://api.web3forms.com/submit", {
+                            method: "POST",
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        // Estilizar mensagem de acordo com o resultado
+                        if (result.success) {
+                            resultDiv.innerHTML = `
+                                <div style="
+                                    background-color: #d4edda;
+                                    color: #155724;
+                                    padding: 10px;
+                                    border-radius: var(--border-radius);
+                                    border: 1px solid #c3e6cb;
+                                ">
+                                    <i class="fas fa-check-circle"></i> 
+                                    <strong>Sucesso!</strong> Você foi inscrito na newsletter. Verifique seu e-mail.
+                                </div>
+                            `;
+                            newsletterForm.reset();
+                        } else {
+                            resultDiv.innerHTML = `
+                                <div style="
+                                    background-color: #f8d7da;
+                                    color: #721c24;
+                                    padding: 10px;
+                                    border-radius: var(--border-radius);
+                                    border: 1px solid #f5c6cb;
+                                ">
+                                    <i class="fas fa-exclamation-circle"></i> 
+                                    <strong>Erro:</strong> ${result.message || 'Falha ao cadastrar. Tente novamente.'}
+                                </div>
+                            `;
+                        }
+                        
+                        resultDiv.style.display = 'block';
+                        
+                        // Rolagem suave para a mensagem
+                        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        
+                        // Auto-esconder mensagem de sucesso após 10 segundos
+                        if (result.success) {
+                            setTimeout(() => {
+                                resultDiv.style.display = 'none';
+                            }, 10000);
+                        }
+                        
+                    } catch (error) {
+                        resultDiv.innerHTML = `
+                            <div style="
+                                background-color: #fff3cd;
+                                color: #856404;
+                                padding: 10px;
+                                border-radius: var(--border-radius);
+                                border: 1px solid #ffeaa7;
+                            ">
+                                <i class="fas fa-exclamation-triangle"></i> 
+                                <strong>Atenção:</strong> Erro de conexão. Tente novamente em alguns instantes.
+                            </div>
+                        `;
+                        resultDiv.style.display = 'block';
+                        console.error('Erro ao enviar formulário:', error);
+                    } finally {
+                        // Restaurar botão ao estado original
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+        });
+
+        // Estilos específicos para este artigo
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Breadcrumbs */
+            .breadcrumbs {
+                background-color: var(--bg-secondary);
+                padding: var(--space-sm) 0;
+                border-bottom: 1px solid var(--light-color);
+            }
+            
+            .breadcrumbs ol {
+                display: flex;
+                list-style: none;
+                gap: var(--space-xs);
+                margin: 0;
+                padding: 0;
+            }
+            
+            .breadcrumbs li {
+                display: flex;
+                align-items: center;
+            }
+            
+            .breadcrumbs li:not(:last-child)::after {
+                content: '›';
+                margin: 0 var(--space-xs);
+                color: var(--gray-color);
+            }
+            
+            .breadcrumbs a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+            
+            .breadcrumbs a:hover {
+                text-decoration: underline;
+            }
+            
+            .breadcrumbs span {
+                color: var(--gray-color);
+            }
+            
+            /* Diagramas Mermaid */
+            .mermaid-diagram, .comparison-diagram {
+                margin: var(--space-xl) 0;
+                padding: var(--space-lg);
+                background-color: var(--white-color);
+                border-radius: var(--border-radius);
+                border: 1px solid var(--light-color);
+                text-align: center;
+            }
+            
+            .mermaid {
+                min-height: 300px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            /* Ad Containers */
+            .ad-container, .in-content-ad {
+                margin: 30px 0;
+                text-align: center;
+            }
+            
+            /* Newsletter Form */
+            .newsletter-form .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .newsletter-form .form-control {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid var(--light-color);
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+                transition: all var(--transition-fast);
+            }
+            
+            .newsletter-form .form-control:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+            
+            .newsletter-form .btn-primary {
+                width: 100%;
+                padding: 12px 20px;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .newsletter-form .btn-primary:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+            
+            .newsletter-form .btn-primary i.fa-spinner {
+                margin-right: 8px;
+            }
+            
+            .hidden {
+                display: none !important;
+            }
+            
+            /* Linha do tempo do exemplo */
+            .example-timeline {
+                position: relative;
+                margin: var(--space-xl) 0;
+                padding-left: 30px;
+            }
+            
+            .example-timeline::before {
+                content: '';
+                position: absolute;
+                left: 15px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background-color: var(--primary-color);
+            }
+            
+            .timeline-item {
+                position: relative;
+                margin-bottom: var(--space-xl);
+            }
+            
+            .timeline-date {
+                position: absolute;
+                left: -30px;
+                top: 0;
+                width: 60px;
+                text-align: center;
+                background-color: var(--primary-color);
+                color: white;
+                padding: 5px;
+                border-radius: var(--border-radius-sm);
+                font-weight: bold;
+                font-size: 0.9rem;
+            }
+            
+            .timeline-content {
+                background-color: var(--bg-secondary);
+                padding: var(--space-lg);
+                border-radius: var(--border-radius);
+                border-left: 4px solid var(--primary-color);
+                margin-left: 40px;
+            }
+            
+            .timeline-content h4 {
+                color: var(--primary-color);
+                margin-top: 0;
+            }
+            
+            /* Tabela de cálculo */
+            .calculation-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: var(--space-md) 0;
+            }
+            
+            .calculation-table td {
+                padding: var(--space-sm);
+                border-bottom: 1px solid var(--light-color);
+            }
+            
+            .calculation-table tr.total td {
+                border-top: 2px solid var(--primary-color);
+                font-weight: bold;
+                color: var(--primary-color);
+            }
+            
+            .note {
+                font-size: 0.9rem;
+                color: var(--gray-color);
+                font-style: italic;
+                margin-top: var(--space-sm);
+            }
+            
+            /* Grid de erros */
+            .errors-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: var(--space-lg);
+                margin: var(--space-xl) 0;
+            }
+            
+            .error-card {
+                background-color: var(--white-color);
+                border-radius: var(--border-radius);
+                padding: var(--space-lg);
+                border: 1px solid var(--light-color);
+                transition: transform var(--transition-normal);
+            }
+            
+            .error-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-md);
+            }
+            
+            .error-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                margin-bottom: var(--space-md);
+            }
+            
+            .error-icon.danger {
+                background-color: rgba(239, 68, 68, 0.1);
+                color: var(--danger-color);
+            }
+            
+            .error-icon.warning {
+                background-color: rgba(245, 158, 11, 0.1);
+                color: var(--accent-color);
+            }
+            
+            /* Card do autor simplificado */
+            .author-card-simple {
+                background-color: var(--white-color);
+                border-radius: var(--border-radius);
+                padding: var(--space-xl);
+                border: 1px solid var(--light-color);
+                text-align: center;
+            }
+            
+            .author-content h4 {
+                color: var(--primary-color);
+                margin-bottom: var(--space-md);
+            }
+            
+            .author-links {
+                margin-top: var(--space-md);
+                display: flex;
+                justify-content: center;
+                gap: var(--space-md);
+                flex-wrap: wrap;
+            }
+            
+            .author-links a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .author-links a:hover {
+                text-decoration: underline;
+            }
+            
+            /* CTA buttons */
+            .cta-buttons {
+                display: flex;
+                justify-content: center;
+                gap: var(--space-md);
+                margin-top: var(--space-lg);
+                flex-wrap: wrap;
+            }
+            
+            /* Responsividade */
+            @media (max-width: 768px) {
+                .example-timeline {
+                    padding-left: 20px;
+                }
+                
+                .example-timeline::before {
+                    left: 10px;
+                }
+                
+                .timeline-date {
+                    left: -25px;
+                    width: 50px;
+                    font-size: 0.8rem;
+                }
+                
+                .timeline-content {
+                    margin-left: 30px;
+                    padding: var(--space-md);
+                }
+                
+                .cta-buttons {
+                    flex-direction: column;
+                }
+                
+                .cta-buttons a {
+                    width: 100%;
+                    margin: 5px 0;
+                }
+                
+                .mermaid {
+                    min-height: 200px;
+                }
+                
+                .newsletter-form .form-control {
+                    padding: 10px 12px;
+                    font-size: 0.9rem;
+                }
+                
+                .newsletter-form .btn-primary {
+                    padding: 10px 15px;
+                    font-size: 0.95rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .errors-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .timeline-content {
+                    margin-left: 20px;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
