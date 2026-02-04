@@ -140,30 +140,6 @@
         </div>
     </header>
 
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs container">
-        <nav aria-label="Navegação estrutural">
-            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="../index.html#home" itemprop="item">
-                        <span itemprop="name">Início</span>
-                    </a>
-                    <meta itemprop="position" content="1" />
-                </li>
-                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="artigos.html" itemprop="item">
-                        <span itemprop="name">Artigos</span>
-                    </a>
-                    <meta itemprop="position" content="2" />
-                </li>
-                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <span itemprop="name">Pedido de Demissão CLT</span>
-                    <meta itemprop="position" content="3" />
-                </li>
-            </ol>
-        </nav>
-    </div>
-
     <!-- Conteúdo do Artigo -->
     <main class="articles-main">
         <div class="articles-container">
@@ -1208,45 +1184,6 @@
         // Estilos específicos para este artigo
         const style = document.createElement('style');
         style.textContent = `
-            /* Breadcrumbs */
-            .breadcrumbs {
-                background-color: var(--bg-secondary);
-                padding: var(--space-sm) 0;
-                border-bottom: 1px solid var(--light-color);
-            }
-            
-            .breadcrumbs ol {
-                display: flex;
-                list-style: none;
-                gap: var(--space-xs);
-                margin: 0;
-                padding: 0;
-            }
-            
-            .breadcrumbs li {
-                display: flex;
-                align-items: center;
-            }
-            
-            .breadcrumbs li:not(:last-child)::after {
-                content: '›';
-                margin: 0 var(--space-xs);
-                color: var(--gray-color);
-            }
-            
-            .breadcrumbs a {
-                color: var(--primary-color);
-                text-decoration: none;
-            }
-            
-            .breadcrumbs a:hover {
-                text-decoration: underline;
-            }
-            
-            .breadcrumbs span {
-                color: var(--gray-color);
-            }
-            
             /* Diagramas Mermaid */
             .mermaid-diagram, .comparison-diagram {
                 margin: var(--space-xl) 0;
