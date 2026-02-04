@@ -7,31 +7,31 @@
     <meta name="description" content="Gere pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas prontos em segundos. Modelos válidos e gratuitos.">
     <meta name="keywords" content="modelo trabalhista, pedido de demissão, solicitação de férias, advertência, atestado, documento trabalhista, modelo pronto gratuito">
     <meta name="author" content="ModeloTrabalhista">
-
+    
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://joaoclaudiano.github.io/modelotrabalhista/">
     <meta property="og:title" content="ModeloTrabalhista | Gerador de Documentos Trabalhistas">
     <meta property="og:description" content="Gere documentos trabalhistas prontos em segundos. Totalmente gratuito!">
     <meta property="og:image" content="https://joaoclaudiano.github.io/modelotrabalhista/assets/og-image.png">
-
+    
     <!-- Favicon -->
     <!-- Favicon tradicional (para navegadores antigos) -->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-
+    
     <!-- Favicon moderno em PNG (96x96) -->
     <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96x96.png">
-
+    
     <!-- Favicon SVG (para navegadores mais recentes) -->
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-
+    
     <!-- Apple Touch Icon (iPhone/iPad) -->
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-
+    
     <!-- Manifest para PWA (Android/Chrome) -->
     <link rel="manifest" href="assets/manifest.json">
-
+    
     <!-- Meta tags para PWA -->
     <meta name="theme-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
@@ -39,14 +39,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
+    
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css" media="screen and (max-width: 768px)">
-
+    
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js" as="script">
     <link rel="preload" href="js/ui.js" as="script">
@@ -68,7 +68,7 @@
             z-index: 9999;
             transition: opacity 0.5s ease;
         }
-
+        
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -78,18 +78,18 @@
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
-
+        
         .loading-text {
             color: white;
             font-size: 1.2rem;
             font-weight: 500;
             font-family: 'Inter', sans-serif;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
+        
         .app-loaded .app-loading {
             opacity: 0;
             pointer-events: none;
@@ -102,7 +102,7 @@
         <div class="loading-spinner"></div>
         <div class="loading-text">Carregando ModeloTrabalhista...</div>
     </div>
-
+    
     <!-- Header -->
     <header class="main-header">
         <div class="container">
@@ -111,7 +111,7 @@
                     <i class="fas fa-file-contract"></i>
                     <h1>Modelo<span>Trabalhista</span></h1>
                 </div>
-
+                
                 <nav class="main-nav">
                     <ul>
                         <li><a href="#home" class="active"><i class="fas fa-home"></i> Início</a></li>
@@ -121,7 +121,7 @@
                         <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     </ul>
                 </nav>
-
+                
                 <button class="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -135,7 +135,7 @@
             <div class="hero-content">
                 <h2>Documentos Trabalhistas Prontos em 30 segundos!</h2>
                 <p class="hero-subtitle">Gere pedidos de demissão, solicitações de férias, advertências e outros documentos válidos. Totalmente gratuito!</p>
-
+                
                 <div class="hero-stats">
                     <div class="stat">
                         <span class="number">6</span>
@@ -150,11 +150,11 @@
                         <span class="label">em Segundos</span>
                     </div>
                 </div>
-
+                
                 <a href="#gerador" class="cta-button">
                     <i class="fas fa-rocket"></i> Gerar Meu Documento Agora
                 </a>
-
+                
                 <div class="trust-badges">
                     <div class="badge">
                         <i class="fas fa-shield-alt"></i>
@@ -170,7 +170,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="hero-image">
                 <div class="document-preview-card">
                     <div class="document-header">
@@ -198,7 +198,7 @@
                 <h2>Modelos Disponíveis</h2>
                 <p class="section-subtitle">Selecione o documento que precisa e personalize com seus dados</p>
             </div>
-
+            
             <div class="models-grid">
                 <!-- Pedido de Demissão -->
                 <div class="model-card" data-model="demissao">
@@ -215,7 +215,7 @@
                         Usar este modelo
                     </button>
                 </div>
-
+                
                 <!-- Solicitação de Férias -->
                 <div class="model-card" data-model="ferias">
                     <div class="model-icon">
@@ -231,7 +231,7 @@
                         Usar este modelo
                     </button>
                 </div>
-
+                
                 <!-- Advertência -->
                 <div class="model-card" data-model="advertencia">
                     <div class="model-icon">
@@ -247,7 +247,7 @@
                         Usar este modelo
                     </button>
                 </div>
-
+                
                 <!-- Atestado -->
                 <div class="model-card" data-model="atestado">
                     <div class="model-icon">
@@ -263,7 +263,7 @@
                         Usar este modelo
                     </button>
                 </div>
-
+                
                 <!-- Acordo de Rescisão -->
                 <div class="model-card" data-model="rescisao">
                     <div class="model-icon">
@@ -279,7 +279,7 @@
                         Usar este modelo
                     </button>
                 </div>
-
+                
                 <!-- Convocatória de Reunião -->
                 <div class="model-card" data-model="reuniao">
                     <div class="model-icon">
@@ -306,7 +306,7 @@
                 <h2>Gerador de Documentos</h2>
                 <p class="section-subtitle">Preencha os dados abaixo e gere seu documento personalizado</p>
             </div>
-
+            
             <div class="generator-wrapper">
                 <!-- Form Side -->
                 <div class="form-side">
@@ -315,7 +315,7 @@
                             <h3><i class="fas fa-edit"></i> Informações do Documento</h3>
                             <p class="form-subtitle">Preencha todos os campos obrigatórios (*)</p>
                         </div>
-
+                        
                         <form id="documentForm">
                             <div class="form-group">
                                 <label for="documentType">
@@ -331,7 +331,7 @@
                                     <option value="reuniao">Convocatória de Reunião</option>
                                 </select>
                             </div>
-
+                            
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="companyName">
@@ -340,7 +340,7 @@
                                     <input type="text" id="companyName" class="form-control" 
                                            placeholder="Ex: Tech Solutions Ltda" required>
                                 </div>
-
+                                
                                 <div class="form-group">
                                     <label for="employeeName">
                                         <i class="fas fa-user"></i> Nome do Funcionário *
@@ -349,7 +349,7 @@
                                            placeholder="Ex: João da Silva" required>
                                 </div>
                             </div>
-
+                            
                             <div class="form-group">
                                 <label for="companyAddress">
                                     <i class="fas fa-map-marker-alt"></i> Endereço da Empresa
@@ -357,7 +357,7 @@
                                 <input type="text" id="companyAddress" class="form-control" 
                                        placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
                             </div>
-
+                            
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="employeePosition">
@@ -366,7 +366,7 @@
                                     <input type="text" id="employeePosition" class="form-control" 
                                            placeholder="Ex: Analista de Sistemas">
                                 </div>
-
+                                
                                 <div class="form-group">
                                     <label for="documentDate">
                                         <i class="fas fa-calendar-alt"></i> Data do Documento *
@@ -374,10 +374,10 @@
                                     <input type="date" id="documentDate" class="form-control" required>
                                 </div>
                             </div>
-
+                            
                             <!-- Dynamic Fields will be inserted here -->
                             <div id="dynamicFields"></div>
-
+                            
                             <div class="form-actions">
                                 <button type="button" id="generateBtn" class="btn-primary">
                                     <i class="fas fa-magic"></i> Gerar Documento
@@ -392,7 +392,7 @@
                         </form>
                     </div>
                 </div>
-
+                
                 <!-- Preview Side -->
                 <div class="preview-side">
                     <div class="preview-card">
@@ -410,7 +410,7 @@
                                 </button>
                             </div>
                         </div>
-
+                        
                         <div class="preview-content">
                             <div id="documentPreview">
                                 <div class="empty-preview">
@@ -420,7 +420,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div class="preview-actions">
                             <button id="printBtn" class="btn-success" disabled>
                                 <i class="fas fa-file-word"></i> Gerar DOCX
@@ -432,7 +432,7 @@
                                 <i class="fas fa-copy"></i> Copiar Texto
                             </button>
                         </div>
-
+                        
                         <div class="preview-info">
                             <p><i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Revise todas as informações antes de imprimir ou salvar.</p>
                         </div>
@@ -449,7 +449,7 @@
                 <h2>Por que usar o ModeloTrabalhista?</h2>
                 <p class="section-subtitle">Tudo que você precisa para documentos trabalhistas perfeitos</p>
             </div>
-
+            
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -458,7 +458,7 @@
                     <h3>Rápido e Prático</h3>
                     <p>Gere documentos em menos de 30 segundos. Basta preencher o formulário e seu documento está pronto.</p>
                 </div>
-
+                
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-lock"></i>
@@ -466,7 +466,7 @@
                     <h3>100% Seguro</h3>
                     <p>Não armazenamos seus dados. Todo o processamento é feito localmente no seu navegador.</p>
                 </div>
-
+                
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-graduation-cap"></i>
@@ -474,7 +474,7 @@
                     <h3>Modelos Válidos</h3>
                     <p>Todos os documentos seguem a legislação trabalhista brasileira e são amplamente aceitos.</p>
                 </div>
-
+                
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-mobile-alt"></i>
@@ -493,7 +493,7 @@
                 <h2>Perguntas Frequentes</h2>
                 <p class="section-subtitle">Tire suas dúvidas sobre o uso da plataforma</p>
             </div>
-
+            
             <div class="faq-container">
                 <div class="faq-item">
                     <button class="faq-question">
@@ -504,7 +504,7 @@
                         <p>Sim, todos os modelos seguem a legislação trabalhista brasileira (CLT) e são amplamente utilizados. No entanto, para casos específicos ou dúvidas complexas, recomendamos consultar um advogado trabalhista.</p>
                     </div>
                 </div>
-
+                
                 <div class="faq-item">
                     <button class="faq-question">
                         É preciso pagar para usar?
@@ -514,7 +514,7 @@
                         <p>Não! O ModeloTrabalhista é completamente gratuito. Não cobramos pelos modelos, não limitamos o número de documentos gerados e não pedimos cadastro.</p>
                     </div>
                 </div>
-
+                
                 <div class="faq-item">
                     <button class="faq-question">
                         Como posso salvar o documento gerado?
@@ -524,7 +524,7 @@
                         <p>Você tem três opções: 1) Imprimir diretamente (botão "Imprimir"), 2) Salvar como PDF (use a opção "Salvar como PDF" na impressão do navegador), 3) Copiar o texto e colar em um editor de sua preferência.</p>
                     </div>
                 </div>
-
+                
                 <div class="faq-item">
                     <button class="faq-question">
                         Meus dados são armazenados?
@@ -534,7 +534,7 @@
                         <p>Não! Todo o processamento é feito localmente no seu navegador. Não enviamos seus dados para nenhum servidor e não usamos cookies para rastreamento.</p>
                     </div>
                 </div>
-
+                
                 <div class="faq-item">
                     <button class="faq-question">
                         Posso modificar o documento após gerar?
@@ -544,7 +544,7 @@
                         <p>Sim! Basta alterar os dados no formulário e clicar em "Gerar Documento" novamente. Você pode fazer quantas modificações precisar.</p>
                     </div>
                 </div>
-
+                
                 <div class="faq-item">
                     <button class="faq-question">
                         O site funciona no celular?
@@ -577,7 +577,7 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="about-image">
                     <div class="image-card">
                         <i class="fas fa-file-contract"></i>
@@ -589,7 +589,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
@@ -619,8 +618,7 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- Coluna 2: Modelos -->
+    
                 <!-- Coluna 2: Links Institucionais (NOVO) -->
                 <div class="footer-section">
                     <h4 class="footer-title">Institucional</h4>
@@ -669,11 +667,9 @@
                         </li>
                     </ul>
                 </div>
-
-                <!-- Coluna 3: Links Úteis -->
+    
                 <!-- Coluna 4: Links Úteis -->
                 <div class="footer-section">
-                    <h4 class="footer-title">Links Úteis</h4>
                     <h4 class="footer-title">Navegação</h4>
                     <ul class="footer-links">
                         <li class="footer-link-item">
@@ -686,31 +682,11 @@
                             <a href="#gerador" class="footer-link">Gerador</a>
                         </li>
                         <li class="footer-link-item">
-                            <a href="#faq" class="footer-link">FAQ</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#sobre" class="footer-link">Sobre</a>
-                        </li>
-                    </ul>
-                </div>
-    
-                <!-- Coluna 4: Legal -->
-                <div class="footer-section">
-                    <h4 class="footer-title">Legal</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Termos de Uso</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Política de Privacidade</a>
-                        </li>
-                        <li class="footer-link-item">
-                            <a href="#" class="footer-link">Aviso Legal</a>
                             <a href="#faq" class="footer-link">Perguntas Frequentes (FAQ)</a>
                         </li>
                     </ul>
                 </div>
-
+    
                 <!-- Aviso de Acessibilidade e Cookies (linha completa) -->
                 <div class="footer-accessibility-notice">
                     <div class="notice-item">
@@ -728,11 +704,10 @@
                     </div>
                 </div>
             </div>
-
+    
             <!-- Rodapé Inferior -->
             <div class="footer-bottom">
                 <p class="copyright">
-                    &copy; 2026 ModeloTrabalhista. Todos os direitos reservados.
                     &copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.
                 </p>
                 <p class="disclaimer">
@@ -756,19 +731,19 @@
     <script src="js/acessibilidade.js" async></script>
     <script src="js/main.js"></script>
     <script src="js/ui.js"></script>
-
+    
     <!-- Módulos de funcionalidade -->
     <script src="js/generator.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/export.js"></script>
     <script src="js/tour.js"></script>
-
+        
     <!-- Script de inicialização -->
     <script>
         // Remover loading quando tudo carregar
         window.addEventListener('load', function() {
             document.body.classList.add('app-loaded');
-
+            
             // Remover completamente após animação
             setTimeout(function() {
                 const loading = document.querySelector('.app-loading');
@@ -777,16 +752,16 @@
                 }
             }, 500);
         });
-
+        
         // Fallback se algo der errado
         setTimeout(function() {
             document.body.classList.add('app-loaded');
         }, 10000); // 10 segundos de timeout
-
+        
         // Verificar se há erros de carregamento
         window.addEventListener('error', function(e) {
             console.error('Erro ao carregar recurso:', e);
-
+            
             // Mostrar mensagem amigável se for um script crítico
             const criticalScripts = ['js/ui.js', 'js/main.js'];
             if (criticalScripts.some(script => e.target.src && e.target.src.includes(script))) {
@@ -814,7 +789,7 @@
             }
         }, true);
     </script>
-
+    
     <!-- Modal de Confirmação -->
     <div id="confirmClearModal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -830,16 +805,16 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Input para importar histórico (escondido) -->
     <input type="file" id="historyFileInput" accept=".json" style="display: none;">
-
+    
     <!-- Container para histórico (opcional) -->
     <div id="historyContainer" style="display: none;">
         <h3><i class="fas fa-history"></i> Histórico de Documentos</h3>
         <div id="historyList"></div>
     </div>
-
+    
     <!-- VLIBRAS -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
