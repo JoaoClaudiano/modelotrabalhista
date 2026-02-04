@@ -1,0 +1,16 @@
+/* CSS Rules */
+
+/* Remove underlines from links while maintaining functionality */
+a {
+    text-decoration: none !important;
+}
+
+/* Remove underlines from any text or element */
+* {
+    text-decoration: none !important;
+}
+
+/* Utility class for explicit no-underline control */
+.no-underline {
+    text-decoration: none !important;
+}
