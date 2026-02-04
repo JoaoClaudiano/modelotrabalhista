@@ -211,7 +211,6 @@
     align-items: center;
     justify-content: center;
     color: var(--white-color);
-    text-decoration: none;
     transition: transform var(--transition-fast);
 }
 
@@ -304,7 +303,6 @@
 }
 
 .related-article a {
-    text-decoration: none;
     color: var(--dark-color);
     transition: color var(--transition-fast);
     display: block;
@@ -373,7 +371,6 @@
     padding: var(--space-lg);
     background-color: var(--white-color);
     border-radius: var(--border-radius);
-    text-decoration: none;
     color: var(--dark-color);
     border: 1px solid var(--light-color);
     transition: all var(--transition-fast);
