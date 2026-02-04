@@ -1193,65 +1193,129 @@
 
     <!-- Footer -->
     <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <i class="fas fa-file-contract"></i>
-                        <h3>Modelo<span>Trabalhista</span></h3>
-                    </div>
-                    <p>Informações e ferramentas gratuitas sobre direitos trabalhistas, acordos, jornada e relações de emprego. Atualizado conforme legislação e jurisprudência do TST em 2026.</p>
-                    <div class="social-links">
-                        <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://twitter.com" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
-                        <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
-                        <a href="https://linkedin.com" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+    <div class="container">
+        <div class="footer-content">
+            <!-- Coluna 1: Logo e Descrição -->
+            <div class="footer-section footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-file-contract"></i>
+                    <h3>Modelo<span>Trabalhista</span></h3>
                 </div>
-                
-                <div class="footer-section">
-                    <h4>Jornada e Horas</h4>
-                    <ul>
-                        <li><a href="intervalo-intrajornada-2026.html">Intervalo Intrajornada (Almoço)</a></li>
-                        <li><a href="banco-horas-vs-extras-2026.html">Banco de Horas vs. Extras</a></li>
-                        <li><a href="horas-extras-2026.html">Horas Extras 50% e 100%</a></li>
-                        <li><a href="#">Jornada de Trabalho 2026</a></li>
-                        <li><a href="#">Intervalo Interjornada (11h)</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Acordos e Contratos</h4>
-                    <ul>
-                        <li><a href="#">Acordo Individual vs. Coletivo</a></li>
-                        <li><a href="#">Contrato de Experiência 2026</a></li>
-                        <li><a href="#">Home Office e Teletrabalho</a></li>
-                        <li><a href="#">PJ vs. CLT 2026</a></li>
-                        <li><a href="#">Demissão e Acordos</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Navegação</h4>
-                    <ul>
-                        <li><a href="../index.html#home">Início</a></li>
-                        <li><a href="../index.html#calculadoras">Calculadoras</a></li>
-                        <li><a href="../index.html#consultorias">Consultorias</a></li>
-                        <li><a href="artigos.html">Artigos</a></li>
-                        <li><a href="../index.html#faq">FAQ</a></li>
-                    </ul>
+                <p class="footer-description">
+                    Gerador gratuito de documentos trabalhistas. 
+                    Simples, rápido e seguro.
+                </p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook" class="social-link">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" aria-label="Twitter" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" aria-label="Instagram" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" aria-label="LinkedIn" class="social-link">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
                 </div>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; <span id="current-year-intervalo">2026</span> ModeloTrabalhista. Todos os direitos reservados.</p>
-                <p class="disclaimer">
-                    <i class="fas fa-exclamation-triangle"></i> 
-                    Este conteúdo tem caráter informativo e educacional. Para orientação jurídica específica sobre intervalo intrajornada, horas extras e cálculos trabalhistas, consulte um advogado trabalhista. As informações são referentes a 2026 e podem ser atualizadas. Consulte sempre fontes oficiais (CLT, TST) e convenções coletivas aplicáveis.
-                </p>
+
+            <!-- Coluna 2: Links Institucionais (NOVO) -->
+            <div class="footer-section">
+                <h4 class="footer-title">Institucional</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="../pages/sobre.html" class="footer-link">Sobre Nós</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../pages/contato.html" class="footer-link">Fale Conosco</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../pages/termos.html" class="footer-link">Termos de Uso</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../pages/privacidade.html" class="footer-link">Política de Privacidade</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../pages/disclaimer.html" class="footer-link">Aviso Legal (Disclaimer)</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Coluna 3: Modelos -->
+            <div class="footer-section">
+                <h4 class="footer-title">Modelos</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="../index.html#gerador" data-model="demissao" class="footer-link">
+                            Pedido de Demissão
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#gerador" data-model="ferias" class="footer-link">
+                            Solicitação de Férias
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#gerador" data-model="advertencia" class="footer-link">
+                            Advertência
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#gerador" data-model="atestado" class="footer-link">
+                            Atestado
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Coluna 4: Links Úteis -->
+            <div class="footer-section">
+                <h4 class="footer-title">Navegação</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="../index.html#home" class="footer-link">Início</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#modelos" class="footer-link">Modelos</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#gerador" class="footer-link">Gerador</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="../index.html#faq" class="footer-link">Perguntas Frequentes (FAQ)</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </footer>
+
+        <!-- Aviso de Acessibilidade, Cookies e Disclaimer em linha contínua -->
+        <div class="footer-notices">
+            <span class="notice-item">
+                <i class="fas fa-universal-access notice-icon"></i>
+                <span class="notice-text">Este site segue as diretrizes de acessibilidade digital</span>
+            </span>
+            <span class="notice-separator">•</span>
+            <span class="notice-item">
+                <i class="fas fa-cookie-bite notice-icon"></i>
+                <span class="notice-text">Utilizamos cookies em conformidade com a LGPD</span>
+            </span>
+            <span class="notice-separator">•</span>
+            <span class="notice-item">
+                <i class="fas fa-exclamation-triangle notice-icon"></i>
+                <span class="notice-text">Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.</span>
+            </span>
+        </div>
+
+        <!-- Rodapé Inferior - Copyright -->
+        <div class="footer-bottom">
+            <p class="copyright">
+                &copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.
+            </p>
+        </div>
+    </div>
+</footer>
 
     <!-- Botão Voltar ao Topo -->
     <button id="back-to-top-article" class="back-to-top-article" aria-label="Voltar ao topo">
