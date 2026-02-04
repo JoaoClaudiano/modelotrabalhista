@@ -1,13 +1,727 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='artigos/style_updates.css'>
-    <link rel="stylesheet" href="existing-styles.css">
-    <title>Your Title</title>
+    <title>Hub de Artigos Trabalhistas | Guia Completo 2026</title>
+    <meta name="description" content="Central de artigos sobre direito trabalhista com 21 guias completos sobre FGTS, rescisão, cálculos e direitos do trabalhador.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #1a2530;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --gray: #7f8c8d;
+            --border-radius: 10px;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f7fa;
+            padding-bottom: 40px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+        }
+        
+        .logo h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 25px;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Filtros */
+        .filters {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            background-color: white;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .filter-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        /* Grid de Cards */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .article-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            padding: 20px 20px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .category-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-rescisao {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent);
+        }
+        
+        .badge-fgts {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+        }
+        
+        .badge-calculos {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+        
+        .badge-direitos {
+            background-color: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+        }
+        
+        .badge-doenca {
+            background-color: rgba(230, 126, 34, 0.1);
+            color: #e67e22;
+        }
+        
+        .badge-jovem {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f1c40f;
+        }
+        
+        .badge-pericia {
+            background-color: rgba(149, 165, 166, 0.1);
+            color: #95a5a6;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-top: 3px;
+        }
+        
+        .card-title h3 {
+            font-size: 1.2rem;
+            flex: 1;
+        }
+        
+        .card-body {
+            padding: 15px 20px;
+            flex: 1;
+        }
+        
+        .card-summary {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .card-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .read-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .read-btn:hover {
+            background-color: var(--dark);
+        }
+        
+        .article-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Mensagem de nenhum resultado */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+    </style>
 </head>
 <body>
-    <!-- Body content goes here -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-balance-scale"></i>
+                    <h1>Hub de Artigos Trabalhistas</h1>
+                </div>
+                <p class="subtitle">Guia completo com 21 artigos atualizados para 2026 sobre direitos trabalhistas, cálculos rescisórios, FGTS e muito mais. Tudo que você precisa saber em um só lugar.</p>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">21</div>
+                        <div class="stat-label">Artigos Atualizados</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">7</div>
+                        <div class="stat-label">Categorias</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">2026</div>
+                        <div class="stat-label">Leis Atualizadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="filters">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Todos os Artigos</button>
+                <button class="filter-btn" data-filter="rescisao">Rescisão</button>
+                <button class="filter-btn" data-filter="fgts">FGTS</button>
+                <button class="filter-btn" data-filter="calculos">Cálculos</button>
+                <button class="filter-btn" data-filter="direitos">Direitos</button>
+                <button class="filter-btn" data-filter="doenca">Doença Ocupacional</button>
+                <button class="filter-btn" data-filter="jovem">Jovem</button>
+                <button class="filter-btn" data-filter="pericia">Perícia</button>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar artigo...">
+            </div>
+        </section>
+        
+        <section class="articles-grid" id="articlesGrid">
+            <!-- Os cards serão gerados via JavaScript -->
+        </section>
+    </main>
+    
+    <footer class="container">
+        <p>© 2026 Hub de Artigos Trabalhistas. Todos os direitos reservados.</p>
+        <p>Este conteúdo é meramente informativo e não substitui a consulta com um advogado especializado.</p>
+    </footer>
+
+    <script>
+        // Dados dos artigos
+        const articles = [
+            {
+                id: 1,
+                title: "Acidente de Trabalho e Perícia do INSS 2026",
+                file: "acidente-trabalho-pericia-inss-2026.html",
+                categories: ["pericia", "direitos"],
+                icon: "fas fa-user-injured",
+                summary: "Entenda como funciona a perícia do INSS em casos de acidente de trabalho e quais são os direitos do trabalhador acidentado em 2026.",
+                date: "Jan 2026"
+            },
+            {
+                id: 2,
+                title: "Adicional Noturno 2026: Novas Regras",
+                file: "adicional-noturno-2026.html",
+                categories: ["direitos", "calculos"],
+                icon: "fas fa-moon",
+                summary: "Confira as mudanças nas regras do adicional noturno para 2026 e saiba como calcular corretamente este direito.",
+                date: "Fev 2026"
+            },
+            {
+                id: 3,
+                title: "Aviso Prévio Indenizado vs Trabalhado",
+                file: "aviso-previo-indenizado-e-trabalhado.html",
+                categories: ["rescisao", "calculos"],
+                icon: "fas fa-file-contract",
+                summary: "Descubra as diferenças entre aviso prévio indenizado e trabalhado e como cada um impacta no cálculo rescisório.",
+                date: "Mar 2026"
+            },
+            {
+                id: 4,
+                title: "Banco de Horas vs Horas Extras 2026",
+                file: "banco-horas-vs-extras-2026.html",
+                categories: ["calculos", "direitos"],
+                icon: "fas fa-clock",
+                summary: "Análise completa das diferenças entre banco de horas e horas extras, e qual a melhor opção em 2026.",
+                date: "Jan 2026"
+            },
+            {
+                id: 5,
+                title: "Burnout como Doença Ocupacional",
+                file: "burnout-doenca-ocupacional.html",
+                categories: ["doenca", "direitos"],
+                icon: "fas fa-brain",
+                summary: "Saiba como o burnout passou a ser reconhecido como doença ocupacional e os direitos garantidos ao trabalhador.",
+                date: "Abr 2026"
+            },
+            {
+                id: 6,
+                title: "CLT vs PJ: Calculadora 2026",
+                file: "clt-pj-calculadora-2026.html",
+                categories: ["calculos", "direitos"],
+                icon: "fas fa-calculator",
+                summary: "Use nossa calculadora comparativa para entender as diferenças financeiras e jurídicas entre CLT e PJ em 2026.",
+                date: "Mar 2026"
+            },
+            {
+                id: 7,
+                title: "Demissão Comum vs Acordo",
+                file: "demissao-comum-acordo.html",
+                categories: ["rescisao", "calculos"],
+                icon: "fas fa-handshake",
+                summary: "Comparativo detalhado entre demissão comum e demissão por acordo, com exemplos de cálculos para cada situação.",
+                date: "Fev 2026"
+            },
+            {
+                id: 8,
+                title: "eSocial para Empregado Doméstico 2026",
+                file: "esocial-domestico-2026.html",
+                categories: ["direitos"],
+                icon: "fas fa-home",
+                summary: "Guia completo sobre as obrigações do eSocial para empregados domésticos e os direitos garantidos em 2026.",
+                date: "Jan 2026"
+            },
+            {
+                id: 9,
+                title: "Estabilidade da Gestante 2026",
+                file: "estabilidade-gestante-2026.html",
+                categories: ["direitos"],
+                icon: "fas fa-baby",
+                summary: "Tudo sobre a estabilidade da gestante: desde a confirmação da gravidez até o retorno ao trabalho após a licença-maternidade.",
+                date: "Mar 2026"
+            },
+            {
+                id: 10,
+                title: "Horas Extras 2026: Como Calcular",
+                file: "horas-extras-2026.html",
+                categories: ["calculos", "direitos"],
+                icon: "fas fa-business-time",
+                summary: "Aprenda a calcular corretamente as horas extras em 2026, considerando as últimas mudanças na legislação trabalhista.",
+                date: "Fev 2026"
+            },
+            {
+                id: 11,
+                title: "Intervalo Intrajornada: Novas Regras",
+                file: "intervalo-intrajornada-2026.html",
+                categories: ["direitos"],
+                icon: "fas fa-coffee",
+                summary: "Entenda as novas regras sobre intervalos intrajornada e como elas afetam sua jornada de trabalho em 2026.",
+                date: "Jan 2026"
+            },
+            {
+                id: 12,
+                title: "Jovem Aprendiz vs Estagiário 2026",
+                file: "jovem-aprendiz-vs-estagiario-2026.html",
+                categories: ["jovem", "direitos"],
+                icon: "fas fa-user-graduate",
+                summary: "Diferenças cruciais entre os programas de jovem aprendiz e estágio, com os direitos de cada um em 2026.",
+                date: "Abr 2026"
+            },
+            {
+                id: 13,
+                title: "Multa de 40% do FGTS: Quando Receber",
+                file: "multa-40-fgts.html",
+                categories: ["fgts", "rescisao"],
+                icon: "fas fa-money-bill-wave",
+                summary: "Guia completo sobre a multa de 40% do FGTS: em quais situações é devida e como calcular o valor correto.",
+                date: "Mar 2026"
+            },
+            {
+                id: 14,
+                title: "Pedido de Demissão: Consequências",
+                file: "pedido-demissao.html",
+                categories: ["rescisao"],
+                icon: "fas fa-file-signature",
+                summary: "O que acontece quando você pede demissão? Entenda as consequências financeiras e trabalhistas desta decisão.",
+                date: "Fev 2026"
+            },
+            {
+                id: 15,
+                title: "Perícia do INSS 2026: Passo a Passo",
+                file: "pericia-inss-2026.html",
+                categories: ["pericia", "direitos"],
+                icon: "fas fa-stethoscope",
+                summary: "Passo a passo completo para passar pela perícia do INSS em 2026 e garantir seus benefícios por incapacidade.",
+                date: "Jan 2026"
+            },
+            {
+                id: 16,
+                title: "PIS/PASEP 2026: Como e Quando Sacar",
+                file: "pis-pasep-2026.html",
+                categories: ["direitos", "calculos"],
+                icon: "fas fa-university",
+                summary: "Tudo sobre o PIS/PASEP 2026: quem tem direito, calendário de saque e como calcular o valor a receber.",
+                date: "Mar 2026"
+            },
+            {
+                id: 17,
+                title: "Rescisão Indireta e Justa Causa",
+                file: "recisao-indireta-justa-causa-aplicada-pelo-empregado.html",
+                categories: ["rescisao"],
+                icon: "fas fa-gavel",
+                summary: "Entenda a rescisão indireta, quando o empregado pode aplicá-la, e as diferenças para a justa causa aplicada pelo empregador.",
+                date: "Abr 2026"
+            },
+            {
+                id: 18,
+                title: "Salário Família 2026: Novos Valores",
+                file: "salario-familia-2026.html",
+                categories: ["direitos", "calculos"],
+                icon: "fas fa-child",
+                summary: "Confira os novos valores do salário família para 2026 e os requisitos para ter direito a este benefício.",
+                date: "Jan 2026"
+            },
+            {
+                id: 19,
+                title: "Saque Aniversário vs Saque Rescisão",
+                file: "saque-aniversario-vs-rescisao.html",
+                categories: ["fgts"],
+                icon: "fas fa-birthday-cake",
+                summary: "Comparativo detalhado entre o saque-aniversário e o saque-rescisão do FGTS: qual a melhor opção para você.",
+                date: "Fev 2026"
+            },
+            {
+                id: 20,
+                title: "Seguro Desemprego 2026: Requisitos",
+                file: "seguro-desemprego-2026.html",
+                categories: ["direitos", "rescisao"],
+                icon: "fas fa-shield-alt",
+                summary: "Requisitos atualizados para solicitar o seguro-desemprego em 2026 e como calcular os valores das parcelas.",
+                date: "Mar 2026"
+            },
+            {
+                id: 21,
+                title: "Teletrabalho Híbrido: Custos 2026",
+                file: "teletrabalho-híbrido-custos-2026.html",
+                categories: ["direitos", "calculos"],
+                icon: "fas fa-laptop-house",
+                summary: "Análise dos custos do teletrabalho híbrido em 2026: o que a empresa deve pagar e os direitos do trabalhador remoto.",
+                date: "Abr 2026"
+            }
+        ];
+
+        // Mapeamento de categorias para nomes exibidos
+        const categoryNames = {
+            'rescisao': 'Rescisão',
+            'fgts': 'FGTS',
+            'calculos': 'Cálculos',
+            'direitos': 'Direitos',
+            'doenca': 'Doença Ocupacional',
+            'jovem': 'Jovem',
+            'pericia': 'Perícia'
+        };
+
+        // Função para renderizar os artigos
+        function renderArticles(filter = 'all', searchTerm = '') {
+            const grid = document.getElementById('articlesGrid');
+            grid.innerHTML = '';
+            
+            // Filtrar artigos
+            let filteredArticles = articles.filter(article => {
+                const matchesFilter = filter === 'all' || article.categories.includes(filter);
+                const matchesSearch = searchTerm === '' || 
+                    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    article.categories.some(cat => categoryNames[cat].toLowerCase().includes(searchTerm.toLowerCase()));
+                
+                return matchesFilter && matchesSearch;
+            });
+            
+            // Se não houver resultados
+            if (filteredArticles.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum artigo encontrado</h3>
+                        <p>Tente usar outros termos de busca ou selecione uma categoria diferente.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Renderizar artigos filtrados
+            filteredArticles.forEach(article => {
+                const categoriesHTML = article.categories.map(cat => 
+                    `<span class="category-badge badge-${cat}">${categoryNames[cat]}</span>`
+                ).join('');
+                
+                const articleCard = document.createElement('article');
+                articleCard.className = 'article-card';
+                articleCard.setAttribute('data-categories', article.categories.join(' '));
+                
+                articleCard.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-categories">
+                            ${categoriesHTML}
+                        </div>
+                        <div class="card-title">
+                            <div class="card-icon">
+                                <i class="${article.icon}"></i>
+                            </div>
+                            <h3>${article.title}</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-summary">${article.summary}</p>
+                    </div>
+                    <div class="card-footer">
+                        <span class="article-date">${article.date}</span>
+                        <a href="${article.file}" class="read-btn">
+                            <span>Ler Artigo</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                `;
+                
+                grid.appendChild(articleCard);
+            });
+        }
+
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Renderizar todos os artigos inicialmente
+            renderArticles();
+            
+            // Configurar filtros por categoria
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remover classe active de todos os botões
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Adicionar classe active ao botão clicado
+                    this.classList.add('active');
+                    
+                    // Obter o filtro
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Aplicar filtro
+                    const searchTerm = document.getElementById('searchInput').value;
+                    renderArticles(filter, searchTerm);
+                });
+            });
+            
+            // Configurar busca em tempo real
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const filter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+                const searchTerm = this.value;
+                renderArticles(filter, searchTerm);
+            });
+        });
+    </script>
 </body>
 </html>
