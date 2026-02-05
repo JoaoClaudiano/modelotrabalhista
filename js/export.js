@@ -606,6 +606,7 @@ class DocumentExporter {
     // Exportar para PDF (método principal com fallback)
     async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
         // Use the new method that preserves formatting via browser print
+        // Note: content parameter retained for backward compatibility but not used
         return await this.exportToPDFViaPrint(filename);
     }
 
