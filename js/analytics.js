@@ -277,8 +277,8 @@ class AnalyticsTracker {
             this.saveQueue();
         } catch (error) {
             console.error('Erro ao processar fila de eventos:', error);
-            // Restaurar eventos não enviados na fila
-            this.eventsQueue = [...eventsToSend, ...this.eventsQueue];
+            // Restaurar eventos não enviados na fila (corrigido)
+            this.eventsQueue = eventsToSend;
             this.saveQueue();
         } finally {
             // Garantir que o flag é sempre limpo, mesmo em caso de erro

@@ -801,9 +801,9 @@ ${data.employeePosition}`;
         contentDiv.className = 'document-content';
         contentDiv.setAttribute('tabindex', '0');
         
-        // Escapar HTML e preservar formatação (newlines)
-        const escapedContent = this.escapeHtml(content);
-        contentDiv.innerHTML = escapedContent.replace(/\n/g, '<br>');
+        // Usar CSS para preservar formatação ao invés de <br> tags
+        contentDiv.style.whiteSpace = 'pre-wrap';
+        contentDiv.textContent = content; // Usar textContent é mais seguro
         
         // Limpar preview e adicionar novo conteúdo
         preview.innerHTML = '';
@@ -817,7 +817,7 @@ ${data.employeePosition}`;
         }
     }
     
-    // Função auxiliar para escapar HTML e prevenir XSS
+    // Função auxiliar para escapar HTML e prevenir XSS (mantida para compatibilidade futura)
     escapeHtml(text) {
         if (typeof text !== 'string') return '';
         const div = document.createElement('div');

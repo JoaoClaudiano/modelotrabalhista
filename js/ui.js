@@ -175,7 +175,9 @@ class UIHelper {
         
         const closeBtn = document.createElement('button');
         closeBtn.className = 'notification-close';
-        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        const closeIcon = document.createElement('i');
+        closeIcon.className = 'fas fa-times';
+        closeBtn.appendChild(closeIcon);
         
         notification.appendChild(contentDiv);
         notification.appendChild(closeBtn);

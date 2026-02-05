@@ -2,6 +2,11 @@
 
 class DocumentGenerator {
     constructor() {
+        // Constantes para validação de tamanho de campos
+        this.MAX_SHORT_TEXT_LENGTH = 500;
+        this.MAX_LONG_TEXT_LENGTH = 2000;
+        this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
+        
         this.templates = {
             demissao: this.generateResignationLetter.bind(this),
             ferias: this.generateVacationRequest.bind(this),
@@ -11,15 +16,21 @@ class DocumentGenerator {
             reuniao: this.generateMeetingConvocation.bind(this)
         };
     }
+    
+    // Verificar se um campo é de texto longo
+    isLongTextField(fieldName) {
+        return this.LONG_TEXT_FIELDS.some(suffix => fieldName.includes(suffix));
+    }
 
     // Sanitizar string para prevenir injeção de comandos/scripts
-    sanitizeInput(text, maxLength = 500) {
+    sanitizeInput(text, maxLength = null) {
         if (typeof text !== 'string') return '';
         // Remover caracteres de controle perigosos mas manter quebras de linha
         text = text.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
         // Limitar comprimento
-        if (text.length > maxLength) {
-            text = text.substring(0, maxLength);
+        const limit = maxLength || this.MAX_SHORT_TEXT_LENGTH;
+        if (text.length > limit) {
+            text = text.substring(0, limit);
         }
         return text.trim();
     }
@@ -34,7 +45,7 @@ class DocumentGenerator {
         const sanitizedData = {};
         for (const key in data) {
             if (typeof data[key] === 'string') {
-                const maxLength = key.includes('Reason') || key.includes('Agenda') || key.includes('Conditions') ? 2000 : 500;
+                const maxLength = this.isLongTextField(key) ? this.MAX_LONG_TEXT_LENGTH : this.MAX_SHORT_TEXT_LENGTH;
                 sanitizedData[key] = this.sanitizeInput(data[key], maxLength);
             } else {
                 sanitizedData[key] = data[key];

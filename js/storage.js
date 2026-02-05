@@ -430,15 +430,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.storageManager) {
         window.storageManager = new StorageManager();
         
-        // Limpeza automática periódica com armazenamento do ID para limpeza
-        const cleanupIntervalId = setInterval(() => {
+        // Limpeza automática periódica (não precisa de cleanup no beforeunload)
+        setInterval(() => {
             window.storageManager.cleanupOldItems();
         }, 24 * 60 * 60 * 1000); // Diariamente
-        
-        // Limpar interval quando a página for descarregada
-        window.addEventListener('beforeunload', () => {
-            clearInterval(cleanupIntervalId);
-        });
     }
 });
 
