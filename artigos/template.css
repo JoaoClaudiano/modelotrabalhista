@@ -538,3 +538,45 @@
 .article-body p:hover {
     background-color: rgba(37, 99, 235, 0.03);
 }
+
+/* ============================================
+   FERRAMENTAS GRATUITAS
+   ============================================ */
+
+.tools-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    color: var(--dark-color);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.tool-item:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    transform: translateX(4px);
+    border-color: var(--primary-dark);
+}
+
+.tool-item i {
+    font-size: 1.25rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.tool-item span {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
