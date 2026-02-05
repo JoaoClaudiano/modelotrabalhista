@@ -380,7 +380,7 @@
                                 <label for="documentType">
                                     <i class="fas fa-file-alt"></i> Tipo de Documento *
                                 </label>
-                                <select id="documentType" class="form-control" required>
+                                <select id="documentType" class="form-control" autocomplete="off" required>
                                     <option value="">Selecione um modelo</option>
                                     <option value="demissao">Pedido de Demissão</option>
                                     <option value="ferias">Solicitação de Férias</option>
@@ -397,7 +397,7 @@
                                         <i class="fas fa-building"></i> Nome da Empresa *
                                     </label>
                                     <input type="text" id="companyName" class="form-control" 
-                                           placeholder="Ex: Tech Solutions Ltda" required>
+                                           placeholder="Ex: Tech Solutions Ltda" autocomplete="organization" required>
                                 </div>
                                 
                                 <div class="form-group">
@@ -405,7 +405,7 @@
                                         <i class="fas fa-user"></i> Nome do Funcionário *
                                     </label>
                                     <input type="text" id="employeeName" class="form-control" 
-                                           placeholder="Ex: João da Silva" required>
+                                           placeholder="Ex: João da Silva" autocomplete="name" required>
                                 </div>
                             </div>
                             
@@ -414,7 +414,7 @@
                                     <i class="fas fa-map-marker-alt"></i> Endereço da Empresa
                                 </label>
                                 <input type="text" id="companyAddress" class="form-control" 
-                                       placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
+                                       placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP" autocomplete="street-address">
                             </div>
                             
                             <div class="form-row">
@@ -423,14 +423,14 @@
                                         <i class="fas fa-briefcase"></i> Cargo
                                     </label>
                                     <input type="text" id="employeePosition" class="form-control" 
-                                           placeholder="Ex: Analista de Sistemas">
+                                           placeholder="Ex: Analista de Sistemas" autocomplete="organization-title">
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="documentDate">
                                         <i class="fas fa-calendar-alt"></i> Data do Documento *
                                     </label>
-                                    <input type="date" id="documentDate" class="form-control" required>
+                                    <input type="date" id="documentDate" class="form-control" autocomplete="off" required>
                                 </div>
                             </div>
                             
