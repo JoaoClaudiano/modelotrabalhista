@@ -35,6 +35,7 @@ class AppTour {
         this.skipButton = null;
         this.nextButton = null;
         this.prevButton = null;
+        this.autoCloseTimer = null;
         
         this.init();
     }
@@ -85,11 +86,13 @@ class AppTour {
         
         // Event listeners
         document.getElementById('startTourBtn').addEventListener('click', () => {
+            this.clearAutoCloseTimer();
             this.start();
             this.hideWelcomeModal();
         });
         
         document.getElementById('skipTourBtn').addEventListener('click', () => {
+            this.clearAutoCloseTimer();
             this.complete();
             this.hideWelcomeModal();
         });
@@ -102,12 +105,26 @@ class AppTour {
                 localStorage.removeItem('modelotrabalhista_tour_disabled');
             }
         });
+        
+        // Auto-close após 10 segundos
+        this.autoCloseTimer = setTimeout(() => {
+            this.hideWelcomeModal();
+            // Não marca como completo, apenas fecha o modal
+        }, 10000);
     }
     
     hideWelcomeModal() {
+        this.clearAutoCloseTimer();
         const modal = document.querySelector('.tour-welcome-modal');
         if (modal) {
             modal.remove();
+        }
+    }
+    
+    clearAutoCloseTimer() {
+        if (this.autoCloseTimer) {
+            clearTimeout(this.autoCloseTimer);
+            this.autoCloseTimer = null;
         }
     }
     
@@ -631,14 +648,6 @@ class AppTour {
         this.start();
     }
 }
-
-// Inicializar quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    // Verificar se o tour está desabilitado
-    if (!localStorage.getItem('modelotrabalhista_tour_disabled')) {
-        window.appTour = new AppTour();
-    }
-});
 
 // Exportar para uso global
 window.AppTour = AppTour;
