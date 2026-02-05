@@ -455,6 +455,8 @@ class ModeloTrabalhistaApp {
             case 'demissao':
                 data.effectiveDate = getValue('effectiveDate');
                 data.noticePeriod = getValue('noticePeriod') || 'trabalhado';
+                data.CPF = getValue('CPF');
+                data.CTPS = getValue('CTPS');
                 break;
             case 'ferias':
                 data.vacationPeriod = getValue('vacationPeriod');
@@ -474,6 +476,8 @@ class ModeloTrabalhistaApp {
                 data.severanceValue = getValue('severanceValue');
                 data.paymentDate = getValue('paymentDate');
                 data.additionalConditions = getValue('additionalConditions');
+                data.CPF = getValue('CPF');
+                data.CTPS = getValue('CTPS');
                 break;
             case 'reuniao':
                 data.meetingDate = getValue('meetingDate');
@@ -826,6 +830,45 @@ ${data.employeePosition}`;
     }
 
     validateForm() {
+        // Use generator's built-in validation if available
+        if (this.generator && typeof this.generator.validateRequiredFields === 'function') {
+            const data = this.collectFormData();
+            const validation = this.generator.validateRequiredFields(data);
+            
+            if (!validation.valid) {
+                // Highlight missing fields
+                validation.missingFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                        this.ui.highlightError(field);
+                    }
+                });
+                
+                // Show error message with specific missing fields
+                this.ui.showNotification(validation.message, 'error');
+                return false;
+            }
+            
+            // Remove error highlights from all fields
+            const allFields = ['companyName', 'employeeName', 'employeePosition', 'documentDate', 
+                              'effectiveDate', 'noticePeriod', 'CPF', 'CTPS',
+                              'vacationPeriod', 'vacationDays', 
+                              'incidentDate', 'warningReason', 'severity',
+                              'certificateStart', 'certificateEnd', 'certificateReason',
+                              'severanceValue', 'paymentDate',
+                              'meetingDate', 'meetingTime', 'meetingLocation', 'meetingAgenda'];
+            
+            allFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    this.ui.removeError(field);
+                }
+            });
+            
+            return true;
+        }
+        
+        // Fallback to simple validation if generator is not available
         const requiredFields = ['companyName', 'employeeName', 'documentDate'];
         
         for (const fieldId of requiredFields) {
@@ -871,6 +914,8 @@ ${data.employeePosition}`;
             companyAddress: 'Av. Paulista, 1000 - São Paulo/SP',
             employeeName: 'João da Silva',
             employeePosition: 'Analista de Sistemas',
+            CPF: '123.456.789-00',
+            CTPS: '12345 - Série 0001',
             vacationPeriod: '01/12/2023 a 31/12/2023',
             vacationDays: '30',
             warningReason: 'Atrasos recorrentes no horário de entrada durante o mês de outubro.',
