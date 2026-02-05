@@ -33,6 +33,22 @@ class StorageManager {
             }));
             return true;
         } catch (e) {
+            // Tratar erro de quota excedida
+            if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
+                console.warn('Armazenamento local cheio. Tentando limpar itens antigos...');
+                this.cleanupOldItems();
+                try {
+                    localStorage.setItem(key, JSON.stringify({
+                        data,
+                        savedAt: new Date().toISOString(),
+                        model
+                    }));
+                    return true;
+                } catch (retryError) {
+                    console.error('Erro ao salvar rascunho após limpeza:', retryError);
+                    return false;
+                }
+            }
             console.error('Erro ao salvar rascunho:', e);
             return false;
         }
@@ -59,7 +75,8 @@ class StorageManager {
         const drafts = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith(`${this.prefix}draft_`)) {
+            // Adicionar verificação de null para prevenir erros
+            if (key && key.startsWith(`${this.prefix}draft_`)) {
                 try {
                     const draft = JSON.parse(localStorage.getItem(key));
                     drafts.push({
@@ -355,7 +372,8 @@ class StorageManager {
         let total = 0;
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith(this.prefix)) {
+            // Adicionar verificação de null
+            if (key && key.startsWith(this.prefix)) {
                 const value = localStorage.getItem(key);
                 total += (key.length + value.length) * 2; // Aproximação em bytes
             }
@@ -393,7 +411,8 @@ class StorageManager {
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith(this.prefix)) {
+            // Adicionar verificação de null
+            if (key && key.startsWith(this.prefix)) {
                 keysToRemove.push(key);
             }
         }
@@ -411,10 +430,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.storageManager) {
         window.storageManager = new StorageManager();
         
-        // Limpeza automática periódica
-        setInterval(() => {
+        // Limpeza automática periódica com armazenamento do ID para limpeza
+        const cleanupIntervalId = setInterval(() => {
             window.storageManager.cleanupOldItems();
         }, 24 * 60 * 60 * 1000); // Diariamente
+        
+        // Limpar interval quando a página for descarregada
+        window.addEventListener('beforeunload', () => {
+            clearInterval(cleanupIntervalId);
+        });
     }
 });
 

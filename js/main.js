@@ -796,13 +796,33 @@ ${data.employeePosition}`;
         const preview = document.getElementById('documentPreview');
         if (!preview) return;
         
-        preview.innerHTML = `<div class="document-content" tabindex="0">${content}</div>`;
+        // Criar elemento de forma segura para prevenir XSS
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'document-content';
+        contentDiv.setAttribute('tabindex', '0');
+        
+        // Escapar HTML e preservar formatação (newlines)
+        const escapedContent = this.escapeHtml(content);
+        contentDiv.innerHTML = escapedContent.replace(/\n/g, '<br>');
+        
+        // Limpar preview e adicionar novo conteúdo
+        preview.innerHTML = '';
+        preview.appendChild(contentDiv);
+        
         preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         
         // Announce to screen readers
         if (this.accessibility && this.accessibility.announceToScreenReader) {
             this.accessibility.announceToScreenReader('Documento gerado com sucesso. Use Tab para navegar no conteúdo.');
         }
+    }
+    
+    // Função auxiliar para escapar HTML e prevenir XSS
+    escapeHtml(text) {
+        if (typeof text !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     validateForm() {

@@ -263,10 +263,11 @@ class AnalyticsTracker {
         if (this.isSending || this.eventsQueue.length === 0) return;
         
         this.isSending = true;
+        let eventsToSend = [];
         
         try {
             // Enviar eventos pendentes
-            const eventsToSend = [...this.eventsQueue];
+            eventsToSend = [...this.eventsQueue];
             this.eventsQueue = [];
             
             for (const event of eventsToSend) {
@@ -276,9 +277,11 @@ class AnalyticsTracker {
             this.saveQueue();
         } catch (error) {
             console.error('Erro ao processar fila de eventos:', error);
-            // Restaurar eventos não enviados
-            this.loadQueue();
+            // Restaurar eventos não enviados na fila
+            this.eventsQueue = [...eventsToSend, ...this.eventsQueue];
+            this.saveQueue();
         } finally {
+            // Garantir que o flag é sempre limpo, mesmo em caso de erro
             this.isSending = false;
         }
     }

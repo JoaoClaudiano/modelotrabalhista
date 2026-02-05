@@ -12,6 +12,14 @@ class DocumentGenerator {
         };
     }
 
+    // Escapa caracteres HTML para prevenir XSS
+    escapeHtml(text) {
+        if (typeof text !== 'string') return text;
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Gerador principal
     generateDocument(data) {
         if (!data || !data.model) {
