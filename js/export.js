@@ -192,22 +192,27 @@ class DocumentExporter {
 
     loadHtml2Canvas() {
         return new Promise((resolve, reject) => {
+            // Verificar se já está carregado
             if (typeof html2canvas !== 'undefined') {
-                this.libsLoaded.html2canvas = true;
                 resolve();
                 return;
             }
-            
+
+            // Carregar html2canvas
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-            script.integrity = 'sha256-6H/NIyKJHgE0lqBnK2lQwhgGUYCVqrG4VKhYKjhCVOQ=';
             script.crossOrigin = 'anonymous';
+            
             script.onload = () => {
                 console.log('✅ html2canvas carregado com sucesso');
-                this.libsLoaded.html2canvas = true;
                 resolve();
             };
-            script.onerror = () => reject(new Error('Falha ao carregar html2canvas'));
+            
+            script.onerror = () => {
+                console.error('❌ Falha ao carregar html2canvas');
+                reject(new Error('Não foi possível carregar o conversor de HTML para PDF'));
+            };
+            
             document.head.appendChild(script);
         });
     }
@@ -286,6 +291,8 @@ class DocumentExporter {
                 pdfBtn.disabled = true;
                 
                 try {
+                    console.log('Iniciando geração automática de PDF...');
+                    
                     // Reset zoom before PDF export to ensure consistent formatting
                     const preview = document.getElementById('documentPreview');
                     let originalZoom = null;
@@ -293,11 +300,11 @@ class DocumentExporter {
                         originalZoom = window.ui.currentZoom;
                         window.ui.resetZoom('documentPreview');
                         // Small delay to allow DOM to update after zoom reset
-                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    // USAR O NOVO MÉTODO QUE PRESERVA FORMATAÇÃO
-                    await this.exportToPDFViaPrint('ModeloTrabalhista');
+                    // USAR O NOVO MÉTODO DE DOWNLOAD AUTOMÁTICO
+                    await this.exportToPDFAuto('ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
                     if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
@@ -508,6 +515,29 @@ class DocumentExporter {
         return 'Nenhum conteúdo disponível para exportação. Gere um modelo primeiro.';
     }
 
+    // Obter elemento do documento (retorna HTMLElement, não string)
+    getDocumentElement() {
+        const selectors = [
+            '#modelo-text',
+            '#textoModelo',
+            '#documento-texto',
+            '#conteudoModelo',
+            '.modelo-texto',
+            '.documento-conteudo',
+            '#previewModelo',
+            '.preview-content'
+        ];
+        
+        for (const selector of selectors) {
+            const element = document.querySelector(selector);
+            if (element && element.innerHTML.trim().length > 0) {
+                return element;
+            }
+        }
+        
+        return null;
+    }
+
     // Exportar para PDF com html2canvas (preserva formatação HTML)
     async exportToPDFWithHTML(filename = 'ModeloTrabalhista') {
         try {
@@ -603,11 +633,107 @@ class DocumentExporter {
         }
     }
 
+    // Exportar para PDF com download automático (novo método principal)
+    async exportToPDFAuto(filename = 'ModeloTrabalhista') {
+        try {
+            // 1. Obter o elemento HTML formatado
+            const element = this.getDocumentElement();
+            if (!element) {
+                throw new Error('Elemento do documento não encontrado');
+            }
+
+            // 2. Carregar bibliotecas necessárias
+            // Carregar jsPDF se necessário
+            if (typeof window.jspdf === 'undefined') {
+                console.log('Carregando jsPDF...');
+                this.loadLibraries();
+                // Wait for jsPDF to load
+                await new Promise((resolve) => {
+                    const checkInterval = setInterval(() => {
+                        if (typeof window.jspdf !== 'undefined') {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }, 10000);
+                });
+            }
+            
+            // Verificar se jsPDF foi carregado
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF não pôde ser carregado');
+            }
+
+            // Carregar html2canvas
+            await this.loadHtml2Canvas();
+
+            // 3. Capturar o elemento como imagem de alta qualidade
+            const canvas = await html2canvas(element, {
+                scale: 2, // Alta resolução
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
+            });
+
+            // 4. Configurar PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // 5. Calcular dimensões para caber na página A4
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            
+            // Redimensionar mantendo proporção para caber na página
+            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight) * 0.95; // 95% da página
+            const finalWidth = imgWidth * ratio;
+            const finalHeight = imgHeight * ratio;
+            
+            // Centralizar na página
+            const x = (pageWidth - finalWidth) / 2;
+            const y = (pageHeight - finalHeight) / 2;
+
+            // 6. Adicionar imagem ao PDF
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
+
+            // 7. Baixar automaticamente
+            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            doc.save(`${safeFilename}.pdf`);
+
+            // 8. Feedback ao usuário
+            this.showNotification('PDF gerado e baixado automaticamente!', 'success');
+            return { 
+                success: true, 
+                filename: `${safeFilename}.pdf`,
+                message: 'PDF baixado automaticamente'
+            };
+
+        } catch (error) {
+            console.error('Erro na geração automática de PDF:', error);
+            
+            // Fallback para método de impressão se a geração automática falhar
+            this.showNotification('Tentando método alternativo...', 'info');
+            return await this.exportToPDFViaPrint(filename);
+        }
+    }
+
     // Exportar para PDF (método principal com fallback)
     async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
-        // Use the new method that preserves formatting via browser print
-        // Note: content parameter retained for backward compatibility but not used
-        return await this.exportToPDFViaPrint(filename);
+        // Usar o novo método de download automático como padrão
+        return await this.exportToPDFAuto(filename);
     }
 
     async exportToPDFViaPrint(filename = 'ModeloTrabalhista') {

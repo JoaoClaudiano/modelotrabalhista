@@ -7,12 +7,14 @@ class DocumentGenerator {
         this.MAX_LONG_TEXT_LENGTH = 2000;
         this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
         
-        // Estilos base para container do documento (otimizado para PDF de 1 página A4)
+        // Estilos base para container do documento (otimizado para PDF de 1 página A4 e captura com html2canvas)
         // box-sizing: border-box - garante que padding não aumenta dimensões totais
         // page-break-inside: avoid - evita quebra dentro do container
         // line-height: 1.3 - reduzido de 1.4 para economizar espaço vertical
-        // padding: 15px - reduzido de 20px para maximizar área utilizável
-        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.3; width: 100%; margin: 0; padding: 15px; box-sizing: border-box; page-break-inside: avoid;';
+        // padding: 20px - ajustado para melhor captura em PDF
+        // background-color: white - garante fundo branco na captura
+        // color: black - garante texto preto para melhor legibilidade
+        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.3; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; background-color: white; color: black;';
         
         // Array de meses em português para formatação de datas
         this.MONTHS_PT = [
