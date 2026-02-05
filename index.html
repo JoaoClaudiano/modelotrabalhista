@@ -918,13 +918,13 @@
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" onerror="console.warn('VLibras script failed to load from primary source')"></script>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" onerror="console.warn('VLibras script failed to load. Accessibility widget unavailable.')"></script>
     <script>
         try {
             if (window.VLibras && window.VLibras.Widget) {
                 new window.VLibras.Widget('https://vlibras.gov.br/app');
             } else {
-                console.warn('VLibras Widget not available');
+                console.warn('VLibras Widget not available - script may have failed to load');
             }
         } catch (error) {
             console.error('Error initializing VLibras:', error);
