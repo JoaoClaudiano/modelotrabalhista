@@ -817,6 +817,10 @@ textarea.form-control {
     color: var(--primary-light);
 }
 
+.footer-logo h3 {
+    color: var(--white-color);
+}
+
 .footer-section h4 {
     color: var(--white-color);
     margin-bottom: var(--space-md);
