@@ -83,11 +83,16 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Ignora requisições que não são do mesmo domínio ou de CDNs específicos
+  // Lista de domínios confiáveis para cache
+  const trustedDomains = [
+    'cdnjs.cloudflare.com',
+    'fonts.googleapis.com',
+    'fonts.gstatic.com'
+  ];
+  
+  // Ignora requisições que não são do mesmo domínio ou de CDNs confiáveis
   if (url.origin !== location.origin && 
-      !url.hostname.includes('cdnjs.cloudflare.com') &&
-      !url.hostname.includes('fonts.googleapis.com') &&
-      !url.hostname.includes('fonts.gstatic.com')) {
+      !trustedDomains.includes(url.hostname)) {
     return;
   }
 
