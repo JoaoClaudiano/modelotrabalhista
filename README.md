@@ -37,6 +37,16 @@ Acesse o site [modelotrabalhista.com.br](https://joaoclaudiano.github.io/modelot
 
 ## 🔧 Desenvolvimento
 
+### Deploy Automático para GitHub Pages
+
+O site é automaticamente implantado no GitHub Pages sempre que há um push para o branch `main`. O workflow de CI/CD:
+
+1. **Instalação de dependências** - Instala as dependências do Node.js
+2. **Geração de arquivos SEO** - Gera automaticamente sitemap.xml e robots.txt
+3. **Build e Deploy** - Faz upload dos arquivos e implanta no GitHub Pages
+
+O site fica disponível em: [https://joaoclaudiano.github.io/modelotrabalhista/](https://joaoclaudiano.github.io/modelotrabalhista/)
+
 ### Gerar Sitemap e Robots.txt
 
 O projeto inclui scripts para gerar automaticamente o sitemap.xml e robots.txt:
