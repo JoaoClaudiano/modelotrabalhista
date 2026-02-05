@@ -4,6 +4,9 @@
 const CACHE_NAME = 'modelotrabalhista-v1';
 const OFFLINE_URL = '/modelotrabalhista/index.html';
 
+// Regex para arquivos cacheáveis
+const CACHEABLE_EXTENSIONS = /\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json)$/;
+
 // Recursos essenciais para cache inicial
 const ESSENTIAL_RESOURCES = [
   '/modelotrabalhista/',
@@ -29,6 +32,9 @@ const ESSENTIAL_RESOURCES = [
   '/modelotrabalhista/assets/favicon-96x96.png'
 ];
 
+// Tracking para atualizações em background
+const updatingResources = new Set();
+
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Instalando...');
@@ -37,7 +43,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[Service Worker] Pré-cache de recursos essenciais');
-        return cache.addAll(ESSENTIAL_RESOURCES.map(url => new Request(url, { cache: 'reload' })));
+        return cache.addAll(ESSENTIAL_RESOURCES);
       })
       .then(() => {
         console.log('[Service Worker] Instalação concluída');
@@ -118,20 +124,30 @@ self.addEventListener('fetch', (event) => {
     caches.match(request)
       .then((cachedResponse) => {
         if (cachedResponse) {
-          // Retorna do cache e atualiza em background
-          fetch(request)
-            .then((response) => {
-              if (response && response.status === 200) {
-                const responseToCache = response.clone();
-                caches.open(CACHE_NAME)
-                  .then((cache) => {
-                    cache.put(request, responseToCache);
-                  });
-              }
-            })
-            .catch(() => {
-              // Ignora erros de atualização em background
-            });
+          // Retorna do cache e atualiza em background (evita duplicatas)
+          const requestUrl = request.url;
+          if (!updatingResources.has(requestUrl)) {
+            updatingResources.add(requestUrl);
+            
+            fetch(request)
+              .then((response) => {
+                if (response && response.status === 200) {
+                  const responseToCache = response.clone();
+                  caches.open(CACHE_NAME)
+                    .then((cache) => {
+                      cache.put(request, responseToCache);
+                    })
+                    .finally(() => {
+                      updatingResources.delete(requestUrl);
+                    });
+                } else {
+                  updatingResources.delete(requestUrl);
+                }
+              })
+              .catch(() => {
+                updatingResources.delete(requestUrl);
+              });
+          }
           
           return cachedResponse;
         }
@@ -149,8 +165,8 @@ self.addEventListener('fetch', (event) => {
             
             caches.open(CACHE_NAME)
               .then((cache) => {
-                // Cacheia recursos estáticos
-                if (request.url.match(/\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json)$/)) {
+                // Cacheia recursos estáticos usando a constante
+                if (request.url.match(CACHEABLE_EXTENSIONS)) {
                   cache.put(request, responseToCache);
                 }
               });
