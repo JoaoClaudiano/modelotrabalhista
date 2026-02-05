@@ -403,24 +403,11 @@ class DocumentExporter {
             const margin = 20;
             const maxWidth = pageWidth - (margin * 2);
             
-            // Cabeçalho
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('MODELO TRABALHISTA', pageWidth / 2, margin, { align: 'center' });
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth / 2, margin + 8, { align: 'center' });
-            
-            // Linha divisória
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, margin + 15, pageWidth - margin, margin + 15);
-            
             // Conteúdo
             doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
             
-            let y = margin + 25;
+            let y = margin;
             const lineHeight = 6;
             
             // Dividir conteúdo em linhas
@@ -448,7 +435,6 @@ class DocumentExporter {
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.text(`Página ${i} de ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                doc.text('joaoclaudiano.github.io/modelotrabalhista', pageWidth / 2, pageHeight - 5, { align: 'center' });
             }
             
             // Salvar
@@ -530,25 +516,7 @@ class DocumentExporter {
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <h1>${filename}</h1>
-                        <p>Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
-                    </div>
-                    
-                    <div class="instructions no-print">
-                        <p><strong>Instruções para salvar como PDF:</strong></p>
-                        <ol>
-                            <li>Clique no botão abaixo para abrir a caixa de impressão</li>
-                            <li>Na caixa de impressão, selecione "Salvar como PDF" como destino</li>
-                            <li>Clique em "Salvar" e escolha onde salvar o arquivo</li>
-                        </ol>
-                    </div>
-                    
                     <div class="document">${content}</div>
-                    
-                    <div class="footer">
-                        <p>Gerado por ModeloTrabalhista - ${window.location.origin}</p>
-                    </div>
                     
                     <div class="no-print" style="text-align: center; margin-top: 2cm;">
                         <button onclick="window.print()">📄 Abrir Caixa de Impressão</button>
@@ -603,29 +571,8 @@ class DocumentExporter {
                 sections: [{
                     properties: {},
                     children: [
-                        // Cabeçalho
-                        new Paragraph({
-                            children: [new TextRun({ text: 'MODELO TRABALHISTA', bold: true, size: 32 })],
-                            alignment: AlignmentType.CENTER,
-                            spacing: { after: 400 }
-                        }),
-                        new Paragraph({
-                            children: [new TextRun({ text: `Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, size: 20 })],
-                            alignment: AlignmentType.CENTER,
-                            spacing: { after: 800 }
-                        }),
                         // Conteúdo
-                        ...paragraphs,
-                        // Rodapé
-                        new Paragraph({ children: [new TextRun({ text: ' ' })] }),
-                        new Paragraph({
-                            children: [new TextRun({ 
-                                text: `Gerado por ModeloTrabalhista - ${window.location.origin}`, 
-                                size: 16, 
-                                color: '666666' 
-                            })],
-                            alignment: AlignmentType.CENTER
-                        })
+                        ...paragraphs
                     ]
                 }]
             });
@@ -699,15 +646,7 @@ class DocumentExporter {
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <h1 style="color: #007bff; margin: 0">${filename}</h1>
-                        <p style="color: #666">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
-                    </div>
                     <div class="document">${content}</div>
-                    <div class="footer">
-                        <p>Gerado por <strong>ModeloTrabalhista</strong> - ${window.location.origin}</p>
-                        <p style="font-size: 9pt; color: #999">Salve este arquivo com extensão .docx para abrir no Microsoft Word</p>
-                    </div>
                 </body>
                 </html>
             `;

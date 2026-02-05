@@ -1021,11 +1021,6 @@ ${data.employeePosition}`;
             </head>
             <body>
                 <div>${content}</div>
-                <div class="footer no-print">
-                    <hr>
-                    <p><small>Gerado por ModeloTrabalhista - ${new Date().toLocaleDateString('pt-BR')}</small></p>
-                    <button onclick="window.print()" class="no-print">Imprimir</button>
-                </div>
             </body>
             </html>
         `);
