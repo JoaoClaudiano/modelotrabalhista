@@ -208,7 +208,7 @@ class DocumentGenerator {
         // Gerar local e data formatada
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `<div style="font-family: Arial, sans-serif; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 10px;">
+        return `<div style="font-family: Arial, sans-serif; line-height: 1.4; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; page-break-inside: avoid;">
     <div style="text-align: center; margin-bottom: 15px;">
         <div style="font-weight: bold; font-size: 11pt;">${companyName}</div>
         <div style="font-weight: bold; font-size: 10pt;">${companyAddress}</div>

@@ -600,13 +600,29 @@ textarea.form-control {
     border: 2px solid var(--light-color);
     border-radius: var(--border-radius-sm);
     min-height: 400px;
-    max-height: 500px;
+    max-height: 600px;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: var(--space-lg);
     background-color: var(--bg-secondary);
     font-family: 'Courier New', monospace;
     white-space: pre-wrap;
     line-height: 1.6;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure document preview fills container properly */
+#documentPreview {
+    width: 100%;
+    transform-origin: top left;
+    transition: transform 0.2s ease;
+}
+
+#documentPreview .document-content {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .empty-preview {
