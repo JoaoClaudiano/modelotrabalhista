@@ -42,6 +42,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    
+    
+    <!-- Preconnect para CDNs (otimização Web Core Vitals) -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://vlibras.gov.br">
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -55,8 +62,6 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js" as="script">
     <link rel="preload" href="js/ui.js" as="script">
-    <!-- Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Loading styles -->
     <style>
         .app-loading {
@@ -739,8 +744,8 @@
     <!-- Módulos de funcionalidade -->
     <script src="js/generator.js"></script>
     <script src="js/storage.js"></script>
-    <script src="js/export.js"></script>
-    <script src="js/tour.js"></script>
+    <script src="js/export.js" defer></script>
+    <script src="js/tour.js" defer></script>
         
     <!-- Script de inicialização -->
     <script>
