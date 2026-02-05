@@ -837,9 +837,20 @@ ${data.employeePosition}`;
         contentDiv.className = 'document-content';
         contentDiv.setAttribute('tabindex', '0');
         
-        // Usar CSS para preservar formatação ao invés de <br> tags
-        contentDiv.style.whiteSpace = 'pre-wrap';
-        contentDiv.textContent = content; // Usar textContent é mais seguro
+        // Verificar se o conteúdo é HTML (começa com tag div ou html de documentos gerados)
+        // Apenas aceitar HTML para documentos gerados internamente que começam com tags específicas
+        const isGeneratedHTML = content.trim().startsWith('<div style="font-family:') || 
+                                 content.trim().startsWith('<div style="font-family: Arial');
+        
+        if (isGeneratedHTML) {
+            // Para conteúdo HTML gerado internamente, usar innerHTML
+            // Nota: o conteúdo já foi sanitizado no generator.js usando escapeHtml
+            contentDiv.innerHTML = content;
+        } else {
+            // Para outros conteúdos, usar CSS para preservar formatação
+            contentDiv.style.whiteSpace = 'pre-wrap';
+            contentDiv.textContent = content; // Usar textContent é mais seguro
+        }
         
         // Limpar preview e adicionar novo conteúdo
         preview.innerHTML = '';

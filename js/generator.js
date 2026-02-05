@@ -7,6 +7,12 @@ class DocumentGenerator {
         this.MAX_LONG_TEXT_LENGTH = 2000;
         this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
         
+        // Array de meses em português para formatação de datas
+        this.MONTHS_PT = [
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+        ];
+        
         this.templates = {
             demissao: this.generateResignationLetter.bind(this),
             ferias: this.generateVacationRequest.bind(this),
@@ -191,50 +197,95 @@ class DocumentGenerator {
     generateResignationLetter(data) {
         const effectiveDate = data.effectiveDate ? this.formatDate(data.effectiveDate) : '(a definir)';
         const noticePeriodText = this.getNoticePeriodText(data.noticePeriod);
-        const cpf = data.CPF || '[INFORME CPF]';
-        const ctps = data.CTPS || '[INFORME CTPS]';
+        // Sanitizar dados para prevenir XSS - escapar HTML em campos de usuário
+        const cpf = this.escapeHtml(data.CPF || '[INFORME CPF]');
+        const ctps = this.escapeHtml(data.CTPS || '[INFORME CTPS]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        
+        // Gerar local e data formatada
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                               PEDIDO DE DEMISSÃO
-${'='.repeat(80)}
-
-Eu, ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, brasileiro(a), portador(a) do CPF ${cpf} 
-e Carteira de Trabalho ${ctps}, na função de ${data.employeePosition || '[CARGO]'}, 
-venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
-ocupo nesta empresa.
-
-Solicito que sejam calculados os valores devidos referentes a:
-- Saldo de salário
-- Férias proporcionais + 1/3 constitucional
-- 13º salário proporcional
-- ${noticePeriodText}
-
-Data efetiva do desligamento: ${effectiveDate}
-
-Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
-não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
-legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
-mencionadas acima, salvo disposições específicas em convenção coletiva ou 
-acordo individual.
-
-Estou disponível para os procedimentos de desligamento conforme estabelecido 
-pela legislação trabalhista e normas internas da empresa.
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted || this.formatDate(new Date())}
-
-${'_'.repeat(42)}
-Assinatura do Funcionário
-
-${'='.repeat(80)}
-
-Recebido por: ${'_'.repeat(42)}
-Cargo: ${'_'.repeat(48)}
-Data: __/__/______`;
+        return `<div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div style="margin-bottom: 20px;">
+        <div style="font-weight: normal;">${companyName}</div>
+        <div style="font-weight: normal;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+        <div style="border-top: 2px solid #000; margin-bottom: 15px;"></div>
+        <h2 style="margin: 15px 0; font-size: 18px; font-weight: bold;">PEDIDO DE DEMISSÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 15px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
+        <p>Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
+        e Carteira de Trabalho <strong>${ctps}</strong>, na função de <strong>${employeePosition}</strong>, 
+        venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
+        ocupo nesta empresa.</p>
+    </div>
+    
+    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
+        <p>Solicito que sejam calculados os valores devidos referentes a:</p>
+        <ul style="margin-left: 20px;">
+            <li>Saldo de salário</li>
+            <li>Férias proporcionais + 1/3 constitucional</li>
+            <li>13º salário proporcional</li>
+            <li>${noticePeriodText}</li>
+        </ul>
+    </div>
+    
+    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
+        <p>Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
+        <p>Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
+        não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
+        legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
+        mencionadas acima, salvo disposições específicas em convenção coletiva ou 
+        acordo individual.</p>
+    </div>
+    
+    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
+        <p>Estou disponível para os procedimentos de desligamento conforme estabelecido 
+        pela legislação trabalhista e normas internas da empresa.</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 30px 0;"></div>
+    
+    <div style="margin: 30px 0;">
+        <p>${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 50px 0 30px 0;">
+        <div style="border-top: 1px solid #000; width: 300px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 5px;">Assinatura do Funcionário</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 30px 0;"></div>
+    
+    <div style="margin: 30px 0;">
+        <p>Recebido por: ___________________________________________</p>
+        <p>Cargo: ___________________________________________________</p>
+        <p>Data: __/__/______</p>
+    </div>
+</div>`;
+    }
+    
+    // Escapar HTML para prevenir XSS
+    escapeHtml(text) {
+        if (typeof text !== 'string') return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
     }
 
     // 2. SOLICITAÇÃO DE FÉRIAS
@@ -521,6 +572,84 @@ ${data.employeePosition || '[CARGO]'}`;
             grave: 'Grave'
         };
         return texts[severity] || 'Média';
+    }
+    
+    // Formatar data por extenso em português
+    formatDateExtended(dateString) {
+        if (!dateString) {
+            dateString = new Date();
+        }
+        
+        try {
+            let date;
+            
+            // Se já for um objeto Date
+            if (dateString instanceof Date) {
+                date = dateString;
+            }
+            // Tentar parsear ISO string (YYYY-MM-DD ou formato completo)
+            else if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+                date = new Date(dateString);
+            }
+            // Tentar parsear formato DD/MM/YYYY
+            else if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+                const [day, month, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            }
+            // Tentar criar Date object diretamente para outros formatos
+            else {
+                date = new Date(dateString);
+            }
+            
+            // Verificar se a data é válida
+            if (isNaN(date.getTime())) {
+                date = new Date();
+            }
+            
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = this.MONTHS_PT[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${day} de ${month} de ${year}`;
+        } catch (e) {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = this.MONTHS_PT[now.getMonth()];
+            const year = now.getFullYear();
+            return `${day} de ${month} de ${year}`;
+        }
+    }
+    
+    // Extrair cidade do endereço
+    extractCity(address) {
+        if (!address || address === '[ENDEREÇO DA EMPRESA]') {
+            return 'São Paulo';
+        }
+        
+        // Tentar extrair cidade do formato: "Rua X, 123 - Cidade/Estado"
+        // ou "Av. Y, 456 - Cidade - Estado"
+        // Suporta tanto hífen ASCII (-) quanto en-dash (–) para compatibilidade
+        const patterns = [
+            /[-–]\s*([A-Za-zÀ-ÿ\s]+)\s*[\/\-]/,  // Cidade antes de / ou -
+            /[-–]\s*([A-Za-zÀ-ÿ\s]+)\s*$/,        // Cidade no final
+        ];
+        
+        for (const pattern of patterns) {
+            const match = address.match(pattern);
+            if (match && match[1]) {
+                return match[1].trim();
+            }
+        }
+        
+        // Se não conseguir extrair, retornar São Paulo como padrão
+        return 'São Paulo';
+    }
+    
+    // Formatar local e data no padrão brasileiro
+    formatLocationAndDate(address, documentDate) {
+        const city = this.extractCity(address);
+        const dateExtended = this.formatDateExtended(documentDate);
+        return `${city}, ${dateExtended}`;
     }
 
     // Geração de exemplo para cada tipo
