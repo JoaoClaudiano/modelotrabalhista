@@ -70,3 +70,9 @@ temp/
 # Não commitar arquivos de configuração sensíveis
 config.json
 secrets.json
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
