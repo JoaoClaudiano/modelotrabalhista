@@ -826,5 +826,31 @@
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
 
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/modelotrabalhista/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                        
+                        // Verifica atualizações
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nova versão disponível
+                                    console.log('Nova versão do Service Worker disponível');
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.log('Erro ao registrar Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+
 </body>
 </html>
