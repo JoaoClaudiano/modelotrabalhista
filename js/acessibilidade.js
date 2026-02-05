@@ -808,15 +808,15 @@ class AcessibilidadeManager {
             /* Responsivo */
             @media (max-width: 768px) {
                 .accessibility-toggle {
-                    bottom: 16px;
-                    right: 16px;
+                    bottom: 20px;
+                    right: 80px;
                     width: 52px;
                     height: 52px;
                     font-size: 22px;
                 }
                 
                 .accessibility-card {
-                    bottom: 80px;
+                    bottom: 85px;
                     right: 16px;
                     left: 16px;
                     width: auto;
@@ -828,6 +828,18 @@ class AcessibilidadeManager {
             }
             
             @media (max-width: 480px) {
+                .accessibility-toggle {
+                    bottom: 15px;
+                    right: 65px;
+                    width: 48px;
+                    height: 48px;
+                    font-size: 20px;
+                }
+                
+                .accessibility-card {
+                    bottom: 75px;
+                }
+                
                 .accessibility-card-section h4 {
                     font-size: 13px;
                 }
