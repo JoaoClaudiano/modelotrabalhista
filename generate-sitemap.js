@@ -35,6 +35,7 @@ function getHtmlFiles(dir, baseDir = dir) {
 function getLastModified(filePath) {
   try {
     const stat = fs.statSync(filePath);
+    // Return ISO date format YYYY-MM-DD
     return stat.mtime.toISOString().split('T')[0];
   } catch (error) {
     return new Date().toISOString().split('T')[0];
@@ -44,7 +45,7 @@ function getLastModified(filePath) {
 // Function to determine priority based on page type
 function getPriority(url) {
   if (url === '' || url === 'index.html') return 1.0;
-  if (url.startsWith('artigos/index.html')) return 0.9;
+  if (url === 'artigos/' || url.startsWith('artigos/index')) return 0.9;
   if (url.startsWith('artigos/')) return 0.8;
   if (url.startsWith('pages/')) return 0.6;
   return 0.7;
@@ -53,7 +54,7 @@ function getPriority(url) {
 // Function to determine change frequency
 function getChangeFreq(url) {
   if (url === '' || url === 'index.html') return 'weekly';
-  if (url.startsWith('artigos/index.html')) return 'weekly';
+  if (url === 'artigos/' || url.startsWith('artigos/index')) return 'weekly';
   if (url.startsWith('artigos/')) return 'monthly';
   if (url.startsWith('pages/')) return 'monthly';
   return 'monthly';
