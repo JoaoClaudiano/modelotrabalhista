@@ -837,12 +837,17 @@ ${data.employeePosition}`;
         contentDiv.className = 'document-content';
         contentDiv.setAttribute('tabindex', '0');
         
-        // Verificar se o conteúdo é HTML (começa com <div ou <html)
-        if (content.trim().startsWith('<')) {
-            // Para conteúdo HTML, usar innerHTML mas apenas para documentos gerados internamente
+        // Verificar se o conteúdo é HTML (começa com tag div ou html de documentos gerados)
+        // Apenas aceitar HTML para documentos gerados internamente que começam com tags específicas
+        const isGeneratedHTML = content.trim().startsWith('<div style="font-family:') || 
+                                 content.trim().startsWith('<div style="font-family: Arial');
+        
+        if (isGeneratedHTML) {
+            // Para conteúdo HTML gerado internamente, usar innerHTML
+            // Nota: o conteúdo já foi sanitizado no generator.js usando escapeHtml
             contentDiv.innerHTML = content;
         } else {
-            // Usar CSS para preservar formatação ao invés de <br> tags
+            // Para outros conteúdos, usar CSS para preservar formatação
             contentDiv.style.whiteSpace = 'pre-wrap';
             contentDiv.textContent = content; // Usar textContent é mais seguro
         }

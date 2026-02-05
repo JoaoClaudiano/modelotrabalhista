@@ -7,6 +7,12 @@ class DocumentGenerator {
         this.MAX_LONG_TEXT_LENGTH = 2000;
         this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
         
+        // Array de meses em português para formatação de datas
+        this.MONTHS_PT = [
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+        ];
+        
         this.templates = {
             demissao: this.generateResignationLetter.bind(this),
             ferias: this.generateVacationRequest.bind(this),
@@ -191,12 +197,13 @@ class DocumentGenerator {
     generateResignationLetter(data) {
         const effectiveDate = data.effectiveDate ? this.formatDate(data.effectiveDate) : '(a definir)';
         const noticePeriodText = this.getNoticePeriodText(data.noticePeriod);
-        const cpf = data.CPF || '[INFORME CPF]';
-        const ctps = data.CTPS || '[INFORME CTPS]';
-        const employeeName = data.employeeName || '[NOME DO FUNCIONÁRIO]';
-        const employeePosition = data.employeePosition || '[CARGO]';
-        const companyName = data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]';
-        const companyAddress = data.companyAddress || '[ENDEREÇO DA EMPRESA]';
+        // Sanitizar dados para prevenir XSS - escapar HTML em campos de usuário
+        const cpf = this.escapeHtml(data.CPF || '[INFORME CPF]');
+        const ctps = this.escapeHtml(data.CTPS || '[INFORME CTPS]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
         
         // Gerar local e data formatada
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
@@ -266,6 +273,19 @@ class DocumentGenerator {
         <p>Data: __/__/______</p>
     </div>
 </div>`;
+    }
+    
+    // Escapar HTML para prevenir XSS
+    escapeHtml(text) {
+        if (typeof text !== 'string') return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
     }
 
     // 2. SOLICITAÇÃO DE FÉRIAS
@@ -586,26 +606,17 @@ ${data.employeePosition || '[CARGO]'}`;
                 date = new Date();
             }
             
-            const months = [
-                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-            ];
-            
-            const day = date.getDate();
-            const month = months[date.getMonth()];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = this.MONTHS_PT[date.getMonth()];
             const year = date.getFullYear();
             
-            return `${day < 10 ? '0' + day : day} de ${month} de ${year}`;
+            return `${day} de ${month} de ${year}`;
         } catch (e) {
             const now = new Date();
-            const months = [
-                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-            ];
-            const day = now.getDate();
-            const month = months[now.getMonth()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = this.MONTHS_PT[now.getMonth()];
             const year = now.getFullYear();
-            return `${day < 10 ? '0' + day : day} de ${month} de ${year}`;
+            return `${day} de ${month} de ${year}`;
         }
     }
     
@@ -617,6 +628,7 @@ ${data.employeePosition || '[CARGO]'}`;
         
         // Tentar extrair cidade do formato: "Rua X, 123 - Cidade/Estado"
         // ou "Av. Y, 456 - Cidade - Estado"
+        // Suporta tanto hífen ASCII (-) quanto en-dash (–) para compatibilidade
         const patterns = [
             /[-–]\s*([A-Za-zÀ-ÿ\s]+)\s*[\/\-]/,  // Cidade antes de / ou -
             /[-–]\s*([A-Za-zÀ-ÿ\s]+)\s*$/,        // Cidade no final
