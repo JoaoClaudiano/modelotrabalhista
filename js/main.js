@@ -224,10 +224,10 @@ class ModeloTrabalhistaApp {
                     </div>
                     <div class="form-group">
                         <label for="vacationDays">
-                            <i class="fas fa-sun"></i> Quantidade de Dias
+                            <i class="fas fa-sun"></i> Quantidade de Dias *
                         </label>
                         <input type="number" id="vacationDays" class="form-control" 
-                               placeholder="30" min="1" max="30">
+                               placeholder="30" min="1" max="30" required>
                     </div>
                 `;
                 break;
@@ -244,15 +244,15 @@ class ModeloTrabalhistaApp {
                     <div class="form-row">
                         <div class="form-group">
                             <label for="incidentDate">
-                                <i class="fas fa-calendar-times"></i> Data da Ocorrência
+                                <i class="fas fa-calendar-times"></i> Data da Ocorrência *
                             </label>
-                            <input type="date" id="incidentDate" class="form-control">
+                            <input type="date" id="incidentDate" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="severity">
-                                <i class="fas fa-balance-scale"></i> Gravidade
+                                <i class="fas fa-balance-scale"></i> Gravidade *
                             </label>
-                            <select id="severity" class="form-control">
+                            <select id="severity" class="form-control" required>
                                 <option value="leve">Leve</option>
                                 <option value="media" selected>Média</option>
                                 <option value="grave">Grave</option>
@@ -274,15 +274,15 @@ class ModeloTrabalhistaApp {
                     <div class="form-row">
                         <div class="form-group">
                             <label for="certificateStart">
-                                <i class="fas fa-calendar-day"></i> Data de Início
+                                <i class="fas fa-calendar-day"></i> Data de Início *
                             </label>
-                            <input type="date" id="certificateStart" class="form-control">
+                            <input type="date" id="certificateStart" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="certificateEnd">
-                                <i class="fas fa-calendar-day"></i> Data de Término
+                                <i class="fas fa-calendar-day"></i> Data de Término *
                             </label>
-                            <input type="date" id="certificateEnd" class="form-control">
+                            <input type="date" id="certificateEnd" class="form-control" required>
                         </div>
                     </div>
                 `;
@@ -290,18 +290,34 @@ class ModeloTrabalhistaApp {
 
             case 'rescisao':
                 html = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="CPF">
+                                <i class="fas fa-id-card"></i> CPF *
+                            </label>
+                            <input type="text" id="CPF" class="form-control" 
+                                   placeholder="Ex: 123.456.789-00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="CTPS">
+                                <i class="fas fa-id-badge"></i> CTPS *
+                            </label>
+                            <input type="text" id="CTPS" class="form-control" 
+                                   placeholder="Ex: 12345 - Série 0001" required>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="severanceValue">
-                            <i class="fas fa-money-bill-wave"></i> Valor da Rescisão (R$)
+                            <i class="fas fa-money-bill-wave"></i> Valor da Rescisão (R$) *
                         </label>
                         <input type="number" id="severanceValue" class="form-control" 
-                               placeholder="Ex: 5000.00" step="0.01" min="0" data-mask="money">
+                               placeholder="Ex: 5000.00" step="0.01" min="0" data-mask="money" required>
                     </div>
                     <div class="form-group">
                         <label for="paymentDate">
-                            <i class="fas fa-calendar-alt"></i> Data para Pagamento
+                            <i class="fas fa-calendar-alt"></i> Data para Pagamento *
                         </label>
-                            <input type="date" id="paymentDate" class="form-control">
+                            <input type="date" id="paymentDate" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="additionalConditions">
@@ -321,31 +337,31 @@ class ModeloTrabalhistaApp {
                     <div class="form-row">
                         <div class="form-group">
                             <label for="meetingDate">
-                                <i class="fas fa-calendar"></i> Data da Reunião
+                                <i class="fas fa-calendar"></i> Data da Reunião *
                             </label>
                             <input type="date" id="meetingDate" class="form-control" 
-                                   value="${tomorrow.toISOString().split('T')[0]}">
+                                   value="${tomorrow.toISOString().split('T')[0]}" required>
                         </div>
                         <div class="form-group">
                             <label for="meetingTime">
-                                <i class="fas fa-clock"></i> Hora da Reunião
+                                <i class="fas fa-clock"></i> Hora da Reunião *
                             </label>
-                            <input type="time" id="meetingTime" class="form-control" value="14:00">
+                            <input type="time" id="meetingTime" class="form-control" value="14:00" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="meetingLocation">
-                            <i class="fas fa-map-marker-alt"></i> Local da Reunião
+                            <i class="fas fa-map-marker-alt"></i> Local da Reunião *
                         </label>
                         <input type="text" id="meetingLocation" class="form-control" 
-                               placeholder="Ex: Sala de Reuniões 1">
+                               placeholder="Ex: Sala de Reuniões 1" required>
                     </div>
                     <div class="form-group">
                         <label for="meetingAgenda" data-tooltip="Liste os tópicos que serão discutidos">
-                            <i class="fas fa-list-alt"></i> Pauta da Reunião
+                            <i class="fas fa-list-alt"></i> Pauta da Reunião *
                         </label>
                         <textarea id="meetingAgenda" class="form-control auto-resize" rows="4"
-                                  placeholder="Liste os tópicos que serão discutidos..."></textarea>
+                                  placeholder="Liste os tópicos que serão discutidos..." required></textarea>
                     </div>
                 `;
                 break;
@@ -358,21 +374,37 @@ class ModeloTrabalhistaApp {
                 html = `
                     <div class="form-group">
                         <label for="effectiveDate">
-                            <i class="fas fa-calendar-check"></i> Data Efetiva da Demissão
+                            <i class="fas fa-calendar-check"></i> Data Efetiva da Demissão *
                         </label>
                         <input type="date" id="effectiveDate" class="form-control" 
-                               value="${nextMonth.toISOString().split('T')[0]}">
+                               value="${nextMonth.toISOString().split('T')[0]}" required>
                         <small class="form-text">Data em que deseja efetivamente se desligar</small>
                     </div>
                     <div class="form-group">
                         <label for="noticePeriod">
-                            <i class="fas fa-bell"></i> Aviso Prévio
+                            <i class="fas fa-bell"></i> Aviso Prévio *
                         </label>
-                        <select id="noticePeriod" class="form-control">
+                        <select id="noticePeriod" class="form-control" required>
                             <option value="trabalhado">Trabalhado</option>
                             <option value="indenizado">Indenizado</option>
                             <option value="dispensado">Dispensado pelo empregador</option>
                         </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="CPF">
+                                <i class="fas fa-id-card"></i> CPF *
+                            </label>
+                            <input type="text" id="CPF" class="form-control" 
+                                   placeholder="Ex: 123.456.789-00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="CTPS">
+                                <i class="fas fa-id-badge"></i> CTPS *
+                            </label>
+                            <input type="text" id="CTPS" class="form-control" 
+                                   placeholder="Ex: 12345 - Série 0001" required>
+                        </div>
                     </div>
                 `;
         }
@@ -455,6 +487,8 @@ class ModeloTrabalhistaApp {
             case 'demissao':
                 data.effectiveDate = getValue('effectiveDate');
                 data.noticePeriod = getValue('noticePeriod') || 'trabalhado';
+                data.CPF = getValue('CPF');
+                data.CTPS = getValue('CTPS');
                 break;
             case 'ferias':
                 data.vacationPeriod = getValue('vacationPeriod');
@@ -474,6 +508,8 @@ class ModeloTrabalhistaApp {
                 data.severanceValue = getValue('severanceValue');
                 data.paymentDate = getValue('paymentDate');
                 data.additionalConditions = getValue('additionalConditions');
+                data.CPF = getValue('CPF');
+                data.CTPS = getValue('CTPS');
                 break;
             case 'reuniao':
                 data.meetingDate = getValue('meetingDate');
@@ -826,6 +862,45 @@ ${data.employeePosition}`;
     }
 
     validateForm() {
+        // Use generator's built-in validation if available
+        if (this.generator && typeof this.generator.validateRequiredFields === 'function') {
+            const data = this.collectFormData();
+            const validation = this.generator.validateRequiredFields(data);
+            
+            if (!validation.valid) {
+                // Highlight missing fields
+                validation.missingFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                        this.ui.highlightError(field);
+                    }
+                });
+                
+                // Show error message with specific missing fields
+                this.ui.showNotification(validation.message, 'error');
+                return false;
+            }
+            
+            // Remove error highlights from all fields
+            const allFields = ['companyName', 'employeeName', 'employeePosition', 'documentDate', 
+                              'effectiveDate', 'noticePeriod', 'CPF', 'CTPS',
+                              'vacationPeriod', 'vacationDays', 
+                              'incidentDate', 'warningReason', 'severity',
+                              'certificateStart', 'certificateEnd', 'certificateReason',
+                              'severanceValue', 'paymentDate',
+                              'meetingDate', 'meetingTime', 'meetingLocation', 'meetingAgenda'];
+            
+            allFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    this.ui.removeError(field);
+                }
+            });
+            
+            return true;
+        }
+        
+        // Fallback to simple validation if generator is not available
         const requiredFields = ['companyName', 'employeeName', 'documentDate'];
         
         for (const fieldId of requiredFields) {
@@ -871,6 +946,8 @@ ${data.employeePosition}`;
             companyAddress: 'Av. Paulista, 1000 - São Paulo/SP',
             employeeName: 'João da Silva',
             employeePosition: 'Analista de Sistemas',
+            CPF: '123.456.789-00',
+            CTPS: '12345 - Série 0001',
             vacationPeriod: '01/12/2023 a 31/12/2023',
             vacationDays: '30',
             warningReason: 'Atrasos recorrentes no horário de entrada durante o mês de outubro.',
