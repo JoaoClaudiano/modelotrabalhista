@@ -421,6 +421,7 @@ class AcessibilidadeManager {
                 }
             `;
         } else {
+            // Clear all theme styles to allow the page to revert to its default CSS
             style.textContent = '';
         }
     }
