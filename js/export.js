@@ -10,7 +10,53 @@ class DocumentExporter {
             jspdf: false,
             docx: false
         };
+        
+        // Constantes de formatação
+        this.FORMATTING = {
+            // PDF
+            EMPTY_LINE_SPACING_FACTOR: 0.5,
+            LINE_HEIGHT_MM: 7,
+            TITLE_FONT_SIZE: 12,
+            BODY_FONT_SIZE: 11,
+            SEPARATOR_PADDING_BEFORE: 2,
+            SEPARATOR_PADDING_AFTER_HEAVY: 5,
+            SEPARATOR_PADDING_AFTER_LIGHT: 4,
+            HEAVY_SEPARATOR_LINE_WIDTH: 0.5,
+            LIGHT_SEPARATOR_LINE_WIDTH: 0.3,
+            
+            // DOCX (sizes in half-points: 22 = 11pt, 24 = 12pt, 28 = 14pt)
+            DOCX_TITLE_SIZE: 28, // 14pt
+            DOCX_BODY_SIZE: 22,  // 11pt
+            DOCX_EMPTY_SIZE: 24, // 12pt for empty line placeholders
+            DOCX_TITLE_SPACING_BEFORE: 200,
+            DOCX_TITLE_SPACING_AFTER: 200,
+            DOCX_BODY_SPACING_AFTER: 120,
+            DOCX_EMPTY_SPACING_AFTER: 100,
+            DOCX_SEPARATOR_SPACING: 100
+        };
+        
+        // Padrões regex para detecção
+        this.PATTERNS = {
+            HEAVY_SEPARATOR: /^[=]{3,}$/,
+            LIGHT_SEPARATOR: /^[_]{3,}$/,
+            UPPERCASE_CHARS: /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/
+        };
+        
         this.init();
+    }
+    
+    // Converter pontos para half-points (usado pela biblioteca docx)
+    pointsToHalfPoints(points) {
+        return points * 2;
+    }
+    
+    // Detectar se uma linha é um título
+    isTitleLine(line) {
+        const trimmedLine = line.trim();
+        return trimmedLine.length < 60 && 
+               trimmedLine.length > 0 &&
+               trimmedLine === trimmedLine.toUpperCase() && 
+               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
     }
 
     init() {
@@ -444,45 +490,44 @@ class DocumentExporter {
             doc.setFont('helvetica', 'normal');
             
             let y = margin;
-            const lineHeight = 7; // Increased from 6 for better readability
+            const lineHeight = this.FORMATTING.LINE_HEIGHT_MM;
             
             // Dividir conteúdo em linhas PRESERVANDO linhas vazias
             const rawLines = content.split('\n');
             
             for (let i = 0; i < rawLines.length; i++) {
                 const line = rawLines[i];
+                const trimmedLine = line.trim();
                 
                 // Se for linha vazia, adicionar espaço
-                if (!line.trim()) {
-                    y += lineHeight * 0.5; // Half line for empty lines
+                if (!trimmedLine) {
+                    y += lineHeight * this.FORMATTING.EMPTY_LINE_SPACING_FACTOR;
                     continue;
                 }
                 
                 // Detectar linhas de separação (========)
-                if (/^[=]{3,}$/.test(line.trim())) {
-                    y += 2;
-                    doc.setLineWidth(0.5);
+                if (this.PATTERNS.HEAVY_SEPARATOR.test(trimmedLine)) {
+                    y += this.FORMATTING.SEPARATOR_PADDING_BEFORE;
+                    doc.setLineWidth(this.FORMATTING.HEAVY_SEPARATOR_LINE_WIDTH);
                     doc.line(margin, y, pageWidth - margin, y);
-                    y += 5;
+                    y += this.FORMATTING.SEPARATOR_PADDING_AFTER_HEAVY;
                     continue;
                 }
                 
                 // Detectar linhas de sublinhado (________)
-                if (/^[_]{3,}$/.test(line.trim())) {
-                    y += 2;
-                    doc.setLineWidth(0.3);
+                if (this.PATTERNS.LIGHT_SEPARATOR.test(trimmedLine)) {
+                    y += this.FORMATTING.SEPARATOR_PADDING_BEFORE;
+                    doc.setLineWidth(this.FORMATTING.LIGHT_SEPARATOR_LINE_WIDTH);
                     doc.line(margin, y, pageWidth - margin, y);
-                    y += 4;
+                    y += this.FORMATTING.SEPARATOR_PADDING_AFTER_LIGHT;
                     continue;
                 }
                 
-                // Detectar possíveis títulos (linhas curtas em maiúsculas)
-                const isTitle = line.trim().length < 60 && 
-                               line.trim() === line.trim().toUpperCase() && 
-                               /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/.test(line.trim());
+                // Detectar possíveis títulos
+                const isTitle = this.isTitleLine(line);
                 
                 if (isTitle) {
-                    doc.setFontSize(12);
+                    doc.setFontSize(this.FORMATTING.TITLE_FONT_SIZE);
                     doc.setFont('helvetica', 'bold');
                 }
                 
@@ -509,7 +554,7 @@ class DocumentExporter {
                 
                 // Restaurar fonte normal
                 if (isTitle) {
-                    doc.setFontSize(11);
+                    doc.setFontSize(this.FORMATTING.BODY_FONT_SIZE);
                     doc.setFont('helvetica', 'normal');
                 }
             }
@@ -685,20 +730,21 @@ class DocumentExporter {
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
+                const trimmedLine = line.trim();
                 
                 // Linha vazia - adicionar parágrafo vazio para preservar espaçamento
-                if (!line.trim()) {
+                if (!trimmedLine) {
                     paragraphs.push(new Paragraph({
-                        children: [new TextRun({ text: '', size: 24 })],
-                        spacing: { after: 100 }
+                        children: [new TextRun({ text: '', size: this.FORMATTING.DOCX_EMPTY_SIZE })],
+                        spacing: { after: this.FORMATTING.DOCX_EMPTY_SPACING_AFTER }
                     }));
                     continue;
                 }
                 
                 // Detectar linhas de separação (========)
-                if (/^[=]{3,}$/.test(line.trim())) {
+                if (this.PATTERNS.HEAVY_SEPARATOR.test(trimmedLine)) {
                     paragraphs.push(new Paragraph({
-                        children: [new TextRun({ text: '', size: 24 })],
+                        children: [new TextRun({ text: '', size: this.FORMATTING.DOCX_EMPTY_SIZE })],
                         border: {
                             bottom: {
                                 color: '000000',
@@ -707,15 +753,18 @@ class DocumentExporter {
                                 size: 20
                             }
                         },
-                        spacing: { before: 100, after: 100 }
+                        spacing: { 
+                            before: this.FORMATTING.DOCX_SEPARATOR_SPACING, 
+                            after: this.FORMATTING.DOCX_SEPARATOR_SPACING 
+                        }
                     }));
                     continue;
                 }
                 
                 // Detectar linhas de sublinhado (________)
-                if (/^[_]{3,}$/.test(line.trim())) {
+                if (this.PATTERNS.LIGHT_SEPARATOR.test(trimmedLine)) {
                     paragraphs.push(new Paragraph({
-                        children: [new TextRun({ text: '', size: 24 })],
+                        children: [new TextRun({ text: '', size: this.FORMATTING.DOCX_EMPTY_SIZE })],
                         border: {
                             bottom: {
                                 color: '000000',
@@ -724,26 +773,30 @@ class DocumentExporter {
                                 size: 10
                             }
                         },
-                        spacing: { before: 80, after: 80 }
+                        spacing: { 
+                            before: this.FORMATTING.DOCX_SEPARATOR_SPACING - 20, 
+                            after: this.FORMATTING.DOCX_SEPARATOR_SPACING - 20 
+                        }
                     }));
                     continue;
                 }
                 
-                // Detectar possíveis títulos (linhas curtas em maiúsculas)
-                const isTitle = line.trim().length < 60 && 
-                               line.trim() === line.trim().toUpperCase() && 
-                               /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/.test(line.trim());
+                // Detectar possíveis títulos
+                const isTitle = this.isTitleLine(line);
                 
                 if (isTitle) {
                     paragraphs.push(new Paragraph({
                         children: [new TextRun({ 
-                            text: line.trim(), 
+                            text: trimmedLine, 
                             font: 'Arial', 
-                            size: 28, // 14pt for titles
+                            size: this.FORMATTING.DOCX_TITLE_SIZE,
                             bold: true 
                         })],
                         alignment: AlignmentType.CENTER,
-                        spacing: { before: 200, after: 200 }
+                        spacing: { 
+                            before: this.FORMATTING.DOCX_TITLE_SPACING_BEFORE, 
+                            after: this.FORMATTING.DOCX_TITLE_SPACING_AFTER 
+                        }
                     }));
                 } else {
                     // Linha normal
@@ -751,9 +804,9 @@ class DocumentExporter {
                         children: [new TextRun({ 
                             text: line, 
                             font: 'Courier New', 
-                            size: 22 // 11pt
+                            size: this.FORMATTING.DOCX_BODY_SIZE
                         })],
-                        spacing: { after: 120 }
+                        spacing: { after: this.FORMATTING.DOCX_BODY_SPACING_AFTER }
                     }));
                 }
             }
