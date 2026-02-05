@@ -891,58 +891,29 @@
         <i class="fas fa-chevron-up"></i>
     </button>
     <script>
-        class ControladorBotaoTopo {
-            constructor(seletorElemento, alturaMinima) {
-                this.elementoBotao = document.querySelector(seletorElemento);
-                this.pontoAtivacao = alturaMinima;
-                this.temporizadorRolagem = null;
-                this.inicializar();
-            }
+        (() => {
+            const botaoTopo = document.querySelector('#back-to-top');
+            if (!botaoTopo) return;
             
-            inicializar() {
-                window.addEventListener('scroll', this.gerenciarVisibilidade.bind(this));
-                this.elementoBotao.addEventListener('click', this.executarRetornoAnimado.bind(this));
-                this.verificarPosicaoInicial();
-            }
+            const alturaAtivacao = 300;
+            let timeoutId = null;
             
-            gerenciarVisibilidade() {
-                if (this.temporizadorRolagem !== null) {
-                    clearTimeout(this.temporizadorRolagem);
-                }
-                this.temporizadorRolagem = setTimeout(() => {
-                    this.verificarPosicaoInicial();
-                }, 150);
-            }
+            const verificarRolagem = () => {
+                const posicao = document.documentElement.scrollTop;
+                botaoTopo.classList.toggle('show', posicao > alturaAtivacao);
+            };
             
-            verificarPosicaoInicial() {
-                const rolagemVertical = window.pageYOffset || document.documentElement.scrollTop;
-                const deveExibir = rolagemVertical > this.pontoAtivacao;
-                this.elementoBotao.classList.toggle('show', deveExibir);
-            }
+            window.addEventListener('scroll', () => {
+                if (timeoutId) clearTimeout(timeoutId);
+                timeoutId = setTimeout(verificarRolagem, 100);
+            });
             
-            executarRetornoAnimado() {
-                const alturaTotalRolagem = window.pageYOffset;
-                const duracaoTotal = 500;
-                const momentoInicio = performance.now();
-                
-                const etapaAnimacao = (momentoAtual) => {
-                    const tempoPassado = momentoAtual - momentoInicio;
-                    const percentualCompleto = Math.min(tempoPassado / duracaoTotal, 1);
-                    const curvaEasing = 1 - Math.pow(1 - percentualCompleto, 3);
-                    const novaPosicao = alturaTotalRolagem * (1 - curvaEasing);
-                    
-                    window.scrollTo(0, novaPosicao);
-                    
-                    if (percentualCompleto < 1) {
-                        requestAnimationFrame(etapaAnimacao);
-                    }
-                };
-                
-                requestAnimationFrame(etapaAnimacao);
-            }
-        }
-        
-        new ControladorBotaoTopo('#back-to-top', 300);
+            botaoTopo.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            verificarRolagem();
+        })();
     </script>
     
     <!-- VLIBRAS -->
