@@ -4,11 +4,13 @@ class DocumentExporter {
         this.mutationObserver = null; // Armazenar referência para limpeza
         this.libsLoaded = {
             jspdf: false,
-            docx: false
+            docx: false,
+            html2canvas: false
         };
         this.libsAttempted = {
             jspdf: false,
-            docx: false
+            docx: false,
+            html2canvas: false
         };
         
         // Constantes de formatação
@@ -57,6 +59,11 @@ class DocumentExporter {
                trimmedLine.length > 0 &&
                trimmedLine === trimmedLine.toUpperCase() && 
                this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
+    }
+
+    // Sanitizar nome de arquivo
+    sanitizeFilename(filename) {
+        return filename.replace(/[^a-z0-9]/gi, '_');
     }
 
     init() {
@@ -183,6 +190,28 @@ class DocumentExporter {
         document.head.appendChild(script);
     }
 
+    loadHtml2Canvas() {
+        return new Promise((resolve, reject) => {
+            if (typeof html2canvas !== 'undefined') {
+                this.libsLoaded.html2canvas = true;
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+            script.integrity = 'sha256-6H/NIyKJHgE0lqBnK2lQwhgGUYCVqrG4VKhYKjhCVOQ=';
+            script.crossOrigin = 'anonymous';
+            script.onload = () => {
+                console.log('✅ html2canvas carregado com sucesso');
+                this.libsLoaded.html2canvas = true;
+                resolve();
+            };
+            script.onerror = () => reject(new Error('Falha ao carregar html2canvas'));
+            document.head.appendChild(script);
+        });
+    }
+
     checkAllLibsLoaded() {
         console.log('Status das bibliotecas:', {
             jspdf: this.libsLoaded.jspdf,
@@ -258,7 +287,7 @@ class DocumentExporter {
                 pdfBtn.disabled = true;
                 
                 try {
-                    console.log('Iniciando geração de PDF...');
+                    console.log('Iniciando geração de PDF com html2canvas...');
                     
                     // Reset zoom before PDF export to ensure consistent formatting
                     const preview = document.getElementById('documentPreview');
@@ -271,13 +300,8 @@ class DocumentExporter {
                         await new Promise(resolve => setTimeout(resolve, DOM_UPDATE_DELAY_MS));
                     }
                     
-                    const content = this.getDocumentContent();
-                    
-                    if (!content || content.trim() === '') {
-                        throw new Error('Nenhum conteúdo encontrado para exportar');
-                    }
-                    
-                    await this.exportToPDF(content, 'ModeloTrabalhista');
+                    // Use new method that preserves formatting
+                    await this.exportToPDF('', 'ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
                     if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
@@ -488,8 +512,119 @@ class DocumentExporter {
         return 'Nenhum conteúdo disponível para exportação. Gere um modelo primeiro.';
     }
 
-    // Exportar para PDF
-    async exportToPDF(content, filename = 'ModeloTrabalhista') {
+    // Exportar para PDF com html2canvas (preserva formatação HTML)
+    async exportToPDFWithHTML(filename = 'ModeloTrabalhista') {
+        try {
+            // Encontrar elemento que contém o documento
+            // Priorizar o container interno .document-content que tem o HTML formatado
+            const element = document.querySelector('#documentPreview .document-content') ||
+                           document.querySelector('#documentPreview') ||
+                           document.querySelector('#modelo-text') || 
+                           document.querySelector('.modelo-texto') ||
+                           document.querySelector('#previewModelo');
+            
+            if (!element) {
+                throw new Error('Elemento do documento não encontrado');
+            }
+            
+            // Carregar html2canvas se necessário
+            await this.loadHtml2Canvas();
+            
+            // Carregar jsPDF se necessário
+            if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
+                console.log('Loading jsPDF on demand...');
+                this.loadLibraries();
+                // Wait for library to load with proper timeout handling
+                await new Promise((resolve, reject) => {
+                    const checkInterval = setInterval(() => {
+                        if (typeof window.jspdf !== 'undefined') {
+                            this.libsLoaded.jspdf = true;
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        if (typeof window.jspdf === 'undefined') {
+                            reject(new Error('Timeout ao carregar jsPDF'));
+                        } else {
+                            resolve();
+                        }
+                    }, 10000);
+                });
+            }
+            
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF não disponível');
+            }
+            
+            // Capture as image with high quality
+            const canvas = await html2canvas(element, {
+                scale: 2,  // Double resolution for quality
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false
+            });
+            
+            // Convert to PDF
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            
+            // Calculate dimensions maintaining aspect ratio
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(
+                (pageWidth - 20) / imgWidth,  // 10mm margin each side
+                (pageHeight - 20) / imgHeight // 10mm margin top/bottom
+            );
+            
+            // Center image on page
+            const x = (pageWidth - imgWidth * ratio) / 2;
+            const y = (pageHeight - imgHeight * ratio) / 2;
+            
+            // Add image to PDF
+            doc.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
+            
+            // Save with sanitized filename
+            const safeFilename = this.sanitizeFilename(filename);
+            doc.save(`${safeFilename}.pdf`);
+            
+            this.showNotification('PDF gerado com sucesso!', 'success');
+            return { success: true, filename: `${safeFilename}.pdf` };
+            
+        } catch (error) {
+            console.error('Erro ao gerar PDF com html2canvas:', error);
+            throw error;
+        }
+    }
+
+    // Exportar para PDF (método principal com fallback)
+    async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
+        try {
+            // Try html2canvas method first (preserves formatting)
+            return await this.exportToPDFWithHTML(filename);
+        } catch (error) {
+            console.warn('Falha no método html2canvas, usando método texto:', error);
+            // If content not provided, try to get it for fallback
+            if (!content) {
+                content = this.getDocumentContent();
+            }
+            // Fallback to text-based export
+            return await this.exportTextToPDF(content, filename);
+        }
+    }
+
+    // Exportar para PDF usando texto (método legado)
+    async exportTextToPDF(content, filename = 'ModeloTrabalhista') {
         try {
             // Load jsPDF library on demand if not already loaded
             if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
@@ -614,7 +749,7 @@ class DocumentExporter {
             }
             
             // Salvar
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             doc.save(`${safeFilename}.pdf`);
             
             this.showNotification('PDF gerado com sucesso!', 'success');
@@ -958,7 +1093,7 @@ class DocumentExporter {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
@@ -1037,7 +1172,7 @@ class DocumentExporter {
             
             const a = document.createElement('a');
             a.href = url;
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
