@@ -284,48 +284,65 @@ class AcessibilidadeManager {
         if (theme === 'dark') {
             style.textContent = `
                 body {
-                    background-color: #1a1a1a !important;
-                    color: #f0f0f0 !important;
+                    background-color: #1e1e1e !important;
+                    color: #e8e8e8 !important;
                 }
                 
-                /* Seções e contêineres */
+                /* Remover todos os gradientes e backgrounds coloridos */
+                * {
+                    background-image: none !important;
+                }
+                
+                /* Seções e contêineres - incluindo hero com gradiente */
                 section, .section, div[class*="section"],
                 .container, .content, .wrapper,
                 .hero, .features, .about, .faq,
                 #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
-                    background-color: #1a1a1a !important;
-                    color: #f0f0f0 !important;
+                    background-color: #1e1e1e !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
+                }
+                
+                /* Hero section - forçar escuro */
+                .hero, #hero, section:first-of-type {
+                    background: #1e1e1e !important;
+                    background-color: #1e1e1e !important;
+                    background-image: none !important;
                 }
                 
                 /* Cards e painéis */
                 .card, .panel, .box, .item,
                 .model-card, .feature-card, .faq-item,
                 .form-container, .preview-container, .form-card {
-                    background-color: #2d2d2d !important;
-                    color: #f0f0f0 !important;
+                    background-color: #2a2a2a !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
                     border-color: #404040 !important;
                 }
                 
                 /* Inputs e formulários */
                 input, textarea, select {
-                    background-color: #2d2d2d !important;
-                    color: #f0f0f0 !important;
+                    background-color: #2a2a2a !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
                     border-color: #404040 !important;
                 }
                 
                 input::placeholder, textarea::placeholder {
-                    color: #a0a0a0 !important;
+                    color: #999 !important;
                 }
                 
                 /* Botões */
                 button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
-                    background-color: #3d3d3d !important;
-                    color: #f0f0f0 !important;
-                    border-color: #505050 !important;
+                    background-color: #333 !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
+                    border-color: #555 !important;
                 }
                 
                 button.btn-primary, button[class*="primary"] {
-                    background-color: #2563eb !important;
+                    background-color: #1e40af !important;
+                    background-image: none !important;
                     color: white !important;
                 }
                 
@@ -336,19 +353,60 @@ class AcessibilidadeManager {
                 
                 /* Cabeçalhos */
                 h1, h2, h3, h4, h5, h6 {
-                    color: #f0f0f0 !important;
+                    color: #e8e8e8 !important;
                 }
                 
                 /* Rodapé */
                 footer {
-                    background-color: #0d0d0d !important;
-                    color: #f0f0f0 !important;
+                    background-color: #0a0a0a !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
                 }
                 
                 /* Navegação */
                 nav, .navbar, header {
-                    background-color: #0d0d0d !important;
-                    color: #f0f0f0 !important;
+                    background-color: #0a0a0a !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
+                }
+                
+                /* Botão de acessibilidade - manter visível */
+                .accessibility-toggle {
+                    background: #333 !important;
+                    background-image: none !important;
+                    color: #e8e8e8 !important;
+                    border: 2px solid #555 !important;
+                }
+                
+                .accessibility-toggle:hover {
+                    background: #444 !important;
+                    background-image: none !important;
+                }
+                
+                .accessibility-toggle.active {
+                    background: #1e40af !important;
+                    background-image: none !important;
+                }
+                
+                /* Card de acessibilidade */
+                .accessibility-card {
+                    background: #2a2a2a !important;
+                    background-image: none !important;
+                }
+                
+                .accessibility-card-header {
+                    background: #1e40af !important;
+                    background-image: none !important;
+                    color: white !important;
+                }
+                
+                .accessibility-card-content {
+                    background: #2a2a2a !important;
+                }
+                
+                /* Labels e textos de formulário */
+                label, .label {
+                    color: #e8e8e8 !important;
                 }
             `;
         } else if (theme === 'high-contrast') {
@@ -358,13 +416,26 @@ class AcessibilidadeManager {
                     color: white !important;
                 }
                 
-                /* Seções e contêineres */
+                /* Remover todos os gradientes e backgrounds coloridos */
+                * {
+                    background-image: none !important;
+                }
+                
+                /* Seções e contêineres - incluindo hero */
                 section, .section, div[class*="section"],
                 .container, .content, .wrapper,
                 .hero, .features, .about, .faq,
                 #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
                     background-color: black !important;
+                    background-image: none !important;
                     color: white !important;
+                }
+                
+                /* Hero section - forçar preto */
+                .hero, #hero, section:first-of-type {
+                    background: black !important;
+                    background-color: black !important;
+                    background-image: none !important;
                 }
                 
                 /* Cards e painéis */
@@ -372,6 +443,7 @@ class AcessibilidadeManager {
                 .model-card, .feature-card, .faq-item,
                 .form-container, .preview-container, .form-card {
                     background-color: black !important;
+                    background-image: none !important;
                     color: white !important;
                     border: 3px solid yellow !important;
                 }
@@ -379,6 +451,7 @@ class AcessibilidadeManager {
                 /* Inputs e formulários */
                 input, textarea, select {
                     background-color: black !important;
+                    background-image: none !important;
                     color: white !important;
                     border: 2px solid yellow !important;
                 }
@@ -391,6 +464,7 @@ class AcessibilidadeManager {
                 /* Botões */
                 button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
                     background-color: black !important;
+                    background-image: none !important;
                     color: yellow !important;
                     border: 2px solid yellow !important;
                 }
@@ -409,6 +483,7 @@ class AcessibilidadeManager {
                 /* Rodapé */
                 footer {
                     background-color: black !important;
+                    background-image: none !important;
                     color: white !important;
                     border-top: 3px solid yellow !important;
                 }
@@ -416,8 +491,46 @@ class AcessibilidadeManager {
                 /* Navegação */
                 nav, .navbar, header {
                     background-color: black !important;
+                    background-image: none !important;
                     color: white !important;
                     border-bottom: 3px solid yellow !important;
+                }
+                
+                /* Botão de acessibilidade */
+                .accessibility-toggle {
+                    background: black !important;
+                    background-image: none !important;
+                    color: yellow !important;
+                    border: 3px solid yellow !important;
+                }
+                
+                .accessibility-toggle:hover,
+                .accessibility-toggle.active {
+                    background: #222 !important;
+                    background-image: none !important;
+                }
+                
+                /* Card de acessibilidade */
+                .accessibility-card {
+                    background: black !important;
+                    background-image: none !important;
+                    border: 3px solid yellow !important;
+                }
+                
+                .accessibility-card-header {
+                    background: black !important;
+                    background-image: none !important;
+                    color: yellow !important;
+                    border-bottom: 2px solid yellow !important;
+                }
+                
+                .accessibility-card-content {
+                    background: black !important;
+                }
+                
+                /* Labels e textos */
+                label, .label {
+                    color: white !important;
                 }
             `;
         } else {
