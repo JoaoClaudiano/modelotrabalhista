@@ -259,6 +259,18 @@ class DocumentExporter {
                 
                 try {
                     console.log('Iniciando geração de PDF...');
+                    
+                    // Reset zoom before PDF export to ensure consistent formatting
+                    const preview = document.getElementById('documentPreview');
+                    let originalZoom = null;
+                    if (preview && window.ui) {
+                        originalZoom = window.ui.currentZoom;
+                        window.ui.resetZoom('documentPreview');
+                        // Small delay to allow DOM to update after zoom reset
+                        const DOM_UPDATE_DELAY_MS = 50;
+                        await new Promise(resolve => setTimeout(resolve, DOM_UPDATE_DELAY_MS));
+                    }
+                    
                     const content = this.getDocumentContent();
                     
                     if (!content || content.trim() === '') {
@@ -266,6 +278,12 @@ class DocumentExporter {
                     }
                     
                     await this.exportToPDF(content, 'ModeloTrabalhista');
+                    
+                    // Restore original zoom if it was changed
+                    if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
+                        window.ui.currentZoom = originalZoom;
+                        window.ui.applyZoom(preview);
+                    }
                 } catch (error) {
                     console.error('Erro ao exportar PDF:', error);
                     this.showNotification(`Erro ao gerar PDF: ${error.message}`, 'error');

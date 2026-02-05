@@ -832,6 +832,11 @@ ${data.employeePosition}`;
         const preview = document.getElementById('documentPreview');
         if (!preview) return;
         
+        // Reset zoom to 100% when displaying new document
+        if (this.ui) {
+            this.ui.resetZoom('documentPreview');
+        }
+        
         // Criar elemento de forma segura para prevenir XSS
         const contentDiv = document.createElement('div');
         contentDiv.className = 'document-content';
