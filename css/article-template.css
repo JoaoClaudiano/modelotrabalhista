@@ -389,21 +389,21 @@
 /* Additional styles from intervalo-intrajornada */
 
 /* ===== COMPARISON CARDS INLINE ===== */
-comparison-cards-inline {
+.comparison-cards-inline {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-lg);
     margin-bottom: var(--space-lg);
 }
 
-comparison-card {
+.comparison-card {
     border-radius: var(--border-radius);
     overflow: hidden;
     border: 2px solid var(--light-color);
     background-color: var(--white-color);
 }
 
-card-header {
+.card-header {
     padding: var(--space-md);
     text-align: center;
     color: white;
@@ -413,47 +413,47 @@ card-header {
     gap: var(--space-xs);
 }
 
-card-header i {
+.card-header i {
     font-size: 1.5rem;
 }
 
-card-header h5 {
+.card-header h5 {
     margin: 0;
     font-size: 1.1rem;
 }
 
-card-body {
+.card-body {
     padding: var(--space-md);
 }
 
-card-body p {
+.card-body p {
     margin: 8px 0;
     font-size: 0.95rem;
 }
 
-highlight-number {
+.highlight-number {
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--primary-color);
 }
 
-benefit-text {
+.benefit-text {
     color: #10B981;
     font-weight: 500;
 }
 
-risk-text {
+.risk-text {
     color: #EF4444;
     font-weight: 500;
 }
 
-no-benefit {
+.no-benefit {
     color: var(--gray-color);
     font-style: italic;
 }
 
 /* ===== CONCLUSION BOX ===== */
-conclusion-box {
+.conclusion-box {
     margin-top: var(--space-lg);
     padding: var(--space-md);
     background-color: var(--bg-secondary);
@@ -461,7 +461,7 @@ conclusion-box {
     border-left: 4px solid var(--primary-color);
 }
 
-conclusion-box h7 {
+.conclusion-box h7 {
     display: block;
     margin-bottom: var(--space-sm);
     font-weight: bold;
@@ -469,7 +469,7 @@ conclusion-box h7 {
     font-size: 1.1rem;
 }
 
-conclusion-details {
+.conclusion-details {
     margin-top: var(--space-md);
     padding: var(--space-sm);
     background-color: rgba(255, 255, 255, 0.7);
@@ -478,21 +478,21 @@ conclusion-details {
 }
 
 /* ===== TIMELINE CONTAINER ===== */
-timeline-container {
+.timeline-container {
     margin: var(--space-lg) 0;
 }
 
-timeline-phase {
+.timeline-phase {
     display: flex;
     margin-bottom: var(--space-xl);
     position: relative;
 }
 
-timeline-phase:last-child {
+.timeline-phase:last-child {
     margin-bottom: 0;
 }
 
-timeline-phase::before {
+.timeline-phase::before {
     content: '';
     position: absolute;
     left: 24px;
@@ -503,11 +503,11 @@ timeline-phase::before {
     z-index: 1;
 }
 
-timeline-phase:last-child::before {
+.timeline-phase:last-child::before {
     display: none;
 }
 
-phase-marker {
+.phase-marker {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -521,29 +521,29 @@ phase-marker {
     margin-right: var(--space-lg);
 }
 
-phase-marker i {
+.phase-marker i {
     font-size: 1.5rem;
 }
 
-phase-content {
+.phase-content {
     flex: 1;
     padding-bottom: var(--space-md);
 }
 
-phase-content h4 {
+.phase-content h4 {
     margin-top: 0;
     margin-bottom: var(--space-sm);
     color: var(--dark-color);
 }
 
-phase-rights {
+.phase-rights {
     margin-top: var(--space-md);
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
 }
 
-right-tag {
+.right-tag {
     padding: 4px 12px;
     background-color: var(--bg-secondary);
     border-radius: 20px;
@@ -555,44 +555,44 @@ right-tag {
 
 /* ===== RESPONSIVIDADE ESPECÍFICA ===== */
 @media (max-width: 992px) {
-   .comparison-cards-inline {
+    .comparison-cards-inline {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
 
 @media (max-width: 768px) {
-   .comparison-cards-inline {
+    .comparison-cards-inline {
         grid-template-columns: 1fr;
     }
-
-   .timeline-phase {
+    
+    .timeline-phase {
         flex-direction: column;
         align-items: flex-start;
     }
-
-   .timeline-phase::before {
+    
+    ..timeline-phase::before {
         left: 25px;
         top: 50px;
         bottom: -50px;
     }
-
-   .phase-marker {
+    
+    .phase-marker {
         margin-right: 0;
         margin-bottom: var(--space-md);
     }
 }
 
 @media (max-width: 480px) {
-   .phase-marker {
+    .phase-marker {
         width: 40px;
         height: 40px;
     }
-
-   .phase-marker i {
+    
+    ..phase-marker i {
         font-size: 1.2rem;
     }
-
-   .card-header h5 {
+    
+    ..card-header h5 {
         font-size: 1rem;
     }
 }
