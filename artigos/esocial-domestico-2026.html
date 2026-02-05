@@ -129,6 +129,212 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+
+    <!-- Estilos específicos para este artigo -->
+    <style>
+                    /* ===== FLOW COLUMN ESTILOS ADICIONAIS ===== */
+                   .comparison-flow {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                        gap: var(--space-lg);
+                        margin-bottom: var(--space-lg);
+                    }
+
+                   .flow-column {
+                        border-radius: var(--border-radius);
+                        overflow: hidden;
+                        border: 2px solid transparent;
+                        background-color: var(--white-color);
+                    }
+
+                   .flow-header {
+                        padding: var(--space-lg);
+                        text-align: center;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: var(--space-sm);
+                    }
+
+                   .flow-header.saque-aniversario {
+                        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+                        color: white;
+                    }
+
+                   .flow-header.saque-rescisao {
+                        background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+                        color: white;
+                    }
+
+                   .flow-header i {
+                        font-size: 2rem;
+                        margin-bottom: var(--space-xs);
+                    }
+
+                   .flow-header h4 {
+                        margin: 0;
+                        font-size: 1.2rem;
+                    }
+
+                   .flow-steps {
+                        padding: var(--space-md);
+                    }
+
+                   .flow-step {
+                        display: flex;
+                        gap: var(--space-md);
+                        margin-bottom: var(--space-lg);
+                        position: relative;
+                    }
+
+                   .flow-step:last-child {
+                        margin-bottom: 0;
+                    }
+
+                   .flow-step::before {
+                        content: '';
+                        position: absolute;
+                        left: 15px;
+                        top: 40px;
+                        bottom: -30px;
+                        width: 2px;
+                        background-color: var(--light-color);
+                        z-index: 1;
+                    }
+
+                   .flow-step:last-child::before {
+                        display: none;
+                    }
+
+                   .step-number {
+                        width: 30px;
+                        height: 30px;
+                        background-color: var(--primary-color);
+                        color: white;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        flex-shrink: 0;
+                        z-index: 2;
+                        position: relative;
+                    }
+
+                   .step-content {
+                        flex: 1;
+                        padding-bottom: var(--space-md);
+                    }
+
+                   .step-content strong {
+                        display: block;
+                        margin-bottom: 5px;
+                        color: var(--dark-color);
+                    }
+
+                   .step-content p {
+                        margin: 0;
+                        color: var(--gray-color);
+                        font-size: 0.95rem;
+                    }
+
+                   .flow-footer {
+                        padding: var(--space-md);
+                        background-color: var(--bg-secondary);
+                        border-top: 1px solid var(--light-color);
+                        text-align: center;
+                    }
+
+                   .flow-footer p {
+                        margin: 5px 0;
+                        font-size: 0.9rem;
+                    }
+
+                   .flow-footer strong {
+                        color: var(--primary-color);
+                    }
+
+                    /* ===== ELEMENTOS GERAIS ===== */
+                   .right-yes {
+                        color: #10B981;
+                        font-weight: bold;
+                    }
+
+                   .right-no {
+                        color: #EF4444;
+                        font-weight: bold;
+                    }
+
+                   .total-estimado {
+                        margin-top: var(--space-md);
+                        padding-top: var(--space-md);
+                        border-top: 2px solid var(--primary-color);
+                        font-size: 1.1rem;
+                        font-weight: bold;
+                    }
+
+                   .checkbox-icon {
+                        margin-right: 8px;
+                        font-size: 1.2rem;
+                    }
+
+                    /* ===== RESPONSIVIDADE ESPECÍFICA ===== */
+                    @media (max-width: 992px) {
+                       .comparison-flow {
+                            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                       .comparison-flow {
+                            grid-template-columns: 1fr;
+                        }
+
+                       .flow-header {
+                            padding: var(--space-md);
+                        }
+
+                       .flow-header h4 {
+                            font-size: 1.1rem;
+                        }
+
+                       .flow-step {
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+
+                       .flow-step::before {
+                            left: 15px;
+                            top: 30px;
+                            bottom: -30px;
+                        }
+
+                       .step-content {
+                            padding-left: var(--space-md);
+                        }
+                    }
+
+                    @media (max-width: 480px) {
+                       .flow-header i {
+                            font-size: 1.5rem;
+                        }
+
+                       .flow-header h4 {
+                            font-size: 1rem;
+                        }
+
+                       .step-number {
+                            width: 25px;
+                            height: 25px;
+                            font-size: 0.9rem;
+                        }
+
+                       .flow-footer {
+                            padding: var(--space-sm);
+                            font-size: 0.85rem;
+                        }
+                    }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -1994,214 +2200,7 @@
                 });
             }        });
 
-        // Estilos específicos para este artigo
-        const style = document.createElement('style');
-        style.textContent = `
-            /* ===== FLOW COLUMN ESTILOS ADICIONAIS ===== */
-           .comparison-flow {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: var(--space-lg);
-                margin-bottom: var(--space-lg);
-            }
-            
-           .flow-column {
-                border-radius: var(--border-radius);
-                overflow: hidden;
-                border: 2px solid transparent;
-                background-color: var(--white-color);
-            }
-            
-           .flow-header {
-                padding: var(--space-lg);
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: var(--space-sm);
-            }
-            
-           .flow-header.saque-aniversario {
-                background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-                color: white;
-            }
-            
-           .flow-header.saque-rescisao {
-                background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
-                color: white;
-            }
-            
-           .flow-header i {
-                font-size: 2rem;
-                margin-bottom: var(--space-xs);
-            }
-            
-           .flow-header h4 {
-                margin: 0;
-                font-size: 1.2rem;
-            }
-            
-           .flow-steps {
-                padding: var(--space-md);
-            }
-            
-           .flow-step {
-                display: flex;
-                gap: var(--space-md);
-                margin-bottom: var(--space-lg);
-                position: relative;
-            }
-            
-           .flow-step:last-child {
-                margin-bottom: 0;
-            }
-            
-           .flow-step::before {
-                content: '';
-                position: absolute;
-                left: 15px;
-                top: 40px;
-                bottom: -30px;
-                width: 2px;
-                background-color: var(--light-color);
-                z-index: 1;
-            }
-            
-           .flow-step:last-child::before {
-                display: none;
-            }
-            
-           .step-number {
-                width: 30px;
-                height: 30px;
-                background-color: var(--primary-color);
-                color: white;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                flex-shrink: 0;
-                z-index: 2;
-                position: relative;
-            }
-            
-           .step-content {
-                flex: 1;
-                padding-bottom: var(--space-md);
-            }
-            
-           .step-content strong {
-                display: block;
-                margin-bottom: 5px;
-                color: var(--dark-color);
-            }
-            
-           .step-content p {
-                margin: 0;
-                color: var(--gray-color);
-                font-size: 0.95rem;
-            }
-            
-           .flow-footer {
-                padding: var(--space-md);
-                background-color: var(--bg-secondary);
-                border-top: 1px solid var(--light-color);
-                text-align: center;
-            }
-            
-           .flow-footer p {
-                margin: 5px 0;
-                font-size: 0.9rem;
-            }
-            
-           .flow-footer strong {
-                color: var(--primary-color);
-            }
-            
-            /* ===== ELEMENTOS GERAIS ===== */
-           .right-yes {
-                color: #10B981;
-                font-weight: bold;
-            }
-            
-           .right-no {
-                color: #EF4444;
-                font-weight: bold;
-            }
-            
-           .total-estimado {
-                margin-top: var(--space-md);
-                padding-top: var(--space-md);
-                border-top: 2px solid var(--primary-color);
-                font-size: 1.1rem;
-                font-weight: bold;
-            }
-            
-           .checkbox-icon {
-                margin-right: 8px;
-                font-size: 1.2rem;
-            }
-            
-            /* ===== RESPONSIVIDADE ESPECÍFICA ===== */
-            @media (max-width: 992px) {
-               .comparison-flow {
-                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                }
-            }
-            
-            @media (max-width: 768px) {
-               .comparison-flow {
-                    grid-template-columns: 1fr;
-                }
-                
-               .flow-header {
-                    padding: var(--space-md);
-                }
-                
-               .flow-header h4 {
-                    font-size: 1.1rem;
-                }
-                
-               .flow-step {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-                
-               .flow-step::before {
-                    left: 15px;
-                    top: 30px;
-                    bottom: -30px;
-                }
-                
-               .step-content {
-                    padding-left: var(--space-md);
-                }
-            }
-            
-            @media (max-width: 480px) {
-               .flow-header i {
-                    font-size: 1.5rem;
-                }
-                
-               .flow-header h4 {
-                    font-size: 1rem;
-                }
-                
-               .step-number {
-                    width: 25px;
-                    height: 25px;
-                    font-size: 0.9rem;
-                }
-                
-               .flow-footer {
-                    padding: var(--space-sm);
-                    font-size: 0.85rem;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+            </script>
     <!-- Sistema de Acessibilidade -->
     <script src="../js/acessibilidade.js" async></script>
     <!-- Service Worker Registration -->
