@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "generate-sitemap": "node generate-sitemap.js"
+    "generate-sitemap": "node generate-sitemap.js",
+    "generate-robots": "node generate-robots.js",
+    "generate-all": "npm run generate-sitemap && npm run generate-robots"
   },
   "devDependencies": {
     "sitemap": "^9.0.0"
