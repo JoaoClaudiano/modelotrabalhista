@@ -30,6 +30,14 @@ Uma aplicação web completa para geração automática de documentos trabalhist
   - Geração automática de robots.txt
   - Atualização automática via GitHub Actions quando o site muda
 
+- **Segurança**:
+  - Content Security Policy (CSP) implementado
+  - CSP Report-Only para monitoramento de violações
+  - Console-based violation reporter
+  - Proteção contra XSS, clickjacking e outros ataques
+  - Headers de segurança configurados
+  - Compatível com GitHub Pages e Firebase Hosting
+
 ## 🚀 Como Usar
 
 ### Opção 1: Online
@@ -70,6 +78,8 @@ Esses arquivos são atualizados automaticamente via GitHub Actions sempre que ar
 Para mais detalhes, veja:
 - [SITEMAP_README.md](SITEMAP_README.md) - Documentação do gerador de sitemap
 - [ROBOTS_README.md](ROBOTS_README.md) - Documentação do gerador de robots.txt
+- [CSP_DOCUMENTATION.md](CSP_DOCUMENTATION.md) - Documentação do Content Security Policy
+- [CSP_REPORTING_GUIDE.md](CSP_REPORTING_GUIDE.md) - Guia de monitoramento de violações CSP
 
 
 # arvore
