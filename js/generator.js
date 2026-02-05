@@ -12,12 +12,16 @@ class DocumentGenerator {
         };
     }
 
-    // Escapa caracteres HTML para prevenir XSS
-    escapeHtml(text) {
-        if (typeof text !== 'string') return text;
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+    // Sanitizar string para prevenir injeção de comandos/scripts
+    sanitizeInput(text, maxLength = 500) {
+        if (typeof text !== 'string') return '';
+        // Remover caracteres de controle perigosos mas manter quebras de linha
+        text = text.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+        // Limitar comprimento
+        if (text.length > maxLength) {
+            text = text.substring(0, maxLength);
+        }
+        return text.trim();
     }
 
     // Gerador principal
@@ -26,13 +30,24 @@ class DocumentGenerator {
             throw new Error('Dados incompletos para gerar documento');
         }
         
-        const generator = this.templates[data.model];
+        // Sanitizar todos os campos de texto do objeto data
+        const sanitizedData = {};
+        for (const key in data) {
+            if (typeof data[key] === 'string') {
+                const maxLength = key.includes('Reason') || key.includes('Agenda') || key.includes('Conditions') ? 2000 : 500;
+                sanitizedData[key] = this.sanitizeInput(data[key], maxLength);
+            } else {
+                sanitizedData[key] = data[key];
+            }
+        }
+        
+        const generator = this.templates[sanitizedData.model];
         if (!generator) {
             throw new Error('Tipo de documento não suportado');
         }
         
         try {
-            return generator(data);
+            return generator(sanitizedData);
         } catch (error) {
             console.error('Erro ao gerar documento:', error);
             throw new Error(`Falha ao gerar documento: ${error.message}`);
