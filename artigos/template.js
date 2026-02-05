@@ -50,7 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Atualizar tempo de leitura dinamicamente
     function updateReadingTime() {
-        const articleText = document.querySelector('.article-body').innerText;
+        const articleBody = document.querySelector('.article-body');
+        if (!articleBody) {
+            return; // Exit early if article body doesn't exist
+        }
+        
+        const articleText = articleBody.innerText;
         const wordCount = articleText.split(/\s+/).length;
         const readingTime = Math.ceil(wordCount / 200); // 200 palavras por minuto
         
