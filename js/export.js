@@ -15,7 +15,8 @@ class DocumentExporter {
 
     init() {
         console.log('DocumentExporter inicializando...');
-        this.loadLibraries();
+        // Don't load libraries immediately - load on demand
+        // this.loadLibraries(); // REMOVED - libraries will be loaded when export is triggered
         this.setupEventListeners();
         this.setupMutationObserver();
     }
@@ -398,6 +399,27 @@ class DocumentExporter {
     // Exportar para PDF
     async exportToPDF(content, filename = 'ModeloTrabalhista') {
         try {
+            // Load jsPDF library on demand if not already loaded
+            if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
+                console.log('Loading jsPDF on demand...');
+                this.loadLibraries();
+                // Wait for library to load
+                await new Promise((resolve) => {
+                    const checkInterval = setInterval(() => {
+                        if (typeof window.jspdf !== 'undefined') {
+                            this.libsLoaded.jspdf = true;
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }, 10000);
+                });
+            }
+            
             // Se jsPDF não estiver carregado, usar fallback
             if (typeof window.jspdf === 'undefined') {
                 console.log('Usando fallback para PDF');
@@ -563,6 +585,27 @@ class DocumentExporter {
     // Exportar para DOCX
     async exportToDOCX(content, filename = 'ModeloTrabalhista') {
         try {
+            // Load docx library on demand if not already loaded
+            if (typeof window.docx === 'undefined' && !this.libsLoaded.docx) {
+                console.log('Loading docx.js on demand...');
+                this.loadLibraries();
+                // Wait for library to load
+                await new Promise((resolve) => {
+                    const checkInterval = setInterval(() => {
+                        if (typeof window.docx !== 'undefined') {
+                            this.libsLoaded.docx = true;
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }, 10000);
+                });
+            }
+            
             // Se docx não estiver carregado, usar fallback
             if (typeof window.docx === 'undefined') {
                 console.log('Usando fallback para DOCX');
