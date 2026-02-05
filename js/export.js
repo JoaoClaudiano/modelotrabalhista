@@ -646,8 +646,8 @@ class DocumentExporter {
                     <style>
                         /* CSS otimizado para PDF de 1 página A4 */
                         
-                        /* Reset box-sizing para garantir dimensões previsíveis */
-                        *, *::before, *::after {
+                        /* Reset box-sizing para elementos do documento - escopo limitado */
+                        .document, .document *, .document *::before, .document *::after {
                             box-sizing: border-box;
                         }
                         

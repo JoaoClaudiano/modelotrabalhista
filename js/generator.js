@@ -645,8 +645,8 @@ class DocumentGenerator {
         const agendaItems = agenda.split('\n').map(item => {
             const trimmed = item.trim();
             if (trimmed) {
-                // Remove numeração se existir
-                const content = trimmed.replace(/^\d+\.\s*/, '');
+                // Remove numeração/bullets (números, letras, hífen, asterisco, bullet)
+                const content = trimmed.replace(/^[\d\w]+\.\s*|^[-*•]\s*/, '');
                 return `<li style="margin: 2px 0; line-height: 1.3;">${this.escapeHtml(content)}</li>`;
             }
             return '';
