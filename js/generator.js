@@ -2,6 +2,11 @@
 
 class DocumentGenerator {
     constructor() {
+        // Constantes para validação de tamanho de campos
+        this.MAX_SHORT_TEXT_LENGTH = 500;
+        this.MAX_LONG_TEXT_LENGTH = 2000;
+        this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
+        
         this.templates = {
             demissao: this.generateResignationLetter.bind(this),
             ferias: this.generateVacationRequest.bind(this),
@@ -11,6 +16,24 @@ class DocumentGenerator {
             reuniao: this.generateMeetingConvocation.bind(this)
         };
     }
+    
+    // Verificar se um campo é de texto longo
+    isLongTextField(fieldName) {
+        return this.LONG_TEXT_FIELDS.some(suffix => fieldName.includes(suffix));
+    }
+
+    // Sanitizar string para prevenir injeção de comandos/scripts
+    sanitizeInput(text, maxLength = null) {
+        if (typeof text !== 'string') return '';
+        // Remover caracteres de controle perigosos mas manter quebras de linha
+        text = text.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+        // Limitar comprimento
+        const limit = maxLength || this.MAX_SHORT_TEXT_LENGTH;
+        if (text.length > limit) {
+            text = text.substring(0, limit);
+        }
+        return text.trim();
+    }
 
     // Gerador principal
     generateDocument(data) {
@@ -18,13 +41,24 @@ class DocumentGenerator {
             throw new Error('Dados incompletos para gerar documento');
         }
         
-        const generator = this.templates[data.model];
+        // Sanitizar todos os campos de texto do objeto data
+        const sanitizedData = {};
+        for (const key in data) {
+            if (typeof data[key] === 'string') {
+                const maxLength = this.isLongTextField(key) ? this.MAX_LONG_TEXT_LENGTH : this.MAX_SHORT_TEXT_LENGTH;
+                sanitizedData[key] = this.sanitizeInput(data[key], maxLength);
+            } else {
+                sanitizedData[key] = data[key];
+            }
+        }
+        
+        const generator = this.templates[sanitizedData.model];
         if (!generator) {
             throw new Error('Tipo de documento não suportado');
         }
         
         try {
-            return generator(data);
+            return generator(sanitizedData);
         } catch (error) {
             console.error('Erro ao gerar documento:', error);
             throw new Error(`Falha ao gerar documento: ${error.message}`);

@@ -1,6 +1,7 @@
 // export.js - Sistema de exportação de documentos aprimorado
 class DocumentExporter {
     constructor() {
+        this.mutationObserver = null; // Armazenar referência para limpeza
         this.libsLoaded = {
             jspdf: false,
             docx: false
@@ -156,7 +157,12 @@ class DocumentExporter {
 
     setupMutationObserver() {
         // Observar mudanças no DOM para quando botões forem adicionados dinamicamente
-        const observer = new MutationObserver((mutations) => {
+        // Desconectar observer anterior se existir
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+        }
+        
+        this.mutationObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList' || mutation.type === 'attributes') {
                     this.attachExportButtons();
@@ -164,12 +170,20 @@ class DocumentExporter {
             });
         });
 
-        observer.observe(document.body, {
+        this.mutationObserver.observe(document.body, {
             childList: true,
             subtree: true,
             attributes: true,
             attributeFilter: ['id', 'class', 'disabled']
         });
+    }
+    
+    // Método para desconectar o observer e evitar memory leak
+    cleanup() {
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+            this.mutationObserver = null;
+        }
     }
 
     // Método para anexar automaticamente os botões de exportação

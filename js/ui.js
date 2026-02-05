@@ -160,15 +160,27 @@ class UIHelper {
             info: 'info-circle'
         };
 
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-${icons[type] || 'info-circle'}"></i>
-                <span>${message}</span>
-            </div>
-            <button class="notification-close">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
+        // Criar conteúdo de forma segura
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'notification-content';
+        
+        const icon = document.createElement('i');
+        icon.className = `fas fa-${icons[type] || 'info-circle'}`;
+        
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message; // Usa textContent para prevenir XSS
+        
+        contentDiv.appendChild(icon);
+        contentDiv.appendChild(messageSpan);
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'notification-close';
+        const closeIcon = document.createElement('i');
+        closeIcon.className = 'fas fa-times';
+        closeBtn.appendChild(closeIcon);
+        
+        notification.appendChild(contentDiv);
+        notification.appendChild(closeBtn);
 
         const styles = {
             success: { bg: '#10b981', icon: '#059669' },
