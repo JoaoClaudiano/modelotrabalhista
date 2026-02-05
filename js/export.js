@@ -280,15 +280,12 @@ class DocumentExporter {
                     return;
                 }
                 
-                // Mostrar loading
                 const originalHTML = pdfBtn.innerHTML;
                 const originalDisabled = pdfBtn.disabled;
                 pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PDF...';
                 pdfBtn.disabled = true;
                 
                 try {
-                    console.log('Iniciando geração de PDF com html2canvas...');
-                    
                     // Reset zoom before PDF export to ensure consistent formatting
                     const preview = document.getElementById('documentPreview');
                     let originalZoom = null;
@@ -296,12 +293,11 @@ class DocumentExporter {
                         originalZoom = window.ui.currentZoom;
                         window.ui.resetZoom('documentPreview');
                         // Small delay to allow DOM to update after zoom reset
-                        const DOM_UPDATE_DELAY_MS = 50;
-                        await new Promise(resolve => setTimeout(resolve, DOM_UPDATE_DELAY_MS));
+                        await new Promise(resolve => setTimeout(resolve, 50));
                     }
                     
-                    // Use new method that preserves formatting
-                    await this.exportToPDF('', 'ModeloTrabalhista');
+                    // USAR O NOVO MÉTODO QUE PRESERVA FORMATAÇÃO
+                    await this.exportToPDFViaPrint('ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
                     if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
@@ -609,17 +605,109 @@ class DocumentExporter {
 
     // Exportar para PDF (método principal com fallback)
     async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
+        // Use the new method that preserves formatting via browser print
+        // Note: content parameter retained for backward compatibility but not used
+        return await this.exportToPDFViaPrint(filename);
+    }
+
+    async exportToPDFViaPrint(filename = 'ModeloTrabalhista') {
         try {
-            // Try html2canvas method first (preserves formatting)
-            return await this.exportToPDFWithHTML(filename);
-        } catch (error) {
-            console.warn('Falha no método html2canvas, usando método texto:', error);
-            // If content not provided, try to get it for fallback
-            if (!content) {
-                content = this.getDocumentContent();
+            // 1. Obter o HTML formatado do documento
+            const htmlContent = this.getDocumentHTML();
+            if (!htmlContent) {
+                throw new Error('Não foi possível obter o conteúdo HTML do documento.');
             }
-            // Fallback to text-based export
-            return await this.exportTextToPDF(content, filename);
+
+            // 2. Criar uma janela de impressão dedicada
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                throw new Error('Popup bloqueado. Permita popups para esta página.');
+            }
+
+            // 3. Escrever o HTML na nova janela, com estilos otimizados para impressão
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${filename}</title>
+                    <style>
+                        /* Estilos base para impressão (PDF) */
+                        body {
+                            font-family: Arial, sans-serif;
+                            line-height: 1.3;
+                            margin: 0;
+                            padding: 15mm;
+                            font-size: 11pt;
+                            color: #000;
+                        }
+                        .document {
+                            width: 100%;
+                            box-sizing: border-box;
+                        }
+                        h2 {
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 14pt;
+                            margin: 12px 0;
+                        }
+                        strong {
+                            font-weight: bold;
+                        }
+                        ul {
+                            margin: 4px 0 4px 18px;
+                        }
+                        li {
+                            margin: 2px 0;
+                        }
+                        /* Ocultar elementos de interface na impressão */
+                        .no-print {
+                            display: none;
+                        }
+                        /* Quebras de página evitadas dentro do conteúdo principal */
+                        .document > * {
+                            page-break-inside: avoid;
+                        }
+                        @media print {
+                            @page {
+                                margin: 15mm;
+                            }
+                            body {
+                                padding: 0;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="document">${htmlContent}</div>
+                    <div class="no-print" style="text-align: center; margin-top: 20px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            📄 Abrir Caixa de Impressão
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            ❌ Fechar Janela
+                        </button>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                            Na caixa de impressão, escolha "Salvar como PDF" como destino.
+                        </p>
+                    </div>
+                    <script>
+                        window.focus();
+                    </script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+
+            // 4. Dar feedback ao usuário
+            this.showNotification('Janela de impressão aberta. Escolha "Salvar como PDF" na caixa de diálogo.', 'success');
+            return { success: true, message: 'Janela de impressão aberta.' };
+
+        } catch (error) {
+            console.error('Erro ao abrir janela de impressão:', error);
+            this.showNotification(`Erro ao gerar PDF: ${error.message}`, 'error');
+            // Fallback para o método anterior (texto puro)
+            return this.exportToPDFFallback(this.getDocumentContent(), filename);
         }
     }
 
