@@ -111,8 +111,12 @@ For Firebase Hosting deployment, the `firebase.json` file configures headers:
 ```
 
 This configuration also includes:
-- Cache control headers for static assets
-- Proper caching strategy for HTML, CSS, JS, and images
+- Cache control headers for static assets:
+  - Images: 30 days
+  - CSS/JS: 1 day  
+  - HTML: No cache (always fresh)
+- Clean URLs enabled (removes .html extension)
+- Trailing slash handling configured
 
 ## Why 'unsafe-inline' is Used
 
