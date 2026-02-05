@@ -37,6 +37,15 @@ class DocumentExporter {
             DOCX_SEPARATOR_SPACING: 100
         };
         
+        // Constantes de validação
+        this.VALIDATION = {
+            // Minimum content length to prevent empty exports (approximately 1-2 short sentences)
+            MIN_CONTENT_LENGTH: 50,
+            // Timeout for library loading (in milliseconds)
+            LIBRARY_LOAD_TIMEOUT: 10000, // 10 seconds
+            HTML2CANVAS_LOAD_TIMEOUT: 10000 // 10 seconds
+        };
+        
         // Padrões regex para detecção
         this.PATTERNS = {
             HEAVY_SEPARATOR: /^[=]{3,}$/,
@@ -427,6 +436,10 @@ class DocumentExporter {
     getDocumentHTML() {
         // Prioridade: elemento específico do modelo
         const contentSelectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -441,13 +454,14 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const html = element.innerHTML || '';
-                if (html.trim().length > 0) {
-                    console.log(`Conteúdo HTML encontrado no seletor: ${selector}`);
+                if (html.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
+                    console.log(`getDocumentHTML: Conteúdo HTML encontrado no seletor: ${selector}`);
                     return html.trim();
                 }
             }
         }
         
+        console.warn('getDocumentHTML: Nenhum conteúdo HTML encontrado');
         return null;
     }
 
@@ -455,6 +469,10 @@ class DocumentExporter {
     getDocumentContent() {
         // Prioridade: elemento específico do modelo
         const contentSelectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -469,8 +487,8 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const text = element.textContent || element.innerText || '';
-                if (text.trim().length > 0) {
-                    console.log(`Conteúdo encontrado no seletor: ${selector}`);
+                if (text.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
+                    console.log(`getDocumentContent: Conteúdo encontrado no seletor: ${selector}`);
                     return text.trim();
                 }
             }
@@ -518,6 +536,10 @@ class DocumentExporter {
     // Obter elemento do documento (retorna HTMLElement, não string)
     getDocumentElement() {
         const selectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -530,110 +552,25 @@ class DocumentExporter {
         
         for (const selector of selectors) {
             const element = document.querySelector(selector);
-            if (element && element.innerHTML.trim().length > 0) {
+            if (element && element.innerHTML.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
+                console.log(`getDocumentElement: Found element with selector: ${selector}`);
                 return element;
             }
         }
         
+        console.warn('getDocumentElement: No suitable element found');
         return null;
     }
 
-    // Exportar para PDF com html2canvas (preserva formatação HTML)
-    async exportToPDFWithHTML(filename = 'ModeloTrabalhista') {
-        try {
-            // Encontrar elemento que contém o documento
-            // Priorizar o container interno .document-content que tem o HTML formatado
-            const element = document.querySelector('#documentPreview .document-content') ||
-                           document.querySelector('#documentPreview') ||
-                           document.querySelector('#modelo-text') || 
-                           document.querySelector('.modelo-texto') ||
-                           document.querySelector('#previewModelo');
-            
-            if (!element) {
-                throw new Error('Elemento do documento não encontrado');
-            }
-            
-            // Carregar html2canvas se necessário
-            await this.loadHtml2Canvas();
-            
-            // Carregar jsPDF se necessário
-            if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
-                console.log('Loading jsPDF on demand...');
-                this.loadLibraries();
-                // Wait for library to load with proper timeout handling
-                await new Promise((resolve, reject) => {
-                    const checkInterval = setInterval(() => {
-                        if (typeof window.jspdf !== 'undefined') {
-                            this.libsLoaded.jspdf = true;
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
-                    // Timeout after 10 seconds
-                    setTimeout(() => {
-                        clearInterval(checkInterval);
-                        if (typeof window.jspdf === 'undefined') {
-                            reject(new Error('Timeout ao carregar jsPDF'));
-                        } else {
-                            resolve();
-                        }
-                    }, 10000);
-                });
-            }
-            
-            if (typeof window.jspdf === 'undefined') {
-                throw new Error('jsPDF não disponível');
-            }
-            
-            // Capture as image with high quality
-            const canvas = await html2canvas(element, {
-                scale: 2,  // Double resolution for quality
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false
-            });
-            
-            // Convert to PDF
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-            
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            
-            // Calculate dimensions maintaining aspect ratio
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(
-                (pageWidth - 20) / imgWidth,  // 10mm margin each side
-                (pageHeight - 20) / imgHeight // 10mm margin top/bottom
-            );
-            
-            // Center image on page
-            const x = (pageWidth - imgWidth * ratio) / 2;
-            const y = (pageHeight - imgHeight * ratio) / 2;
-            
-            // Add image to PDF
-            doc.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
-            
-            // Save with sanitized filename
-            const safeFilename = this.sanitizeFilename(filename);
-            doc.save(`${safeFilename}.pdf`);
-            
-            this.showNotification('PDF gerado com sucesso!', 'success');
-            return { success: true, filename: `${safeFilename}.pdf` };
-            
-        } catch (error) {
-            console.error('Erro ao gerar PDF com html2canvas:', error);
-            throw error;
-        }
-    }
-
-    // Exportar para PDF com download automático (novo método principal)
+    // ==========================================
+    // MÉTODOS DE EXPORTAÇÃO PDF (2 métodos)
+    // ==========================================
+    // 1. PRIMEIRA TENTATIVA: Download automático (exportToPDFAuto)
+    // 2. SE FALHAR: Impressão nativa (exportToPDFViaPrint)
+    // ==========================================
+    
+    // 1. Exportar para PDF com download automático (método principal)
+    // Usa html2canvas + jsPDF para gerar PDF e fazer download automático
     async exportToPDFAuto(filename = 'ModeloTrabalhista') {
         const PDF_CONTENT_SCALE = 0.95; // 95% da página para margem
         
@@ -641,7 +578,7 @@ class DocumentExporter {
             // 1. Obter o elemento HTML formatado
             const element = this.getDocumentElement();
             if (!element) {
-                throw new Error('Elemento do documento não encontrado');
+                throw new Error('Não foi possível obter o conteúdo do documento para exportar');
             }
 
             // 2. Carregar bibliotecas necessárias
@@ -657,11 +594,11 @@ class DocumentExporter {
                             resolve();
                         }
                     }, 100);
-                    // Timeout after 10 seconds with error
+                    // Timeout after configured time with error
                     setTimeout(() => {
                         clearInterval(checkInterval);
                         reject(new Error('Timeout ao carregar jsPDF'));
-                    }, 10000);
+                    }, this.VALIDATION.LIBRARY_LOAD_TIMEOUT);
                 });
             }
             
@@ -670,18 +607,42 @@ class DocumentExporter {
                 throw new Error('jsPDF não pôde ser carregado');
             }
 
-            // Carregar html2canvas
-            await this.loadHtml2Canvas();
+            // Carregar html2canvas com timeout
+            await Promise.race([
+                this.loadHtml2Canvas(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout ao carregar html2canvas')), this.VALIDATION.HTML2CANVAS_LOAD_TIMEOUT)
+                )
+            ]);
+            
+            // Verificar se html2canvas foi carregado
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('html2canvas não pôde ser carregado');
+            }
 
-            // 3. Capturar o elemento como imagem de alta qualidade
-            const canvas = await html2canvas(element, {
-                scale: 2, // Alta resolução
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight
-            });
+            // 3. Capturar o elemento como imagem de alta qualidade com validação
+            let canvas;
+            try {
+                // Use getBoundingClientRect for more accurate dimensions (accounts for CSS transforms and zoom)
+                // Fallback to scrollWidth/scrollHeight if rect dimensions are 0 (e.g., element is not fully rendered)
+                const rect = element.getBoundingClientRect();
+                canvas = await html2canvas(element, {
+                    scale: 2, // Alta resolução
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: rect.width || element.scrollWidth,
+                    height: rect.height || element.scrollHeight
+                });
+                
+                // Validate canvas was created successfully
+                if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                    throw new Error('Canvas vazio - conteúdo não foi renderizado corretamente');
+                }
+            } catch (canvasError) {
+                console.error('Erro ao capturar elemento com html2canvas:', canvasError);
+                throw new Error(`Falha ao capturar conteúdo: ${canvasError.message}`);
+            }
 
             // 4. Configurar PDF
             const { jsPDF } = window.jspdf;
@@ -732,12 +693,8 @@ class DocumentExporter {
         }
     }
 
-    // Exportar para PDF (método principal com fallback)
-    async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
-        // Usar o novo método de download automático como padrão
-        return await this.exportToPDFAuto(filename);
-    }
-
+    // 2. Fallback: exportar via impressão nativa do navegador
+    // Abre janela de impressão para o usuário salvar como PDF manualmente
     async exportToPDFViaPrint(filename = 'ModeloTrabalhista') {
         try {
             // 1. Obter o HTML formatado do documento
@@ -834,341 +791,6 @@ class DocumentExporter {
         } catch (error) {
             console.error('Erro ao abrir janela de impressão:', error);
             this.showNotification(`Erro ao gerar PDF: ${error.message}`, 'error');
-            // Fallback para o método anterior (texto puro)
-            return this.exportToPDFFallback(this.getDocumentContent(), filename);
-        }
-    }
-
-    // Exportar para PDF usando texto (método legado)
-    async exportTextToPDF(content, filename = 'ModeloTrabalhista') {
-        try {
-            // Load jsPDF library on demand if not already loaded
-            if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
-                console.log('Loading jsPDF on demand...');
-                this.loadLibraries();
-                // Wait for library to load
-                await new Promise((resolve) => {
-                    const checkInterval = setInterval(() => {
-                        if (typeof window.jspdf !== 'undefined') {
-                            this.libsLoaded.jspdf = true;
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
-                    // Timeout after 10 seconds
-                    setTimeout(() => {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }, 10000);
-                });
-            }
-            
-            // Se jsPDF não estiver carregado, usar fallback
-            if (typeof window.jspdf === 'undefined') {
-                console.log('Usando fallback para PDF');
-                return this.exportToPDFFallback(content, filename);
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            // Configurações
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 20;
-            const maxWidth = pageWidth - (margin * 2);
-            
-            // Conteúdo
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'normal');
-            
-            let y = margin;
-            const lineHeight = this.FORMATTING.LINE_HEIGHT_MM;
-            
-            // Dividir conteúdo em linhas PRESERVANDO linhas vazias
-            const rawLines = content.split('\n');
-            
-            for (let i = 0; i < rawLines.length; i++) {
-                const line = rawLines[i];
-                const trimmedLine = line.trim();
-                
-                // Se for linha vazia, adicionar espaço
-                if (!trimmedLine) {
-                    y += lineHeight * this.FORMATTING.EMPTY_LINE_SPACING_FACTOR;
-                    continue;
-                }
-                
-                // Detectar linhas de separação (========)
-                if (this.PATTERNS.HEAVY_SEPARATOR.test(trimmedLine)) {
-                    y += this.FORMATTING.SEPARATOR_PADDING_BEFORE;
-                    doc.setLineWidth(this.FORMATTING.HEAVY_SEPARATOR_LINE_WIDTH);
-                    doc.line(margin, y, pageWidth - margin, y);
-                    y += this.FORMATTING.SEPARATOR_PADDING_AFTER_HEAVY;
-                    continue;
-                }
-                
-                // Detectar linhas de sublinhado (________)
-                if (this.PATTERNS.LIGHT_SEPARATOR.test(trimmedLine)) {
-                    y += this.FORMATTING.SEPARATOR_PADDING_BEFORE;
-                    doc.setLineWidth(this.FORMATTING.LIGHT_SEPARATOR_LINE_WIDTH);
-                    doc.line(margin, y, pageWidth - margin, y);
-                    y += this.FORMATTING.SEPARATOR_PADDING_AFTER_LIGHT;
-                    continue;
-                }
-                
-                // Detectar possíveis títulos
-                const isTitle = this.isTitleLine(line);
-                
-                if (isTitle) {
-                    doc.setFontSize(this.FORMATTING.TITLE_FONT_SIZE);
-                    doc.setFont('helvetica', 'bold');
-                }
-                
-                // Quebrar linha longa em múltiplas linhas se necessário
-                const wrappedLines = doc.splitTextToSize(line, maxWidth);
-                
-                for (let j = 0; j < wrappedLines.length; j++) {
-                    // Verificar se precisa adicionar nova página
-                    if (y + lineHeight > pageHeight - margin) {
-                        doc.addPage();
-                        y = margin;
-                        // Adicionar indicador de continuação
-                        doc.setFontSize(9);
-                        doc.setFont('helvetica', 'italic');
-                        doc.text('(continuação)', pageWidth / 2, y, { align: 'center' });
-                        y += 10;
-                        doc.setFontSize(11);
-                        doc.setFont('helvetica', 'normal');
-                    }
-                    
-                    doc.text(wrappedLines[j], margin, y);
-                    y += lineHeight;
-                }
-                
-                // Restaurar fonte normal
-                if (isTitle) {
-                    doc.setFontSize(this.FORMATTING.BODY_FONT_SIZE);
-                    doc.setFont('helvetica', 'normal');
-                }
-            }
-            
-            // Rodapé em todas as páginas
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.text(`Página ${i} de ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-            }
-            
-            // Salvar
-            const safeFilename = this.sanitizeFilename(filename);
-            doc.save(`${safeFilename}.pdf`);
-            
-            this.showNotification('PDF gerado com sucesso!', 'success');
-            return { success: true, filename: `${safeFilename}.pdf` };
-            
-        } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
-            return this.exportToPDFFallback(content, filename);
-        }
-    }
-
-    // Fallback para PDF
-    exportToPDFFallback(content, filename) {
-        try {
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                throw new Error('Popup bloqueado. Permita popups para esta página.');
-            }
-            
-            // Get HTML content instead of plain text
-            const htmlContent = this.getDocumentHTML() || content;
-            
-            const pageContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${filename}</title>
-                    <meta charset="UTF-8">
-                    <style>
-                        /* CSS otimizado para PDF de 1 página A4 */
-                        
-                        /* Reset box-sizing para elementos do documento - escopo limitado */
-                        .document, .document *, .document *::before, .document *::after {
-                            box-sizing: border-box;
-                        }
-                        
-                        /* Reset específico para elementos do documento */
-                        .document * {
-                            margin: 0;
-                            padding: 0;
-                        }
-                        
-                        body { 
-                            font-family: Arial, sans-serif; 
-                            /* line-height reduzido de 1.6 para 1.3 - economiza espaço vertical */
-                            line-height: 1.3; 
-                            /* margin reduzido de 1.5cm para 1.2cm - mais espaço utilizável */
-                            margin: 1.2cm;
-                            font-size: 10pt;
-                            max-width: 21cm;
-                        }
-                        
-                        @media print {
-                            /* @page configurado com margin 2cm conforme requisito */
-                            @page { 
-                                margin: 2cm; 
-                                size: A4;
-                            }
-                            body {
-                                margin: 0;
-                                /* padding 2cm alinhado com @page margin */
-                                padding: 2cm;
-                            }
-                            .no-print { display: none; }
-                            /* REMOVIDO: page-break regras que forçam quebra de página */
-                        }
-                        
-                        .document { 
-                            font-family: Arial, sans-serif;
-                            font-size: 10pt;
-                            /* line-height reduzido de 1.4 para 1.3 */
-                            line-height: 1.3;
-                            /* page-break-inside: avoid - evita quebra dentro do documento */
-                            page-break-inside: avoid;
-                        }
-                        
-                        .document h2 {
-                            text-align: center;
-                            font-weight: bold;
-                            /* font-size reduzido de 14pt para 13pt */
-                            font-size: 13pt;
-                            /* margin reduzido de 15px para 8px */
-                            margin: 8px 0;
-                            line-height: 1.2;
-                        }
-                        
-                        .document p {
-                            text-align: justify;
-                            /* margin reduzido de 10px para 6px */
-                            margin: 6px 0;
-                            /* line-height reduzido de 1.5 para 1.3 */
-                            line-height: 1.3;
-                        }
-                        
-                        .document strong {
-                            font-weight: bold;
-                        }
-                        
-                        .document ul {
-                            /* margins reduzidos - economiza espaço */
-                            margin: 4px 0 4px 18px;
-                            line-height: 1.3;
-                        }
-                        
-                        .document li {
-                            /* margin reduzido de 5px para 2px */
-                            margin: 2px 0;
-                            line-height: 1.3;
-                        }
-                        
-                        /* Company header styles */
-                        .document > div:first-child {
-                            text-align: center;
-                            font-weight: bold;
-                            /* margin-bottom reduzido de 20px para 8px */
-                            margin-bottom: 8px;
-                        }
-                        
-                        .document > div:first-child > div {
-                            font-weight: bold;
-                            line-height: 1.2;
-                        }
-                        
-                        /* Signature and footer sections - page-break-inside: avoid */
-                        .document > div:last-child {
-                            /* margin-top reduzido de 20px para 8px */
-                            margin-top: 8px;
-                            page-break-inside: avoid;
-                        }
-                        
-                        .document > div:last-child p {
-                            text-align: left;
-                            line-height: 1.3;
-                        }
-                        
-                        /* Centered elements */
-                        .document > p:nth-last-of-type(2),
-                        .document > p:nth-last-of-type(1) {
-                            text-align: center;
-                        }
-                        
-                        .header {
-                            text-align: center;
-                            /* margin-bottom reduzido */
-                            margin-bottom: 0.6cm;
-                            border-bottom: 2px solid #ccc;
-                            /* padding-bottom reduzido */
-                            padding-bottom: 0.3cm;
-                        }
-                        
-                        .footer {
-                            /* margin-top reduzido */
-                            margin-top: 0.6cm;
-                            text-align: center;
-                            font-size: 9pt;
-                            color: #666;
-                            border-top: 1px solid #ccc;
-                            /* padding-top reduzido */
-                            padding-top: 0.3cm;
-                        }
-                        
-                        button {
-                            padding: 10px 20px;
-                            background: #007bff;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            margin: 10px;
-                            font-size: 14px;
-                        }
-                        button:hover {
-                            background: #0056b3;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="document">${htmlContent}</div>
-                    
-                    <div class="no-print" style="text-align: center; margin-top: 2cm;">
-                        <button onclick="window.print()">📄 Abrir Caixa de Impressão</button>
-                        <button onclick="window.close()">❌ Fechar Janela</button>
-                    </div>
-                    
-                    <script>
-                        // Focar na janela
-                        window.focus();
-                    </script>
-                </body>
-                </html>
-            `;
-            
-            printWindow.document.write(pageContent);
-            printWindow.document.close();
-            
-            return { 
-                success: true, 
-                message: 'Janela aberta. Clique em "Abrir Caixa de Impressão" e selecione "Salvar como PDF".' 
-            };
-            
-        } catch (error) {
-            console.error('Erro no fallback do PDF:', error);
-            this.showNotification('Erro ao gerar PDF. Tente usar Ctrl+P na página principal.', 'error');
             return { success: false, error: error.message };
         }
     }
