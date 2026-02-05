@@ -644,88 +644,138 @@ class DocumentExporter {
                     <title>${filename}</title>
                     <meta charset="UTF-8">
                     <style>
+                        /* CSS otimizado para PDF de 1 página A4 */
+                        
+                        /* Reset box-sizing para elementos do documento - escopo limitado */
+                        .document, .document *, .document *::before, .document *::after {
+                            box-sizing: border-box;
+                        }
+                        
+                        /* Reset específico para elementos do documento */
+                        .document * {
+                            margin: 0;
+                            padding: 0;
+                        }
+                        
                         body { 
-                            font-family: 'Arial', sans-serif; 
-                            line-height: 1.6; 
-                            margin: 1.5cm; 
+                            font-family: Arial, sans-serif; 
+                            /* line-height reduzido de 1.6 para 1.3 - economiza espaço vertical */
+                            line-height: 1.3; 
+                            /* margin reduzido de 1.5cm para 1.2cm - mais espaço utilizável */
+                            margin: 1.2cm;
                             font-size: 10pt;
                             max-width: 21cm;
                         }
+                        
                         @media print {
+                            /* @page configurado com margin 2cm conforme requisito */
                             @page { 
-                                margin: 1.5cm; 
+                                margin: 2cm; 
                                 size: A4;
                             }
                             body {
                                 margin: 0;
-                                padding: 1.5cm;
+                                /* padding 2cm alinhado com @page margin */
+                                padding: 2cm;
                             }
                             .no-print { display: none; }
-                            .page-break {
-                                page-break-after: always;
-                                break-after: page;
-                            }
+                            /* REMOVIDO: page-break regras que forçam quebra de página */
                         }
+                        
                         .document { 
-                            font-family: 'Arial', sans-serif;
+                            font-family: Arial, sans-serif;
                             font-size: 10pt;
-                            line-height: 1.4;
+                            /* line-height reduzido de 1.4 para 1.3 */
+                            line-height: 1.3;
+                            /* page-break-inside: avoid - evita quebra dentro do documento */
+                            page-break-inside: avoid;
                         }
+                        
                         .document h2 {
                             text-align: center;
                             font-weight: bold;
-                            font-size: 14pt;
-                            margin: 15px 0;
+                            /* font-size reduzido de 14pt para 13pt */
+                            font-size: 13pt;
+                            /* margin reduzido de 15px para 8px */
+                            margin: 8px 0;
+                            line-height: 1.2;
                         }
+                        
                         .document p {
                             text-align: justify;
-                            margin: 10px 0;
-                            line-height: 1.5;
+                            /* margin reduzido de 10px para 6px */
+                            margin: 6px 0;
+                            /* line-height reduzido de 1.5 para 1.3 */
+                            line-height: 1.3;
                         }
+                        
                         .document strong {
                             font-weight: bold;
                         }
+                        
                         .document ul {
-                            margin: 10px 0 10px 20px;
+                            /* margins reduzidos - economiza espaço */
+                            margin: 4px 0 4px 18px;
+                            line-height: 1.3;
                         }
+                        
                         .document li {
-                            margin: 5px 0;
+                            /* margin reduzido de 5px para 2px */
+                            margin: 2px 0;
+                            line-height: 1.3;
                         }
+                        
                         /* Company header styles */
                         .document > div:first-child {
                             text-align: center;
                             font-weight: bold;
-                            margin-bottom: 20px;
+                            /* margin-bottom reduzido de 20px para 8px */
+                            margin-bottom: 8px;
                         }
+                        
                         .document > div:first-child > div {
                             font-weight: bold;
+                            line-height: 1.2;
                         }
-                        /* Signature and footer sections */
+                        
+                        /* Signature and footer sections - page-break-inside: avoid */
                         .document > div:last-child {
-                            margin-top: 20px;
+                            /* margin-top reduzido de 20px para 8px */
+                            margin-top: 8px;
+                            page-break-inside: avoid;
                         }
+                        
                         .document > div:last-child p {
                             text-align: left;
+                            line-height: 1.3;
                         }
+                        
                         /* Centered elements */
                         .document > p:nth-last-of-type(2),
                         .document > p:nth-last-of-type(1) {
                             text-align: center;
                         }
+                        
                         .header {
                             text-align: center;
-                            margin-bottom: 1cm;
+                            /* margin-bottom reduzido */
+                            margin-bottom: 0.6cm;
                             border-bottom: 2px solid #ccc;
-                            padding-bottom: 0.5cm;
+                            /* padding-bottom reduzido */
+                            padding-bottom: 0.3cm;
                         }
+                        
                         .footer {
-                            margin-top: 1cm;
+                            /* margin-top reduzido */
+                            margin-top: 0.6cm;
                             text-align: center;
                             font-size: 9pt;
                             color: #666;
                             border-top: 1px solid #ccc;
-                            padding-top: 0.5cm;
+                            /* padding-top reduzido */
+                            padding-top: 0.3cm;
                         }
+                        
                         button {
                             padding: 10px 20px;
                             background: #007bff;

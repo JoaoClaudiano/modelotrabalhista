@@ -7,8 +7,12 @@ class DocumentGenerator {
         this.MAX_LONG_TEXT_LENGTH = 2000;
         this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
         
-        // Estilos base para container do documento (otimizado para PDF)
-        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.4; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; page-break-inside: avoid;';
+        // Estilos base para container do documento (otimizado para PDF de 1 página A4)
+        // box-sizing: border-box - garante que padding não aumenta dimensões totais
+        // page-break-inside: avoid - evita quebra dentro do container
+        // line-height: 1.3 - reduzido de 1.4 para economizar espaço vertical
+        // padding: 15px - reduzido de 20px para maximizar área utilizável
+        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.3; width: 100%; margin: 0; padding: 15px; box-sizing: border-box; page-break-inside: avoid;';
         
         // Array de meses em português para formatação de datas
         this.MONTHS_PT = [
@@ -211,69 +215,82 @@ class DocumentGenerator {
         // Gerar local e data formatada
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
+        // Template otimizado para caber em EXATAMENTE 1 página A4
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
-    <div style="text-align: center; margin-bottom: 15px;">
-        <div style="font-weight: bold; font-size: 11pt;">${companyName}</div>
-        <div style="font-weight: bold; font-size: 10pt;">${companyAddress}</div>
+    <!-- Cabeçalho da empresa - margin-bottom reduzido de 15px para 8px -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
-    <div style="text-align: center; margin: 20px 0 15px 0;">
-        <div style="border-top: 2px solid #000; margin-bottom: 10px;"></div>
-        <h2 style="margin: 10px 0; font-size: 16px; font-weight: bold;">PEDIDO DE DEMISSÃO</h2>
-        <div style="border-bottom: 2px solid #000; margin-top: 10px;"></div>
+    <!-- Título - margins reduzidos (20px->12px top, 15px->8px bottom), font-size 16pt->14pt -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">PEDIDO DE DEMISSÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
     </div>
     
-    <div style="text-align: justify; margin: 15px 0; line-height: 1.5;">
-        <p style="margin: 0 0 10px 0;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
+    <!-- Parágrafo de identificação - line-height 1.5->1.3, margin 15px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
         e Carteira de Trabalho <strong>${ctps}</strong>, na função de <strong>${employeePosition}</strong>, 
         venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
         ocupo nesta empresa.</p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0 0 5px 0;">Solicito que sejam calculados os valores devidos referentes a:</p>
-        <ul style="margin: 5px 0 0 20px; padding: 0;">
-            <li style="margin: 3px 0;">Saldo de salário</li>
-            <li style="margin: 3px 0;">Férias proporcionais + 1/3 constitucional</li>
-            <li style="margin: 3px 0;">13º salário proporcional</li>
-            <li style="margin: 3px 0;">${noticePeriodText}</li>
+    <!-- Lista de valores devidos - margins reduzidos (12px->8px), line-height 1.5->1.3 -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Solicito que sejam calculados os valores devidos referentes a:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            <li style="margin: 2px 0; line-height: 1.3;">Saldo de salário</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Férias proporcionais + 1/3 constitucional</li>
+            <li style="margin: 2px 0; line-height: 1.3;">13º salário proporcional</li>
+            <li style="margin: 2px 0; line-height: 1.3;">${noticePeriodText}</li>
         </ul>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
+    <!-- Data de desligamento - margin 12px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
+    <!-- Declaração FGTS - margin 12px->8px, line-height 1.5->1.3 -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
         não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
         legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
         mencionadas acima, salvo disposições específicas em convenção coletiva ou 
         acordo individual.</p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
+    <!-- Disponibilidade - margin 12px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
         pela legislação trabalhista e normas internas da empresa.</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
+    <!-- Separador - margin 20px->12px -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
-    <div style="margin: 15px 0;">
-        <p style="margin: 0;">${locationAndDate}</p>
+    <!-- Local e data - margin 15px->8px -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">${locationAndDate}</p>
     </div>
     
-    <div style="margin: 35px 0 20px 0;">
-        <div style="border-top: 1px solid #000; width: 300px; margin: 0 auto;"></div>
-        <p style="text-align: center; margin-top: 5px;">Assinatura do Funcionário</p>
+    <!-- Assinatura do funcionário - margins reduzidos (35px->20px, 20px->12px), page-break-inside: avoid -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
+    <!-- Separador - margin 20px->12px -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
-    <div style="margin: 15px 0;">
-        <p style="margin: 3px 0;">Recebido por: ___________________________________________</p>
-        <p style="margin: 3px 0;">Cargo: ___________________________________________________</p>
-        <p style="margin: 3px 0;">Data: __/__/______</p>
+    <!-- Seção de recebimento - margin 15px->8px, page-break-inside: avoid -->
+    <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.3;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.3;">Data: __/__/______</p>
     </div>
 </div>`;
     }
@@ -295,101 +312,175 @@ class DocumentGenerator {
     generateVacationRequest(data) {
         const period = data.vacationPeriod || '(período a ser definido)';
         const days = data.vacationDays || '30';
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                           SOLICITAÇÃO DE FÉRIAS
-${'='.repeat(80)}
-
-Eu, ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, funcionário(a) desta empresa no cargo de 
-${data.employeePosition || '[CARGO]'}, venho por meio deste solicitar o gozo de minhas 
-férias referentes ao período aquisitivo vigente.
-
-Solicito que as férias sejam concedidas no seguinte período: ${period}
-Quantidade de dias: ${days} dias
-
-Declaro estar ciente de que, conforme legislação trabalhista:
-1. As férias devem ser concedidas em até 12 meses após o período aquisitivo
-2. Receberei o valor correspondente com o adicional de 1/3 constitucional
-3. O período de férias pode ser dividido conforme acordo entre as partes
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted || this.formatDate(new Date())}
-
-${'_'.repeat(42)}
-Assinatura do Funcionário
-
-${'='.repeat(80)}
-
-Parecer do Departamento Pessoal: ${'_'.repeat(42)}
-Data de Agendamento: __/__/______`;
+        // Template otimizado para caber em EXATAMENTE 1 página A4
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <!-- Título -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">SOLICITAÇÃO DE FÉRIAS</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <!-- Texto principal -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">Eu, <strong>${employeeName}</strong>, funcionário(a) desta empresa no cargo de 
+        <strong>${employeePosition}</strong>, venho por meio deste solicitar o gozo de minhas 
+        férias referentes ao período aquisitivo vigente.</p>
+    </div>
+    
+    <!-- Período e dias -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Solicito que as férias sejam concedidas no seguinte período: <strong>${period}</strong></p>
+        <p style="margin: 0; line-height: 1.3;">Quantidade de dias: <strong>${days} dias</strong></p>
+    </div>
+    
+    <!-- Declaração -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Declaro estar ciente de que, conforme legislação trabalhista:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            <li style="margin: 2px 0; line-height: 1.3;">As férias devem ser concedidas em até 12 meses após o período aquisitivo</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Receberei o valor correspondente com o adicional de 1/3 constitucional</li>
+            <li style="margin: 2px 0; line-height: 1.3;">O período de férias pode ser dividido conforme acordo entre as partes</li>
+        </ul>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Data -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">${locationAndDate}</p>
+    </div>
+    
+    <!-- Assinatura do funcionário -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Parecer departamento -->
+    <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;">Parecer do Departamento Pessoal: ___________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.3;">Data de Agendamento: __/__/______</p>
+    </div>
+</div>`;
     }
 
     // 3. ADVERTÊNCIA FORMAL
     generateWarningLetter(data) {
         const severityText = this.getSeverityText(data.severity);
         const incidentDate = data.incidentDate ? this.formatDate(data.incidentDate) : data.documentDateFormatted || this.formatDate(new Date());
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const warningReason = this.escapeHtml(data.warningReason || 'Conduta inadequada no ambiente de trabalho.');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                             ADVERTÊNCIA FORMAL
-${'='.repeat(80)}
-
-Para: ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}
-Cargo: ${data.employeePosition || '[CARGO]'}
-Data da Ocorrência: ${incidentDate}
-Data do Documento: ${data.documentDateFormatted || this.formatDate(new Date())}
-Gravidade: ${severityText}
-
-${'='.repeat(80)}
-                         COMUNICADO DE ADVERTÊNCIA
-${'='.repeat(80)}
-
-A direção da empresa vem, por meio deste documento, formalizar uma advertência 
-por:
-
-"${data.warningReason || 'Conduta inadequada no ambiente de trabalho.'}"
-
-Esta advertência é emitida com base no regulamento interno da empresa e na 
-legislação trabalhista vigente (CLT, art. 482). O objetivo desta medida 
-disciplinar é alertar sobre a necessidade de adequação de conduta e registrar 
-formalmente a ocorrência.
-
-Esta advertência não implica automaticamente em demissão por justa causa, mas 
-serve como registro formal que poderá ser considerado em caso de reincidência 
-ou agravamento de conduta inadequada.
-
-Medidas disciplinares progressivas previstas no regulamento interno:
-1. Advertência verbal (orientação)
-2. Advertência escrita formal
-3. Suspensão temporária
-4. Em casos graves ou reincidências, possibilidade de dispensa por justa causa,
-   conforme análise específica e respaldo legal
-
-${'='.repeat(80)}
-
-O funcionário está ciente do conteúdo desta advertência e das disposições do
-regulamento interno da empresa. Este documento deverá ser assinado em duas 
-vias, ficando uma com a empresa e outra em poder do funcionário.
-
-${'_'.repeat(42)}
-Assinatura do Representante da Empresa
-Cargo: ${'_'.repeat(40)}
-
-${'='.repeat(80)}
-                            CIÊNCIA DO FUNCIONÁRIO
-
-Declaro ter recebido e compreendido o conteúdo desta advertência.
-
-Data: __/__/______
-
-${'_'.repeat(42)}
-Assinatura do Funcionário`;
+        // Template otimizado para caber em EXATAMENTE 1 página A4
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <!-- Título -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">ADVERTÊNCIA FORMAL</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <!-- Dados do funcionário -->
+    <div style="margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Para:</strong> ${employeeName}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Cargo:</strong> ${employeePosition}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Data da Ocorrência:</strong> ${incidentDate}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Gravidade:</strong> ${severityText}</p>
+    </div>
+    
+    <!-- Subtítulo -->
+    <div style="text-align: center; margin: 10px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 4px;"></div>
+        <h3 style="margin: 4px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">COMUNICADO DE ADVERTÊNCIA</h3>
+        <div style="border-bottom: 2px solid #000; margin-top: 4px;"></div>
+    </div>
+    
+    <!-- Texto principal -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">A direção da empresa vem, por meio deste documento, formalizar uma advertência por:</p>
+        <p style="margin: 6px 0; line-height: 1.3; font-style: italic;">"${warningReason}"</p>
+        <p style="margin: 6px 0 0 0; line-height: 1.3;">Esta advertência é emitida com base no regulamento interno da empresa e na 
+        legislação trabalhista vigente (CLT, art. 482). O objetivo desta medida 
+        disciplinar é alertar sobre a necessidade de adequação de conduta e registrar 
+        formalmente a ocorrência.</p>
+    </div>
+    
+    <!-- Medidas disciplinares -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Medidas disciplinares progressivas previstas no regulamento interno:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            <li style="margin: 2px 0; line-height: 1.3;">Advertência verbal (orientação)</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Advertência escrita formal</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Suspensão temporária</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Em casos graves ou reincidências, possibilidade de dispensa por justa causa</li>
+        </ul>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Ciência -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">O funcionário está ciente do conteúdo desta advertência. Este documento deverá ser assinado em duas vias.</p>
+    </div>
+    
+    <!-- Assinatura empresa -->
+    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Representante da Empresa</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Subtítulo ciência -->
+    <div style="text-align: center; margin: 8px 0; box-sizing: border-box;">
+        <h3 style="margin: 4px 0; font-size: 11pt; font-weight: bold; line-height: 1.2;">CIÊNCIA DO FUNCIONÁRIO</h3>
+    </div>
+    
+    <!-- Declaração de ciência -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Declaro ter recebido e compreendido o conteúdo desta advertência.</p>
+    </div>
+    
+    <!-- Data e assinatura funcionário -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;">Data: __/__/______</p>
+    </div>
+    
+    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
+    </div>
+</div>`;
     }
 
     // 4. ATESTADO
@@ -399,32 +490,62 @@ Assinatura do Funcionário`;
         const period = startDate === endDate 
             ? `na data de ${startDate}`
             : `no período de ${startDate} a ${endDate}`;
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const certificateReason = this.escapeHtml(data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                                  ATESTADO
-${'='.repeat(80)}
-
-Atesto para os devidos fins que o(a) Sr(a). ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, 
-ocupante do cargo de ${data.employeePosition || '[CARGO]'} nesta empresa, não compareceu 
-ao trabalho ${period} devido a:
-
-"${data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.'}"
-
-Este documento serve como justificativa para a ausência e não implica em 
-qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
-acordo ou convenção coletiva.
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted || this.formatDate(new Date())}
-
-${'_'.repeat(42)}
-Assinatura do Responsável
-
-Cargo: ${'_'.repeat(42)}`;
+        // Template otimizado para caber em EXATAMENTE 1 página A4
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <!-- Título -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">ATESTADO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <!-- Texto principal -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">Atesto para os devidos fins que o(a) Sr(a). <strong>${employeeName}</strong>, 
+        ocupante do cargo de <strong>${employeePosition}</strong> nesta empresa, não compareceu 
+        ao trabalho <strong>${period}</strong> devido a:</p>
+    </div>
+    
+    <!-- Motivo -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3; font-style: italic;">"${certificateReason}"</p>
+    </div>
+    
+    <!-- Observação -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Este documento serve como justificativa para a ausência e não implica em 
+        qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
+        acordo ou convenção coletiva.</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Data -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">${locationAndDate}</p>
+    </div>
+    
+    <!-- Assinatura -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Responsável</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
+    </div>
+</div>`;
     }
 
     // 5. ACORDO DE RESCISÃO
@@ -432,45 +553,79 @@ Cargo: ${'_'.repeat(42)}`;
         const value = data.severanceValue ? `R$ ${parseFloat(data.severanceValue).toFixed(2).replace('.', ',')}` : 'a ser definido';
         const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
         const conditions = data.additionalConditions ? `\n6. ${data.additionalConditions}` : '';
-        const cpf = data.CPF || '[INFORME CPF]';
-        const ctps = data.CTPS || '[INFORME CTPS]';
+        const cpf = this.escapeHtml(data.CPF || '[INFORME CPF]');
+        const ctps = this.escapeHtml(data.CTPS || '[INFORME CTPS]');
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                       ACORDO DE RESCISÃO CONTRATUAL
-${'='.repeat(80)}
-
-Entre ${data.companyName || '[NOME DA EMPRESA]'}, com sede em ${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}, doravante 
-denominada EMPRESA, e ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}, portador(a) do CPF ${cpf} 
-e Carteira de Trabalho ${ctps}, ocupante do cargo de 
-${data.employeePosition || '[CARGO]'}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
-o presente acordo de rescisão contratual, sob as seguintes condições:
-
-1. As partes, de comum acordo, resolvem o contrato de trabalho vigente.
-2. A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de ${value}, 
-   correspondente a todos os direitos trabalhistas decorrentes da rescisão.
-3. Data para pagamento: ${paymentDate}
-4. O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
-   acordo, renuncia a qualquer ação trabalhista referente ao período 
-   contratual.
-5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-   até a data do desligamento.${conditions}
-
-As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
-vias de igual teor.
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted || this.formatDate(new Date())}
-
-${'_'.repeat(42)}
-Representante Legal da Empresa
-Cargo: ${'_'.repeat(40)}
-
-${'_'.repeat(42)}
-${data.employeeName || '[NOME DO FUNCIONÁRIO]'}`;
+        // Template otimizado para caber em EXATAMENTE 1 página A4
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <!-- Título -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">ACORDO DE RESCISÃO CONTRATUAL</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <!-- Partes do acordo -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">Entre <strong>${companyName}</strong>, com sede em ${companyAddress}, doravante 
+        denominada EMPRESA, e <strong>${employeeName}</strong>, portador(a) do CPF <strong>${cpf}</strong> 
+        e Carteira de Trabalho <strong>${ctps}</strong>, ocupante do cargo de 
+        <strong>${employeePosition}</strong>, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
+        o presente acordo de rescisão contratual, sob as seguintes condições:</p>
+    </div>
+    
+    <!-- Condições -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            <li style="margin: 2px 0; line-height: 1.3;">As partes, de comum acordo, resolvem o contrato de trabalho vigente.</li>
+            <li style="margin: 2px 0; line-height: 1.3;">A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de <strong>${value}</strong>, 
+            correspondente a todos os direitos trabalhistas decorrentes da rescisão.</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Data para pagamento: <strong>${paymentDate}</strong></li>
+            <li style="margin: 2px 0; line-height: 1.3;">O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
+            acordo, renuncia a qualquer ação trabalhista referente ao período contratual.</li>
+            <li style="margin: 2px 0; line-height: 1.3;">O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
+            até a data do desligamento.</li>${conditions ? `<li style="margin: 2px 0; line-height: 1.3;">${this.escapeHtml(conditions.substring(3))}</li>` : ''}
+        </ul>
+    </div>
+    
+    <!-- Declaração final -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
+        vias de igual teor.</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Data -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">${locationAndDate}</p>
+    </div>
+    
+    <!-- Assinatura empresa -->
+    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Representante Legal da Empresa</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
+    </div>
+    
+    <!-- Assinatura funcionário -->
+    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+    </div>
+</div>`;
     }
 
     // 6. CONVOCATÓRIA DE REUNIÃO
@@ -480,41 +635,91 @@ ${data.employeeName || '[NOME DO FUNCIONÁRIO]'}`;
         const location = data.meetingLocation || 'Sala de Reuniões';
         const agenda = data.meetingAgenda || 
             '1. Abertura e apresentação dos objetivos\n2. Discussão sobre metas trimestrais\n3. Ajustes de processos internos\n4. Feedbacks e sugestões\n5. Encerramento';
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+        
+        // Converter agenda em lista HTML
+        const agendaItems = agenda.split('\n').map(item => {
+            const trimmed = item.trim();
+            if (trimmed) {
+                // Remove numeração/bullets (números, letras, hífen, asterisco, bullet)
+                const content = trimmed.replace(/^[\d\w]+\.\s*|^[-*•]\s*/, '');
+                return `<li style="margin: 2px 0; line-height: 1.3;">${this.escapeHtml(content)}</li>`;
+            }
+            return '';
+        }).filter(item => item).join('');
 
-        return `${data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]'}
-${data.companyAddress || '[ENDEREÇO DA EMPRESA]'}
-
-${'='.repeat(80)}
-                        CONVOCATÓRIA PARA REUNIÃO
-${'='.repeat(80)}
-
-Para: Todos os funcionários do departamento
-De: ${data.employeeName || '[NOME DO FUNCIONÁRIO]'} - ${data.employeePosition || '[CARGO]'}
-Data do Documento: ${data.documentDateFormatted || this.formatDate(new Date())}
-
-${'='.repeat(80)}
-                               CONVOCAÇÃO
-${'='.repeat(80)}
-
-Convocamos todos os membros do departamento para uma reunião que será 
-realizada:
-
-Data: ${meetingDate}
-Hora: ${time}
-Local: ${location}
-
-Pauta da Reunião:
-${agenda}
-
-Solicitamos a confirmação de presença até 24 horas antes da reunião.
-
-${'='.repeat(80)}
-
-Atenciosamente,
-
-${'_'.repeat(42)}
-${data.employeeName || '[NOME DO FUNCIONÁRIO]'}
-${data.employeePosition || '[CARGO]'}`;
+        // Template otimizado para caber em EXATAMENTE 1 página A4
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <!-- Título -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14pt; font-weight: bold; line-height: 1.2;">CONVOCATÓRIA PARA REUNIÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <!-- Cabeçalho do documento -->
+    <div style="margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Para:</strong> Todos os funcionários do departamento</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>De:</strong> ${employeeName} - ${employeePosition}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Data do Documento:</strong> ${locationAndDate}</p>
+    </div>
+    
+    <!-- Subtítulo -->
+    <div style="text-align: center; margin: 10px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 4px;"></div>
+        <h3 style="margin: 4px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">CONVOCAÇÃO</h3>
+        <div style="border-bottom: 2px solid #000; margin-top: 4px;"></div>
+    </div>
+    
+    <!-- Texto principal -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Convocamos todos os membros do departamento para uma reunião que será realizada:</p>
+    </div>
+    
+    <!-- Detalhes da reunião -->
+    <div style="margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Data:</strong> ${meetingDate}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Hora:</strong> ${time}</p>
+        <p style="margin: 2px 0; line-height: 1.3;"><strong>Local:</strong> ${location}</p>
+    </div>
+    
+    <!-- Pauta da reunião -->
+    <div style="margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;"><strong>Pauta da Reunião:</strong></p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            ${agendaItems}
+        </ul>
+    </div>
+    
+    <!-- Confirmação -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Solicitamos a confirmação de presença até 24 horas antes da reunião.</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    
+    <!-- Assinatura -->
+    <div style="margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Atenciosamente,</p>
+    </div>
+    
+    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
     }
 
     // FUNÇÕES AUXILIARES
