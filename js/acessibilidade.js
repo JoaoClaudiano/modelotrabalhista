@@ -877,16 +877,27 @@ class AcessibilidadeManager {
     }
 }
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        setTimeout(() => {
-            window.accessibility = new AcessibilidadeManager();
-            console.log('Acessibilidade inicializada');
-        }, 500);
-    } catch (error) {
-        console.error('Erro na acessibilidade:', error);
+// Inicialização - suporta carregamento antes e depois de DOMContentLoaded
+function initializeAccessibility() {
+    if (!window.accessibility) {
+        try {
+            setTimeout(() => {
+                window.accessibility = new AcessibilidadeManager();
+                console.log('Acessibilidade inicializada');
+            }, 500);
+        } catch (error) {
+            console.error('Erro na acessibilidade:', error);
+        }
     }
-});
+}
+
+// Se o DOM já está pronto, inicializa imediatamente
+if (document.readyState === 'loading') {
+    // DOM ainda carregando, aguarda DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', initializeAccessibility);
+} else {
+    // DOM já está pronto, inicializa agora
+    initializeAccessibility();
+}
 
 window.AcessibilidadeManager = AcessibilidadeManager;
