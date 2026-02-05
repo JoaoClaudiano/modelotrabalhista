@@ -37,6 +37,15 @@ class DocumentExporter {
             DOCX_SEPARATOR_SPACING: 100
         };
         
+        // Constantes de validação
+        this.VALIDATION = {
+            // Minimum content length to prevent empty exports (approximately 1-2 short sentences)
+            MIN_CONTENT_LENGTH: 50,
+            // Timeout for library loading (in milliseconds)
+            LIBRARY_LOAD_TIMEOUT: 10000, // 10 seconds
+            HTML2CANVAS_LOAD_TIMEOUT: 10000 // 10 seconds
+        };
+        
         // Padrões regex para detecção
         this.PATTERNS = {
             HEAVY_SEPARATOR: /^[=]{3,}$/,
@@ -445,7 +454,7 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const html = element.innerHTML || '';
-                if (html.trim().length > 50) { // Validate minimum content
+                if (html.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
                     console.log(`getDocumentHTML: Conteúdo HTML encontrado no seletor: ${selector}`);
                     return html.trim();
                 }
@@ -478,7 +487,7 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const text = element.textContent || element.innerText || '';
-                if (text.trim().length > 50) { // Validate minimum content
+                if (text.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
                     console.log(`getDocumentContent: Conteúdo encontrado no seletor: ${selector}`);
                     return text.trim();
                 }
@@ -543,7 +552,7 @@ class DocumentExporter {
         
         for (const selector of selectors) {
             const element = document.querySelector(selector);
-            if (element && element.innerHTML.trim().length > 50) { // Validate minimum content
+            if (element && element.innerHTML.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
                 console.log(`getDocumentElement: Found element with selector: ${selector}`);
                 return element;
             }
@@ -672,11 +681,11 @@ class DocumentExporter {
                             resolve();
                         }
                     }, 100);
-                    // Timeout after 10 seconds with error
+                    // Timeout after configured time with error
                     setTimeout(() => {
                         clearInterval(checkInterval);
                         reject(new Error('Timeout ao carregar jsPDF'));
-                    }, 10000);
+                    }, this.VALIDATION.LIBRARY_LOAD_TIMEOUT);
                 });
             }
             
@@ -689,7 +698,7 @@ class DocumentExporter {
             await Promise.race([
                 this.loadHtml2Canvas(),
                 new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Timeout ao carregar html2canvas')), 10000)
+                    setTimeout(() => reject(new Error('Timeout ao carregar html2canvas')), this.VALIDATION.HTML2CANVAS_LOAD_TIMEOUT)
                 )
             ]);
             
@@ -701,7 +710,8 @@ class DocumentExporter {
             // 3. Capturar o elemento como imagem de alta qualidade com validação
             let canvas;
             try {
-                // Use getBoundingClientRect for more accurate dimensions
+                // Use getBoundingClientRect for more accurate dimensions (accounts for CSS transforms and zoom)
+                // Fallback to scrollWidth/scrollHeight if rect dimensions are 0 (e.g., element is not fully rendered)
                 const rect = element.getBoundingClientRect();
                 canvas = await html2canvas(element, {
                     scale: 2, // Alta resolução
