@@ -288,8 +288,10 @@ class AcessibilidadeManager {
                     color: #e8e8e8 !important;
                 }
                 
-                /* Remover todos os gradientes e backgrounds coloridos */
-                * {
+                /* Remover gradientes de elementos específicos */
+                .hero, section, .card, .panel, .box, .item,
+                button, .accessibility-toggle, .accessibility-card,
+                .accessibility-card-header, div[class*="hero"] {
                     background-image: none !important;
                 }
                 
@@ -299,15 +301,12 @@ class AcessibilidadeManager {
                 .hero, .features, .about, .faq,
                 #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
                     background-color: #1e1e1e !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                 }
                 
                 /* Hero section - forçar escuro */
                 .hero, #hero, section:first-of-type {
-                    background: #1e1e1e !important;
                     background-color: #1e1e1e !important;
-                    background-image: none !important;
                 }
                 
                 /* Cards e painéis */
@@ -315,7 +314,6 @@ class AcessibilidadeManager {
                 .model-card, .feature-card, .faq-item,
                 .form-container, .preview-container, .form-card {
                     background-color: #2a2a2a !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                     border-color: #404040 !important;
                 }
@@ -323,7 +321,6 @@ class AcessibilidadeManager {
                 /* Inputs e formulários */
                 input, textarea, select {
                     background-color: #2a2a2a !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                     border-color: #404040 !important;
                 }
@@ -335,14 +332,12 @@ class AcessibilidadeManager {
                 /* Botões */
                 button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
                     background-color: #333 !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                     border-color: #555 !important;
                 }
                 
                 button.btn-primary, button[class*="primary"] {
                     background-color: #1e40af !important;
-                    background-image: none !important;
                     color: white !important;
                 }
                 
@@ -359,49 +354,42 @@ class AcessibilidadeManager {
                 /* Rodapé */
                 footer {
                     background-color: #0a0a0a !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                 }
                 
                 /* Navegação */
                 nav, .navbar, header {
                     background-color: #0a0a0a !important;
-                    background-image: none !important;
                     color: #e8e8e8 !important;
                 }
                 
                 /* Botão de acessibilidade - manter visível */
                 .accessibility-toggle {
-                    background: #333 !important;
-                    background-image: none !important;
+                    background-color: #333 !important;
                     color: #e8e8e8 !important;
                     border: 2px solid #555 !important;
                 }
                 
                 .accessibility-toggle:hover {
-                    background: #444 !important;
-                    background-image: none !important;
+                    background-color: #444 !important;
                 }
                 
                 .accessibility-toggle.active {
-                    background: #1e40af !important;
-                    background-image: none !important;
+                    background-color: #1e40af !important;
                 }
                 
                 /* Card de acessibilidade */
                 .accessibility-card {
-                    background: #2a2a2a !important;
-                    background-image: none !important;
+                    background-color: #2a2a2a !important;
                 }
                 
                 .accessibility-card-header {
-                    background: #1e40af !important;
-                    background-image: none !important;
+                    background-color: #1e40af !important;
                     color: white !important;
                 }
                 
                 .accessibility-card-content {
-                    background: #2a2a2a !important;
+                    background-color: #2a2a2a !important;
                 }
                 
                 /* Labels e textos de formulário */
@@ -412,12 +400,14 @@ class AcessibilidadeManager {
         } else if (theme === 'high-contrast') {
             style.textContent = `
                 body {
-                    background: black !important;
+                    background-color: black !important;
                     color: white !important;
                 }
                 
-                /* Remover todos os gradientes e backgrounds coloridos */
-                * {
+                /* Remover gradientes de elementos específicos */
+                .hero, section, .card, .panel, .box, .item,
+                button, .accessibility-toggle, .accessibility-card,
+                .accessibility-card-header, div[class*="hero"] {
                     background-image: none !important;
                 }
                 
@@ -427,15 +417,12 @@ class AcessibilidadeManager {
                 .hero, .features, .about, .faq,
                 #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
                     background-color: black !important;
-                    background-image: none !important;
                     color: white !important;
                 }
                 
                 /* Hero section - forçar preto */
                 .hero, #hero, section:first-of-type {
-                    background: black !important;
                     background-color: black !important;
-                    background-image: none !important;
                 }
                 
                 /* Cards e painéis */
@@ -443,7 +430,6 @@ class AcessibilidadeManager {
                 .model-card, .feature-card, .faq-item,
                 .form-container, .preview-container, .form-card {
                     background-color: black !important;
-                    background-image: none !important;
                     color: white !important;
                     border: 3px solid yellow !important;
                 }
@@ -451,7 +437,6 @@ class AcessibilidadeManager {
                 /* Inputs e formulários */
                 input, textarea, select {
                     background-color: black !important;
-                    background-image: none !important;
                     color: white !important;
                     border: 2px solid yellow !important;
                 }
@@ -464,7 +449,6 @@ class AcessibilidadeManager {
                 /* Botões */
                 button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
                     background-color: black !important;
-                    background-image: none !important;
                     color: yellow !important;
                     border: 2px solid yellow !important;
                 }
@@ -483,7 +467,6 @@ class AcessibilidadeManager {
                 /* Rodapé */
                 footer {
                     background-color: black !important;
-                    background-image: none !important;
                     color: white !important;
                     border-top: 3px solid yellow !important;
                 }
@@ -491,41 +474,36 @@ class AcessibilidadeManager {
                 /* Navegação */
                 nav, .navbar, header {
                     background-color: black !important;
-                    background-image: none !important;
                     color: white !important;
                     border-bottom: 3px solid yellow !important;
                 }
                 
                 /* Botão de acessibilidade */
                 .accessibility-toggle {
-                    background: black !important;
-                    background-image: none !important;
+                    background-color: black !important;
                     color: yellow !important;
                     border: 3px solid yellow !important;
                 }
                 
                 .accessibility-toggle:hover,
                 .accessibility-toggle.active {
-                    background: #222 !important;
-                    background-image: none !important;
+                    background-color: #222 !important;
                 }
                 
                 /* Card de acessibilidade */
                 .accessibility-card {
-                    background: black !important;
-                    background-image: none !important;
+                    background-color: black !important;
                     border: 3px solid yellow !important;
                 }
                 
                 .accessibility-card-header {
-                    background: black !important;
-                    background-image: none !important;
+                    background-color: black !important;
                     color: yellow !important;
                     border-bottom: 2px solid yellow !important;
                 }
                 
                 .accessibility-card-content {
-                    background: black !important;
+                    background-color: black !important;
                 }
                 
                 /* Labels e textos */
