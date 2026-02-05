@@ -300,7 +300,7 @@ class AcessibilidadeManager {
                 /* Cards e painéis */
                 .card, .panel, .box, .item,
                 .model-card, .feature-card, .faq-item,
-                .form-container, .preview-container {
+                .form-container, .preview-container, .form-card {
                     background-color: #2d2d2d !important;
                     color: #f0f0f0 !important;
                     border-color: #404040 !important;
@@ -370,7 +370,7 @@ class AcessibilidadeManager {
                 /* Cards e painéis */
                 .card, .panel, .box, .item,
                 .model-card, .feature-card, .faq-item,
-                .form-container, .preview-container {
+                .form-container, .preview-container, .form-card {
                     background-color: black !important;
                     color: white !important;
                     border: 3px solid yellow !important;
