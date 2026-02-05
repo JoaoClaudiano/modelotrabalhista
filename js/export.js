@@ -61,6 +61,11 @@ class DocumentExporter {
                this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
     }
 
+    // Sanitizar nome de arquivo
+    sanitizeFilename(filename) {
+        return filename.replace(/[^a-z0-9]/gi, '_');
+    }
+
     init() {
         console.log('DocumentExporter inicializando...');
         // Don't load libraries immediately - load on demand
@@ -195,6 +200,7 @@ class DocumentExporter {
             
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+            script.integrity = 'sha256-6H/NIyKJHgE0lqBnK2lQwhgGUYCVqrG4VKhYKjhCVOQ=';
             script.crossOrigin = 'anonymous';
             script.onload = () => {
                 console.log('✅ html2canvas carregado com sucesso');
@@ -294,7 +300,7 @@ class DocumentExporter {
                         await new Promise(resolve => setTimeout(resolve, DOM_UPDATE_DELAY_MS));
                     }
                     
-                    // Usar novo método que preserva formatação
+                    // Use new method that preserves formatting
                     await this.exportToPDF('', 'ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
@@ -528,8 +534,8 @@ class DocumentExporter {
             if (typeof window.jspdf === 'undefined' && !this.libsLoaded.jspdf) {
                 console.log('Loading jsPDF on demand...');
                 this.loadLibraries();
-                // Wait for library to load
-                await new Promise((resolve) => {
+                // Wait for library to load with proper timeout handling
+                await new Promise((resolve, reject) => {
                     const checkInterval = setInterval(() => {
                         if (typeof window.jspdf !== 'undefined') {
                             this.libsLoaded.jspdf = true;
@@ -540,7 +546,11 @@ class DocumentExporter {
                     // Timeout after 10 seconds
                     setTimeout(() => {
                         clearInterval(checkInterval);
-                        resolve();
+                        if (typeof window.jspdf === 'undefined') {
+                            reject(new Error('Timeout ao carregar jsPDF'));
+                        } else {
+                            resolve();
+                        }
                     }, 10000);
                 });
             }
@@ -549,15 +559,15 @@ class DocumentExporter {
                 throw new Error('jsPDF não disponível');
             }
             
-            // Capturar como imagem com alta qualidade
+            // Capture as image with high quality
             const canvas = await html2canvas(element, {
-                scale: 2,  // Dupla resolução para qualidade
+                scale: 2,  // Double resolution for quality
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false
             });
             
-            // Converter para PDF
+            // Convert to PDF
             const imgData = canvas.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({
@@ -569,23 +579,23 @@ class DocumentExporter {
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
             
-            // Calcular dimensões mantendo proporção
+            // Calculate dimensions maintaining aspect ratio
             const imgWidth = canvas.width;
             const imgHeight = canvas.height;
             const ratio = Math.min(
-                (pageWidth - 20) / imgWidth,  // 10mm margem cada lado
-                (pageHeight - 20) / imgHeight // 10mm margem topo/base
+                (pageWidth - 20) / imgWidth,  // 10mm margin each side
+                (pageHeight - 20) / imgHeight // 10mm margin top/bottom
             );
             
-            // Centralizar imagem na página
+            // Center image on page
             const x = (pageWidth - imgWidth * ratio) / 2;
             const y = (pageHeight - imgHeight * ratio) / 2;
             
-            // Adicionar imagem ao PDF
+            // Add image to PDF
             doc.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
             
-            // Salvar
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            // Save with sanitized filename
+            const safeFilename = this.sanitizeFilename(filename);
             doc.save(`${safeFilename}.pdf`);
             
             this.showNotification('PDF gerado com sucesso!', 'success');
@@ -598,13 +608,17 @@ class DocumentExporter {
     }
 
     // Exportar para PDF (método principal com fallback)
-    async exportToPDF(content, filename = 'ModeloTrabalhista') {
+    async exportToPDF(content = '', filename = 'ModeloTrabalhista') {
         try {
-            // Tentar primeiro o método com html2canvas (preserva formatação)
+            // Try html2canvas method first (preserves formatting)
             return await this.exportToPDFWithHTML(filename);
         } catch (error) {
             console.warn('Falha no método html2canvas, usando método texto:', error);
-            // Fallback para método de texto original
+            // If content not provided, try to get it for fallback
+            if (!content) {
+                content = this.getDocumentContent();
+            }
+            // Fallback to text-based export
             return await this.exportTextToPDF(content, filename);
         }
     }
@@ -735,7 +749,7 @@ class DocumentExporter {
             }
             
             // Salvar
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             doc.save(`${safeFilename}.pdf`);
             
             this.showNotification('PDF gerado com sucesso!', 'success');
@@ -1079,7 +1093,7 @@ class DocumentExporter {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
@@ -1158,7 +1172,7 @@ class DocumentExporter {
             
             const a = document.createElement('a');
             a.href = url;
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            const safeFilename = this.sanitizeFilename(filename);
             a.download = `${safeFilename}.docx`;
             document.body.appendChild(a);
             a.click();
