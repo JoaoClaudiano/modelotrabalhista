@@ -837,9 +837,15 @@ ${data.employeePosition}`;
         contentDiv.className = 'document-content';
         contentDiv.setAttribute('tabindex', '0');
         
-        // Usar CSS para preservar formatação ao invés de <br> tags
-        contentDiv.style.whiteSpace = 'pre-wrap';
-        contentDiv.textContent = content; // Usar textContent é mais seguro
+        // Verificar se o conteúdo é HTML (começa com <div ou <html)
+        if (content.trim().startsWith('<')) {
+            // Para conteúdo HTML, usar innerHTML mas apenas para documentos gerados internamente
+            contentDiv.innerHTML = content;
+        } else {
+            // Usar CSS para preservar formatação ao invés de <br> tags
+            contentDiv.style.whiteSpace = 'pre-wrap';
+            contentDiv.textContent = content; // Usar textContent é mais seguro
+        }
         
         // Limpar preview e adicionar novo conteúdo
         preview.innerHTML = '';
