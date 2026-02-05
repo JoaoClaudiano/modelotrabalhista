@@ -378,6 +378,34 @@ class DocumentExporter {
         }
     }
 
+    // Obter conteúdo HTML do documento
+    getDocumentHTML() {
+        // Prioridade: elemento específico do modelo
+        const contentSelectors = [
+            '#modelo-text',
+            '#textoModelo',
+            '#documento-texto',
+            '#conteudoModelo',
+            '.modelo-texto',
+            '.documento-conteudo',
+            '#previewModelo',
+            '.preview-content'
+        ];
+        
+        for (const selector of contentSelectors) {
+            const element = document.querySelector(selector);
+            if (element) {
+                const html = element.innerHTML || '';
+                if (html.trim().length > 0) {
+                    console.log(`Conteúdo HTML encontrado no seletor: ${selector}`);
+                    return html.trim();
+                }
+            }
+        }
+        
+        return null;
+    }
+
     // Obter conteúdo do documento
     getDocumentContent() {
         // Prioridade: elemento específico do modelo
@@ -588,7 +616,10 @@ class DocumentExporter {
                 throw new Error('Popup bloqueado. Permita popups para esta página.');
             }
             
-            const htmlContent = `
+            // Get HTML content instead of plain text
+            const htmlContent = this.getDocumentHTML() || content;
+            
+            const pageContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -597,19 +628,19 @@ class DocumentExporter {
                     <style>
                         body { 
                             font-family: 'Arial', sans-serif; 
-                            line-height: 1.8; 
-                            margin: 2cm; 
-                            font-size: 11pt;
+                            line-height: 1.6; 
+                            margin: 1.5cm; 
+                            font-size: 10pt;
                             max-width: 21cm;
                         }
                         @media print {
                             @page { 
-                                margin: 2cm; 
+                                margin: 1.5cm; 
                                 size: A4;
                             }
                             body {
                                 margin: 0;
-                                padding: 2cm;
+                                padding: 1.5cm;
                             }
                             .no-print { display: none; }
                             .page-break {
@@ -618,32 +649,64 @@ class DocumentExporter {
                             }
                         }
                         .document { 
-                            white-space: pre-wrap;
-                            word-wrap: break-word;
-                            font-family: 'Courier New', monospace;
-                            font-size: 11pt;
-                            line-height: 1.8;
+                            font-family: 'Arial', sans-serif;
+                            font-size: 10pt;
+                            line-height: 1.4;
+                        }
+                        .document h2 {
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 14pt;
+                            margin: 15px 0;
+                        }
+                        .document p {
+                            text-align: justify;
+                            margin: 10px 0;
+                            line-height: 1.5;
+                        }
+                        .document strong {
+                            font-weight: bold;
+                        }
+                        .document ul {
+                            margin: 10px 0 10px 20px;
+                        }
+                        .document li {
+                            margin: 5px 0;
+                        }
+                        /* Company header styles */
+                        .document > div:first-child {
+                            text-align: center;
+                            font-weight: bold;
+                            margin-bottom: 20px;
+                        }
+                        .document > div:first-child > div {
+                            font-weight: bold;
+                        }
+                        /* Signature and footer sections */
+                        .document > div:last-child {
+                            margin-top: 20px;
+                        }
+                        .document > div:last-child p {
+                            text-align: left;
+                        }
+                        /* Centered elements */
+                        .document > p:nth-last-of-type(2),
+                        .document > p:nth-last-of-type(1) {
+                            text-align: center;
                         }
                         .header {
                             text-align: center;
-                            margin-bottom: 2cm;
+                            margin-bottom: 1cm;
                             border-bottom: 2px solid #ccc;
-                            padding-bottom: 1cm;
+                            padding-bottom: 0.5cm;
                         }
                         .footer {
-                            margin-top: 2cm;
+                            margin-top: 1cm;
                             text-align: center;
-                            font-size: 10pt;
+                            font-size: 9pt;
                             color: #666;
                             border-top: 1px solid #ccc;
-                            padding-top: 1cm;
-                        }
-                        .instructions {
-                            background: #f0f8ff;
-                            padding: 20px;
-                            border-radius: 8px;
-                            margin: 20px 0;
-                            border-left: 4px solid #007bff;
+                            padding-top: 0.5cm;
                         }
                         button {
                             padding: 10px 20px;
@@ -661,7 +724,7 @@ class DocumentExporter {
                     </style>
                 </head>
                 <body>
-                    <div class="document">${content}</div>
+                    <div class="document">${htmlContent}</div>
                     
                     <div class="no-print" style="text-align: center; margin-top: 2cm;">
                         <button onclick="window.print()">📄 Abrir Caixa de Impressão</button>
@@ -676,7 +739,7 @@ class DocumentExporter {
                 </html>
             `;
             
-            printWindow.document.write(htmlContent);
+            printWindow.document.write(pageContent);
             printWindow.document.close();
             
             return { 
