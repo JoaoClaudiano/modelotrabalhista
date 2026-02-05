@@ -7,8 +7,24 @@ Sitemap: https://modelotrabalhista.com.br/sitemap.xml
 Disallow: /admin/
 Disallow: /login/
 Disallow: /config/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /assets/temp/
 
-# Permitir todos os crawlers
+# Bloquear arquivos técnicos (wildcards - amplamente suportado)
+Disallow: *.json
+Disallow: *.js
+Disallow: *.css
+
+# Bloquear arquivos específicos
+Disallow: /template.html
+Disallow: /example.html
+
+# Templates e exemplos em subdiretórios
+Disallow: /artigos/template.html
+Disallow: /pages/example.html
+
+# Permitir todos os principais crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -26,3 +42,4 @@ Allow: /
 
 User-agent: YandexBot
 Allow: /
+

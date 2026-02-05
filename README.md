@@ -25,10 +25,41 @@ Uma aplicação web completa para geração automática de documentos trabalhist
   - Exemplos pré-carregados
   - Design moderno e profissional
 
+- **SEO Otimizado**:
+  - Geração automática de sitemap.xml
+  - Geração automática de robots.txt
+  - Atualização automática via GitHub Actions quando o site muda
+
 ## 🚀 Como Usar
 
 ### Opção 1: Online
 Acesse o site [modelotrabalhista.com.br](https://joaoclaudiano.github.io/modelotrabalhista/#home) e comece a usar!
+
+## 🔧 Desenvolvimento
+
+### Gerar Sitemap e Robots.txt
+
+O projeto inclui scripts para gerar automaticamente o sitemap.xml e robots.txt:
+
+```bash
+# Instalar dependências
+npm install
+
+# Gerar apenas o sitemap
+npm run generate-sitemap
+
+# Gerar apenas o robots.txt
+npm run generate-robots
+
+# Gerar ambos
+npm run generate-all
+```
+
+Esses arquivos são atualizados automaticamente via GitHub Actions sempre que arquivos HTML são modificados no branch principal.
+
+Para mais detalhes, veja:
+- [SITEMAP_README.md](SITEMAP_README.md) - Documentação do gerador de sitemap
+- [ROBOTS_README.md](ROBOTS_README.md) - Documentação do gerador de robots.txt
 
 
 # arvore
