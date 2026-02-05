@@ -635,6 +635,8 @@ class DocumentExporter {
 
     // Exportar para PDF com download automático (novo método principal)
     async exportToPDFAuto(filename = 'ModeloTrabalhista') {
+        const PDF_CONTENT_SCALE = 0.95; // 95% da página para margem
+        
         try {
             // 1. Obter o elemento HTML formatado
             const element = this.getDocumentElement();
@@ -648,17 +650,17 @@ class DocumentExporter {
                 console.log('Carregando jsPDF...');
                 this.loadLibraries();
                 // Wait for jsPDF to load
-                await new Promise((resolve) => {
+                await new Promise((resolve, reject) => {
                     const checkInterval = setInterval(() => {
                         if (typeof window.jspdf !== 'undefined') {
                             clearInterval(checkInterval);
                             resolve();
                         }
                     }, 100);
-                    // Timeout after 10 seconds
+                    // Timeout after 10 seconds with error
                     setTimeout(() => {
                         clearInterval(checkInterval);
-                        resolve();
+                        reject(new Error('Timeout ao carregar jsPDF'));
                     }, 10000);
                 });
             }
@@ -697,7 +699,7 @@ class DocumentExporter {
             const imgHeight = canvas.height;
             
             // Redimensionar mantendo proporção para caber na página
-            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight) * 0.95; // 95% da página
+            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight) * PDF_CONTENT_SCALE;
             const finalWidth = imgWidth * ratio;
             const finalHeight = imgHeight * ratio;
             
