@@ -444,25 +444,74 @@ class DocumentExporter {
             doc.setFont('helvetica', 'normal');
             
             let y = margin;
-            const lineHeight = 6;
+            const lineHeight = 7; // Increased from 6 for better readability
             
-            // Dividir conteúdo em linhas
-            const lines = doc.splitTextToSize(content, maxWidth);
+            // Dividir conteúdo em linhas PRESERVANDO linhas vazias
+            const rawLines = content.split('\n');
             
-            for (let i = 0; i < lines.length; i++) {
-                if (y + lineHeight > pageHeight - margin) {
-                    doc.addPage();
-                    y = margin;
-                    doc.setFontSize(10);
-                    doc.setFont('helvetica', 'italic');
-                    doc.text('Continuação...', pageWidth / 2, y, { align: 'center' });
-                    y += 10;
+            for (let i = 0; i < rawLines.length; i++) {
+                const line = rawLines[i];
+                
+                // Se for linha vazia, adicionar espaço
+                if (!line.trim()) {
+                    y += lineHeight * 0.5; // Half line for empty lines
+                    continue;
+                }
+                
+                // Detectar linhas de separação (========)
+                if (/^[=]{3,}$/.test(line.trim())) {
+                    y += 2;
+                    doc.setLineWidth(0.5);
+                    doc.line(margin, y, pageWidth - margin, y);
+                    y += 5;
+                    continue;
+                }
+                
+                // Detectar linhas de sublinhado (________)
+                if (/^[_]{3,}$/.test(line.trim())) {
+                    y += 2;
+                    doc.setLineWidth(0.3);
+                    doc.line(margin, y, pageWidth - margin, y);
+                    y += 4;
+                    continue;
+                }
+                
+                // Detectar possíveis títulos (linhas curtas em maiúsculas)
+                const isTitle = line.trim().length < 60 && 
+                               line.trim() === line.trim().toUpperCase() && 
+                               /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/.test(line.trim());
+                
+                if (isTitle) {
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                }
+                
+                // Quebrar linha longa em múltiplas linhas se necessário
+                const wrappedLines = doc.splitTextToSize(line, maxWidth);
+                
+                for (let j = 0; j < wrappedLines.length; j++) {
+                    // Verificar se precisa adicionar nova página
+                    if (y + lineHeight > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                        // Adicionar indicador de continuação
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'italic');
+                        doc.text('(continuação)', pageWidth / 2, y, { align: 'center' });
+                        y += 10;
+                        doc.setFontSize(11);
+                        doc.setFont('helvetica', 'normal');
+                    }
+                    
+                    doc.text(wrappedLines[j], margin, y);
+                    y += lineHeight;
+                }
+                
+                // Restaurar fonte normal
+                if (isTitle) {
                     doc.setFontSize(11);
                     doc.setFont('helvetica', 'normal');
                 }
-                
-                doc.text(lines[i], margin, y);
-                y += lineHeight;
             }
             
             // Rodapé em todas as páginas
@@ -503,17 +552,32 @@ class DocumentExporter {
                     <style>
                         body { 
                             font-family: 'Arial', sans-serif; 
-                            line-height: 1.6; 
+                            line-height: 1.8; 
                             margin: 2cm; 
-                            font-size: 12pt;
+                            font-size: 11pt;
+                            max-width: 21cm;
                         }
                         @media print {
-                            @page { margin: 2cm; }
+                            @page { 
+                                margin: 2cm; 
+                                size: A4;
+                            }
+                            body {
+                                margin: 0;
+                                padding: 2cm;
+                            }
                             .no-print { display: none; }
+                            .page-break {
+                                page-break-after: always;
+                                break-after: page;
+                            }
                         }
                         .document { 
                             white-space: pre-wrap;
+                            word-wrap: break-word;
                             font-family: 'Courier New', monospace;
+                            font-size: 11pt;
+                            line-height: 1.8;
                         }
                         .header {
                             text-align: center;
@@ -613,15 +677,86 @@ class DocumentExporter {
             }
 
             const docxLib = window.docx;
-            const { Document, Packer, Paragraph, TextRun, AlignmentType } = docxLib;
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle } = docxLib;
             
-            // Criar parágrafos
-            const paragraphs = content.split('\n')
-                .filter(line => line.trim())
-                .map(line => new Paragraph({
-                    children: [new TextRun({ text: line, font: 'Courier New', size: 24 })],
-                    spacing: { after: 200 }
-                }));
+            // Criar parágrafos PRESERVANDO linhas vazias e estrutura
+            const lines = content.split('\n');
+            const paragraphs = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Linha vazia - adicionar parágrafo vazio para preservar espaçamento
+                if (!line.trim()) {
+                    paragraphs.push(new Paragraph({
+                        children: [new TextRun({ text: '', size: 24 })],
+                        spacing: { after: 100 }
+                    }));
+                    continue;
+                }
+                
+                // Detectar linhas de separação (========)
+                if (/^[=]{3,}$/.test(line.trim())) {
+                    paragraphs.push(new Paragraph({
+                        children: [new TextRun({ text: '', size: 24 })],
+                        border: {
+                            bottom: {
+                                color: '000000',
+                                space: 1,
+                                style: BorderStyle.SINGLE,
+                                size: 20
+                            }
+                        },
+                        spacing: { before: 100, after: 100 }
+                    }));
+                    continue;
+                }
+                
+                // Detectar linhas de sublinhado (________)
+                if (/^[_]{3,}$/.test(line.trim())) {
+                    paragraphs.push(new Paragraph({
+                        children: [new TextRun({ text: '', size: 24 })],
+                        border: {
+                            bottom: {
+                                color: '000000',
+                                space: 1,
+                                style: BorderStyle.SINGLE,
+                                size: 10
+                            }
+                        },
+                        spacing: { before: 80, after: 80 }
+                    }));
+                    continue;
+                }
+                
+                // Detectar possíveis títulos (linhas curtas em maiúsculas)
+                const isTitle = line.trim().length < 60 && 
+                               line.trim() === line.trim().toUpperCase() && 
+                               /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/.test(line.trim());
+                
+                if (isTitle) {
+                    paragraphs.push(new Paragraph({
+                        children: [new TextRun({ 
+                            text: line.trim(), 
+                            font: 'Arial', 
+                            size: 28, // 14pt for titles
+                            bold: true 
+                        })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 200, after: 200 }
+                    }));
+                } else {
+                    // Linha normal
+                    paragraphs.push(new Paragraph({
+                        children: [new TextRun({ 
+                            text: line, 
+                            font: 'Courier New', 
+                            size: 22 // 11pt
+                        })],
+                        spacing: { after: 120 }
+                    }));
+                }
+            }
 
             // Criar documento
             const doc = new Document({
@@ -678,13 +813,16 @@ class DocumentExporter {
                     <style>
                         body {
                             font-family: 'Arial', sans-serif;
-                            line-height: 1.6;
+                            line-height: 1.8;
                             margin: 2cm;
-                            font-size: 12pt;
+                            font-size: 11pt;
                         }
                         .document {
                             white-space: pre-wrap;
+                            word-wrap: break-word;
                             font-family: 'Courier New', monospace;
+                            font-size: 11pt;
+                            line-height: 1.8;
                         }
                         .header {
                             text-align: center;
