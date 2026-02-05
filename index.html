@@ -45,6 +45,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://vlibras.gov.br">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -780,19 +781,19 @@
 
     <!-- JavaScript -->
     <!-- CSP Reporter (load first to catch violations early) -->
-    <script src="js/csp-reporter.js"></script>
+    <script src="js/csp-reporter.js" defer></script>
     
     <!-- Módulo de UI primeiro (dependência base) -->
-    <script src="js/log.js"></script>
+    <script src="js/log.js" defer></script>
     <script src="js/analytics.js" async></script>
     <script src="js/acessibilidade.js" async></script>
-    <script src="js/ui.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/main.js" defer></script>
     
     <!-- Módulos de funcionalidade -->
-    <script src="js/generator.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/export.js"></script>
+    <script src="js/generator.js" defer></script>
+    <script src="js/storage.js" defer></script>
+    <script src="js/export.js" defer></script>
     <!-- Tour.js loaded on-demand (lazy loaded after page load) -->
     <script>
         // Lazy load tour.js after page is fully loaded
