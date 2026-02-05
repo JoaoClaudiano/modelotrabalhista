@@ -7,8 +7,12 @@ class DocumentGenerator {
         this.MAX_LONG_TEXT_LENGTH = 2000;
         this.LONG_TEXT_FIELDS = ['Reason', 'Agenda', 'Conditions', 'Description'];
         
-        // Estilos base para container do documento (otimizado para PDF)
-        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.4; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; page-break-inside: avoid;';
+        // Estilos base para container do documento (otimizado para PDF de 1 página A4)
+        // box-sizing: border-box - garante que padding não aumenta dimensões totais
+        // page-break-inside: avoid - evita quebra dentro do container
+        // line-height: 1.3 - reduzido de 1.4 para economizar espaço vertical
+        // padding: 15px - reduzido de 20px para maximizar área utilizável
+        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.3; width: 100%; margin: 0; padding: 15px; box-sizing: border-box; page-break-inside: avoid;';
         
         // Array de meses em português para formatação de datas
         this.MONTHS_PT = [
@@ -211,69 +215,82 @@ class DocumentGenerator {
         // Gerar local e data formatada
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
+        // Template otimizado para caber em EXATAMENTE 1 página A4
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
-    <div style="text-align: center; margin-bottom: 15px;">
-        <div style="font-weight: bold; font-size: 11pt;">${companyName}</div>
-        <div style="font-weight: bold; font-size: 10pt;">${companyAddress}</div>
+    <!-- Cabeçalho da empresa - margin-bottom reduzido de 15px para 8px -->
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
-    <div style="text-align: center; margin: 20px 0 15px 0;">
-        <div style="border-top: 2px solid #000; margin-bottom: 10px;"></div>
-        <h2 style="margin: 10px 0; font-size: 16px; font-weight: bold;">PEDIDO DE DEMISSÃO</h2>
-        <div style="border-bottom: 2px solid #000; margin-top: 10px;"></div>
+    <!-- Título - margins reduzidos (20px->12px top, 15px->8px bottom), font-size 16px->14px -->
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 14px; font-weight: bold; line-height: 1.2;">PEDIDO DE DEMISSÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
     </div>
     
-    <div style="text-align: justify; margin: 15px 0; line-height: 1.5;">
-        <p style="margin: 0 0 10px 0;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
+    <!-- Parágrafo de identificação - line-height 1.5->1.3, margin 15px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.3;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
         e Carteira de Trabalho <strong>${ctps}</strong>, na função de <strong>${employeePosition}</strong>, 
         venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
         ocupo nesta empresa.</p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0 0 5px 0;">Solicito que sejam calculados os valores devidos referentes a:</p>
-        <ul style="margin: 5px 0 0 20px; padding: 0;">
-            <li style="margin: 3px 0;">Saldo de salário</li>
-            <li style="margin: 3px 0;">Férias proporcionais + 1/3 constitucional</li>
-            <li style="margin: 3px 0;">13º salário proporcional</li>
-            <li style="margin: 3px 0;">${noticePeriodText}</li>
+    <!-- Lista de valores devidos - margins reduzidos (12px->8px), line-height 1.5->1.3 -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.3;">Solicito que sejam calculados os valores devidos referentes a:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.3;">
+            <li style="margin: 2px 0; line-height: 1.3;">Saldo de salário</li>
+            <li style="margin: 2px 0; line-height: 1.3;">Férias proporcionais + 1/3 constitucional</li>
+            <li style="margin: 2px 0; line-height: 1.3;">13º salário proporcional</li>
+            <li style="margin: 2px 0; line-height: 1.3;">${noticePeriodText}</li>
         </ul>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
+    <!-- Data de desligamento - margin 12px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
+    <!-- Declaração FGTS - margin 12px->8px, line-height 1.5->1.3 -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
         não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
         legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
         mencionadas acima, salvo disposições específicas em convenção coletiva ou 
         acordo individual.</p>
     </div>
     
-    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
-        <p style="margin: 0;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
+    <!-- Disponibilidade - margin 12px->8px -->
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.3; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
         pela legislação trabalhista e normas internas da empresa.</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
+    <!-- Separador - margin 20px->12px -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
-    <div style="margin: 15px 0;">
-        <p style="margin: 0;">${locationAndDate}</p>
+    <!-- Local e data - margin 15px->8px -->
+    <div style="margin: 8px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.3;">${locationAndDate}</p>
     </div>
     
-    <div style="margin: 35px 0 20px 0;">
-        <div style="border-top: 1px solid #000; width: 300px; margin: 0 auto;"></div>
-        <p style="text-align: center; margin-top: 5px;">Assinatura do Funcionário</p>
+    <!-- Assinatura do funcionário - margins reduzidos (35px->20px, 20px->12px), page-break-inside: avoid -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
+    <!-- Separador - margin 20px->12px -->
+    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
-    <div style="margin: 15px 0;">
-        <p style="margin: 3px 0;">Recebido por: ___________________________________________</p>
-        <p style="margin: 3px 0;">Cargo: ___________________________________________________</p>
-        <p style="margin: 3px 0;">Data: __/__/______</p>
+    <!-- Seção de recebimento - margin 15px->8px, page-break-inside: avoid -->
+    <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.3;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.3;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.3;">Data: __/__/______</p>
     </div>
 </div>`;
     }
