@@ -33,6 +33,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       
       - name: Install dependencies
         run: npm install
@@ -46,8 +47,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload only necessary files for the static site
           path: '.'
+          # Exclude unnecessary files using .gitignore patterns
+          # The action automatically excludes .git and files matching .gitignore
   
   # Deployment job
   deploy:
