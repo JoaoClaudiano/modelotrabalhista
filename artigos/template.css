@@ -417,7 +417,7 @@
 
 .back-to-top-article {
     position: fixed;
-    bottom: 30px;
+    bottom: 90px;
     right: 30px;
     width: 50px;
     height: 50px;
@@ -495,6 +495,13 @@
     .article-navigation {
         grid-template-columns: 1fr;
     }
+    
+    .back-to-top-article {
+        bottom: 85px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -508,6 +515,14 @@
     
     .article-section h2 {
         font-size: 1.5rem;
+    }
+    
+    .back-to-top-article {
+        bottom: 75px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 }
 
