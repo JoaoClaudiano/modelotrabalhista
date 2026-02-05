@@ -266,8 +266,9 @@ class DocumentExporter {
                     if (preview && window.ui) {
                         originalZoom = window.ui.currentZoom;
                         window.ui.resetZoom('documentPreview');
-                        // Small delay to let DOM update
-                        await new Promise(resolve => setTimeout(resolve, 50));
+                        // Small delay to allow DOM to update after zoom reset
+                        const DOM_UPDATE_DELAY_MS = 50;
+                        await new Promise(resolve => setTimeout(resolve, DOM_UPDATE_DELAY_MS));
                     }
                     
                     const content = this.getDocumentContent();
