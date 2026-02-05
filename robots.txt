@@ -3,45 +3,26 @@ Allow: /
 
 Sitemap: https://modelotrabalhista.com.br/sitemap.xml
 
-# Desabilitar crawling de áreas administrativas e arquivos técnicos
+# Desabilitar crawling de áreas administrativas
 Disallow: /admin/
 Disallow: /login/
 Disallow: /config/
 Disallow: /.git/
 Disallow: /node_modules/
 Disallow: /assets/temp/
+
+# Bloquear arquivos técnicos (wildcards - amplamente suportado)
 Disallow: *.json
 Disallow: *.js
 Disallow: *.css
+
+# Bloquear arquivos específicos
 Disallow: /template.html
 Disallow: /example.html
 
-# Arquivos técnicos e templates
-Disallow: /artigos/template.css
+# Templates e exemplos em subdiretórios
 Disallow: /artigos/template.html
-Disallow: /artigos/template.js
-Disallow: /assets/css/print.css
-Disallow: /assets/manifest.json
-Disallow: /css/responsive.css
-Disallow: /css/style.css
-Disallow: /generate-robots.js
-Disallow: /generate-sitemap.js
-Disallow: /js/acessibilidade.js
-Disallow: /js/analytics.js
-Disallow: /js/export.js
-Disallow: /js/generator.js
-Disallow: /js/log.js
-Disallow: /js/main.js
-Disallow: /js/storage.js
-Disallow: /js/tour.js
-Disallow: /js/ui.js
-Disallow: /models/templates.json
-Disallow: /package-lock.json
-Disallow: /package.json
 Disallow: /pages/example.html
-Disallow: /pages/institucional.css
-Disallow: /script.js
-Disallow: /style.css
 
 # Permitir todos os principais crawlers
 User-agent: Googlebot

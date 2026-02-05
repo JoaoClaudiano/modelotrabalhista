@@ -14,12 +14,31 @@ const DISALLOW_PATTERNS = [
   '/.git/',
   '/node_modules/',
   '/assets/temp/',
+];
+
+// Extensions to block (note: wildcards are widely supported but not standard)
+const DISALLOW_EXTENSIONS = [
   '*.json',
   '*.js',
   '*.css',
+];
+
+// Specific files to block
+const DISALLOW_FILES = [
   '/template.html',
   '/example.html',
 ];
+
+// Function to check if a file should be disallowed
+function shouldDisallowFile(filename) {
+  // Check specific filenames
+  if (filename === 'template.html' || filename === 'example.html') {
+    return true;
+  }
+  
+  // Note: We don't disallow by extension here because wildcards in DISALLOW_EXTENSIONS handle this
+  return false;
+}
 
 // Function to get all directories that should be disallowed
 function getDisallowedPaths(dir, baseDir = dir, results = []) {
@@ -37,9 +56,8 @@ function getDisallowedPaths(dir, baseDir = dir, results = []) {
       // Recursively check subdirectories
       getDisallowedPaths(filePath, baseDir, results);
     } else {
-      // Add template and example files to disallow list
-      if (file === 'template.html' || file === 'example.html' || 
-          file.endsWith('.js') || file.endsWith('.css') || file.endsWith('.json')) {
+      // Add specific files that should be disallowed
+      if (shouldDisallowFile(file)) {
         const urlPath = '/' + relativePath.replace(/\\/g, '/');
         if (!results.includes(urlPath)) {
           results.push(urlPath);
@@ -71,25 +89,31 @@ function generateRobotsContent() {
   content += '\n';
   
   // Disallow sections
-  content += '# Desabilitar crawling de áreas administrativas e arquivos técnicos\n';
+  content += '# Desabilitar crawling de áreas administrativas\n';
   
-  // Add static disallow patterns
+  // Add directory patterns
   DISALLOW_PATTERNS.forEach(pattern => {
-    if (pattern.startsWith('/') && pattern.endsWith('/')) {
-      // It's a directory
-      content += `Disallow: ${pattern}\n`;
-    } else if (pattern.includes('*')) {
-      // It's a pattern (some crawlers support this)
-      content += `Disallow: ${pattern}\n`;
-    } else {
-      content += `Disallow: ${pattern}\n`;
-    }
+    content += `Disallow: ${pattern}\n`;
   });
   
-  // Add dynamic disallows for template and technical files
+  content += '\n# Bloquear arquivos técnicos (wildcards - amplamente suportado)\n';
+  
+  // Add extension wildcards (note: widely supported but not in official spec)
+  DISALLOW_EXTENSIONS.forEach(pattern => {
+    content += `Disallow: ${pattern}\n`;
+  });
+  
+  content += '\n# Bloquear arquivos específicos\n';
+  
+  // Add specific files
+  DISALLOW_FILES.forEach(pattern => {
+    content += `Disallow: ${pattern}\n`;
+  });
+  
+  // Add dynamic disallows for template and example files found in subdirectories
   const uniqueDisallows = [...new Set(dynamicDisallows)].sort();
   if (uniqueDisallows.length > 0) {
-    content += '\n# Arquivos técnicos e templates\n';
+    content += '\n# Templates e exemplos em subdiretórios\n';
     uniqueDisallows.forEach(path => {
       content += `Disallow: ${path}\n`;
     });
