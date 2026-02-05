@@ -484,13 +484,7 @@ ${data.employeePosition || '[CARGO]'}`;
                 const [day, month, year] = dateString.split('-');
                 date = new Date(year, month - 1, day);
             }
-            // Tentar parsear formato MM/DD/YYYY (americano)
-            else if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-                const parts = dateString.split('/');
-                // Assumir formato brasileiro (DD/MM/YYYY) primeiro
-                date = new Date(parts[2], parts[1] - 1, parts[0]);
-            }
-            // Tentar criar Date object diretamente
+            // Tentar criar Date object diretamente para outros formatos
             else {
                 date = new Date(dateString);
             }
