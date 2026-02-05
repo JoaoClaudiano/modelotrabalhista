@@ -728,20 +728,13 @@ function printDocument() {
     
     // Criar uma nova janela para impressão
     const printWindow = window.open('', '_blank');
+    const cssUrl = `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, '')}css/print.css`;
     printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
             <title>${originalTitle} - Documento</title>
-            <style>
-                body { font-family: 'Courier New', monospace; line-height: 1.6; margin: 2cm; }
-                .header { text-align: center; margin-bottom: 2cm; }
-                .content { white-space: pre-wrap; }
-                .footer { margin-top: 2cm; text-align: center; font-size: 0.9em; color: #666; }
-                @media print {
-                    .no-print { display: none; }
-                }
-            </style>
+            <link rel="stylesheet" href="${cssUrl}">
         </head>
         <body>
             <div class="content">${previewContent}</div>
