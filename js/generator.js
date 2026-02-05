@@ -208,69 +208,69 @@ class DocumentGenerator {
         // Gerar local e data formatada
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
-        return `<div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px;">
-    <div style="margin-bottom: 20px;">
-        <div style="font-weight: normal;">${companyName}</div>
-        <div style="font-weight: normal;">${companyAddress}</div>
+        return `<div style="font-family: Arial, sans-serif; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 10px;">
+    <div style="text-align: center; margin-bottom: 15px;">
+        <div style="font-weight: bold; font-size: 11pt;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 10pt;">${companyAddress}</div>
     </div>
     
-    <div style="text-align: center; margin: 30px 0;">
-        <div style="border-top: 2px solid #000; margin-bottom: 15px;"></div>
-        <h2 style="margin: 15px 0; font-size: 18px; font-weight: bold;">PEDIDO DE DEMISSÃO</h2>
-        <div style="border-bottom: 2px solid #000; margin-top: 15px;"></div>
+    <div style="text-align: center; margin: 20px 0 15px 0;">
+        <div style="border-top: 2px solid #000; margin-bottom: 10px;"></div>
+        <h2 style="margin: 10px 0; font-size: 16px; font-weight: bold;">PEDIDO DE DEMISSÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 10px;"></div>
     </div>
     
-    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
-        <p>Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
+    <div style="text-align: justify; margin: 15px 0; line-height: 1.5;">
+        <p style="margin: 0 0 10px 0;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
         e Carteira de Trabalho <strong>${ctps}</strong>, na função de <strong>${employeePosition}</strong>, 
         venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
         ocupo nesta empresa.</p>
     </div>
     
-    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
-        <p>Solicito que sejam calculados os valores devidos referentes a:</p>
-        <ul style="margin-left: 20px;">
-            <li>Saldo de salário</li>
-            <li>Férias proporcionais + 1/3 constitucional</li>
-            <li>13º salário proporcional</li>
-            <li>${noticePeriodText}</li>
+    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
+        <p style="margin: 0 0 5px 0;">Solicito que sejam calculados os valores devidos referentes a:</p>
+        <ul style="margin: 5px 0 0 20px; padding: 0;">
+            <li style="margin: 3px 0;">Saldo de salário</li>
+            <li style="margin: 3px 0;">Férias proporcionais + 1/3 constitucional</li>
+            <li style="margin: 3px 0;">13º salário proporcional</li>
+            <li style="margin: 3px 0;">${noticePeriodText}</li>
         </ul>
     </div>
     
-    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
-        <p>Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
+    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
+        <p style="margin: 0;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
     </div>
     
-    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
-        <p>Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
+    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
+        <p style="margin: 0;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
         não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
         legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
         mencionadas acima, salvo disposições específicas em convenção coletiva ou 
         acordo individual.</p>
     </div>
     
-    <div style="text-align: justify; margin: 25px 0; line-height: 1.8;">
-        <p>Estou disponível para os procedimentos de desligamento conforme estabelecido 
+    <div style="text-align: justify; margin: 12px 0; line-height: 1.5;">
+        <p style="margin: 0;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
         pela legislação trabalhista e normas internas da empresa.</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 30px 0;"></div>
+    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
     
-    <div style="margin: 30px 0;">
-        <p>${locationAndDate}</p>
+    <div style="margin: 15px 0;">
+        <p style="margin: 0;">${locationAndDate}</p>
     </div>
     
-    <div style="margin: 50px 0 30px 0;">
+    <div style="margin: 35px 0 20px 0;">
         <div style="border-top: 1px solid #000; width: 300px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 5px;">Assinatura do Funcionário</p>
     </div>
     
-    <div style="border-top: 2px solid #000; margin: 30px 0;"></div>
+    <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
     
-    <div style="margin: 30px 0;">
-        <p>Recebido por: ___________________________________________</p>
-        <p>Cargo: ___________________________________________________</p>
-        <p>Data: __/__/______</p>
+    <div style="margin: 15px 0;">
+        <p style="margin: 3px 0;">Recebido por: ___________________________________________</p>
+        <p style="margin: 3px 0;">Cargo: ___________________________________________________</p>
+        <p style="margin: 3px 0;">Data: __/__/______</p>
     </div>
 </div>`;
     }
