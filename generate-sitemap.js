@@ -110,13 +110,9 @@ async function generateSitemap() {
     xmlString = xmlString
       .replace(/<urlset([^>]*)>/, '<urlset$1>\n    ')
       .replace(/<url>/g, '<url>\n        ')
-      .replace(/<loc>/g, '<loc>')
       .replace(/<\/loc>/g, '</loc>\n        ')
-      .replace(/<lastmod>/g, '<lastmod>')
       .replace(/<\/lastmod>/g, '</lastmod>\n        ')
-      .replace(/<changefreq>/g, '<changefreq>')
       .replace(/<\/changefreq>/g, '</changefreq>\n        ')
-      .replace(/<priority>/g, '<priority>')
       .replace(/<\/priority>/g, '</priority>\n    ')
       .replace(/<\/url>/g, '</url>\n    ')
       .replace(/\n    <\/urlset>/, '\n</urlset>');
