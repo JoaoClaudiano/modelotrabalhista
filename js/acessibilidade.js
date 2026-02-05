@@ -881,22 +881,25 @@ class AcessibilidadeManager {
 function initializeAccessibility() {
     if (!window.accessibility) {
         try {
-            setTimeout(() => {
+            // Use requestAnimationFrame para garantir que a renderização esteja completa
+            // Permite que o navegador complete qualquer trabalho pendente antes de inicializar
+            requestAnimationFrame(() => {
                 window.accessibility = new AcessibilidadeManager();
                 console.log('Acessibilidade inicializada');
-            }, 500);
+            });
         } catch (error) {
             console.error('Erro na acessibilidade:', error);
         }
     }
 }
 
-// Se o DOM já está pronto, inicializa imediatamente
+// Se o DOM está loading, aguarda DOMContentLoaded
+// Se está interactive ou complete, inicializa imediatamente (DOMContentLoaded já disparou)
 if (document.readyState === 'loading') {
     // DOM ainda carregando, aguarda DOMContentLoaded
     document.addEventListener('DOMContentLoaded', initializeAccessibility);
 } else {
-    // DOM já está pronto, inicializa agora
+    // DOM já está em estado 'interactive' ou 'complete', inicializa agora
     initializeAccessibility();
 }
 
