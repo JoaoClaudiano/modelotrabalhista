@@ -510,7 +510,10 @@ class DocumentExporter {
     async exportToPDFWithHTML(filename = 'ModeloTrabalhista') {
         try {
             // Encontrar elemento que contém o documento
-            const element = document.querySelector('#modelo-text') || 
+            // Priorizar o container interno .document-content que tem o HTML formatado
+            const element = document.querySelector('#documentPreview .document-content') ||
+                           document.querySelector('#documentPreview') ||
+                           document.querySelector('#modelo-text') || 
                            document.querySelector('.modelo-texto') ||
                            document.querySelector('#previewModelo');
             
