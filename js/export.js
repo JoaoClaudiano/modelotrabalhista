@@ -427,6 +427,10 @@ class DocumentExporter {
     getDocumentHTML() {
         // Prioridade: elemento específico do modelo
         const contentSelectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -441,13 +445,14 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const html = element.innerHTML || '';
-                if (html.trim().length > 0) {
-                    console.log(`Conteúdo HTML encontrado no seletor: ${selector}`);
+                if (html.trim().length > 50) { // Validate minimum content
+                    console.log(`getDocumentHTML: Conteúdo HTML encontrado no seletor: ${selector}`);
                     return html.trim();
                 }
             }
         }
         
+        console.warn('getDocumentHTML: Nenhum conteúdo HTML encontrado');
         return null;
     }
 
@@ -455,6 +460,10 @@ class DocumentExporter {
     getDocumentContent() {
         // Prioridade: elemento específico do modelo
         const contentSelectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -469,8 +478,8 @@ class DocumentExporter {
             const element = document.querySelector(selector);
             if (element) {
                 const text = element.textContent || element.innerText || '';
-                if (text.trim().length > 0) {
-                    console.log(`Conteúdo encontrado no seletor: ${selector}`);
+                if (text.trim().length > 50) { // Validate minimum content
+                    console.log(`getDocumentContent: Conteúdo encontrado no seletor: ${selector}`);
                     return text.trim();
                 }
             }
@@ -518,6 +527,10 @@ class DocumentExporter {
     // Obter elemento do documento (retorna HTMLElement, não string)
     getDocumentElement() {
         const selectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
             '#modelo-text',
             '#textoModelo',
             '#documento-texto',
@@ -530,11 +543,13 @@ class DocumentExporter {
         
         for (const selector of selectors) {
             const element = document.querySelector(selector);
-            if (element && element.innerHTML.trim().length > 0) {
+            if (element && element.innerHTML.trim().length > 50) { // Validate minimum content
+                console.log(`getDocumentElement: Found element with selector: ${selector}`);
                 return element;
             }
         }
         
+        console.warn('getDocumentElement: No suitable element found');
         return null;
     }
 
@@ -550,7 +565,7 @@ class DocumentExporter {
                            document.querySelector('#previewModelo');
             
             if (!element) {
-                throw new Error('Elemento do documento não encontrado');
+                throw new Error('Não foi possível obter o conteúdo do documento para exportar');
             }
             
             // Carregar html2canvas se necessário
@@ -641,7 +656,7 @@ class DocumentExporter {
             // 1. Obter o elemento HTML formatado
             const element = this.getDocumentElement();
             if (!element) {
-                throw new Error('Elemento do documento não encontrado');
+                throw new Error('Não foi possível obter o conteúdo do documento para exportar');
             }
 
             // 2. Carregar bibliotecas necessárias
@@ -670,18 +685,41 @@ class DocumentExporter {
                 throw new Error('jsPDF não pôde ser carregado');
             }
 
-            // Carregar html2canvas
-            await this.loadHtml2Canvas();
+            // Carregar html2canvas com timeout
+            await Promise.race([
+                this.loadHtml2Canvas(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout ao carregar html2canvas')), 10000)
+                )
+            ]);
+            
+            // Verificar se html2canvas foi carregado
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('html2canvas não pôde ser carregado');
+            }
 
-            // 3. Capturar o elemento como imagem de alta qualidade
-            const canvas = await html2canvas(element, {
-                scale: 2, // Alta resolução
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight
-            });
+            // 3. Capturar o elemento como imagem de alta qualidade com validação
+            let canvas;
+            try {
+                // Use getBoundingClientRect for more accurate dimensions
+                const rect = element.getBoundingClientRect();
+                canvas = await html2canvas(element, {
+                    scale: 2, // Alta resolução
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: rect.width || element.scrollWidth,
+                    height: rect.height || element.scrollHeight
+                });
+                
+                // Validate canvas was created successfully
+                if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                    throw new Error('Canvas vazio - conteúdo não foi renderizado corretamente');
+                }
+            } catch (canvasError) {
+                console.error('Erro ao capturar elemento com html2canvas:', canvasError);
+                throw new Error(`Falha ao capturar conteúdo: ${canvasError.message}`);
+            }
 
             // 4. Configurar PDF
             const { jsPDF } = window.jspdf;
