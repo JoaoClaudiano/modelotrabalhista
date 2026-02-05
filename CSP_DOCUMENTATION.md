@@ -4,6 +4,10 @@
 
 This document describes the Content Security Policy (CSP) implementation for ModeloTrabalhista, designed to be compatible with both GitHub Pages and Firebase Hosting.
 
+**Related Documentation:**
+- [CSP Reporting Guide](CSP_REPORTING_GUIDE.md) - How to monitor and act on CSP violations
+- [CSP Implementation Summary](CSP_IMPLEMENTATION_SUMMARY.md) - Quick reference guide
+
 ## Security Headers Implemented
 
 ### 1. Content Security Policy (CSP)
@@ -47,7 +51,22 @@ upgrade-insecure-requests
 - **form-action 'self'**: Restricts form submissions to same origin
 - **upgrade-insecure-requests**: Automatically upgrades HTTP requests to HTTPS
 
-### 2. Additional Security Headers
+### 2. Content Security Policy Report-Only
+
+In addition to the enforcing CSP, a **Report-Only** CSP is also implemented. This policy monitors for violations without blocking resources, allowing us to:
+
+- Test new CSP rules safely
+- Monitor for unexpected resource loads
+- Debug CSP issues in production
+- Track potential security concerns
+
+The Report-Only policy uses the same directives as the enforcing policy and reports violations to:
+- Browser console via `js/csp-reporter.js`
+- Developer tools Security panel
+
+**For detailed information on monitoring violations, see [CSP_REPORTING_GUIDE.md](CSP_REPORTING_GUIDE.md)**
+
+### 3. Additional Security Headers
 
 - **X-Frame-Options: DENY** - Prevents clickjacking attacks
 - **X-Content-Type-Options: nosniff** - Prevents MIME type sniffing
@@ -59,14 +78,18 @@ upgrade-insecure-requests
 
 ### 1. Meta Tags (All HTML Files)
 
-Every HTML file includes a CSP meta tag in the `<head>` section:
+Every HTML file includes both enforcing and report-only CSP meta tags in the `<head>` section:
 
 ```html
+<!-- Enforcing CSP (blocks violations) -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+
+<!-- Report-Only CSP (reports violations without blocking) -->
+<meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 ```
 
 **Files Updated:**
-- `index.html`
+- `index.html` (also includes `js/csp-reporter.js`)
 - All files in `pages/` directory (6 files)
 - All files in `artigos/` directory (30 files)
 
