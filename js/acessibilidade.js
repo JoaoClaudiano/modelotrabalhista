@@ -288,8 +288,67 @@ class AcessibilidadeManager {
                     color: #f0f0f0 !important;
                 }
                 
+                /* Seções e contêineres */
+                section, .section, div[class*="section"],
+                .container, .content, .wrapper,
+                .hero, .features, .about, .faq,
+                #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
+                    background-color: #1a1a1a !important;
+                    color: #f0f0f0 !important;
+                }
+                
+                /* Cards e painéis */
+                .card, .panel, .box, .item,
+                .model-card, .feature-card, .faq-item,
+                .form-container, .preview-container {
+                    background-color: #2d2d2d !important;
+                    color: #f0f0f0 !important;
+                    border-color: #404040 !important;
+                }
+                
+                /* Inputs e formulários */
+                input, textarea, select {
+                    background-color: #2d2d2d !important;
+                    color: #f0f0f0 !important;
+                    border-color: #404040 !important;
+                }
+                
+                input::placeholder, textarea::placeholder {
+                    color: #a0a0a0 !important;
+                }
+                
+                /* Botões */
+                button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
+                    background-color: #3d3d3d !important;
+                    color: #f0f0f0 !important;
+                    border-color: #505050 !important;
+                }
+                
+                button.btn-primary, button[class*="primary"] {
+                    background-color: #2563eb !important;
+                    color: white !important;
+                }
+                
+                /* Links */
                 a {
                     color: #60a5fa !important;
+                }
+                
+                /* Cabeçalhos */
+                h1, h2, h3, h4, h5, h6 {
+                    color: #f0f0f0 !important;
+                }
+                
+                /* Rodapé */
+                footer {
+                    background-color: #0d0d0d !important;
+                    color: #f0f0f0 !important;
+                }
+                
+                /* Navegação */
+                nav, .navbar, header {
+                    background-color: #0d0d0d !important;
+                    color: #f0f0f0 !important;
                 }
             `;
         } else if (theme === 'high-contrast') {
@@ -299,22 +358,71 @@ class AcessibilidadeManager {
                     color: white !important;
                 }
                 
+                /* Seções e contêineres */
+                section, .section, div[class*="section"],
+                .container, .content, .wrapper,
+                .hero, .features, .about, .faq,
+                #hero, #modelos, #gerador, #sobre, #faq, #beneficios {
+                    background-color: black !important;
+                    color: white !important;
+                }
+                
+                /* Cards e painéis */
+                .card, .panel, .box, .item,
+                .model-card, .feature-card, .faq-item,
+                .form-container, .preview-container {
+                    background-color: black !important;
+                    color: white !important;
+                    border: 3px solid yellow !important;
+                }
+                
+                /* Inputs e formulários */
+                input, textarea, select {
+                    background-color: black !important;
+                    color: white !important;
+                    border: 2px solid yellow !important;
+                }
+                
+                input::placeholder, textarea::placeholder {
+                    color: yellow !important;
+                    opacity: 0.7 !important;
+                }
+                
+                /* Botões */
+                button:not(.accessibility-card-btn):not(.accessibility-toggle):not([class*="tour"]) {
+                    background-color: black !important;
+                    color: yellow !important;
+                    border: 2px solid yellow !important;
+                }
+                
+                /* Links */
                 a {
                     color: yellow !important;
                     text-decoration: underline !important;
                 }
                 
-                button, input {
-                    border: 2px solid yellow !important;
+                /* Cabeçalhos */
+                h1, h2, h3, h4, h5, h6 {
+                    color: white !important;
+                }
+                
+                /* Rodapé */
+                footer {
+                    background-color: black !important;
+                    color: white !important;
+                    border-top: 3px solid yellow !important;
+                }
+                
+                /* Navegação */
+                nav, .navbar, header {
+                    background-color: black !important;
+                    color: white !important;
+                    border-bottom: 3px solid yellow !important;
                 }
             `;
         } else {
-            style.textContent = `
-                body {
-                    background-color: white !important;
-                    color: #333 !important;
-                }
-            `;
+            // Clear all theme styles to allow the page to revert to its default CSS
+            style.textContent = '';
         }
     }
 
