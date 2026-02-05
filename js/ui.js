@@ -209,7 +209,6 @@ class UIHelper {
             font-weight: 500;
         `;
 
-        const closeBtn = notification.querySelector('.notification-close');
         closeBtn.style.cssText = `
             background: rgba(255,255,255,0.2);
             border: none;
