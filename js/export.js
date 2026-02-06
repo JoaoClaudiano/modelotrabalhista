@@ -662,8 +662,9 @@ class DocumentExporter {
                 // Always restore original transform state
                 element.style.transform = originalTransform;
                 element.style.transformOrigin = originalTransformOrigin;
-                if (container && originalContainerHeight !== null) {
-                    container.style.height = originalContainerHeight;
+                // Restore container height even if it was an empty string
+                if (container) {
+                    container.style.height = originalContainerHeight !== null ? originalContainerHeight : '';
                 }
             }
 
