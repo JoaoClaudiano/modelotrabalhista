@@ -574,7 +574,10 @@ class DocumentExporter {
     // 1. Exportar para PDF com download automático (método principal)
     // Usa html2canvas + jsPDF para gerar PDF e fazer download automático
     async exportToPDFAuto(filename = 'ModeloTrabalhista') {
-        const PDF_CONTENT_SCALE = 0.95; // 95% da página para margem
+        // A4 dimensions at 96 DPI: 210mm = 794px, 297mm = 1123px
+        const A4_WIDTH_PX = 794;
+        const A4_HEIGHT_PX = 1123;
+        const PDF_MARGIN_MM = 15; // Margin in mm for PDF
         
         try {
             // 1. Obter o elemento HTML formatado
@@ -622,33 +625,48 @@ class DocumentExporter {
                 throw new Error('html2canvas não pôde ser carregado');
             }
 
-            // 3. Capturar o elemento como imagem de alta qualidade com validação
-            // Save and remove CSS transforms before capture to ensure proper A4 sizing
-            const originalTransform = element.style.transform;
-            const originalTransformOrigin = element.style.transformOrigin;
+            // 3. Preparar elemento para captura com dimensões e estilos A4
+            // Save original styles
+            const originalStyles = {
+                transform: element.style.transform,
+                transformOrigin: element.style.transformOrigin,
+                width: element.style.width,
+                maxWidth: element.style.maxWidth,
+                fontSize: element.style.fontSize,
+                lineHeight: element.style.lineHeight,
+                padding: element.style.padding,
+                boxSizing: element.style.boxSizing
+            };
             const container = element.parentElement;
             const originalContainerHeight = container ? container.style.height : null;
             
             let canvas;
             try {
-                // Remove transform completely (not just reset to scale(1))
+                // Apply A4-friendly styles for reflow (not scale)
                 element.style.transform = '';
                 element.style.transformOrigin = '';
+                element.style.width = `${A4_WIDTH_PX}px`;
+                element.style.maxWidth = `${A4_WIDTH_PX}px`;
+                element.style.fontSize = '11pt'; // Readable font size
+                element.style.lineHeight = '1.4'; // Comfortable line spacing
+                element.style.padding = '40px'; // Internal padding for margins
+                element.style.boxSizing = 'border-box';
+                
                 if (container) {
                     container.style.height = '';
                 }
                 
-                // Small delay to allow DOM to update after removing transform
+                // Small delay to allow DOM reflow with new styles
                 await new Promise(resolve => setTimeout(resolve, this.VALIDATION.DOM_UPDATE_DELAY_MS));
                 
-                // Use scrollWidth/scrollHeight for natural dimensions without transforms
+                // Capture with fixed A4 width, scale: 1 (no excessive scaling)
                 canvas = await html2canvas(element, {
-                    scale: 2, // Alta resolução
+                    scale: 1, // No scaling - use natural size
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    width: element.scrollWidth,
-                    height: element.scrollHeight
+                    width: A4_WIDTH_PX,
+                    height: element.scrollHeight // Let height be natural
                 });
                 
                 // Validate canvas was created successfully
@@ -659,9 +677,10 @@ class DocumentExporter {
                 console.error('Erro ao capturar elemento com html2canvas:', canvasError);
                 throw new Error(`Falha ao capturar conteúdo: ${canvasError.message}`);
             } finally {
-                // Always restore original transform state
-                element.style.transform = originalTransform;
-                element.style.transformOrigin = originalTransformOrigin;
+                // Always restore original styles
+                Object.keys(originalStyles).forEach(key => {
+                    element.style[key] = originalStyles[key];
+                });
                 // Restore container height even if it was an empty string
                 if (container) {
                     container.style.height = originalContainerHeight !== null ? originalContainerHeight : '';
@@ -676,17 +695,29 @@ class DocumentExporter {
                 format: 'a4'
             });
 
-            // 5. Calcular dimensões para caber na página A4
+            // 5. Calcular dimensões para página A4 (sem escala excessiva)
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
             
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
+            // Área utilizável (descontando margens)
+            const usableWidth = pageWidth - (2 * PDF_MARGIN_MM);
+            const usableHeight = pageHeight - (2 * PDF_MARGIN_MM);
             
-            // Redimensionar mantendo proporção para caber na página
-            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight) * PDF_CONTENT_SCALE;
-            const finalWidth = imgWidth * ratio;
-            const finalHeight = imgHeight * ratio;
+            // Convert canvas pixels to mm (assuming 96 DPI: 1 inch = 25.4mm, 96px = 25.4mm)
+            const pxToMm = 25.4 / 96;
+            const imgWidthMm = canvas.width * pxToMm;
+            const imgHeightMm = canvas.height * pxToMm;
+            
+            // Calculate scaling to fit within usable area (if needed)
+            let finalWidth = imgWidthMm;
+            let finalHeight = imgHeightMm;
+            
+            // Only scale down if content is larger than usable area
+            if (imgWidthMm > usableWidth || imgHeightMm > usableHeight) {
+                const ratio = Math.min(usableWidth / imgWidthMm, usableHeight / imgHeightMm);
+                finalWidth = imgWidthMm * ratio;
+                finalHeight = imgHeightMm * ratio;
+            }
             
             // Centralizar na página
             const x = (pageWidth - finalWidth) / 2;
