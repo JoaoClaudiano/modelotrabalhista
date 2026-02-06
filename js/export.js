@@ -1198,8 +1198,17 @@ class DocumentExporter {
                         pdf.setFontSize(config.TITLE_FONT_SIZE);
                         pdf.setFont('helvetica', 'bold');
                         
-                        // Calculate total height needed
-                        const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                        // Calculate font metrics
+                        // jsPDF's text() uses baseline positioning, not top of text
+                        // We need to account for ascent/descent for proper vertical centering
+                        const titleFontSizeMm = config.TITLE_FONT_SIZE * config.PT_TO_MM;
+                        const titleLineHeight = titleFontSizeMm * config.LINE_HEIGHT_FACTOR;
+                        
+                        // Font metrics: ~75% ascent, ~25% descent of font size
+                        const titleAscent = titleFontSizeMm * 0.75;
+                        const titleDescent = titleFontSizeMm * 0.25;
+                        
+                        // Calculate total height needed for page break check
                         const totalHeight = config.TITLE_LINE_SPACING_BEFORE +
                                           config.TITLE_LINE_TO_TEXT +
                                           titleLineHeight +
@@ -1220,16 +1229,18 @@ class DocumentExporter {
                         this.drawDecorativeLine(pdf, yPosition, config);
                         
                         // Space between line and title
-                        yPosition += config.TITLE_LINE_TO_TEXT;
+                        // Add space + ascent to position baseline for vertical centering
+                        yPosition += config.TITLE_LINE_TO_TEXT + titleAscent;
                         
-                        // Center title on usable width
+                        // Center title horizontally
                         const titleWidth = pdf.getTextWidth(block.text);
                         const titleX = config.MARGIN + (config.USABLE_WIDTH - titleWidth) / 2;
-                        pdf.text(block.text, titleX, yPosition);
-                        yPosition += titleLineHeight;
                         
-                        // Space between title and bottom line
-                        yPosition += config.TITLE_TEXT_TO_LINE;
+                        // Draw text (yPosition is now at the baseline for proper centering)
+                        pdf.text(block.text, titleX, yPosition);
+                        
+                        // Move down by descent + space to reach bottom line position
+                        yPosition += titleDescent + config.TITLE_TEXT_TO_LINE;
                         
                         // Draw bottom decorative line
                         this.drawDecorativeLine(pdf, yPosition, config);
