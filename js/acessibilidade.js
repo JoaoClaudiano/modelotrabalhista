@@ -208,9 +208,10 @@ class AcessibilidadeManager {
             // Remove focus trap when hidden - query all potentially focusable elements
             const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
             focusableElements.forEach(el => {
-                // Store original tabindex if it exists and isn't already stored
-                if (el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1' && !el.hasAttribute('data-original-tabindex')) {
-                    el.setAttribute('data-original-tabindex', el.getAttribute('tabindex'));
+                // Only store tabindex if not already stored and not already -1
+                const currentTabindex = el.getAttribute('tabindex');
+                if (currentTabindex !== '-1' && !el.hasAttribute('data-original-tabindex')) {
+                    el.setAttribute('data-original-tabindex', currentTabindex || '0');
                 }
                 el.setAttribute('tabindex', '-1');
             });
@@ -223,11 +224,17 @@ class AcessibilidadeManager {
             // Restore focus ability when visible
             const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
             focusableElements.forEach(el => {
-                // Restore original tabindex if it was stored, otherwise remove tabindex attribute
+                // Restore original tabindex if it was stored
                 if (el.hasAttribute('data-original-tabindex')) {
-                    el.setAttribute('tabindex', el.getAttribute('data-original-tabindex'));
+                    const originalValue = el.getAttribute('data-original-tabindex');
+                    if (originalValue === '0') {
+                        el.removeAttribute('tabindex');
+                    } else {
+                        el.setAttribute('tabindex', originalValue);
+                    }
                     el.removeAttribute('data-original-tabindex');
                 } else {
+                    // Element didn't have stored tabindex, just remove it
                     el.removeAttribute('tabindex');
                 }
             });
