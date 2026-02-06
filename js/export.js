@@ -723,8 +723,8 @@ class DocumentExporter {
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    // Usar o novo orquestrador de PDF (via exportToPDFAuto para compatibilidade)
-                    await this.exportToPDFAuto('ModeloTrabalhista');
+                    // Usar o novo orquestrador de PDF diretamente
+                    await this.exportPDF('ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
                     if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
