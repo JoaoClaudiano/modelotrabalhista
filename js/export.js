@@ -696,7 +696,8 @@ class DocumentExporter {
     }
 
     checkAllLibsLoaded() {
-        // Libraries loaded check - status tracked in this.libsLoaded
+        // Empty implementation - library loading status is tracked via this.libsLoaded
+        // and checked by individual export methods when needed
     }
 
     setupEventListeners() {
@@ -890,7 +891,6 @@ class DocumentExporter {
             copyBtn.title = 'Copiar texto para área de transferência';
         }
     }
-
 
     /**
      * Get document text content for PDF generation
