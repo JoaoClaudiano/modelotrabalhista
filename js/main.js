@@ -1472,14 +1472,8 @@ ${data.employeePosition}`;
             return null;
         }
         
-        // If content is HTML (from generator), extract text
-        if (this.lastGeneratedContent.trim().startsWith('<div')) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = this.lastGeneratedContent;
-            return tempDiv.textContent || tempDiv.innerText || '';
-        }
-        
-        // Otherwise return as-is (already plain text)
+        // Return HTML content directly for semantic parsing in PDF export
+        // The PDF exporter will parse the HTML structure to identify semantic elements
         return this.lastGeneratedContent;
     }
     
