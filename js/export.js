@@ -57,7 +57,7 @@ class DocumentExporter {
             // Font settings (pt)
             FONT_SIZE: 11,              // Corpo do texto
             TITLE_FONT_SIZE: 12,        // Títulos
-            LINE_HEIGHT_FACTOR: 1.4,    // Fator de espaçamento entre linhas (changed from 1.4 to 1.5)
+            LINE_HEIGHT_FACTOR: 1.5,    // Fator de espaçamento entre linhas (changed from 1.4 to 1.5)
             
             // Conversion factor: points to millimeters
             PT_TO_MM: 0.3527,           // 1pt = 1/72 inch = 0.3527mm
