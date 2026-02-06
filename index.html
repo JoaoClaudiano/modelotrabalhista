@@ -51,8 +51,9 @@
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2" crossorigin>
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835">
+    <!-- Font Awesome - Load asynchronously to not block rendering -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835"></noscript>
     
     <!-- Google Fonts with font-display: swap for optimal performance -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -64,6 +65,103 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js?v=1770389835" as="script">
     <link rel="preload" href="js/ui.js?v=1770389835" as="script">
+    
+    <!-- Critical CSS for above-the-fold content (improves FCP/LCP) -->
+    <style>
+        /* CSS Variables - Critical subset */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --dark-color: #1f2937;
+            --gray-dark: #374151;
+            --gray-color: #6b7280;
+            --white-color: #ffffff;
+            --bg-secondary: #f9fafb;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.2s ease;
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+        
+        /* Critical base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            font-size: 16px;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            color: var(--dark-color);
+            line-height: 1.6;
+            background-color: var(--bg-secondary);
+            overflow-x: hidden;
+        }
+        
+        /* Header - Critical for above-the-fold */
+        .main-header {
+            background-color: var(--white-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        /* Hero section - Critical for LCP */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            min-height: 500px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-md);
+        }
+    </style>
+    
     <!-- Loading styles -->
     <style>
         .app-loading {
@@ -1036,24 +1134,36 @@
         })();
     </script>
     
-    <!-- VLIBRAS -->
+    <!-- VLIBRAS - Loaded after page load to improve FCP/LCP -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835" onerror="console.warn('VLibras script failed to load. Accessibility widget unavailable.')"></script>
     <script>
-        try {
-            if (window.VLibras && window.VLibras.Widget) {
-                new window.VLibras.Widget('https://vlibras.gov.br/app');
-            } else {
-                console.warn('VLibras Widget not available - script may have failed to load');
-            }
-        } catch (error) {
-            console.error('Error initializing VLibras:', error);
-        }
+        // Defer VLibras loading until after page is interactive
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var script = document.createElement('script');
+                script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835';
+                script.onerror = function() {
+                    console.warn('VLibras script failed to load. Accessibility widget unavailable.');
+                };
+                script.onload = function() {
+                    try {
+                        if (window.VLibras && window.VLibras.Widget) {
+                            new window.VLibras.Widget('https://vlibras.gov.br/app');
+                        } else {
+                            console.warn('VLibras Widget not available - script may have failed to load');
+                        }
+                    } catch (error) {
+                        console.error('Error initializing VLibras:', error);
+                    }
+                };
+                document.body.appendChild(script);
+            }, 1500); // Load after 1.5s to prioritize main content
+        });
     </script>
 
     <!-- Service Worker Registration -->
