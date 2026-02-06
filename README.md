@@ -8,13 +8,18 @@ Uma aplicação web completa para geração automática de documentos trabalhist
 
 ## ✨ Funcionalidades
 
-- **6 Modelos de Documentos**:
+- **Modelos de Documentos**:
   - Pedido de Demissão
   - Solicitação de Férias
   - Advertência Formal
-  - Atestado Informal
-  - Acordo de Rescisão
   - Convocatória de Reunião
+  - Pedido de Alteração de Jornada ou Turno
+  - Pedido de Reembolso de Despesas
+  - Solicitação de Benefícios
+  - Pedido de Licença Maternidade/Paternidade ou Prorrogação
+  - Pedido de Flexibilização de Jornada por Motivo Familiar
+  - Solicitação de Intervalo para Amamentação
+  - Pedido de Licença ou Ajuste de Horário para Pais/Responsáveis
 
 - **Características**:
   - Interface intuitiva e responsiva
