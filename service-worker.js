@@ -14,10 +14,15 @@ const CACHEABLE_EXTENSIONS = /\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json
  * @returns {string} URL limpa sem query string de versão
  */
 function getCleanUrl(url) {
-  const urlObj = new URL(url);
-  // Remove apenas o parâmetro 'v', mantendo outros parâmetros se existirem
-  urlObj.searchParams.delete('v');
-  return urlObj.toString();
+  try {
+    const urlObj = new URL(url);
+    // Remove apenas o parâmetro 'v', mantendo outros parâmetros se existirem
+    urlObj.searchParams.delete('v');
+    return urlObj.toString();
+  } catch (error) {
+    console.warn('[Service Worker] URL inválida:', url, error);
+    return url; // Retorna URL original se falhar
+  }
 }
 
 /**
@@ -181,7 +186,17 @@ self.addEventListener('fetch', (event) => {
         }
         
         // Se não tem cache, aguarda a requisição de rede
-        return fetchPromise || caches.match(request);
+        if (fetchPromise) {
+          return fetchPromise;
+        }
+        
+        // Fallback final: tentar cache novamente
+        return caches.match(request).then(fallbackResponse => {
+          return fallbackResponse || new Response('Offline - recurso não disponível', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
       })
   );
 });

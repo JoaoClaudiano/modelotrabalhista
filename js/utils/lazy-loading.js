@@ -111,13 +111,13 @@ class ExportLibraryPreloader {
         console.log('[Lazy Loading] Iniciando pré-carregamento de bibliotecas de exportação...');
         
         try {
-            // Verificar se DocumentExporter está disponível
-            if (typeof DocumentExporter !== 'undefined' && window.documentExporter) {
+            // Verificar se a instância documentExporter está disponível
+            if (window.documentExporter && typeof window.documentExporter.loadLibraries === 'function') {
                 await window.documentExporter.loadLibraries();
                 console.log('[Lazy Loading] ✅ Bibliotecas pré-carregadas com sucesso');
                 this.preloaded = true;
             } else {
-                console.warn('[Lazy Loading] DocumentExporter não disponível ainda');
+                console.warn('[Lazy Loading] documentExporter ainda não foi inicializado');
             }
         } catch (error) {
             console.warn('[Lazy Loading] ⚠️ Erro ao pré-carregar bibliotecas:', error);
@@ -263,8 +263,9 @@ class DynamicModuleLoader {
             console.log(`[Dynamic Import] ✅ Módulo ${moduleName} carregado`);
             return module;
         } catch (error) {
-            console.error(`[Dynamic Import] ❌ Erro ao carregar ${moduleName}:`, error);
-            throw error;
+            const errorMsg = `Falha ao carregar módulo '${moduleName}' de '${modulePath}': ${error.message}`;
+            console.error(`[Dynamic Import] ❌ ${errorMsg}`);
+            throw new Error(errorMsg);
         }
     }
     

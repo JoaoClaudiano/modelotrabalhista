@@ -1,5 +1,19 @@
 # Guia de Implementação - Cache Busting
 
+## ⚠️ IMPORTANTE: Coordenação com Cache HTTP
+
+**CRÍTICO:** O firebase.json e _headers configuram cache de 1 ano (`max-age=31536000, immutable`) para CSS/JS. 
+Este cache agressivo **REQUER** que o cache busting seja aplicado SEMPRE antes do deploy. 
+
+**Se você fizer deploy sem executar `npm run build`:**
+- Usuários ficarão com versões antigas por até 1 ano
+- Mudanças críticas não serão vistas
+- Bugs corrigidos permanecerão ativos
+
+**Solução:** SEMPRE execute `npm run build` antes de fazer deploy.
+
+---
+
 ## Visão Geral
 
 Este guia documenta o sistema de Cache Busting implementado para o ModeloTrabalhista, que automaticamente adiciona versões aos arquivos estáticos (CSS e JavaScript) para garantir que usuários sempre recebam a versão mais recente dos recursos.
