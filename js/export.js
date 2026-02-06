@@ -303,7 +303,7 @@ class DocumentExporter {
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    // USAR O NOVO MÉTODO DE DOWNLOAD AUTOMÁTICO
+                    // Usar o novo orquestrador de PDF (via exportToPDFAuto para compatibilidade)
                     await this.exportToPDFAuto('ModeloTrabalhista');
                     
                     // Restore original zoom if it was changed
