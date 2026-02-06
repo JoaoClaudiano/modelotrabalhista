@@ -1389,8 +1389,8 @@ class DocumentExporter {
                         pdf.setLineWidth(config.TITLE_LINE_WIDTH);
                         pdf.line(config.MARGIN, yPosition, config.MARGIN + config.USABLE_WIDTH, yPosition);
                         
-                        // Add spacing after separator
-                        yPosition += config.PARAGRAPH_SPACING;
+                        // Add spacing after separator (increased to match HTML margin of ~18px ≈ 4.76mm)
+                        yPosition += config.PARAGRAPH_SPACING * 2; // 2.5mm * 2 = 5mm
                         break;
                 }
                 
