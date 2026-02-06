@@ -455,6 +455,26 @@ class DocumentExporter {
         console.warn('getDocumentHTML: Nenhum conteúdo HTML encontrado');
         return null;
     }
+    
+    /**
+     * Get document text content for PDF generation
+     * This method NEVER uses the preview DOM to ensure PDF is 100% vectorial
+     * and completely independent from the preview layout
+     * @returns {string|null} Pure text content from the data model
+     */
+    getDocumentTextForPDF() {
+        // Try to get content from the app's stored data model first
+        if (window.app && typeof window.app.getDocumentContentForPDF === 'function') {
+            const content = window.app.getDocumentContentForPDF();
+            if (content && content.length > this.VALIDATION.MIN_CONTENT_LENGTH) {
+                console.log('✅ getDocumentTextForPDF: Using content from data model (NOT from preview DOM)');
+                return content;
+            }
+        }
+        
+        console.warn('⚠️ getDocumentTextForPDF: No content available from data model. Generate a document first.');
+        return null;
+    }
 
     // Obter conteúdo do documento
     getDocumentContent() {
@@ -567,10 +587,10 @@ class DocumentExporter {
      */
     async exportPDF(filename = 'ModeloTrabalhista') {
         try {
-            // 1. Obter conteúdo do documento
-            const content = this.getDocumentContent();
+            // 1. Obter conteúdo do documento a partir do modelo de dados (NÃO do DOM de preview)
+            const content = this.getDocumentTextForPDF();
             if (!content || content.length < this.VALIDATION.MIN_CONTENT_LENGTH) {
-                throw new Error('Conteúdo insuficiente para gerar PDF');
+                throw new Error('Conteúdo insuficiente para gerar PDF. Gere um documento primeiro.');
             }
             
             // 2. Medir altura estimada do conteúdo em mm
@@ -638,6 +658,12 @@ class DocumentExporter {
     /**
      * Exportar PDF com texto vetorial usando jsPDF puro
      * Apenas para conteúdo que cabe em 1 página A4
+     * 
+     * IMPORTANTE: Este método usa APENAS texto puro do modelo de dados.
+     * NÃO extrai conteúdo do DOM de preview, garantindo PDF 100% vetorial.
+     * 
+     * @param {string} content - Texto puro do documento (do modelo de dados, não do DOM)
+     * @param {string} filename - Nome do arquivo PDF
      */
     async exportPDFVector(content, filename = 'ModeloTrabalhista') {
         try {
