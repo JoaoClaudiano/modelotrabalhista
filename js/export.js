@@ -125,6 +125,31 @@ class DocumentExporter {
     }
     
     /**
+     * Check if a line should be treated as a title
+     * A line is considered a title if:
+     * 1. It is in uppercase (including accented characters)
+     * 2. It is within the title character limit
+     * @param {string} line - The line to check
+     * @returns {boolean} True if the line is a title, false otherwise
+     */
+    isTitleLine(line) {
+        const trimmed = line.trim();
+        
+        // Empty lines are not titles
+        if (!trimmed) {
+            return false;
+        }
+        
+        // Check if line is within character limit for titles
+        if (trimmed.length > this.PDF_CONFIG.TITLE_CHAR_LIMIT) {
+            return false;
+        }
+        
+        // Check if line is all uppercase (including accented characters)
+        return this.PATTERNS.UPPERCASE_CHARS.test(trimmed);
+    }
+    
+    /**
      * Parse HTML document content into semantic structure
      * @param {string} htmlContent - HTML string from document generator
      * @returns {Array} Array of semantic content blocks
