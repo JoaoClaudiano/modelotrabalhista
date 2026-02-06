@@ -213,6 +213,7 @@ class DocumentExporter {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
             script.crossOrigin = 'anonymous';
+            script.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
             
             script.onload = () => {
                 console.log('✅ html2canvas carregado com sucesso');
