@@ -105,56 +105,393 @@ class DocumentExporter {
         return points * 2;
     }
     
-    // Detectar se uma linha é um título
-    isTitleLine(line) {
-        const trimmedLine = line.trim();
-        return trimmedLine.length < this.PDF_CONFIG.TITLE_CHAR_LIMIT && 
-               trimmedLine.length > 0 &&
-               trimmedLine === trimmedLine.toUpperCase() && 
-               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
+    /**
+     * Parse HTML document content into semantic structure
+     * @param {string} htmlContent - HTML string from document generator
+     * @returns {Array} Array of semantic content blocks
+     */
+    parseDocumentToSemanticStructure(htmlContent) {
+        const structure = [];
+        
+        // Create a temporary DOM element to parse HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+        
+        // Helper function to extract text from element, preserving <strong> tags
+        const extractTextWithFormatting = (element) => {
+            const parts = [];
+            const processNode = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.textContent.trim();
+                    if (text) {
+                        parts.push({ text, bold: false });
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'STRONG' || node.tagName === 'B') {
+                        const text = node.textContent.trim();
+                        if (text) {
+                            parts.push({ text, bold: true });
+                        }
+                    } else {
+                        // Recursively process child nodes
+                        node.childNodes.forEach(processNode);
+                    }
+                }
+            };
+            
+            element.childNodes.forEach(processNode);
+            return parts;
+        };
+        
+        // Process the main container and its children
+        const mainContainer = tempDiv.querySelector('div') || tempDiv;
+        const children = Array.from(mainContainer.children);
+        
+        for (let i = 0; i < children.length; i++) {
+            const element = children[i];
+            
+            // Check for HTML comment before element to identify type
+            let commentText = '';
+            let prevSibling = element.previousSibling;
+            while (prevSibling) {
+                if (prevSibling.nodeType === Node.COMMENT_NODE) {
+                    commentText = prevSibling.textContent.trim().toLowerCase();
+                    break;
+                }
+                prevSibling = prevSibling.previousSibling;
+            }
+            
+            // Company header (look for centered div with two child divs)
+            if (commentText.includes('cabeçalho') || (i === 0 && element.style.textAlign === 'center')) {
+                const divs = element.querySelectorAll('div');
+                if (divs.length >= 2) {
+                    structure.push({
+                        type: 'companyName',
+                        text: divs[0].textContent.trim()
+                    });
+                    structure.push({
+                        type: 'companyAddress',
+                        text: divs[1].textContent.trim()
+                    });
+                    continue;
+                }
+            }
+            
+            // Document title (centered div with h2 and border divs)
+            if (commentText.includes('título')) {
+                const h2 = element.querySelector('h2');
+                if (h2) {
+                    structure.push({
+                        type: 'documentTitle',
+                        text: h2.textContent.trim()
+                    });
+                    continue;
+                }
+            }
+            
+            // H2 tag directly
+            if (element.tagName === 'H2') {
+                structure.push({
+                    type: 'documentTitle',
+                    text: element.textContent.trim()
+                });
+                continue;
+            }
+            
+            // Check for separator (div with border-top)
+            if (element.style.borderTop && element.style.borderTop !== 'none' && element.style.borderTop !== '') {
+                structure.push({
+                    type: 'separator'
+                });
+                continue;
+            }
+            
+            // Lists (ul elements)
+            const ul = element.querySelector('ul');
+            if (ul) {
+                // Check if there's a preceding paragraph (label for the list)
+                const allPs = element.querySelectorAll('p');
+                for (const p of allPs) {
+                    // Only add paragraph if it comes before the list
+                    if (p.parentNode === element && ul.parentNode === element) {
+                        const pPos = Array.from(element.children).indexOf(p);
+                        const ulPos = Array.from(element.children).indexOf(ul);
+                        if (pPos < ulPos) {
+                            const parts = extractTextWithFormatting(p);
+                            if (parts.length > 0) {
+                                structure.push({
+                                    type: 'paragraph',
+                                    parts: parts,
+                                    text: p.textContent.trim()
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Add the list items
+                const items = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
+                if (items.length > 0) {
+                    structure.push({
+                        type: 'list',
+                        items: items
+                    });
+                }
+                continue;
+            }
+            
+            // Paragraphs with potential field values
+            const paragraphs = element.querySelectorAll('p');
+            if (paragraphs.length > 0) {
+                paragraphs.forEach(p => {
+                    const parts = extractTextWithFormatting(p);
+                    if (parts.length > 0) {
+                        // Check if this is a field (has label: value pattern)
+                        const fullText = p.textContent.trim();
+                        const colonMatch = fullText.match(/^([^:]+):\s*(.+)$/);
+                        
+                        if (colonMatch) {
+                            // Check if bold formatting appears in the value part (after the colon)
+                            const colonIndex = fullText.indexOf(':');
+                            let hasBoldAfterColon = false;
+                            
+                            // Build position map accounting for original untrimmed content
+                            let fullTextBuilt = '';
+                            for (const part of parts) {
+                                const partStart = fullTextBuilt.length;
+                                const partEnd = partStart + part.text.length;
+                                
+                                // Check if this bold part overlaps with text after colon
+                                if (part.bold && partEnd > colonIndex + 1) {
+                                    hasBoldAfterColon = true;
+                                    break;
+                                }
+                                fullTextBuilt += part.text;
+                            }
+                            
+                            if (hasBoldAfterColon) {
+                                // This is a field with label and value
+                                structure.push({
+                                    type: 'field',
+                                    label: colonMatch[1].trim(),
+                                    value: colonMatch[2].trim(),
+                                    parts: parts
+                                });
+                            } else {
+                                // Regular paragraph
+                                structure.push({
+                                    type: 'paragraph',
+                                    parts: parts,
+                                    text: fullText
+                                });
+                            }
+                        } else {
+                            // Regular paragraph
+                            structure.push({
+                                type: 'paragraph',
+                                parts: parts,
+                                text: fullText
+                            });
+                        }
+                    }
+                });
+            }
+        }
+        
+        return structure;
     }
     
-    // Detectar se é o cabeçalho da empresa (nome da empresa - primeira linha uppercase curta)
-    isCompanyNameLine(line, lineIndex, previousLinesCount) {
-        // Nome da empresa é tipicamente a primeira linha uppercase
-        const trimmedLine = line.trim();
-        return lineIndex < 3 && // Primeiras 3 linhas
-               trimmedLine.length > 0 &&
-               trimmedLine.length < 80 &&
-               trimmedLine === trimmedLine.toUpperCase() && 
-               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine) &&
-               previousLinesCount === 0; // É a primeira linha não-vazia
+    /**
+     * Render a paragraph with mixed formatting (normal and bold)
+     * @param {object} pdf - jsPDF instance
+     * @param {object} block - Paragraph block with parts array
+     * @param {number} yPosition - Current Y position
+     * @param {number} currentPageCount - Current page count
+     * @param {object} config - PDF configuration
+     * @returns {object} Updated yPosition and pageCount
+     */
+    renderParagraphWithFormatting(pdf, block, yPosition, currentPageCount, config) {
+        const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+        let pageCount = currentPageCount;
+        
+        // Helper function to skip whitespace
+        const skipWhitespace = (text, pos) => {
+            while (pos < text.length && /\s/.test(text[pos])) {
+                pos++;
+            }
+            return pos;
+        };
+        
+        // Build the full text for line breaking
+        const fullText = block.text;
+        
+        // Check if paragraph should be justified (long paragraphs only)
+        const shouldJustify = fullText.length >= config.JUSTIFY_MIN_LENGTH &&
+                            !fullText.match(/^[-•*]/) && // Not a list item
+                            !fullText.match(/^[0-9]+[.)]/); // Not a numbered list
+        
+        // Split text into lines that fit the usable width
+        pdf.setFont('helvetica', 'normal'); // Set base font for measurement
+        const lines = pdf.splitTextToSize(fullText, config.USABLE_WIDTH);
+        
+        // Build position map for bold text
+        let textPosition = 0;
+        const boldRanges = [];
+        for (const part of block.parts) {
+            const start = textPosition;
+            const end = start + part.text.length;
+            if (part.bold) {
+                boldRanges.push({ start, end });
+            }
+            textPosition = end;
+        }
+        
+        // Helper to check if a character position is in a bold range
+        const isBold = (pos) => {
+            for (const range of boldRanges) {
+                if (pos >= range.start && pos < range.end) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        // Track position in full text
+        let fullTextPos = 0;
+        
+        // Render each line
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const isLastLine = i === lines.length - 1;
+            
+            // Check for page break
+            if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                pdf.addPage();
+                yPosition = config.MARGIN;
+                pageCount++;
+            }
+            
+            // Render line with proper formatting
+            let xPos = config.MARGIN;
+            
+            // Skip whitespace at start of line
+            fullTextPos = skipWhitespace(fullText, fullTextPos);
+            
+            // For justified text (not last line)
+            if (shouldJustify && !isLastLine && line.trim().length > 0) {
+                const words = line.trim().split(/\s+/);
+                if (words.length > 1) {
+                    // Calculate space width for justification
+                    const wordWidths = [];
+                    let lineStart = fullTextPos;
+                    
+                    for (const word of words) {
+                        const wordBold = isBold(fullTextPos);
+                        pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
+                        wordWidths.push(pdf.getTextWidth(word));
+                        fullTextPos += word.length;
+                        fullTextPos = skipWhitespace(fullText, fullTextPos);
+                    }
+                    
+                    const totalWordsWidth = wordWidths.reduce((sum, w) => sum + w, 0);
+                    const availableSpace = config.USABLE_WIDTH - totalWordsWidth;
+                    const spaceWidth = availableSpace / (words.length - 1);
+                    
+                    // Reset position for rendering
+                    fullTextPos = lineStart;
+                    
+                    for (let j = 0; j < words.length; j++) {
+                        const word = words[j];
+                        const wordBold = isBold(fullTextPos);
+                        pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
+                        pdf.text(word, xPos, yPosition);
+                        xPos += wordWidths[j] + spaceWidth;
+                        fullTextPos += word.length;
+                        fullTextPos = skipWhitespace(fullText, fullTextPos);
+                    }
+                } else {
+                    // Single word
+                    const wordBold = isBold(fullTextPos);
+                    pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
+                    pdf.text(line, config.MARGIN, yPosition);
+                    fullTextPos += line.length;
+                }
+            } else {
+                // Left-aligned rendering (last line or short paragraph)
+                const words = line.trim().split(/\s+/);
+                for (const word of words) {
+                    const wordBold = isBold(fullTextPos);
+                    pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
+                    pdf.text(word, xPos, yPosition);
+                    xPos += pdf.getTextWidth(word) + pdf.getTextWidth(' ');
+                    fullTextPos += word.length;
+                    fullTextPos = skipWhitespace(fullText, fullTextPos);
+                }
+            }
+            
+            yPosition += lineHeight;
+            fullTextPos = skipWhitespace(fullText, fullTextPos);
+        }
+        
+        return { yPosition, pageCount };
     }
     
-    // Detectar se é o endereço da empresa (segue o nome da empresa)
-    isCompanyAddressLine(line, previousLineWasCompanyName) {
-        const trimmedLine = line.trim();
-        return previousLineWasCompanyName && 
-               trimmedLine.length > 0 &&
-               trimmedLine.length < 100;
-    }
-    
-    // Detectar se é o título principal do documento (ex: "PEDIDO DE DEMISSÃO")
-    // Critério: linha uppercase curta que aparece após o cabeçalho
-    isMainDocumentTitle(line, lineIndex, afterHeader) {
-        const trimmedLine = line.trim();
-        // Títulos principais são uppercase, curtos e aparecem nas primeiras linhas após header
-        return afterHeader &&
-               lineIndex < 10 && // Primeiras 10 linhas do documento
-               trimmedLine.length > 10 && // Não muito curto
-               trimmedLine.length < 50 && // Não muito longo
-               trimmedLine === trimmedLine.toUpperCase() && 
-               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
-    }
-    
-    // Verificar se uma linha deve ser justificada
-    shouldJustifyLine(line) {
-        const trimmedLine = line.trim();
-        // Justificar apenas parágrafos longos (não títulos, listas, etc)
-        return trimmedLine.length >= this.PDF_CONFIG.JUSTIFY_MIN_LENGTH &&
-               !this.isTitleLine(line) &&
-               !trimmedLine.match(/^[-•*]/) && // Não é item de lista
-               !trimmedLine.match(/^[0-9]+[.)]/); // Não é lista numerada
+    /**
+     * Render a field with label (normal) and value (bold)
+     * @param {object} pdf - jsPDF instance
+     * @param {object} block - Field block with label and value
+     * @param {number} yPosition - Current Y position
+     * @param {number} currentPageCount - Current page count
+     * @param {object} config - PDF configuration
+     * @returns {object} Updated yPosition and pageCount
+     */
+    renderFieldWithFormatting(pdf, block, yPosition, currentPageCount, config) {
+        const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+        let pageCount = currentPageCount;
+        
+        // Build the full text for line breaking
+        const fullText = `${block.label}: ${block.value}`;
+        
+        // Split text into lines
+        pdf.setFont('helvetica', 'normal');
+        const lines = pdf.splitTextToSize(fullText, config.USABLE_WIDTH);
+        
+        // Render each line
+        for (const line of lines) {
+            // Check for page break
+            if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                pdf.addPage();
+                yPosition = config.MARGIN;
+                pageCount++;
+            }
+            
+            // Render line with label in normal and value in bold
+            let xPos = config.MARGIN;
+            
+            // Check if this line contains the colon (label part)
+            const colonIndex = line.indexOf(':');
+            if (colonIndex !== -1) {
+                const label = line.substring(0, colonIndex + 1);
+                const value = line.substring(colonIndex + 1).trim();
+                
+                // Render label (normal)
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(label, xPos, yPosition);
+                xPos += pdf.getTextWidth(label + ' ');
+                
+                // Render value (bold)
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(value, xPos, yPosition);
+            } else {
+                // Continuation line - render as bold (part of value)
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(line, xPos, yPosition);
+            }
+            
+            yPosition += lineHeight;
+        }
+        
+        return { yPosition, pageCount };
     }
     
     // Desenhar linha horizontal decorativa
@@ -784,256 +1121,175 @@ class DocumentExporter {
             const pdf = new jsPDF('p', 'mm', 'a4');
             const config = this.PDF_CONFIG;
             
-            // 3. Processar conteúdo linha por linha com suporte a múltiplas páginas
-            const lines = content.split('\n');
+            // 3. Parse content into semantic structure
+            const structure = this.parseDocumentToSemanticStructure(content);
+            
+            // 4. Render content based on semantic structure
             let yPosition = config.MARGIN;
             let pageCount = 1;
-            let previousLineWasEmpty = false;
-            let previousLineWasTitle = false;
-            let previousLineWasCompanyName = false;
-            let headerComplete = false;
-            let nonEmptyLinesCount = 0;
+            let previousBlockType = null;
             
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                const trimmed = line.trim();
-                
-                // Linha vazia - usar fator de espaçamento configurável
-                if (!trimmed) {
-                    const emptyLineSpacing = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR * config.EMPTY_LINE_FACTOR;
-                    yPosition += emptyLineSpacing;
-                    previousLineWasEmpty = true;
-                    previousLineWasTitle = false;
-                    previousLineWasCompanyName = false;
-                    continue;
-                }
-                
-                // Detectar nome da empresa (cabeçalho)
-                if (this.isCompanyNameLine(line, i, nonEmptyLinesCount)) {
-                    pdf.setFontSize(config.FONT_SIZE);
-                    pdf.setFont('helvetica', 'bold');
-                    
-                    const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    
-                    // Verificar se precisa de nova página
-                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
-                    
-                    // Centralizar nome da empresa na largura útil
-                    const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
-                    
-                    pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += lineHeight;
-                    
-                    previousLineWasEmpty = false;
-                    previousLineWasTitle = false;
-                    previousLineWasCompanyName = true;
-                    nonEmptyLinesCount++;
-                    continue;
-                }
-                
-                // Detectar endereço da empresa (segue o nome)
-                if (this.isCompanyAddressLine(line, previousLineWasCompanyName)) {
-                    pdf.setFontSize(config.FONT_SIZE);
-                    pdf.setFont('helvetica', 'normal');
-                    
-                    // Espaçamento reduzido entre nome e endereço
-                    yPosition += config.HEADER_NAME_TO_ADDRESS;
-                    
-                    const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    
-                    // Verificar se precisa de nova página
-                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
-                    
-                    // Centralizar endereço na largura útil
-                    const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
-                    
-                    pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += lineHeight + config.HEADER_AFTER;
-                    
-                    previousLineWasEmpty = false;
-                    previousLineWasTitle = false;
-                    previousLineWasCompanyName = false;
-                    headerComplete = true;
-                    nonEmptyLinesCount++;
-                    continue;
-                }
-                
-                // Detectar título principal do documento (com linhas decorativas)
-                if (this.isMainDocumentTitle(line, i, headerComplete)) {
-                    pdf.setFontSize(config.TITLE_FONT_SIZE);
-                    pdf.setFont('helvetica', 'bold');
-                    
-                    // Calcular altura total necessária
-                    const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    const totalHeight = config.TITLE_LINE_SPACING_BEFORE +
-                                      config.TITLE_LINE_TO_TEXT +
-                                      titleLineHeight +
-                                      config.TITLE_TEXT_TO_LINE +
-                                      config.TITLE_LINE_SPACING_AFTER;
-                    
-                    // Verificar se precisa de nova página
-                    if (yPosition + totalHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
-                    
-                    // Espaço antes da linha superior
-                    yPosition += config.TITLE_LINE_SPACING_BEFORE;
-                    
-                    // Desenhar linha horizontal superior
-                    this.drawDecorativeLine(pdf, yPosition, config);
-                    
-                    // Espaço entre linha e título
-                    yPosition += config.TITLE_LINE_TO_TEXT;
-                    
-                    // Centralizar título na largura útil
-                    const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
-                    
-                    pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += titleLineHeight;
-                    
-                    // Espaço entre título e linha inferior
-                    yPosition += config.TITLE_TEXT_TO_LINE;
-                    
-                    // Desenhar linha horizontal inferior
-                    this.drawDecorativeLine(pdf, yPosition, config);
-                    
-                    // Espaço após linha inferior
-                    yPosition += config.TITLE_LINE_SPACING_AFTER;
-                    
-                    previousLineWasEmpty = false;
-                    previousLineWasTitle = true;
-                    previousLineWasCompanyName = false;
-                    nonEmptyLinesCount++;
-                    continue;
-                }
-                
-                // Título regular (uppercase, não o principal)
-                if (this.isTitleLine(line)) {
-                    pdf.setFontSize(config.TITLE_FONT_SIZE);
-                    pdf.setFont('helvetica', 'bold');
-                    
-                    // Calcular line-height do título usando constantes
-                    const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    const totalTitleHeight = titleLineHeight + config.TITLE_SPACING_AFTER;
-                    
-                    // Adicionar espaço antes do título (exceto no início da página ou após linha vazia)
-                    if (yPosition > config.MARGIN && !previousLineWasEmpty) {
-                        yPosition += config.TITLE_SPACING_BEFORE;
-                    }
-                    
-                    // Verificar se precisa de nova página
-                    if (yPosition + totalTitleHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
-                    
-                    // Centralizar título DENTRO DA LARGURA ÚTIL
-                    const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
-                    
-                    pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += totalTitleHeight;
-                    previousLineWasEmpty = false;
-                    previousLineWasTitle = true;
-                    previousLineWasCompanyName = false;
-                    nonEmptyLinesCount++;
-                    continue;
-                }
-                
-                // Texto normal com quebra automática e justificação condicional
-                pdf.setFontSize(config.FONT_SIZE);
-                pdf.setFont('helvetica', 'normal');
-                
-                // Adicionar espaço entre parágrafos (texto após texto, não após título ou linha vazia)
-                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN) {
-                    yPosition += config.PARAGRAPH_SPACING;
-                }
-                
+            for (let i = 0; i < structure.length; i++) {
+                const block = structure[i];
                 const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
                 
-                // Verificar se deve justificar este parágrafo
-                const shouldJustify = this.shouldJustifyLine(line);
-                
-                if (shouldJustify) {
-                    // Justificar parágrafo longo
-                    const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
-                    
-                    for (let j = 0; j < textLines.length; j++) {
-                        const textLine = textLines[j];
-                        const isLastLine = j === textLines.length - 1;
+                // Handle different block types
+                switch (block.type) {
+                    case 'companyName':
+                        pdf.setFontSize(config.FONT_SIZE);
+                        pdf.setFont('helvetica', 'bold');
                         
-                        // Verificar se precisa de nova página
+                        // Check for page break
                         if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
                             pdf.addPage();
                             yPosition = config.MARGIN;
                             pageCount++;
                         }
                         
-                        // Justificar apenas se não for a última linha
-                        if (!isLastLine && textLine.trim().length > 0) {
-                            // Calcular espaço entre palavras para justificar
-                            const words = textLine.trim().split(/\s+/);
-                            if (words.length > 1) {
-                                // Medir largura total das palavras (cache para eficiência)
-                                const wordWidths = words.map(word => pdf.getTextWidth(word));
-                                const totalWordsWidth = wordWidths.reduce((sum, width) => sum + width, 0);
-                                const availableSpace = config.USABLE_WIDTH - totalWordsWidth;
-                                const spaceWidth = availableSpace / (words.length - 1);
-                                
-                                let xPos = config.MARGIN;
-                                for (let k = 0; k < words.length; k++) {
-                                    pdf.text(words[k], xPos, yPosition);
-                                    xPos += wordWidths[k] + spaceWidth;
+                        // Center on usable width
+                        const nameWidth = pdf.getTextWidth(block.text);
+                        const nameX = config.MARGIN + (config.USABLE_WIDTH - nameWidth) / 2;
+                        pdf.text(block.text, nameX, yPosition);
+                        yPosition += lineHeight;
+                        break;
+                        
+                    case 'companyAddress':
+                        pdf.setFontSize(config.FONT_SIZE);
+                        pdf.setFont('helvetica', 'normal');
+                        
+                        // Reduced spacing between name and address
+                        yPosition += config.HEADER_NAME_TO_ADDRESS;
+                        
+                        // Check for page break
+                        if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                            pdf.addPage();
+                            yPosition = config.MARGIN;
+                            pageCount++;
+                        }
+                        
+                        // Center on usable width
+                        const addressWidth = pdf.getTextWidth(block.text);
+                        const addressX = config.MARGIN + (config.USABLE_WIDTH - addressWidth) / 2;
+                        pdf.text(block.text, addressX, yPosition);
+                        yPosition += lineHeight + config.HEADER_AFTER;
+                        break;
+                        
+                    case 'documentTitle':
+                        pdf.setFontSize(config.TITLE_FONT_SIZE);
+                        pdf.setFont('helvetica', 'bold');
+                        
+                        // Calculate total height needed
+                        const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                        const totalHeight = config.TITLE_LINE_SPACING_BEFORE +
+                                          config.TITLE_LINE_TO_TEXT +
+                                          titleLineHeight +
+                                          config.TITLE_TEXT_TO_LINE +
+                                          config.TITLE_LINE_SPACING_AFTER;
+                        
+                        // Check for page break
+                        if (yPosition + totalHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                            pdf.addPage();
+                            yPosition = config.MARGIN;
+                            pageCount++;
+                        }
+                        
+                        // Space before top line
+                        yPosition += config.TITLE_LINE_SPACING_BEFORE;
+                        
+                        // Draw top decorative line
+                        this.drawDecorativeLine(pdf, yPosition, config);
+                        
+                        // Space between line and title
+                        yPosition += config.TITLE_LINE_TO_TEXT;
+                        
+                        // Center title on usable width
+                        const titleWidth = pdf.getTextWidth(block.text);
+                        const titleX = config.MARGIN + (config.USABLE_WIDTH - titleWidth) / 2;
+                        pdf.text(block.text, titleX, yPosition);
+                        yPosition += titleLineHeight;
+                        
+                        // Space between title and bottom line
+                        yPosition += config.TITLE_TEXT_TO_LINE;
+                        
+                        // Draw bottom decorative line
+                        this.drawDecorativeLine(pdf, yPosition, config);
+                        
+                        // Space after bottom line
+                        yPosition += config.TITLE_LINE_SPACING_AFTER;
+                        break;
+                        
+                    case 'paragraph':
+                        // Add spacing between paragraphs (but not after title or at start)
+                        if (previousBlockType === 'paragraph' && yPosition > config.MARGIN) {
+                            yPosition += config.PARAGRAPH_SPACING;
+                        }
+                        
+                        pdf.setFontSize(config.FONT_SIZE);
+                        
+                        // Render paragraph with mixed formatting (bold and normal)
+                        const paragraphResult = this.renderParagraphWithFormatting(pdf, block, yPosition, pageCount, config);
+                        yPosition = paragraphResult.yPosition;
+                        pageCount = paragraphResult.pageCount;
+                        break;
+                        
+                    case 'field':
+                        // Add spacing if after paragraph
+                        if (previousBlockType === 'paragraph' && yPosition > config.MARGIN) {
+                            yPosition += config.PARAGRAPH_SPACING;
+                        }
+                        
+                        pdf.setFontSize(config.FONT_SIZE);
+                        
+                        // Render field with label (normal) and value (bold)
+                        const fieldResult = this.renderFieldWithFormatting(pdf, block, yPosition, pageCount, config);
+                        yPosition = fieldResult.yPosition;
+                        pageCount = fieldResult.pageCount;
+                        break;
+                        
+                    case 'list':
+                        // Add spacing before list
+                        if (previousBlockType && previousBlockType !== 'list' && yPosition > config.MARGIN) {
+                            yPosition += config.PARAGRAPH_SPACING;
+                        }
+                        
+                        pdf.setFontSize(config.FONT_SIZE);
+                        pdf.setFont('helvetica', 'normal');
+                        
+                        // Render list items (not justified)
+                        for (const item of block.items) {
+                            const itemLines = pdf.splitTextToSize(item, config.USABLE_WIDTH);
+                            
+                            for (const itemLine of itemLines) {
+                                // Check for page break
+                                if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                                    pdf.addPage();
+                                    yPosition = config.MARGIN;
+                                    pageCount++;
                                 }
-                            } else {
-                                // Palavra única, sem justificação
-                                pdf.text(textLine, config.MARGIN, yPosition);
+                                
+                                pdf.text(itemLine, config.MARGIN, yPosition);
+                                yPosition += lineHeight;
                             }
-                        } else {
-                            // Última linha, alinhada à esquerda
-                            pdf.text(textLine, config.MARGIN, yPosition);
                         }
+                        break;
                         
-                        yPosition += lineHeight;
-                    }
-                } else {
-                    // Não justificar (lista, texto curto, etc) - alinhado à esquerda
-                    const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
-                    
-                    for (const textLine of textLines) {
-                        // Verificar se precisa de nova página
-                        if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                            pdf.addPage();
-                            yPosition = config.MARGIN;
-                            pageCount++;
-                        }
+                    case 'separator':
+                        // Add spacing before separator
+                        yPosition += config.PARAGRAPH_SPACING;
                         
-                        pdf.text(textLine, config.MARGIN, yPosition);
-                        yPosition += lineHeight;
-                    }
+                        // Draw separator line
+                        pdf.setLineWidth(config.TITLE_LINE_WIDTH);
+                        pdf.line(config.MARGIN, yPosition, config.MARGIN + config.USABLE_WIDTH, yPosition);
+                        
+                        // Add spacing after separator
+                        yPosition += config.PARAGRAPH_SPACING;
+                        break;
                 }
                 
-                previousLineWasEmpty = false;
-                previousLineWasTitle = false;
-                previousLineWasCompanyName = false;
-                nonEmptyLinesCount++;
+                previousBlockType = block.type;
             }
             
-            // 4. Salvar PDF
+            // 5. Salvar PDF
             const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
             pdf.save(`${safeFilename}.pdf`);
             
@@ -1042,7 +1298,7 @@ class DocumentExporter {
                 : 'PDF vetorial gerado com sucesso!';
             
             this.showNotification(message, 'success');
-            console.log(`✅ PDF gerado com ${pageCount} página(s) usando texto do modelo de dados`);
+            console.log(`✅ PDF gerado com ${pageCount} página(s) usando estrutura semântica`);
             
             return { 
                 success: true, 
