@@ -214,7 +214,27 @@ class DocumentExporter {
                 continue;
             }
             
-            // Check for separator (div with border-top)
+            // Check for signature line (div with child div containing border-top and paragraph label)
+            const childDivWithBorder = Array.from(element.children).find(child => 
+                child.tagName === 'DIV' && 
+                child.style.borderTop && 
+                child.style.borderTop !== 'none' && 
+                child.style.borderTop !== ''
+            );
+            if (childDivWithBorder) {
+                // Check if there's also a paragraph with the signature label
+                const signatureLabel = element.querySelector('p');
+                if (signatureLabel) {
+                    structure.push({
+                        type: 'signatureLine',
+                        label: signatureLabel.textContent.trim(),
+                        width: childDivWithBorder.style.width || '280px'
+                    });
+                    continue;
+                }
+            }
+            
+            // Check for separator (div with border-top directly on element)
             if (element.style.borderTop && element.style.borderTop !== 'none' && element.style.borderTop !== '') {
                 structure.push({
                     type: 'separator'
@@ -1325,6 +1345,40 @@ class DocumentExporter {
                                 yPosition += lineHeight;
                             }
                         }
+                        break;
+                        
+                    case 'signatureLine':
+                        // Add spacing before signature line
+                        yPosition += config.PARAGRAPH_SPACING * 2; // Extra spacing for visual separation
+                        
+                        // Parse width (e.g., "280px" -> 280, then convert to mm)
+                        const widthPx = parseInt(block.width) || 280;
+                        const widthMm = widthPx * 0.264583; // Convert px to mm (1px ≈ 0.264583mm at 96 DPI)
+                        const lineWidth = Math.min(widthMm, config.USABLE_WIDTH * 0.6); // Max 60% of usable width
+                        
+                        // Center the signature line
+                        const lineStartX = config.MARGIN + (config.USABLE_WIDTH - lineWidth) / 2;
+                        const lineEndX = lineStartX + lineWidth;
+                        
+                        // Draw signature line (thin line)
+                        pdf.setLineWidth(0.3);
+                        pdf.line(lineStartX, yPosition, lineEndX, yPosition);
+                        
+                        // Add small spacing between line and label
+                        yPosition += 2; // 2mm spacing
+                        
+                        // Draw label centered below the line
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(config.FONT_SIZE - 1); // Slightly smaller font for label
+                        const labelWidth = pdf.getTextWidth(block.label);
+                        const labelX = config.MARGIN + (config.USABLE_WIDTH - labelWidth) / 2;
+                        pdf.text(block.label, labelX, yPosition);
+                        
+                        // Reset font size
+                        pdf.setFontSize(config.FONT_SIZE);
+                        
+                        // Move down for next element
+                        yPosition += lineHeight;
                         break;
                         
                     case 'separator':
