@@ -583,7 +583,7 @@ class DocumentExporter {
     
     /**
      * Orquestrador principal de exportação PDF
-     * Mede o conteúdo e decide automaticamente o melhor método
+     * Sempre usa jsPDF com texto vetorial para garantir texto selecionável
      */
     async exportPDF(filename = 'ModeloTrabalhista') {
         try {
@@ -593,21 +593,10 @@ class DocumentExporter {
                 throw new Error('Conteúdo insuficiente para gerar PDF. Gere um documento primeiro.');
             }
             
-            // 2. Medir altura estimada do conteúdo em mm
-            const estimatedHeightMm = this.estimateContentHeight(content);
+            // 2. Sempre usar exportPDFVector para garantir texto 100% vetorial e selecionável
+            console.log('✅ Gerando PDF vetorial com texto do modelo de dados');
+            return await this.exportPDFVector(content, filename);
             
-            console.log(`📏 Altura estimada do conteúdo: ${estimatedHeightMm.toFixed(1)}mm`);
-            console.log(`📏 Altura disponível em A4: ${this.PDF_CONFIG.USABLE_HEIGHT}mm`);
-            
-            // 3. Decidir método baseado na altura
-            if (estimatedHeightMm <= this.PDF_CONFIG.USABLE_HEIGHT) {
-                console.log('✅ Conteúdo cabe em 1 página A4 → usando exportPDFVector');
-                return await this.exportPDFVector(content, filename);
-            } else {
-                const exceededByPercent = ((estimatedHeightMm / this.PDF_CONFIG.USABLE_HEIGHT - 1) * 100).toFixed(0);
-                console.log(`⚠️  Conteúdo excede 1 página A4 em ${exceededByPercent}% → usando exportPDFViaPrint`);
-                return await this.exportPDFViaPrint(filename);
-            }
         } catch (error) {
             console.error('Erro no orquestrador de PDF:', error);
             this.showNotification(`Erro ao gerar PDF: ${error.message}`, 'error');
@@ -657,7 +646,7 @@ class DocumentExporter {
     
     /**
      * Exportar PDF com texto vetorial usando jsPDF puro
-     * Apenas para conteúdo que cabe em 1 página A4
+     * Suporta múltiplas páginas automaticamente
      * 
      * IMPORTANTE: Este método usa APENAS texto puro do modelo de dados.
      * NÃO extrai conteúdo do DOM de preview, garantindo PDF 100% vetorial.
@@ -694,9 +683,10 @@ class DocumentExporter {
             const pdf = new jsPDF('p', 'mm', 'a4');
             const config = this.PDF_CONFIG;
             
-            // 3. Processar conteúdo linha por linha
+            // 3. Processar conteúdo linha por linha com suporte a múltiplas páginas
             const lines = content.split('\n');
             let yPosition = config.MARGIN;
+            let pageCount = 1;
             
             for (const line of lines) {
                 const trimmed = line.trim();
@@ -712,12 +702,21 @@ class DocumentExporter {
                     pdf.setFontSize(config.TITLE_FONT_SIZE);
                     pdf.setFont('helvetica', 'bold');
                     
+                    const lineHeight = (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR + 3;
+                    
+                    // Verificar se precisa de nova página
+                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                        pdf.addPage();
+                        yPosition = config.MARGIN;
+                        pageCount++;
+                    }
+                    
                     // Centralizar título
                     const textWidth = pdf.getTextWidth(trimmed);
                     const xPosition = (config.PAGE_WIDTH - textWidth) / 2;
                     
                     pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR + 3;
+                    yPosition += lineHeight;
                     continue;
                 }
                 
@@ -726,10 +725,18 @@ class DocumentExporter {
                 pdf.setFont('helvetica', 'normal');
                 
                 const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
+                const lineHeight = (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
                 
                 for (const textLine of textLines) {
+                    // Verificar se precisa de nova página
+                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                        pdf.addPage();
+                        yPosition = config.MARGIN;
+                        pageCount++;
+                    }
+                    
                     pdf.text(textLine, config.MARGIN, yPosition);
-                    yPosition += (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+                    yPosition += lineHeight;
                 }
             }
             
@@ -737,12 +744,19 @@ class DocumentExporter {
             const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
             pdf.save(`${safeFilename}.pdf`);
             
-            this.showNotification('PDF vetorial gerado com sucesso!', 'success');
+            const message = pageCount > 1 
+                ? `PDF vetorial gerado com ${pageCount} páginas!` 
+                : 'PDF vetorial gerado com sucesso!';
+            
+            this.showNotification(message, 'success');
+            console.log(`✅ PDF gerado com ${pageCount} página(s) usando texto do modelo de dados`);
+            
             return { 
                 success: true, 
                 filename: `${safeFilename}.pdf`,
                 method: 'vector',
-                message: 'PDF com texto vetorial baixado automaticamente'
+                pages: pageCount,
+                message: `PDF com texto vetorial (${pageCount} páginas) baixado automaticamente`
             };
             
         } catch (error) {
