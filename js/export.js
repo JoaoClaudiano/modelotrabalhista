@@ -4,13 +4,11 @@ class DocumentExporter {
         this.mutationObserver = null; // Armazenar referência para limpeza
         this.libsLoaded = {
             jspdf: false,
-            docx: false,
-            html2canvas: false
+            docx: false
         };
         this.libsAttempted = {
             jspdf: false,
-            docx: false,
-            html2canvas: false
+            docx: false
         };
         
         // Constantes de formatação
@@ -43,9 +41,24 @@ class DocumentExporter {
             MIN_CONTENT_LENGTH: 50,
             // Timeout for library loading (in milliseconds)
             LIBRARY_LOAD_TIMEOUT: 10000, // 10 seconds
-            HTML2CANVAS_LOAD_TIMEOUT: 10000, // 10 seconds
             // Delay to allow browser layout engine to complete recalculation after CSS transform changes
             DOM_UPDATE_DELAY_MS: 50
+        };
+        
+        // Constantes para PDF
+        this.PDF_CONFIG = {
+            // A4 dimensions in mm
+            PAGE_WIDTH: 210,
+            PAGE_HEIGHT: 297,
+            // Margins in mm
+            MARGIN: 20,
+            // Font settings
+            FONT_SIZE: 11,
+            TITLE_FONT_SIZE: 12,
+            LINE_HEIGHT_FACTOR: 1.4,
+            // Calculated usable area
+            get USABLE_WIDTH() { return this.PAGE_WIDTH - (2 * this.MARGIN); },
+            get USABLE_HEIGHT() { return this.PAGE_HEIGHT - (2 * this.MARGIN); }
         };
         
         // Padrões regex para detecção
@@ -202,34 +215,6 @@ class DocumentExporter {
         };
         
         document.head.appendChild(script);
-    }
-
-    loadHtml2Canvas() {
-        return new Promise((resolve, reject) => {
-            // Verificar se já está carregado
-            if (typeof html2canvas !== 'undefined') {
-                resolve();
-                return;
-            }
-
-            // Carregar html2canvas
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-            script.crossOrigin = 'anonymous';
-            script.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
-            
-            script.onload = () => {
-                console.log('✅ html2canvas carregado com sucesso');
-                resolve();
-            };
-            
-            script.onerror = () => {
-                console.error('❌ Falha ao carregar html2canvas');
-                reject(new Error('Não foi possível carregar o conversor de HTML para PDF'));
-            };
-            
-            document.head.appendChild(script);
-        });
     }
 
     checkAllLibsLoaded() {
@@ -569,33 +554,97 @@ class DocumentExporter {
     }
 
     // ==========================================
-    // MÉTODOS DE EXPORTAÇÃO PDF (2 métodos)
+    // MÉTODOS DE EXPORTAÇÃO PDF (Novo Sistema)
     // ==========================================
-    // 1. PRIMEIRA TENTATIVA: Download automático (exportToPDFAuto)
-    // 2. SE FALHAR: Impressão nativa (exportToPDFViaPrint)
+    // Orquestrador único que decide automaticamente entre:
+    // - exportPDFVector: jsPDF puro com texto vetorial
+    // - exportPDFViaPrint: impressão nativa como fallback
     // ==========================================
     
-    // 1. Exportar para PDF com download automático (método principal)
-    // Usa html2canvas + jsPDF para gerar PDF e fazer download automático
-    async exportToPDFAuto(filename = 'ModeloTrabalhista') {
-        // A4 dimensions at 96 DPI: 210mm = 794px, 297mm = 1123px
-        const A4_WIDTH_PX = 794;
-        const A4_HEIGHT_PX = 1123;
-        const PDF_MARGIN_MM = 15; // Margin in mm for PDF
-        
+    /**
+     * Orquestrador principal de exportação PDF
+     * Mede o conteúdo e decide automaticamente o melhor método
+     */
+    async exportPDF(filename = 'ModeloTrabalhista') {
         try {
-            // 1. Obter o elemento HTML formatado
-            const element = this.getDocumentElement();
-            if (!element) {
-                throw new Error('Não foi possível obter o conteúdo do documento para exportar');
+            // 1. Obter conteúdo do documento
+            const content = this.getDocumentContent();
+            if (!content || content.length < this.VALIDATION.MIN_CONTENT_LENGTH) {
+                throw new Error('Conteúdo insuficiente para gerar PDF');
             }
-
-            // 2. Carregar bibliotecas necessárias
-            // Carregar jsPDF se necessário
+            
+            // 2. Medir altura estimada do conteúdo em mm
+            const estimatedHeightMm = this.estimateContentHeight(content);
+            
+            console.log(`📏 Altura estimada do conteúdo: ${estimatedHeightMm.toFixed(1)}mm`);
+            console.log(`📏 Altura disponível em A4: ${this.PDF_CONFIG.USABLE_HEIGHT}mm`);
+            
+            // 3. Decidir método baseado na altura
+            if (estimatedHeightMm <= this.PDF_CONFIG.USABLE_HEIGHT) {
+                console.log('✅ Conteúdo cabe em 1 página A4 → usando exportPDFVector');
+                return await this.exportPDFVector(content, filename);
+            } else {
+                const exceededByPercent = ((estimatedHeightMm / this.PDF_CONFIG.USABLE_HEIGHT - 1) * 100).toFixed(0);
+                console.log(`⚠️  Conteúdo excede 1 página A4 em ${exceededByPercent}% → usando exportPDFViaPrint`);
+                return await this.exportPDFViaPrint(filename);
+            }
+        } catch (error) {
+            console.error('Erro no orquestrador de PDF:', error);
+            this.showNotification(`Erro ao gerar PDF: ${error.message}`, 'error');
+            throw error;
+        }
+    }
+    
+    /**
+     * Estimar altura do conteúdo em milímetros
+     * Baseado em contagem de linhas e espaçamento de texto
+     */
+    estimateContentHeight(content) {
+        const lines = content.split('\n');
+        const config = this.PDF_CONFIG;
+        
+        // Altura por linha de texto (font-size * line-height)
+        // 11pt ≈ 3.88mm, com line-height 1.4 = 5.43mm por linha
+        const lineHeightMm = (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+        
+        let totalHeight = 0;
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            
+            // Linha vazia
+            if (!trimmed) {
+                totalHeight += lineHeightMm * 0.5; // Meia altura para linha vazia
+                continue;
+            }
+            
+            // Título (uppercase)
+            if (this.isTitleLine(line)) {
+                const titleLineHeight = (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+                totalHeight += titleLineHeight + 3; // Adicionar espaçamento extra
+                continue;
+            }
+            
+            // Texto normal - calcular quebras de linha baseado na largura útil
+            // Aproximação: ~2.5 caracteres por mm em fonte 11pt
+            const charsPerLine = Math.floor(config.USABLE_WIDTH * 2.5);
+            const wrappedLines = Math.ceil(trimmed.length / charsPerLine);
+            totalHeight += lineHeightMm * wrappedLines;
+        }
+        
+        return totalHeight;
+    }
+    
+    /**
+     * Exportar PDF com texto vetorial usando jsPDF puro
+     * Apenas para conteúdo que cabe em 1 página A4
+     */
+    async exportPDFVector(content, filename = 'ModeloTrabalhista') {
+        try {
+            // 1. Carregar jsPDF se necessário
             if (typeof window.jspdf === 'undefined') {
                 console.log('Carregando jsPDF...');
                 this.loadLibraries();
-                // Wait for jsPDF to load
                 await new Promise((resolve, reject) => {
                     const checkInterval = setInterval(() => {
                         if (typeof window.jspdf !== 'undefined') {
@@ -603,7 +652,6 @@ class DocumentExporter {
                             resolve();
                         }
                     }, 100);
-                    // Timeout after configured time with error
                     setTimeout(() => {
                         clearInterval(checkInterval);
                         reject(new Error('Timeout ao carregar jsPDF'));
@@ -611,163 +659,85 @@ class DocumentExporter {
                 });
             }
             
-            // Verificar se jsPDF foi carregado
             if (typeof window.jspdf === 'undefined') {
                 throw new Error('jsPDF não pôde ser carregado');
             }
-
-            // Carregar html2canvas com timeout
-            await Promise.race([
-                this.loadHtml2Canvas(),
-                new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Timeout ao carregar html2canvas')), this.VALIDATION.HTML2CANVAS_LOAD_TIMEOUT)
-                )
-            ]);
             
-            // Verificar se html2canvas foi carregado
-            if (typeof html2canvas === 'undefined') {
-                throw new Error('html2canvas não pôde ser carregado');
-            }
-
-            // 3. Preparar elemento para captura com dimensões e estilos A4
-            // Save original styles
-            const originalStyles = {
-                transform: element.style.transform,
-                transformOrigin: element.style.transformOrigin,
-                width: element.style.width,
-                maxWidth: element.style.maxWidth,
-                fontSize: element.style.fontSize,
-                lineHeight: element.style.lineHeight,
-                padding: element.style.padding,
-                boxSizing: element.style.boxSizing
-            };
-            const container = element.parentElement;
-            const originalContainerHeight = container ? container.style.height : null;
-            
-            let canvas;
-            try {
-                // Apply A4-friendly styles for reflow (not scale)
-                element.style.transform = '';
-                element.style.transformOrigin = '';
-                element.style.width = `${A4_WIDTH_PX}px`;
-                element.style.maxWidth = `${A4_WIDTH_PX}px`;
-                element.style.fontSize = '11pt'; // Readable font size
-                element.style.lineHeight = '1.4'; // Comfortable line spacing
-                element.style.padding = '40px'; // Internal padding for margins
-                element.style.boxSizing = 'border-box';
-                
-                if (container) {
-                    container.style.height = '';
-                }
-                
-                // Small delay to allow DOM reflow with new styles
-                await new Promise(resolve => setTimeout(resolve, this.VALIDATION.DOM_UPDATE_DELAY_MS));
-                
-                // Capture with fixed A4 width, scale: 1 (no excessive scaling)
-                canvas = await html2canvas(element, {
-                    scale: 1, // No scaling - use natural size
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    width: A4_WIDTH_PX,
-                    height: element.scrollHeight // Let height be natural
-                });
-                
-                // Validate canvas was created successfully
-                if (!canvas || canvas.width === 0 || canvas.height === 0) {
-                    throw new Error('Canvas vazio - conteúdo não foi renderizado corretamente');
-                }
-            } catch (canvasError) {
-                console.error('Erro ao capturar elemento com html2canvas:', canvasError);
-                throw new Error(`Falha ao capturar conteúdo: ${canvasError.message}`);
-            } finally {
-                // Always restore original styles
-                Object.keys(originalStyles).forEach(key => {
-                    element.style[key] = originalStyles[key];
-                });
-                // Restore container height even if it was an empty string
-                if (container) {
-                    container.style.height = originalContainerHeight !== null ? originalContainerHeight : '';
-                }
-            }
-
-            // 4. Configurar PDF
+            // 2. Criar documento PDF A4
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            // 5. Calcular dimensões para página A4 (FIXAS - sem compressão)
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const config = this.PDF_CONFIG;
             
-            // Área utilizável (descontando margens)
-            const usableWidth = pageWidth - (2 * PDF_MARGIN_MM);
-            const usableHeight = pageHeight - (2 * PDF_MARGIN_MM);
+            // 3. Processar conteúdo linha por linha
+            const lines = content.split('\n');
+            let yPosition = config.MARGIN;
             
-            // Convert canvas pixels to mm (assuming 96 DPI: 96 pixels = 1 inch = 25.4mm)
-            const pxToMm = 25.4 / 96;
-            const imgWidthMm = canvas.width * pxToMm;
-            const imgHeightMm = canvas.height * pxToMm;
-            
-            // REGRAS OBRIGATÓRIAS:
-            // 1. Dimensões FIXAS A4 - sem proporção dinâmica
-            // 2. NUNCA reduzir para "fazer caber"
-            // 3. Se exceder altura A4, FALHAR explicitamente
-            
-            // Usar dimensões fixas A4 (sem redução proporcional)
-            const finalWidth = usableWidth;
-            const finalHeight = usableHeight;
-            
-            // Validar se conteúdo excede altura permitida
-            if (imgHeightMm > usableHeight) {
-                const exceededByMm = (imgHeightMm - usableHeight).toFixed(1);
-                const exceededByPercent = ((imgHeightMm / usableHeight - 1) * 100).toFixed(1);
-                console.warn(`⚠️ AVISO: Conteúdo excede altura A4 em ${exceededByMm}mm (${exceededByPercent}%)`);
-                console.warn(`   Altura do conteúdo: ${imgHeightMm.toFixed(1)}mm`);
-                console.warn(`   Altura disponível: ${usableHeight.toFixed(1)}mm`);
-                console.warn(`   Redução de conteúdo ou ajuste de layout necessário.`);
+            for (const line of lines) {
+                const trimmed = line.trim();
                 
-                // Erro controlado - informar usuário mas continuar
-                this.showNotification(
-                    `Atenção: Conteúdo ultrapassa ${exceededByPercent}% da altura A4. Parte do texto pode ser cortada.`,
-                    'warning'
-                );
+                // Linha vazia
+                if (!trimmed) {
+                    yPosition += (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR * 0.5;
+                    continue;
+                }
+                
+                // Título (uppercase)
+                if (this.isTitleLine(line)) {
+                    pdf.setFontSize(config.TITLE_FONT_SIZE);
+                    pdf.setFont('helvetica', 'bold');
+                    
+                    // Centralizar título
+                    const textWidth = pdf.getTextWidth(trimmed);
+                    const xPosition = (config.PAGE_WIDTH - textWidth) / 2;
+                    
+                    pdf.text(trimmed, xPosition, yPosition);
+                    yPosition += (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR + 3;
+                    continue;
+                }
+                
+                // Texto normal com quebra automática
+                pdf.setFontSize(config.FONT_SIZE);
+                pdf.setFont('helvetica', 'normal');
+                
+                const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
+                
+                for (const textLine of textLines) {
+                    pdf.text(textLine, config.MARGIN, yPosition);
+                    yPosition += (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+                }
             }
             
-            // Posicionar no topo esquerdo com margens
-            const x = PDF_MARGIN_MM;
-            const y = PDF_MARGIN_MM;
-
-            // 6. Adicionar imagem ao PDF com dimensões FIXAS
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
-
-            // 7. Baixar automaticamente
+            // 4. Salvar PDF
             const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
-            doc.save(`${safeFilename}.pdf`);
-
-            // 8. Feedback ao usuário
-            this.showNotification('PDF gerado e baixado automaticamente!', 'success');
+            pdf.save(`${safeFilename}.pdf`);
+            
+            this.showNotification('PDF vetorial gerado com sucesso!', 'success');
             return { 
                 success: true, 
                 filename: `${safeFilename}.pdf`,
-                message: 'PDF baixado automaticamente'
+                method: 'vector',
+                message: 'PDF com texto vetorial baixado automaticamente'
             };
-
-        } catch (error) {
-            console.error('Erro na geração automática de PDF:', error);
             
-            // Fallback para método de impressão se a geração automática falhar
-            this.showNotification('Tentando método alternativo...', 'info');
-            return await this.exportToPDFViaPrint(filename);
+        } catch (error) {
+            console.error('Erro ao gerar PDF vetorial:', error);
+            throw error;
         }
     }
+    
+    /**
+     * MANTENDO exportToPDFAuto por compatibilidade - redireciona para exportPDF
+     * @deprecated Use exportPDF() instead
+     */
+    async exportToPDFAuto(filename = 'ModeloTrabalhista') {
+        console.warn('exportToPDFAuto está obsoleto. Use exportPDF() diretamente.');
+        return await this.exportPDF(filename);
+    }
 
-    // 2. Fallback: exportar via impressão nativa do navegador
-    // Abre janela de impressão para o usuário salvar como PDF manualmente
+    /**
+     * Exportar via impressão nativa (fallback para conteúdo longo)
+     * Usa window.print() com estilos @media print
+     */
     async exportToPDFViaPrint(filename = 'ModeloTrabalhista') {
         try {
             // 1. Obter o HTML formatado do documento
@@ -793,9 +763,9 @@ class DocumentExporter {
                         /* Estilos base para impressão (PDF) */
                         body {
                             font-family: Arial, sans-serif;
-                            line-height: 1.3;
+                            line-height: 1.4;
                             margin: 0;
-                            padding: 15mm;
+                            padding: 20mm;
                             font-size: 11pt;
                             color: #000;
                         }
@@ -806,14 +776,14 @@ class DocumentExporter {
                         h2 {
                             text-align: center;
                             font-weight: bold;
-                            font-size: 14pt;
+                            font-size: 12pt;
                             margin: 12px 0;
                         }
                         strong {
                             font-weight: bold;
                         }
                         ul {
-                            margin: 4px 0 4px 18px;
+                            margin: 4px 0 4px 18mm;
                         }
                         li {
                             margin: 2px 0;
@@ -828,10 +798,13 @@ class DocumentExporter {
                         }
                         @media print {
                             @page {
-                                margin: 15mm;
+                                margin: 20mm;
+                                size: A4 portrait;
                             }
                             body {
                                 padding: 0;
+                                font-size: 11pt;
+                                line-height: 1.4;
                             }
                         }
                     </style>
@@ -856,10 +829,21 @@ class DocumentExporter {
                 </html>
             `);
             printWindow.document.close();
+            
+            // 4. Aguardar carregamento e abrir janela de impressão automaticamente
+            printWindow.onload = () => {
+                setTimeout(() => {
+                    printWindow.print();
+                }, 250);
+            };
 
-            // 4. Dar feedback ao usuário
-            this.showNotification('Janela de impressão aberta. Escolha "Salvar como PDF" na caixa de diálogo.', 'success');
-            return { success: true, message: 'Janela de impressão aberta.' };
+            this.showNotification('Janela de impressão aberta. Escolha "Salvar como PDF".', 'info');
+            return { 
+                success: true, 
+                filename: `${filename}.pdf`,
+                method: 'print',
+                message: 'Usando impressão nativa (conteúdo longo)'
+            };
 
         } catch (error) {
             console.error('Erro ao abrir janela de impressão:', error);
