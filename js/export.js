@@ -77,7 +77,7 @@ class DocumentExporter {
             TITLE_LINE_SPACING_BEFORE: 3, // Espaço antes da linha superior
             TITLE_LINE_TO_TEXT: 4,        // Espaço entre linha e texto do título (increased from 2 to 4 to prevent overlap)
             TITLE_TEXT_TO_LINE: 2,        // Espaço entre texto do título e linha inferior
-            TITLE_LINE_SPACING_AFTER: 3,  // Espaço após linha inferior
+            TITLE_LINE_SPACING_AFTER: 5,  // Espaço após linha inferior (increased from 3 to 5 for better spacing before first paragraph)
             
             // Title detection
             TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título
