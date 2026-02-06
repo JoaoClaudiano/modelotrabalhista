@@ -1,11 +1,55 @@
 // Service Worker para ModeloTrabalhista PWA
-// Versão 1.0.0
+// Versão 1.1.0 - Com suporte a Cache Busting
 
-const CACHE_NAME = 'modelotrabalhista-v1';
+const CACHE_NAME = 'modelotrabalhista-v1.1';
 const OFFLINE_URL = '/modelotrabalhista/index.html';
 
 // Regex para arquivos cacheáveis
 const CACHEABLE_EXTENSIONS = /\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json)$/;
+
+/**
+ * Remove query strings de versão (?v=...) para normalização de cache
+ * Isso permite que o SW reconheça o mesmo arquivo mesmo com versões diferentes
+ * @param {string} url - URL completa
+ * @returns {string} URL limpa sem query string de versão
+ */
+function getCleanUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    // Remove apenas o parâmetro 'v', mantendo outros parâmetros se existirem
+    urlObj.searchParams.delete('v');
+    return urlObj.toString();
+  } catch (error) {
+    console.warn('[Service Worker] URL inválida:', url, error);
+    return url; // Retorna URL original se falhar
+  }
+}
+
+/**
+ * Verifica se uma URL deve ser cacheada
+ * @param {string} url - URL para verificar
+ * @returns {boolean}
+ */
+function isCacheable(url) {
+  const urlObj = new URL(url);
+  
+  // Lista de domínios confiáveis para cache
+  const trustedDomains = [
+    'cdnjs.cloudflare.com',
+    'fonts.googleapis.com',
+    'fonts.gstatic.com',
+    'cdn.jsdelivr.net'
+  ];
+  
+  // Verifica se é do mesmo domínio ou de um CDN confiável
+  const isTrusted = urlObj.origin === location.origin || 
+                    trustedDomains.includes(urlObj.hostname);
+  
+  // Verifica se tem extensão cacheável
+  const hasExtension = CACHEABLE_EXTENSIONS.test(urlObj.pathname);
+  
+  return isTrusted && hasExtension;
+}
 
 // Recursos essenciais para cache inicial
 const ESSENTIAL_RESOURCES = [
@@ -32,12 +76,9 @@ const ESSENTIAL_RESOURCES = [
   '/modelotrabalhista/assets/favicon-96x96.png'
 ];
 
-// Tracking para atualizações em background
-const updatingResources = new Set();
-
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Instalando...');
+  console.log('[Service Worker] Instalando v1.1...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -57,7 +98,7 @@ self.addEventListener('install', (event) => {
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Ativando...');
+  console.log('[Service Worker] Ativando v1.1...');
   
   event.waitUntil(
     caches.keys()
@@ -81,21 +122,7 @@ self.addEventListener('activate', (event) => {
 // Interceptação de requisições
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
   
-  // Lista de domínios confiáveis para cache
-  const trustedDomains = [
-    'cdnjs.cloudflare.com',
-    'fonts.googleapis.com',
-    'fonts.gstatic.com'
-  ];
-  
-  // Ignora requisições que não são do mesmo domínio ou de CDNs confiáveis
-  if (url.origin !== location.origin && 
-      !trustedDomains.includes(url.hostname)) {
-    return;
-  }
-
   // Para navegação (HTML), usa network-first
   if (request.mode === 'navigate') {
     event.respondWith(
@@ -123,65 +150,53 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
+  
+  // Verifica se é cacheável
+  if (!isCacheable(request.url)) {
+    // Se não é cacheável, apenas faz a requisição normal
+    return;
+  }
 
-  // Para outros recursos, usa cache-first
+  // Para outros recursos (CSS, JS, etc), usa Stale-While-Revalidate
+  // compatível com Cache Busting
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
-        if (cachedResponse) {
-          // Retorna do cache e atualiza em background (evita duplicatas)
-          const requestUrl = request.url;
-          if (!updatingResources.has(requestUrl)) {
-            updatingResources.add(requestUrl);
-            
-            fetch(request)
-              .then((response) => {
-                if (response && response.status === 200) {
-                  const responseToCache = response.clone();
-                  caches.open(CACHE_NAME)
-                    .then((cache) => {
-                      cache.put(request, responseToCache);
-                    })
-                    .finally(() => {
-                      updatingResources.delete(requestUrl);
-                    });
-                } else {
-                  updatingResources.delete(requestUrl);
-                }
-              })
-              .catch(() => {
-                updatingResources.delete(requestUrl);
-              });
-          }
-          
-          return cachedResponse;
-        }
-
-        // Se não está no cache, busca da rede
-        return fetch(request)
-          .then((response) => {
-            // Cacheia apenas respostas válidas
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
-
-            // Clona a resposta antes de cachear
-            const responseToCache = response.clone();
-            
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                // Cacheia recursos estáticos usando a constante
-                if (request.url.match(CACHEABLE_EXTENSIONS)) {
+        // Buscar versão atualizada do servidor em paralelo
+        const fetchPromise = fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME)
+                .then((cache) => {
+                  // Cacheia a resposta
                   cache.put(request, responseToCache);
-                }
-              });
-
-            return response;
+                });
+            }
+            return networkResponse;
           })
           .catch(() => {
-            // Se falhar completamente, tenta buscar do cache
-            return caches.match(request);
+            // Se falhar a requisição de rede, retorna null
+            return null;
           });
+        
+        // Se tem cache, retorna imediatamente (Stale-While-Revalidate)
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        
+        // Se não tem cache, aguarda a requisição de rede
+        if (fetchPromise) {
+          return fetchPromise;
+        }
+        
+        // Fallback final: tentar cache novamente
+        return caches.match(request).then(fallbackResponse => {
+          return fallbackResponse || new Response('Offline - recurso não disponível', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
       })
   );
 });
