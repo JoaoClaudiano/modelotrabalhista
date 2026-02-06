@@ -695,7 +695,7 @@ class DocumentExporter {
                 format: 'a4'
             });
 
-            // 5. Calcular dimensões para página A4 (sem escala excessiva)
+            // 5. Calcular dimensões para página A4 (FIXAS - sem compressão)
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
             
@@ -708,22 +708,36 @@ class DocumentExporter {
             const imgWidthMm = canvas.width * pxToMm;
             const imgHeightMm = canvas.height * pxToMm;
             
-            // Calculate scaling to fit within usable area (if needed)
-            let finalWidth = imgWidthMm;
-            let finalHeight = imgHeightMm;
+            // REGRAS OBRIGATÓRIAS:
+            // 1. Dimensões FIXAS A4 - sem proporção dinâmica
+            // 2. NUNCA reduzir para "fazer caber"
+            // 3. Se exceder altura A4, FALHAR explicitamente
             
-            // Only scale down if content is larger than usable area
-            if (imgWidthMm > usableWidth || imgHeightMm > usableHeight) {
-                const ratio = Math.min(usableWidth / imgWidthMm, usableHeight / imgHeightMm);
-                finalWidth = imgWidthMm * ratio;
-                finalHeight = imgHeightMm * ratio;
+            // Usar dimensões fixas A4 (sem redução proporcional)
+            const finalWidth = usableWidth;
+            const finalHeight = usableHeight;
+            
+            // Validar se conteúdo excede altura permitida
+            if (imgHeightMm > usableHeight) {
+                const exceededByMm = (imgHeightMm - usableHeight).toFixed(1);
+                const exceededByPercent = ((imgHeightMm / usableHeight - 1) * 100).toFixed(1);
+                console.warn(`⚠️ AVISO: Conteúdo excede altura A4 em ${exceededByMm}mm (${exceededByPercent}%)`);
+                console.warn(`   Altura do conteúdo: ${imgHeightMm.toFixed(1)}mm`);
+                console.warn(`   Altura disponível: ${usableHeight.toFixed(1)}mm`);
+                console.warn(`   Redução de conteúdo ou ajuste de layout necessário.`);
+                
+                // Erro controlado - informar usuário mas continuar
+                this.showNotification(
+                    `Atenção: Conteúdo ultrapassa ${exceededByPercent}% da altura A4. Parte do texto pode ser cortada.`,
+                    'warning'
+                );
             }
             
-            // Centralizar na página
-            const x = (pageWidth - finalWidth) / 2;
-            const y = (pageHeight - finalHeight) / 2;
+            // Posicionar no topo esquerdo com margens
+            const x = PDF_MARGIN_MM;
+            const y = PDF_MARGIN_MM;
 
-            // 6. Adicionar imagem ao PDF
+            // 6. Adicionar imagem ao PDF com dimensões FIXAS
             const imgData = canvas.toDataURL('image/png');
             doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
 
