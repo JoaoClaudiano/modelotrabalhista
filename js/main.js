@@ -267,73 +267,6 @@ class ModeloTrabalhistaApp {
                 `;
                 break;
 
-            case 'atestado':
-                html = `
-                    <div class="form-group">
-                        <label for="certificateReason" data-tooltip="Informe o motivo da ausência">
-                            <i class="fas fa-stethoscope"></i> Motivo do Atestado *
-                        </label>
-                        <textarea id="certificateReason" class="form-control auto-resize" rows="3"
-                                  placeholder="Informe o motivo da ausência..." required></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="certificateStart">
-                                <i class="fas fa-calendar-day"></i> Data de Início *
-                            </label>
-                            <input type="date" id="certificateStart" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="certificateEnd">
-                                <i class="fas fa-calendar-day"></i> Data de Término *
-                            </label>
-                            <input type="date" id="certificateEnd" class="form-control" required>
-                        </div>
-                    </div>
-                `;
-                break;
-
-            case 'rescisao':
-                html = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="CPF">
-                                <i class="fas fa-id-card"></i> CPF *
-                            </label>
-                            <input type="text" id="CPF" class="form-control" 
-                                   placeholder="Ex: 123.456.789-00" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="CTPS">
-                                <i class="fas fa-id-badge"></i> CTPS *
-                            </label>
-                            <input type="text" id="CTPS" class="form-control" 
-                                   placeholder="Ex: 12345 - Série 0001" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="severanceValue">
-                            <i class="fas fa-money-bill-wave"></i> Valor da Rescisão (R$) *
-                        </label>
-                        <input type="number" id="severanceValue" class="form-control" 
-                               placeholder="Ex: 5000.00" step="0.01" min="0" data-mask="money" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="paymentDate">
-                            <i class="fas fa-calendar-alt"></i> Data para Pagamento *
-                        </label>
-                            <input type="date" id="paymentDate" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="additionalConditions">
-                            <i class="fas fa-clipboard-list"></i> Condições Adicionais
-                        </label>
-                        <textarea id="additionalConditions" class="form-control auto-resize" rows="3"
-                                  placeholder="Informe condições adicionais do acordo..."></textarea>
-                    </div>
-                `;
-                break;
-
             case 'reuniao':
                 const tomorrow = new Date();
                 tomorrow.setDate(tomorrow.getDate() + 1);
@@ -367,6 +300,257 @@ class ModeloTrabalhistaApp {
                         </label>
                         <textarea id="meetingAgenda" class="form-control auto-resize" rows="4"
                                   placeholder="Liste os tópicos que serão discutidos..." required></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'alteracao_jornada':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Administrativo" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="currentShift">
+                                <i class="fas fa-clock"></i> Turno Atual *
+                            </label>
+                            <input type="text" id="currentShift" class="form-control" 
+                                   placeholder="Ex: Matutino (8h-12h)" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="desiredShift">
+                                <i class="fas fa-clock"></i> Turno Desejado *
+                            </label>
+                            <input type="text" id="desiredShift" class="form-control" 
+                                   placeholder="Ex: Vespertino (14h-18h)" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">
+                            <i class="fas fa-calendar-alt"></i> Data de Início Desejada *
+                        </label>
+                        <input type="date" id="startDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="justification">
+                            <i class="fas fa-comment-alt"></i> Justificativa *
+                        </label>
+                        <textarea id="justification" class="form-control auto-resize" rows="3"
+                                  placeholder="Explique o motivo da solicitação..." required></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'reembolso':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Vendas" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expenseType">
+                                <i class="fas fa-tag"></i> Tipo de Despesa *
+                            </label>
+                            <input type="text" id="expenseType" class="form-control" 
+                                   placeholder="Ex: Combustível, Hospedagem" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseDate">
+                                <i class="fas fa-calendar-day"></i> Data da Despesa *
+                            </label>
+                            <input type="date" id="expenseDate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseValue">
+                            <i class="fas fa-money-bill-wave"></i> Valor (R$) *
+                        </label>
+                        <input type="number" id="expenseValue" class="form-control" 
+                               placeholder="Ex: 150.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseReason">
+                            <i class="fas fa-comment-alt"></i> Motivo *
+                        </label>
+                        <textarea id="expenseReason" class="form-control auto-resize" rows="3"
+                                  placeholder="Descreva o motivo da despesa..." required></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'beneficios':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: TI" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="benefitType">
+                            <i class="fas fa-gift"></i> Tipo de Benefício *
+                        </label>
+                        <input type="text" id="benefitType" class="form-control" 
+                               placeholder="Ex: Vale-refeição, Vale-transporte" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">
+                            <i class="fas fa-calendar-alt"></i> Data de Início Desejada *
+                        </label>
+                        <input type="date" id="startDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="justification">
+                            <i class="fas fa-comment-alt"></i> Justificativa *
+                        </label>
+                        <textarea id="justification" class="form-control auto-resize" rows="3"
+                                  placeholder="Explique o motivo da solicitação..." required></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'licenca_maternidade':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Recursos Humanos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaveType">
+                            <i class="fas fa-baby"></i> Tipo de Licença *
+                        </label>
+                        <select id="leaveType" class="form-control" required>
+                            <option value="Licença Maternidade">Licença Maternidade</option>
+                            <option value="Licença Paternidade">Licença Paternidade</option>
+                            <option value="Prorrogação de Licença Maternidade">Prorrogação de Licença Maternidade</option>
+                            <option value="Prorrogação de Licença Paternidade">Prorrogação de Licença Paternidade</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">
+                                <i class="fas fa-calendar-alt"></i> Data de Início *
+                            </label>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">
+                                <i class="fas fa-hourglass-half"></i> Duração *
+                            </label>
+                            <input type="text" id="duration" class="form-control" 
+                                   placeholder="Ex: 120 dias" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="justification">
+                            <i class="fas fa-comment-alt"></i> Observações
+                        </label>
+                        <textarea id="justification" class="form-control auto-resize" rows="2"
+                                  placeholder="Informações adicionais..."></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'flexibilizacao_jornada':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Marketing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="flexibilizationType">
+                            <i class="fas fa-clock"></i> Tipo de Flexibilização *
+                        </label>
+                        <input type="text" id="flexibilizationType" class="form-control" 
+                               placeholder="Ex: Entrada às 9h e saída às 18h" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="period">
+                            <i class="fas fa-calendar"></i> Período *
+                        </label>
+                        <input type="text" id="period" class="form-control" 
+                               placeholder="Ex: 3 meses, Até dezembro/2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">
+                            <i class="fas fa-comment-alt"></i> Motivo Familiar *
+                        </label>
+                        <textarea id="reason" class="form-control auto-resize" rows="3"
+                                  placeholder="Descreva o motivo familiar..." required></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'intervalo_amamentacao':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Financeiro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervalPeriod">
+                            <i class="fas fa-clock"></i> Período de Intervalo *
+                        </label>
+                        <input type="text" id="intervalPeriod" class="form-control" 
+                               placeholder="Ex: Dois intervalos de 30 minutos (10h e 15h)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="observations">
+                            <i class="fas fa-comment-alt"></i> Observações
+                        </label>
+                        <textarea id="observations" class="form-control auto-resize" rows="2"
+                                  placeholder="Informações adicionais..."></textarea>
+                    </div>
+                `;
+                break;
+
+            case 'ajuste_horario_pais':
+                html = `
+                    <div class="form-group">
+                        <label for="sector">
+                            <i class="fas fa-building"></i> Setor *
+                        </label>
+                        <input type="text" id="sector" class="form-control" 
+                               placeholder="Ex: Operações" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adjustmentType">
+                            <i class="fas fa-clock"></i> Tipo de Ajuste *
+                        </label>
+                        <input type="text" id="adjustmentType" class="form-control" 
+                               placeholder="Ex: Saída antecipada às quintas-feiras" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dates">
+                            <i class="fas fa-calendar"></i> Datas *
+                        </label>
+                        <input type="text" id="dates" class="form-control" 
+                               placeholder="Ex: Todas as quintas até dezembro/2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">
+                            <i class="fas fa-comment-alt"></i> Motivo *
+                        </label>
+                        <textarea id="reason" class="form-control auto-resize" rows="3"
+                                  placeholder="Descreva o motivo..." required></textarea>
                     </div>
                 `;
                 break;
@@ -509,23 +693,55 @@ class ModeloTrabalhistaApp {
                 data.incidentDate = getValue('incidentDate');
                 data.severity = getValue('severity') || 'media';
                 break;
-            case 'atestado':
-                data.certificateReason = getValue('certificateReason');
-                data.certificateStart = getValue('certificateStart') || data.documentDate;
-                data.certificateEnd = getValue('certificateEnd') || data.documentDate;
-                break;
-            case 'rescisao':
-                data.severanceValue = getValue('severanceValue');
-                data.paymentDate = getValue('paymentDate');
-                data.additionalConditions = getValue('additionalConditions');
-                data.CPF = getValue('CPF');
-                data.CTPS = getValue('CTPS');
-                break;
             case 'reuniao':
                 data.meetingDate = getValue('meetingDate');
                 data.meetingTime = getValue('meetingTime');
                 data.meetingLocation = getValue('meetingLocation');
                 data.meetingAgenda = getValue('meetingAgenda');
+                break;
+            case 'alteracao_jornada':
+                data.sector = getValue('sector');
+                data.currentShift = getValue('currentShift');
+                data.desiredShift = getValue('desiredShift');
+                data.justification = getValue('justification');
+                data.startDate = getValue('startDate');
+                break;
+            case 'reembolso':
+                data.sector = getValue('sector');
+                data.expenseType = getValue('expenseType');
+                data.expenseDate = getValue('expenseDate');
+                data.expenseValue = getValue('expenseValue');
+                data.expenseReason = getValue('expenseReason');
+                break;
+            case 'beneficios':
+                data.sector = getValue('sector');
+                data.benefitType = getValue('benefitType');
+                data.justification = getValue('justification');
+                data.startDate = getValue('startDate');
+                break;
+            case 'licenca_maternidade':
+                data.sector = getValue('sector');
+                data.leaveType = getValue('leaveType');
+                data.startDate = getValue('startDate');
+                data.duration = getValue('duration');
+                data.justification = getValue('justification');
+                break;
+            case 'flexibilizacao_jornada':
+                data.sector = getValue('sector');
+                data.flexibilizationType = getValue('flexibilizationType');
+                data.period = getValue('period');
+                data.reason = getValue('reason');
+                break;
+            case 'intervalo_amamentacao':
+                data.sector = getValue('sector');
+                data.intervalPeriod = getValue('intervalPeriod');
+                data.observations = getValue('observations');
+                break;
+            case 'ajuste_horario_pais':
+                data.sector = getValue('sector');
+                data.adjustmentType = getValue('adjustmentType');
+                data.dates = getValue('dates');
+                data.reason = getValue('reason');
                 break;
         }
 
@@ -545,10 +761,6 @@ class ModeloTrabalhistaApp {
                 return this.generateVacationRequest(data);
             case 'advertencia':
                 return this.generateWarningLetter(data);
-            case 'atestado':
-                return this.generateCertificate(data);
-            case 'rescisao':
-                return this.generateSeveranceAgreement(data);
             case 'reuniao':
                 return this.generateMeetingConvocation(data);
             default:
@@ -954,13 +1166,6 @@ ${data.employeePosition}`;
                     return false;
                 }
                 break;
-            case 'atestado':
-                const certReasonField = document.getElementById('certificateReason');
-                if (certReasonField && !certReasonField.value.trim()) {
-                    this.ui.highlightError(certReasonField);
-                    return false;
-                }
-                break;
         }
 
         return true;
@@ -977,10 +1182,24 @@ ${data.employeePosition}`;
             vacationPeriod: '01/12/2023 a 31/12/2023',
             vacationDays: '30',
             warningReason: 'Atrasos recorrentes no horário de entrada durante o mês de outubro.',
-            certificateReason: 'Consulta médica agendada com urgência.',
-            severanceValue: '5000.00',
             meetingLocation: 'Sala de Reuniões Principal',
-            meetingAgenda: '1. Abertura e boas-vindas\n2. Apresentação dos resultados do trimestre\n3. Discussão sobre novas metas\n4. Feedbacks da equipe\n5. Encerramento'
+            meetingAgenda: '1. Abertura e boas-vindas\n2. Apresentação dos resultados do trimestre\n3. Discussão sobre novas metas\n4. Feedbacks da equipe\n5. Encerramento',
+            sector: 'Tecnologia',
+            currentShift: 'Matutino (8h-12h)',
+            desiredShift: 'Vespertino (14h-18h)',
+            justification: 'Necessidade de acompanhar filho em escola no período da manhã.',
+            expenseType: 'Combustível',
+            expenseValue: '250.00',
+            expenseReason: 'Visita a clientes conforme orientação do gestor.',
+            benefitType: 'Vale-refeição',
+            leaveType: 'Licença Maternidade',
+            duration: '120 dias',
+            flexibilizationType: 'Entrada às 9h e saída às 18h',
+            period: '3 meses',
+            reason: 'Necessidade de acompanhamento médico de filho.',
+            intervalPeriod: 'Dois intervalos de 30 minutos (10h e 15h)',
+            adjustmentType: 'Saída antecipada às quintas-feiras',
+            dates: 'Todas as quintas-feiras até dezembro/2026'
         };
 
         // Fill basic fields

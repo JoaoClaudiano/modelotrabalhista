@@ -36,29 +36,89 @@
       "seo_title": "Modelo de Advertência Formal para Empregados",
       "seo_description": "Crie advertências formais com nosso modelo válido. Documente infrações de forma profissional."
     },
-    "atestado": {
-      "name": "Atestado Informal",
-      "description": "Modelo simples para atestar comparecimento ou justificar falta",
-      "icon": "file-medical",
+    "alteracao_jornada": {
+      "name": "Pedido de Alteração de Jornada ou Turno",
+      "description": "Formalize solicitação de mudança de turno ou jornada de trabalho",
+      "icon": "clock",
       "fields": {
-        "required": ["empresaNome", "funcionarioNome", "data", "motivoAtestado"],
-        "optional": ["empresaEndereco", "funcionarioCargo", "dataInicio", "dataFim"]
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "turnoAtual", "turnoDesejado", "justificativa", "dataInicio"],
+        "optional": ["empresaNome", "empresaEndereco"]
       },
-      "keywords": ["atestado", "falta", "justificativa", "comparecimento", "informal"],
-      "seo_title": "Modelo de Atestado Informal para Justificar Faltas",
-      "seo_description": "Gere atestados informais para justificar faltas ao trabalho. Modelo simples e prático."
+      "keywords": ["alteração", "jornada", "turno", "horário", "trabalho"],
+      "seo_title": "Modelo de Pedido de Alteração de Jornada ou Turno",
+      "seo_description": "Solicite alteração de jornada ou turno com nosso modelo profissional e formal."
     },
-    "rescisao": {
-      "name": "Acordo de Rescisão",
-      "description": "Documento para formalizar acordo de rescisão contratual",
-      "icon": "handshake",
+    "reembolso": {
+      "name": "Pedido de Reembolso de Despesas",
+      "description": "Solicite reembolso de despesas administrativas ou profissionais",
+      "icon": "receipt",
       "fields": {
-        "required": ["empresaNome", "funcionarioNome", "data"],
-        "optional": ["empresaEndereco", "funcionarioCargo", "valorRescisao", "dataPagamento", "condicoesAdicionais"]
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "tipoDespesa", "dataDespesa", "valor", "motivo"],
+        "optional": ["empresaNome", "comprovante"]
       },
-      "keywords": ["acordo", "rescisão", "contratual", "termo", "trabalhista"],
-      "seo_title": "Modelo de Acordo de Rescisão Contratual",
-      "seo_description": "Formalize acordos de rescisão com nosso modelo válido. Proteja direitos de ambas as partes."
+      "keywords": ["reembolso", "despesas", "gastos", "comprovante", "administrativo"],
+      "seo_title": "Modelo de Pedido de Reembolso de Despesas",
+      "seo_description": "Formalize pedidos de reembolso com nosso modelo completo e profissional."
+    },
+    "beneficios": {
+      "name": "Solicitação de Benefícios",
+      "description": "Solicite benefícios como vale-refeição, transporte ou cursos",
+      "icon": "gift",
+      "fields": {
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "tipoBeneficio", "justificativa", "dataInicio"],
+        "optional": ["empresaNome"]
+      },
+      "keywords": ["benefícios", "vale-refeição", "vale-transporte", "cursos", "solicitação"],
+      "seo_title": "Modelo de Solicitação de Benefícios",
+      "seo_description": "Solicite benefícios trabalhistas com nosso modelo formal e completo."
+    },
+    "licenca_maternidade": {
+      "name": "Pedido de Licença Maternidade/Paternidade ou Prorrogação",
+      "description": "Formalize solicitação de licença conforme CLT",
+      "icon": "baby",
+      "fields": {
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "dataInicio", "duracao", "tipoLicenca"],
+        "optional": ["empresaNome", "justificativa"]
+      },
+      "keywords": ["licença", "maternidade", "paternidade", "CLT", "prorrogação"],
+      "seo_title": "Modelo de Pedido de Licença Maternidade/Paternidade",
+      "seo_description": "Solicite licença maternidade ou paternidade com base na CLT."
+    },
+    "flexibilizacao_jornada": {
+      "name": "Pedido de Flexibilização de Jornada por Motivo Familiar",
+      "description": "Solicite ajuste de horário por razões familiares",
+      "icon": "home",
+      "fields": {
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "motivo", "periodo", "tipoFlexibilizacao"],
+        "optional": ["empresaNome"]
+      },
+      "keywords": ["flexibilização", "jornada", "família", "horário", "ajuste"],
+      "seo_title": "Modelo de Pedido de Flexibilização de Jornada por Motivo Familiar",
+      "seo_description": "Formalize pedidos de flexibilização de horário por motivos familiares."
+    },
+    "intervalo_amamentacao": {
+      "name": "Solicitação de Intervalo para Amamentação",
+      "description": "Garanta direito de amamentação conforme art. 396 da CLT",
+      "icon": "heart",
+      "fields": {
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "periodoIntervalo"],
+        "optional": ["empresaNome", "observacoes"]
+      },
+      "keywords": ["amamentação", "intervalo", "CLT", "mãe", "lactante"],
+      "seo_title": "Modelo de Solicitação de Intervalo para Amamentação",
+      "seo_description": "Formalize seu direito ao intervalo para amamentação garantido pela CLT."
+    },
+    "ajuste_horario_pais": {
+      "name": "Pedido de Licença ou Ajuste de Horário para Pais/Responsáveis",
+      "description": "Solicite ajuste de horário para acompanhamento de filhos",
+      "icon": "user-friends",
+      "fields": {
+        "required": ["funcionarioNome", "funcionarioCargo", "setor", "data", "tipoAjuste", "datas", "motivo"],
+        "optional": ["empresaNome"]
+      },
+      "keywords": ["ajuste", "horário", "pais", "responsáveis", "filhos"],
+      "seo_title": "Modelo de Pedido de Ajuste de Horário para Pais/Responsáveis",
+      "seo_description": "Formalize pedidos de ajuste de horário para acompanhamento de filhos."
     },
     "reuniao": {
       "name": "Convocatória de Reunião",
@@ -74,7 +134,7 @@
     }
   },
   "metadata": {
-    "version": "1.0.0",
-    "last_updated": "2026-02-15",
+    "version": "2.0.0",
+    "last_updated": "2026-02-06"
   }
 }

@@ -1,0 +1,258 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                 ESTRUTURA VISUAL DOS PDFs EXPORTADOS                      ║
+║                    GUIA COMPLETO DE LAYOUT E FORMATAÇÃO                   ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Este documento mostra EXATAMENTE como cada PDF é estruturado visualmente,
+incluindo formatação, espaçamentos, bordas e organização dos elementos.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 MODELO 1: PEDIDO DE ALTERAÇÃO DE JORNADA OU TURNO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│                         TECH SOLUTIONS LTDA                               │
+│                    Av. Paulista, 1000 - São Paulo/SP                     │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│           PEDIDO DE ALTERAÇÃO DE JORNADA OU TURNO                        │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│                                                                           │
+│   Eu, Maria Santos, ocupante do cargo de Analista de RH,                │
+│   lotado(a) no setor Recursos Humanos, venho por meio deste             │
+│   solicitar alteração de jornada de trabalho conforme detalhado         │
+│   abaixo:                                                                 │
+│                                                                           │
+│                                                                           │
+│   Turno Atual: Matutino (8h às 12h)                                     │
+│   Turno Desejado: Vespertino (14h às 18h)                               │
+│   Data de Início Desejada: 01/03/2026                                   │
+│                                                                           │
+│                                                                           │
+│   Justificativa:                                                          │
+│   "Necessidade de acompanhar filho em escola no período da manhã."      │
+│                                                                           │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│   São Paulo, 06 de fevereiro de 2026                                    │
+│                                                                           │
+│                                                                           │
+│                     _________________________________                     │
+│                            Maria Santos                                   │
+│                           Analista de RH                                  │
+│                                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+FORMATAÇÃO USADA:
+├─ Cabeçalho: Fonte 10pt, NEGRITO, Centralizado
+├─ Endereço: Fonte 9pt, NEGRITO, Centralizado
+├─ Título: Fonte 12pt, NEGRITO, Centralizado, Bordas superior e inferior
+├─ Corpo: Fonte 10pt, Texto justificado, Espaçamento 1.5
+├─ Dados destacados: NEGRITO
+├─ Justificativa: Itálico, Entre aspas
+├─ Data: Fonte 10pt
+├─ Assinatura: Linha superior, Nome centralizado, Cargo em fonte 9pt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 MODELO 2: PEDIDO DE REEMBOLSO DE DESPESAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│                         TECH SOLUTIONS LTDA                               │
+│                    Av. Paulista, 1000 - São Paulo/SP                     │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│                 PEDIDO DE REEMBOLSO DE DESPESAS                          │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│                                                                           │
+│   Eu, Carlos Oliveira, ocupante do cargo de Gerente de Vendas,          │
+│   lotado(a) no setor Comercial, venho solicitar o reembolso de          │
+│   despesas conforme detalhado abaixo:                                    │
+│                                                                           │
+│                                                                           │
+│   Tipo de Despesa: Combustível e pedágio                                │
+│   Data da Despesa: 05/02/2026                                            │
+│   Valor: R$ 350,00                                                       │
+│                                                                           │
+│                                                                           │
+│   Motivo:                                                                 │
+│   "Visita a clientes em Campinas conforme aprovação do diretor          │
+│   comercial."                                                             │
+│                                                                           │
+│                                                                           │
+│   Declaro que a despesa foi realizada em benefício da empresa e         │
+│   que possuo os comprovantes necessários.                                │
+│                                                                           │
+│                                                                           │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│                                                                           │
+│   São Paulo, 06 de fevereiro de 2026                                    │
+│                                                                           │
+│                                                                           │
+│                     _________________________________                     │
+│                           Carlos Oliveira                                 │
+│                         Gerente de Vendas                                 │
+│                                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+FORMATAÇÃO USADA:
+├─ Cabeçalho: Fonte 10pt, NEGRITO, Centralizado
+├─ Endereço: Fonte 9pt, NEGRITO, Centralizado
+├─ Título: Fonte 12pt, NEGRITO, Centralizado, Bordas superior e inferior
+├─ Corpo: Fonte 10pt, Texto justificado, Espaçamento 1.5
+├─ Dados financeiros: NEGRITO (tipo, data, valor)
+├─ Valor monetário: Formato R$ XXX,XX
+├─ Motivo: Itálico, Entre aspas
+├─ Declaração: Texto justificado
+├─ Data: Fonte 10pt
+├─ Assinatura: Linha superior, Nome e cargo centralizados
+
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                    PADRÕES DE FORMATAÇÃO COMUNS                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+📐 DIMENSÕES DO DOCUMENTO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Tamanho da página: A4 (210mm x 297mm)
+• Margens: 2cm (todas as bordas)
+• Largura útil: 17cm (170mm)
+• Altura útil: 25.7cm (257mm)
+• Fonte base: Arial ou Helvetica
+• Cor do texto: Preto (#000000)
+
+
+🎨 ELEMENTOS VISUAIS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. CABEÇALHO DA EMPRESA:
+   ├─ Posição: Topo da página, centralizado
+   ├─ Nome: Fonte 10pt, NEGRITO, MAIÚSCULAS
+   ├─ Endereço: Fonte 9pt, NEGRITO
+   └─ Espaçamento inferior: 8px
+
+2. TÍTULO DO DOCUMENTO:
+   ├─ Posição: Abaixo do cabeçalho, centralizado
+   ├─ Fonte: 12pt, NEGRITO, MAIÚSCULAS
+   ├─ Bordas: Linha de 2px acima e abaixo
+   ├─ Espaçamento: 12px acima, 8px abaixo
+   └─ Cor das bordas: Preto (#000)
+
+3. CORPO DO TEXTO:
+   ├─ Fonte: 10pt, Regular
+   ├─ Alinhamento: Justificado
+   ├─ Espaçamento entre linhas: 1.5
+   ├─ Espaçamento entre parágrafos: 6-8px
+   └─ Destaques: NEGRITO para informações importantes
+
+4. DADOS DESTACADOS:
+   ├─ Rótulos: Normal
+   ├─ Valores: NEGRITO
+   └─ Espaçamento: 2px entre linhas
+
+5. CITAÇÕES/JUSTIFICATIVAS:
+   ├─ Formatação: Itálico
+   ├─ Aspas duplas: " "
+   └─ Indentação: Opcional
+
+6. CAIXAS DE REFERÊNCIA LEGAL (CLT):
+   ├─ Fundo: Cinza claro (#f5f5f5)
+   ├─ Borda: 1px sólida (#ddd)
+   ├─ Padding: 12px
+   ├─ Fonte: 9pt
+   ├─ Margem: 8px acima e abaixo
+   └─ Border-radius: 4px (cantos arredondados)
+
+7. DIVISÓRIA HORIZONTAL:
+   ├─ Linha: 2px sólida, preta
+   ├─ Largura: 100%
+   ├─ Margem: 18px acima e abaixo
+   └─ Uso: Antes da assinatura
+
+8. DATA E LOCAL:
+   ├─ Fonte: 10pt
+   ├─ Posição: Após a divisória
+   ├─ Formato: [Cidade], [dia] de [mês por extenso] de [ano]
+   └─ Espaçamento: 12px inferior
+
+9. ÁREA DE ASSINATURA:
+   ├─ Linha superior: 1px sólida, preta, 280px de largura
+   ├─ Posição: Centralizada
+   ├─ Margem superior: 28px
+   ├─ Nome: Fonte 10pt, centralizado, 4px abaixo da linha
+   ├─ Cargo: Fonte 9pt, centralizado, 2px abaixo do nome
+   └─ Margem inferior: 16px
+
+
+⚙️ CONFIGURAÇÕES DE CSS INLINE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DOCUMENT_CONTAINER_STYLE:
+├─ width: 21cm (página A4)
+├─ max-width: 21cm
+├─ margin: 0 auto
+├─ padding: 2cm
+├─ background-color: #ffffff
+├─ font-family: Arial, Helvetica, sans-serif
+├─ font-size: 10pt
+├─ line-height: 1.5
+├─ color: #000000
+├─ box-sizing: border-box
+└─ page-break-inside: avoid (para impressão)
+
+
+📄 COMPATIBILIDADE DE EXPORTAÇÃO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ PDF:
+   • Renderizado via jsPDF + html2canvas
+   • Preserva formatação CSS inline
+   • Mantém quebras de página
+   • Tamanho de arquivo: ~50-100KB
+
+✅ DOCX:
+   • Gerado via docx.js
+   • Converte HTML para Word
+   • Mantém estilos básicos (negrito, itálico)
+   • Tabelas e listas preservadas
+
+✅ TXT:
+   • Cópia do texto puro
+   • Remove formatação HTML
+   • Mantém quebras de linha
+   • Ideal para referência rápida
+
+
+🔧 TECNOLOGIAS UTILIZADAS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. HTML5: Estrutura do documento
+2. CSS3 Inline: Formatação e layout
+3. JavaScript: Geração dinâmica (generator.js)
+4. jsPDF: Exportação para PDF
+5. html2canvas: Renderização de HTML para canvas
+6. docx.js: Geração de arquivos DOCX
+7. Font: Arial/Helvetica (web-safe fonts)
+
+
+💡 NOTAS IMPORTANTES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Todos os documentos seguem o mesmo padrão visual
+✓ Apenas documentos com referências CLT têm caixas destacadas
+✓ A formatação é preservada em PDF e DOCX
+✓ O sistema é responsivo (funciona em mobile)
+✓ Não há imagens ou logos (apenas texto)
+✓ Cores limitadas a preto, branco e cinza claro
+✓ Fonte web-safe para máxima compatibilidade
+✓ CSS inline para garantir portabilidade
