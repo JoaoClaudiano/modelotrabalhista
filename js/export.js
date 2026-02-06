@@ -1175,7 +1175,7 @@ class DocumentExporter {
                         
                     case 'companyAddress':
                         pdf.setFontSize(config.FONT_SIZE);
-                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFont('helvetica', 'bold');
                         
                         // Reduced spacing between name and address
                         yPosition += config.HEADER_NAME_TO_ADDRESS;
