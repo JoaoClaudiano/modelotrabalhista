@@ -1430,7 +1430,11 @@ class DocumentExporter {
             
             // 5. Save PDF with descriptive filename
             // Create a safe filename from the title (e.g., "Pedido_de_Demissao.pdf")
-            const safeFilename = title.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, '').replace(/\s+/g, '_');
+            // Replace slashes with underscores first, then remove other special characters
+            const safeFilename = title
+                .replace(/\//g, '_')  // Replace slashes with underscores
+                .replace(/[^a-zA-ZÀ-ÿ0-9\s_]/g, '')  // Remove other special chars
+                .replace(/\s+/g, '_');  // Replace spaces with underscores
             pdf.save(`${safeFilename}.pdf`);
             
             const message = pageCount > 1 
