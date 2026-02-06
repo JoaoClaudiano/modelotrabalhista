@@ -68,8 +68,22 @@ class DocumentExporter {
             TITLE_SPACING_AFTER: 3,     // Espaço depois de títulos
             EMPTY_LINE_FACTOR: 0.75,    // Fator para linhas vazias (relativo ao line-height)
             
+            // Header spacing (mm)
+            HEADER_NAME_TO_ADDRESS: 1.5,  // Espaço reduzido entre nome e endereço da empresa
+            HEADER_AFTER: 6,              // Espaço após cabeçalho completo
+            
+            // Decorative lines for document title
+            TITLE_LINE_WIDTH: 0.4,        // Espessura das linhas (pt) - discreta
+            TITLE_LINE_SPACING_BEFORE: 3, // Espaço antes da linha superior
+            TITLE_LINE_TO_TEXT: 2,        // Espaço entre linha e texto do título
+            TITLE_TEXT_TO_LINE: 2,        // Espaço entre texto do título e linha inferior
+            TITLE_LINE_SPACING_AFTER: 3,  // Espaço após linha inferior
+            
             // Title detection
             TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título
+            
+            // Text justification
+            JUSTIFY_MIN_LENGTH: 60,     // Mínimo de caracteres para justificar parágrafo
             
             // Calculated usable area (getters dinâmicos)
             get USABLE_WIDTH() { return this.PAGE_WIDTH - (2 * this.MARGIN); },
@@ -98,6 +112,60 @@ class DocumentExporter {
                trimmedLine.length > 0 &&
                trimmedLine === trimmedLine.toUpperCase() && 
                this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
+    }
+    
+    // Detectar se é o cabeçalho da empresa (nome da empresa - primeira linha uppercase curta)
+    isCompanyNameLine(line, lineIndex, previousLinesCount) {
+        // Nome da empresa é tipicamente a primeira linha uppercase
+        const trimmedLine = line.trim();
+        return lineIndex < 3 && // Primeiras 3 linhas
+               trimmedLine.length > 0 &&
+               trimmedLine.length < 80 &&
+               trimmedLine === trimmedLine.toUpperCase() && 
+               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine) &&
+               previousLinesCount === 0; // É a primeira linha não-vazia
+    }
+    
+    // Detectar se é o endereço da empresa (segue o nome da empresa)
+    isCompanyAddressLine(line, previousLineWasCompanyName) {
+        const trimmedLine = line.trim();
+        return previousLineWasCompanyName && 
+               trimmedLine.length > 0 &&
+               trimmedLine.length < 100;
+    }
+    
+    // Detectar se é o título principal do documento (ex: "PEDIDO DE DEMISSÃO")
+    // Critério: linha uppercase curta que aparece após o cabeçalho
+    isMainDocumentTitle(line, lineIndex, afterHeader) {
+        const trimmedLine = line.trim();
+        // Títulos principais são uppercase, curtos e aparecem nas primeiras linhas após header
+        return afterHeader &&
+               lineIndex < 10 && // Primeiras 10 linhas do documento
+               trimmedLine.length > 10 && // Não muito curto
+               trimmedLine.length < 50 && // Não muito longo
+               trimmedLine === trimmedLine.toUpperCase() && 
+               this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
+    }
+    
+    // Verificar se uma linha deve ser justificada
+    shouldJustifyLine(line) {
+        const trimmedLine = line.trim();
+        // Justificar apenas parágrafos longos (não títulos, listas, etc)
+        return trimmedLine.length >= this.PDF_CONFIG.JUSTIFY_MIN_LENGTH &&
+               !this.isTitleLine(line) &&
+               !trimmedLine.match(/^[-•*]/) && // Não é item de lista
+               !trimmedLine.match(/^[0-9]+[.)]/); // Não é lista numerada
+    }
+    
+    // Desenhar linha horizontal decorativa
+    drawDecorativeLine(pdf, yPosition, config) {
+        pdf.setLineWidth(config.TITLE_LINE_WIDTH);
+        pdf.line(
+            config.MARGIN, 
+            yPosition, 
+            config.MARGIN + config.USABLE_WIDTH, 
+            yPosition
+        );
     }
 
     // Sanitizar nome de arquivo
@@ -722,6 +790,9 @@ class DocumentExporter {
             let pageCount = 1;
             let previousLineWasEmpty = false;
             let previousLineWasTitle = false;
+            let previousLineWasCompanyName = false;
+            let headerComplete = false;
+            let nonEmptyLinesCount = 0;
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
@@ -733,10 +804,123 @@ class DocumentExporter {
                     yPosition += emptyLineSpacing;
                     previousLineWasEmpty = true;
                     previousLineWasTitle = false;
+                    previousLineWasCompanyName = false;
                     continue;
                 }
                 
-                // Título (uppercase)
+                // Detectar nome da empresa (cabeçalho)
+                if (this.isCompanyNameLine(line, i, nonEmptyLinesCount)) {
+                    pdf.setFontSize(config.FONT_SIZE);
+                    pdf.setFont('helvetica', 'bold');
+                    
+                    const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                    
+                    // Verificar se precisa de nova página
+                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                        pdf.addPage();
+                        yPosition = config.MARGIN;
+                        pageCount++;
+                    }
+                    
+                    // Centralizar nome da empresa na largura útil
+                    const textWidth = pdf.getTextWidth(trimmed);
+                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
+                    
+                    pdf.text(trimmed, xPosition, yPosition);
+                    yPosition += lineHeight;
+                    
+                    previousLineWasEmpty = false;
+                    previousLineWasTitle = false;
+                    previousLineWasCompanyName = true;
+                    nonEmptyLinesCount++;
+                    continue;
+                }
+                
+                // Detectar endereço da empresa (segue o nome)
+                if (this.isCompanyAddressLine(line, previousLineWasCompanyName)) {
+                    pdf.setFontSize(config.FONT_SIZE);
+                    pdf.setFont('helvetica', 'normal');
+                    
+                    // Espaçamento reduzido entre nome e endereço
+                    yPosition += config.HEADER_NAME_TO_ADDRESS;
+                    
+                    const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                    
+                    // Verificar se precisa de nova página
+                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                        pdf.addPage();
+                        yPosition = config.MARGIN;
+                        pageCount++;
+                    }
+                    
+                    // Centralizar endereço na largura útil
+                    const textWidth = pdf.getTextWidth(trimmed);
+                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
+                    
+                    pdf.text(trimmed, xPosition, yPosition);
+                    yPosition += lineHeight + config.HEADER_AFTER;
+                    
+                    previousLineWasEmpty = false;
+                    previousLineWasTitle = false;
+                    previousLineWasCompanyName = false;
+                    headerComplete = true;
+                    nonEmptyLinesCount++;
+                    continue;
+                }
+                
+                // Detectar título principal do documento (com linhas decorativas)
+                if (this.isMainDocumentTitle(line, i, headerComplete)) {
+                    pdf.setFontSize(config.TITLE_FONT_SIZE);
+                    pdf.setFont('helvetica', 'bold');
+                    
+                    // Calcular altura total necessária
+                    const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                    const totalHeight = config.TITLE_LINE_SPACING_BEFORE +
+                                      config.TITLE_LINE_TO_TEXT +
+                                      titleLineHeight +
+                                      config.TITLE_TEXT_TO_LINE +
+                                      config.TITLE_LINE_SPACING_AFTER;
+                    
+                    // Verificar se precisa de nova página
+                    if (yPosition + totalHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                        pdf.addPage();
+                        yPosition = config.MARGIN;
+                        pageCount++;
+                    }
+                    
+                    // Espaço antes da linha superior
+                    yPosition += config.TITLE_LINE_SPACING_BEFORE;
+                    
+                    // Desenhar linha horizontal superior
+                    this.drawDecorativeLine(pdf, yPosition, config);
+                    
+                    // Espaço entre linha e título
+                    yPosition += config.TITLE_LINE_TO_TEXT;
+                    
+                    // Centralizar título na largura útil
+                    const textWidth = pdf.getTextWidth(trimmed);
+                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
+                    
+                    pdf.text(trimmed, xPosition, yPosition);
+                    yPosition += titleLineHeight;
+                    
+                    // Espaço entre título e linha inferior
+                    yPosition += config.TITLE_TEXT_TO_LINE;
+                    
+                    // Desenhar linha horizontal inferior
+                    this.drawDecorativeLine(pdf, yPosition, config);
+                    
+                    // Espaço após linha inferior
+                    yPosition += config.TITLE_LINE_SPACING_AFTER;
+                    
+                    previousLineWasEmpty = false;
+                    previousLineWasTitle = true;
+                    previousLineWasCompanyName = false;
+                    nonEmptyLinesCount++;
+                    continue;
+                }
+                
+                // Título regular (uppercase, não o principal)
                 if (this.isTitleLine(line)) {
                     pdf.setFontSize(config.TITLE_FONT_SIZE);
                     pdf.setFont('helvetica', 'bold');
@@ -757,7 +941,7 @@ class DocumentExporter {
                         pageCount++;
                     }
                     
-                    // Centralizar título DENTRO DA LARGURA ÚTIL (correção crítica)
+                    // Centralizar título DENTRO DA LARGURA ÚTIL
                     const textWidth = pdf.getTextWidth(trimmed);
                     const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
                     
@@ -765,35 +949,86 @@ class DocumentExporter {
                     yPosition += totalTitleHeight;
                     previousLineWasEmpty = false;
                     previousLineWasTitle = true;
+                    previousLineWasCompanyName = false;
+                    nonEmptyLinesCount++;
                     continue;
                 }
                 
-                // Texto normal com quebra automática
+                // Texto normal com quebra automática e justificação condicional
                 pdf.setFontSize(config.FONT_SIZE);
                 pdf.setFont('helvetica', 'normal');
                 
                 // Adicionar espaço entre parágrafos (texto após texto, não após título ou linha vazia)
-                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN) {
+                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN && nonEmptyLinesCount > 0) {
                     yPosition += config.PARAGRAPH_SPACING;
                 }
                 
-                const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
                 const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
                 
-                for (const textLine of textLines) {
-                    // Verificar se precisa de nova página
-                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
+                // Verificar se deve justificar este parágrafo
+                const shouldJustify = this.shouldJustifyLine(line);
+                
+                if (shouldJustify) {
+                    // Justificar parágrafo longo
+                    const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
                     
-                    pdf.text(textLine, config.MARGIN, yPosition);
-                    yPosition += lineHeight;
+                    for (let j = 0; j < textLines.length; j++) {
+                        const textLine = textLines[j];
+                        const isLastLine = j === textLines.length - 1;
+                        
+                        // Verificar se precisa de nova página
+                        if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                            pdf.addPage();
+                            yPosition = config.MARGIN;
+                            pageCount++;
+                        }
+                        
+                        // Justificar apenas se não for a última linha
+                        if (!isLastLine && textLine.trim().length > 0) {
+                            // Calcular espaço entre palavras para justificar
+                            const words = textLine.trim().split(/\s+/);
+                            if (words.length > 1) {
+                                const textWidth = pdf.getTextWidth(words.join(''));
+                                const availableSpace = config.USABLE_WIDTH - textWidth;
+                                const spaceWidth = availableSpace / (words.length - 1);
+                                
+                                let xPos = config.MARGIN;
+                                for (let k = 0; k < words.length; k++) {
+                                    pdf.text(words[k], xPos, yPosition);
+                                    xPos += pdf.getTextWidth(words[k]) + spaceWidth;
+                                }
+                            } else {
+                                // Palavra única, sem justificação
+                                pdf.text(textLine, config.MARGIN, yPosition);
+                            }
+                        } else {
+                            // Última linha, alinhada à esquerda
+                            pdf.text(textLine, config.MARGIN, yPosition);
+                        }
+                        
+                        yPosition += lineHeight;
+                    }
+                } else {
+                    // Não justificar (lista, texto curto, etc) - alinhado à esquerda
+                    const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
+                    
+                    for (const textLine of textLines) {
+                        // Verificar se precisa de nova página
+                        if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                            pdf.addPage();
+                            yPosition = config.MARGIN;
+                            pageCount++;
+                        }
+                        
+                        pdf.text(textLine, config.MARGIN, yPosition);
+                        yPosition += lineHeight;
+                    }
                 }
                 
                 previousLineWasEmpty = false;
                 previousLineWasTitle = false;
+                previousLineWasCompanyName = false;
+                nonEmptyLinesCount++;
             }
             
             // 4. Salvar PDF
