@@ -7,7 +7,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Base URL for the website
-const BASE_URL = 'https://modelotrabalhista.com.br';
+const BASE_URL = 'https://joaoclaudiano.github.io/modelotrabalhista';
 
 // Function to get all HTML files
 function getHtmlFiles(dir, baseDir = dir) {
