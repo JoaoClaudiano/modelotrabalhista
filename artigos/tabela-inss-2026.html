@@ -282,36 +282,37 @@
                         <p>Com base na <strong>Portaria Interministerial MPS/MF Nº 13 de 09/01/2026</strong>, vigente desde 1º de janeiro, a tabela para empregados CLT, domésticos e avulsos em 2026 é a seguinte[citation:1][citation:2]:</p>
 
                         <div class="styled-table">
-                            <table>
+                            <table role="table" aria-label="Tabela de Alíquotas do INSS 2026">
+                                <caption>Tabela Progressiva de Contribuição do INSS para 2026</caption>
                                 <thead>
                                     <tr>
-                                        <th>Faixa do Salário de Contribuição (R$)</th>
-                                        <th>Alíquota (%)</th>
-                                        <th>Parcela a Deduzir (R$) *</th>
-                                        <th>Alíquota Efetiva Máxima da Faixa</th>
+                                        <th scope="col">Faixa do Salário de Contribuição (R$)</th>
+                                        <th scope="col">Alíquota (%)</th>
+                                        <th scope="col">Parcela a Deduzir (R$) *</th>
+                                        <th scope="col">Alíquota Efetiva Máxima da Faixa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Até 1.621,00</td>
+                                        <th scope="row">Até 1.621,00</th>
                                         <td>7,5%</td>
                                         <td>–</td>
                                         <td>7,50%</td>
                                     </tr>
                                     <tr>
-                                        <td>De 1.621,01 até 2.902,84</td>
+                                        <th scope="row">De 1.621,01 até 2.902,84</th>
                                         <td>9,0%</td>
                                         <td>24,32</td>
                                         <td>~8,16%</td>
                                     </tr>
                                     <tr>
-                                        <td>De 2.902,85 até 4.354,27</td>
+                                        <th scope="row">De 2.902,85 até 4.354,27</th>
                                         <td>12,0%</td>
                                         <td>111,40</td>
                                         <td>~9,49%</td>
                                     </tr>
                                     <tr>
-                                        <td>De 4.354,28 até 8.475,55 (TETO)</td>
+                                        <th scope="row">De 4.354,28 até 8.475,55 (TETO)</th>
                                         <td>14,0%</td>
                                         <td>198,49</td>
                                         <td>~11,66%</td>
@@ -364,12 +365,30 @@
                         <h3>Exemplo 3: Patrícia, Salário de R$ 10.000,00 (Teto Máximo de Contribuição)</h3>
                         <p>Quem ganha acima do teto do INSS tem o desconto <strong>limitado ao valor máximo da última faixa</strong>. Contribui apenas sobre R$ 8.475,55, não sobre os R$ 10.000,00[citation:1][citation:9].</p>
                         <div class="calculation-table">
-                            <table>
-                                <tr><td>1ª Faixa (7,5% sobre R$ 1.621,00):</td><td>R$ 121,57</td></tr>
-                                <tr><td>2ª Faixa (9% sobre R$ 1.281,84):</td><td>R$ 115,36</td></tr>
-                                <tr><td>3ª Faixa (12% sobre R$ 1.451,43):</td><td>R$ 174,17</td></tr>
-                                <tr><td>4ª Faixa (14% sobre R$ 4.121,28*):</td><td>R$ 576,98</td></tr>
-                                <tr class="total"><td><strong>TOTAL DO DESCONTO INSS (TETO):</strong></td><td><strong>R$ 988,08</strong></td></tr>
+                            <table role="table" aria-label="Cálculo INSS para salário de R$ 10.000,00">
+                                <caption>Exemplo de cálculo: Salário acima do teto (R$ 10.000,00)</caption>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">1ª Faixa (7,5% sobre R$ 1.621,00):</th>
+                                        <td>R$ 121,57</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2ª Faixa (9% sobre R$ 1.281,84):</th>
+                                        <td>R$ 115,36</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3ª Faixa (12% sobre R$ 1.451,43):</th>
+                                        <td>R$ 174,17</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">4ª Faixa (14% sobre R$ 4.121,28*):</th>
+                                        <td>R$ 576,98</td>
+                                    </tr>
+                                    <tr class="total">
+                                        <th scope="row"><strong>TOTAL DO DESCONTO INSS (TETO):</strong></th>
+                                        <td><strong>R$ 988,08</strong></td>
+                                    </tr>
+                                </tbody>
                             </table>
                             <p class="note">*R$ 4.121,28 é a diferença entre o teto (R$ 8.475,55) e o limite da 3ª faixa (R$ 4.354,27)[citation:6][citation:10]. A alíquota efetiva máxima do sistema é de aproximadamente 11,66% (R$ 988,08 ÷ R$ 8.475,55).</p>
                         </div>
@@ -417,23 +436,60 @@
                         <!-- Tabela Comparativa de Salário Líquido -->
                         <h3>Tabela: Impacto do INSS 2026 no Salário Líquido (Exemplos)</h3>
                         <div class="styled-table">
-                            <table>
+                            <table role="table" aria-label="Comparação de salário líquido com desconto INSS 2026">
+                                <caption>Impacto do desconto do INSS no salário líquido para diferentes faixas salariais em 2026</caption>
                                 <thead>
                                     <tr>
-                                        <th>Salário Bruto (R$)</th>
-                                        <th>Desconto INSS 2026 (R$)</th>
-                                        <th>Alíquota Efetiva</th>
-                                        <th>Salário Líquido Parcial* (R$)</th>
-                                        <th>Variação no INSS vs. 2025 (R$)</th>
+                                        <th scope="col">Salário Bruto (R$)</th>
+                                        <th scope="col">Desconto INSS 2026 (R$)</th>
+                                        <th scope="col">Alíquota Efetiva</th>
+                                        <th scope="col">Salário Líquido Parcial* (R$)</th>
+                                        <th scope="col">Variação no INSS vs. 2025 (R$)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>1.621,00 (Mínimo)</td><td>121,58</td><td>7,50%</td><td>1.499,42</td><td>+7,73</td></tr>
-                                    <tr><td>2.000,00</td><td>155,68</td><td>7,78%</td><td>1.844,32</td><td>~ -1,54[citation:9]</td></tr>
-                                    <tr><td>3.000,00</td><td>248,60</td><td>8,29%</td><td>2.751,40</td><td>~ -4,81[citation:9]</td></tr>
-                                    <tr><td>5.000,00</td><td>501,50</td><td>10,03%</td><td>4.498,50</td><td>~ -8,08[citation:9]</td></tr>
-                                    <tr><td>8.475,55 (Teto)</td><td>988,08</td><td>11,66%</td><td>7.487,47</td><td>+36,45</td></tr>
-                                    <tr><td>10.000,00</td><td>988,08 (Teto)</td><td>9,88%</td><td>9.011,92</td><td>+36,45</td></tr>
+                                    <tr>
+                                        <th scope="row">1.621,00 (Mínimo)</th>
+                                        <td>121,58</td>
+                                        <td>7,50%</td>
+                                        <td>1.499,42</td>
+                                        <td>+7,73</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2.000,00</th>
+                                        <td>155,68</td>
+                                        <td>7,78%</td>
+                                        <td>1.844,32</td>
+                                        <td>~ -1,54[citation:9]</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3.000,00</th>
+                                        <td>248,60</td>
+                                        <td>8,29%</td>
+                                        <td>2.751,40</td>
+                                        <td>~ -4,81[citation:9]</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">5.000,00</th>
+                                        <td>501,50</td>
+                                        <td>10,03%</td>
+                                        <td>4.498,50</td>
+                                        <td>~ -8,08[citation:9]</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">8.475,55 (Teto)</th>
+                                        <td>988,08</td>
+                                        <td>11,66%</td>
+                                        <td>7.487,47</td>
+                                        <td>+36,45</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">10.000,00</th>
+                                        <td>988,08 (Teto)</td>
+                                        <td>9,88%</td>
+                                        <td>9.011,92</td>
+                                        <td>+36,45</td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <p class="table-caption"><strong>*Salário Líquido Parcial</strong> = Bruto − Desconto INSS. Valores sem considerar outros descontos como IRRF ou benefícios. A "Variação" é uma estimativa comparando o mesmo salário nominal entre os anos.</p>
