@@ -273,6 +273,8 @@ p {
     box-shadow: var(--shadow-xl);
     transform: rotate(3deg);
     animation: float 3s ease-in-out infinite;
+    max-height: 500px;
+    overflow: hidden;
 }
 
 @keyframes float {
@@ -288,9 +290,23 @@ p {
     color: var(--primary-color);
 }
 
+.document-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.document-content {
+    font-size: 0.85rem;
+}
+
 .document-content p {
     margin-bottom: 0.5rem;
     color: var(--gray-dark);
+}
+
+.document-status {
+    margin-top: var(--space-md);
+    text-align: center;
 }
 
 .status-badge {
