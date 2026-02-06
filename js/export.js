@@ -45,18 +45,33 @@ class DocumentExporter {
             DOM_UPDATE_DELAY_MS: 50
         };
         
-        // Constantes para PDF
+        // Constantes para PDF - Consolidadas e documentadas
         this.PDF_CONFIG = {
             // A4 dimensions in mm
             PAGE_WIDTH: 210,
             PAGE_HEIGHT: 297,
+            
             // Margins in mm
             MARGIN: 20,
-            // Font settings
-            FONT_SIZE: 11,
-            TITLE_FONT_SIZE: 12,
-            LINE_HEIGHT_FACTOR: 1.4,
-            // Calculated usable area
+            
+            // Font settings (pt)
+            FONT_SIZE: 11,              // Corpo do texto
+            TITLE_FONT_SIZE: 12,        // Títulos
+            LINE_HEIGHT_FACTOR: 1.4,    // Fator de espaçamento entre linhas
+            
+            // Conversion factor: points to millimeters
+            PT_TO_MM: 0.3527,           // 1pt = 1/72 inch = 0.3527mm
+            
+            // Vertical spacing (mm)
+            PARAGRAPH_SPACING: 2.5,     // Espaço adicional entre parágrafos
+            TITLE_SPACING_BEFORE: 4,    // Espaço antes de títulos
+            TITLE_SPACING_AFTER: 3,     // Espaço depois de títulos
+            EMPTY_LINE_FACTOR: 0.75,    // Fator para linhas vazias (relativo ao line-height)
+            
+            // Title detection
+            TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título
+            
+            // Calculated usable area (getters dinâmicos)
             get USABLE_WIDTH() { return this.PAGE_WIDTH - (2 * this.MARGIN); },
             get USABLE_HEIGHT() { return this.PAGE_HEIGHT - (2 * this.MARGIN); }
         };
@@ -79,7 +94,7 @@ class DocumentExporter {
     // Detectar se uma linha é um título
     isTitleLine(line) {
         const trimmedLine = line.trim();
-        return trimmedLine.length < 60 && 
+        return trimmedLine.length < this.PDF_CONFIG.TITLE_CHAR_LIMIT && 
                trimmedLine.length > 0 &&
                trimmedLine === trimmedLine.toUpperCase() && 
                this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
@@ -607,38 +622,56 @@ class DocumentExporter {
     /**
      * Estimar altura do conteúdo em milímetros
      * Baseado em contagem de linhas e espaçamento de texto
+     * Atualizado para usar constantes consolidadas
      */
     estimateContentHeight(content) {
         const lines = content.split('\n');
         const config = this.PDF_CONFIG;
         
-        // Altura por linha de texto (font-size * line-height)
-        // 11pt ≈ 3.88mm, com line-height 1.4 = 5.43mm por linha
-        const lineHeightMm = (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+        // Altura por linha de texto usando constantes
+        const lineHeightMm = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
         
         let totalHeight = 0;
+        let previousWasEmpty = false;
+        let previousWasTitle = false;
         
         for (const line of lines) {
             const trimmed = line.trim();
             
             // Linha vazia
             if (!trimmed) {
-                totalHeight += lineHeightMm * 0.5; // Meia altura para linha vazia
+                totalHeight += lineHeightMm * config.EMPTY_LINE_FACTOR;
+                previousWasEmpty = true;
+                previousWasTitle = false;
                 continue;
             }
             
             // Título (uppercase)
             if (this.isTitleLine(line)) {
-                const titleLineHeight = (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
-                totalHeight += titleLineHeight + 3; // Adicionar espaçamento extra
+                const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                // Adicionar espaçamento antes (se não for início ou após linha vazia)
+                if (totalHeight > 0 && !previousWasEmpty) {
+                    totalHeight += config.TITLE_SPACING_BEFORE;
+                }
+                totalHeight += titleLineHeight + config.TITLE_SPACING_AFTER;
+                previousWasEmpty = false;
+                previousWasTitle = true;
                 continue;
             }
             
             // Texto normal - calcular quebras de linha baseado na largura útil
+            // Adicionar espaçamento entre parágrafos
+            if (!previousWasTitle && !previousWasEmpty && totalHeight > 0) {
+                totalHeight += config.PARAGRAPH_SPACING;
+            }
+            
             // Aproximação: ~2.5 caracteres por mm em fonte 11pt
             const charsPerLine = Math.floor(config.USABLE_WIDTH * 2.5);
             const wrappedLines = Math.ceil(trimmed.length / charsPerLine);
             totalHeight += lineHeightMm * wrappedLines;
+            
+            previousWasEmpty = false;
+            previousWasTitle = false;
         }
         
         return totalHeight;
@@ -687,13 +720,19 @@ class DocumentExporter {
             const lines = content.split('\n');
             let yPosition = config.MARGIN;
             let pageCount = 1;
+            let previousLineWasEmpty = false;
+            let previousLineWasTitle = false;
             
-            for (const line of lines) {
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
                 const trimmed = line.trim();
                 
-                // Linha vazia
+                // Linha vazia - usar fator de espaçamento configurável
                 if (!trimmed) {
-                    yPosition += (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR * 0.5;
+                    const emptyLineSpacing = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR * config.EMPTY_LINE_FACTOR;
+                    yPosition += emptyLineSpacing;
+                    previousLineWasEmpty = true;
+                    previousLineWasTitle = false;
                     continue;
                 }
                 
@@ -702,21 +741,30 @@ class DocumentExporter {
                     pdf.setFontSize(config.TITLE_FONT_SIZE);
                     pdf.setFont('helvetica', 'bold');
                     
-                    const lineHeight = (config.TITLE_FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR + 3;
+                    // Calcular line-height do título usando constantes
+                    const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
+                    const totalTitleHeight = titleLineHeight + config.TITLE_SPACING_AFTER;
+                    
+                    // Adicionar espaço antes do título (exceto no início da página ou após linha vazia)
+                    if (yPosition > config.MARGIN && !previousLineWasEmpty) {
+                        yPosition += config.TITLE_SPACING_BEFORE;
+                    }
                     
                     // Verificar se precisa de nova página
-                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                    if (yPosition + totalTitleHeight > config.PAGE_HEIGHT - config.MARGIN) {
                         pdf.addPage();
                         yPosition = config.MARGIN;
                         pageCount++;
                     }
                     
-                    // Centralizar título
+                    // Centralizar título DENTRO DA LARGURA ÚTIL (correção crítica)
                     const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = (config.PAGE_WIDTH - textWidth) / 2;
+                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
                     
                     pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += lineHeight;
+                    yPosition += totalTitleHeight;
+                    previousLineWasEmpty = false;
+                    previousLineWasTitle = true;
                     continue;
                 }
                 
@@ -724,8 +772,13 @@ class DocumentExporter {
                 pdf.setFontSize(config.FONT_SIZE);
                 pdf.setFont('helvetica', 'normal');
                 
+                // Adicionar espaço entre parágrafos (texto após texto, não após título ou linha vazia)
+                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN) {
+                    yPosition += config.PARAGRAPH_SPACING;
+                }
+                
                 const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
-                const lineHeight = (config.FONT_SIZE * 0.3527) * config.LINE_HEIGHT_FACTOR;
+                const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
                 
                 for (const textLine of textLines) {
                     // Verificar se precisa de nova página
@@ -738,6 +791,9 @@ class DocumentExporter {
                     pdf.text(textLine, config.MARGIN, yPosition);
                     yPosition += lineHeight;
                 }
+                
+                previousLineWasEmpty = false;
+                previousLineWasTitle = false;
             }
             
             // 4. Salvar PDF
