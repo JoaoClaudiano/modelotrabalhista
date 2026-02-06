@@ -114,6 +114,7 @@ class DocumentExporter {
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
         script.crossOrigin = 'anonymous';
+        script.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
         
         script.onload = () => {
             console.log('✅ jsPDF carregado com sucesso');
@@ -133,6 +134,7 @@ class DocumentExporter {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
         script.crossOrigin = 'anonymous';
+        script.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
         
         script.onload = () => {
             console.log('✅ jsPDF carregado via fallback');
@@ -185,6 +187,7 @@ class DocumentExporter {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/docx@7.8.0/build/index.js';
         script.crossOrigin = 'anonymous';
+        script.integrity = 'sha384-+Q9XUOzYmnebUFYhYAgja0XBVfXUm8gKA6IyQqNzzgwauWOwIR5hBtCyJvMA2Q0x';
         
         script.onload = () => {
             console.log('✅ docx.js carregado via fallback');
@@ -213,6 +216,7 @@ class DocumentExporter {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
             script.crossOrigin = 'anonymous';
+            script.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
             
             script.onload = () => {
                 console.log('✅ html2canvas carregado com sucesso');
