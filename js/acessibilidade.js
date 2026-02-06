@@ -99,9 +99,11 @@ class AcessibilidadeManager {
         const card = document.createElement('div');
         card.id = 'accessibility-card';
         card.className = 'accessibility-card';
-        card.setAttribute('aria-hidden', 'true');
+        // Don't set aria-hidden initially - let CSS handle visibility
+        // and manage aria-hidden dynamically based on visible state
         card.setAttribute('role', 'dialog');
         card.setAttribute('aria-label', 'Opções de acessibilidade');
+        card.setAttribute('aria-modal', 'false'); // It's not a modal dialog
         
         card.innerHTML = `
             <div class="accessibility-card-header">
@@ -176,6 +178,12 @@ class AcessibilidadeManager {
         `;
         
         document.body.appendChild(card);
+        
+        // Initially hide card and make focusable elements unfocusable
+        card.setAttribute('aria-hidden', 'true');
+        const focusableElements = card.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+        focusableElements.forEach(el => el.setAttribute('tabindex', '-1'));
+        
         this.setupCardEvents();
     }
 
@@ -186,12 +194,20 @@ class AcessibilidadeManager {
         if (this.cardVisible) {
             card.classList.remove('visible');
             button.classList.remove('active');
+            // Hide from accessibility tree when not visible
             card.setAttribute('aria-hidden', 'true');
+            // Remove focus trap when hidden
+            const focusableElements = card.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+            focusableElements.forEach(el => el.setAttribute('tabindex', '-1'));
             this.cardVisible = false;
         } else {
             card.classList.add('visible');
             button.classList.add('active');
+            // Make accessible when visible
             card.setAttribute('aria-hidden', 'false');
+            // Restore focus ability when visible
+            const focusableElements = card.querySelectorAll('button, input');
+            focusableElements.forEach(el => el.removeAttribute('tabindex'));
             this.cardVisible = true;
         }
     }

@@ -47,10 +47,14 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://vlibras.gov.br">
     
+    <!-- Preload critical fonts for better LCP/FCP -->
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2" crossorigin>
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts with font-display: swap for optimal performance -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     
     <!-- CSS -->
@@ -181,7 +185,7 @@
                     </ul>
                 </nav>
                 
-                <button class="mobile-menu-btn">
+                <button class="mobile-menu-btn" aria-label="Abrir menu de navegação">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -568,14 +572,14 @@
                         <div class="preview-header">
                             <h3><i class="fas fa-search"></i> Pré-visualização</h3>
                             <div class="preview-controls">
-                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom">
-                                    <i class="fas fa-search-plus"></i>
+                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom" aria-label="Aumentar zoom">
+                                    <i class="fas fa-search-plus" aria-hidden="true"></i>
                                 </button>
-                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom">
-                                    <i class="fas fa-search-minus"></i>
+                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom" aria-label="Diminuir zoom">
+                                    <i class="fas fa-search-minus" aria-hidden="true"></i>
                                 </button>
-                                <button id="resetZoomBtn" class="control-btn" title="Zoom original">
-                                    <i class="fas fa-sync-alt"></i>
+                                <button id="resetZoomBtn" class="control-btn" title="Zoom original" aria-label="Redefinir zoom para tamanho original">
+                                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
