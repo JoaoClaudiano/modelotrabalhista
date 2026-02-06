@@ -81,29 +81,80 @@ npm run generate-all
 Esses arquivos são atualizados automaticamente via GitHub Actions sempre que arquivos HTML são modificados no branch principal.
 
 Para mais detalhes, veja:
-- [SITEMAP_README.md](SITEMAP_README.md) - Documentação do gerador de sitemap
-- [ROBOTS_README.md](ROBOTS_README.md) - Documentação do gerador de robots.txt
-- [CSP_DOCUMENTATION.md](CSP_DOCUMENTATION.md) - Documentação do Content Security Policy
-- [CSP_REPORTING_GUIDE.md](CSP_REPORTING_GUIDE.md) - Guia de monitoramento de violações CSP
+- [docs/SITEMAP_README.md](docs/SITEMAP_README.md) - Documentação do gerador de sitemap
+- [docs/ROBOTS_README.md](docs/ROBOTS_README.md) - Documentação do gerador de robots.txt
+- [docs/CSP_DOCUMENTATION.md](docs/CSP_DOCUMENTATION.md) - Documentação do Content Security Policy
+- [docs/CSP_REPORTING_GUIDE.md](docs/CSP_REPORTING_GUIDE.md) - Guia de monitoramento de violações CSP
 
 
-# arvore
+## 📁 Estrutura do Projeto
 
+```
 modelotrabalhista/
 ├── index.html                 # Página principal
-├── style.css                  # Estilos principais
-├── script.js                  # Lógica JavaScript
-├── README.md                  # Este arquivo
-├── LICENSE                    # Licença MIT
-├── .gitignore                 # Arquivos ignorados pelo Git
+├── service-worker.js          # Service Worker para PWA
 ├── robots.txt                 # Instruções para motores de busca
 ├── sitemap.xml                # Mapa do site para SEO
+├── firebase.json              # Configuração do Firebase
+├── package.json               # Dependências e scripts NPM
+├── LICENSE                    # Licença MIT
+├── README.md                  # Este arquivo
+│
+├── .github/                   # Configurações do GitHub
+│   └── workflows/             # GitHub Actions workflows
+│       ├── deploy-github-pages.yml
+│       └── update-seo.yml
 │
 ├── assets/                    # Recursos estáticos
 │   ├── css/
 │   │   └── print.css          # Estilos para impressão
-│   ├── icons/                 # Ícones do site
-│   └── images/                # Imagens do site
+│   ├── *.png, *.svg, *.ico    # Ícones e favicons
+│   └── manifest.json          # Manifest PWA
 │
-└── models/                    # Modelos de documento
-    └── templates.json         # Templates em JSON
+├── artigos/                   # Artigos e conteúdo educacional
+│   ├── *.html                 # Artigos sobre direitos trabalhistas
+│   ├── index.html             # Página índice dos artigos
+│   ├── template.html          # Template base para artigos
+│   ├── template.css           # Estilos dos artigos
+│   └── template.js            # Lógica dos artigos
+│
+├── css/                       # Folhas de estilo
+│   ├── style.css              # Estilos principais
+│   └── responsive.css         # Estilos responsivos
+│
+├── docs/                      # Documentação técnica
+│   ├── README.md              # Índice da documentação
+│   ├── *.md                   # Documentação de arquitetura, segurança, performance
+│   ├── legacy/                # Arquivos legados mantidos para referência
+│   └── *.png, *.txt           # Recursos de documentação
+│
+├── exemplos-documentos/       # Exemplos de documentos gerados
+│   ├── README.md              # Descrição dos exemplos
+│   └── *.txt                  # Exemplos de documentos em texto
+│
+├── js/                        # Scripts JavaScript
+│   ├── main.js                # Script principal
+│   ├── ui.js                  # Interface do usuário
+│   ├── generator.js           # Geração de documentos
+│   ├── export.js              # Exportação (PDF/DOCX)
+│   ├── export-handlers.js     # Manipuladores de exportação
+│   ├── storage.js             # Armazenamento local
+│   ├── analytics.js           # Analytics e tracking
+│   ├── acessibilidade.js      # Recursos de acessibilidade
+│   ├── tour.js                # Tour guiado
+│   ├── log.js                 # Sistema de logs
+│   ├── csp-reporter.js        # Relatório de violações CSP
+│   └── utils/
+│       └── lazy-loading.js    # Utilitário de lazy loading
+│
+├── models/                    # Modelos de documentos
+│   └── templates.json         # Templates JSON dos documentos
+│
+├── pages/                     # Páginas institucionais
+│   ├── *.html                 # Páginas sobre, contato, etc.
+│   └── institucional.css      # Estilos das páginas institucionais
+│
+└── scripts/                   # Scripts de build e deploy
+    ├── generate-sitemap.js    # Gerador de sitemap.xml
+    └── generate-robots.js     # Gerador de robots.txt
+```
