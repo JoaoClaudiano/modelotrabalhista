@@ -145,61 +145,6 @@ function updateSpecificFields(docType) {
             `;
             break;
             
-        case 'atestado':
-            fieldsHTML = `
-                <div class="form-group">
-                    <label for="motivoAtestado">
-                        <i class="fas fa-stethoscope"></i> Motivo do Atestado:
-                    </label>
-                    <textarea id="motivoAtestado" class="form-control" rows="3"
-                              placeholder="Informe o motivo da ausência..."></textarea>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dataInicio">
-                            <i class="fas fa-calendar-day"></i> Data de Início:
-                        </label>
-                        <input type="date" id="dataInicio" class="form-control">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="dataFim">
-                            <i class="fas fa-calendar-day"></i> Data de Término:
-                        </label>
-                        <input type="date" id="dataFim" class="form-control">
-                    </div>
-                </div>
-            `;
-            break;
-            
-        case 'rescisao':
-            fieldsHTML = `
-                <div class="form-group">
-                    <label for="valorRescisao">
-                        <i class="fas fa-money-bill-wave"></i> Valor da Rescisão (R$):
-                    </label>
-                    <input type="number" id="valorRescisao" class="form-control" 
-                           placeholder="Ex: 5000.00" step="0.01" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label for="dataPagamento">
-                        <i class="fas fa-calendar-alt"></i> Data para Pagamento:
-                    </label>
-                    <input type="date" id="dataPagamento" class="form-control">
-                </div>
-                
-                <div class="form-group">
-                    <label for="condicoesAdicionais">
-                        <i class="fas fa-clipboard-list"></i> Condições Adicionais:
-                    </label>
-                    <textarea id="condicoesAdicionais" class="form-control" rows="3"
-                              placeholder="Informe condições adicionais do acordo..."></textarea>
-                </div>
-            `;
-            break;
-            
         case 'reuniao':
             const hoje = new Date();
             const amanha = new Date(hoje);
@@ -292,12 +237,6 @@ function generateDocument() {
         case 'advertencia':
             documento = generateAdvertencia(formData);
             break;
-        case 'atestado':
-            documento = generateAtestado(formData);
-            break;
-        case 'rescisao':
-            documento = generateRescisao(formData);
-            break;
         case 'reuniao':
             documento = generateReuniao(formData);
             break;
@@ -348,16 +287,6 @@ function collectFormData() {
             data.motivoAdvertencia = document.getElementById('motivoAdvertencia')?.value || '';
             data.dataOcorrencia = document.getElementById('dataOcorrencia')?.value || '';
             data.gravidade = document.getElementById('gravidade')?.value || 'media';
-            break;
-        case 'atestado':
-            data.motivoAtestado = document.getElementById('motivoAtestado')?.value || '';
-            data.dataInicio = document.getElementById('dataInicio')?.value || data.data;
-            data.dataFim = document.getElementById('dataFim')?.value || data.data;
-            break;
-        case 'rescisao':
-            data.valorRescisao = document.getElementById('valorRescisao')?.value || '';
-            data.dataPagamento = document.getElementById('dataPagamento')?.value || '';
-            data.condicoesAdicionais = document.getElementById('condicoesAdicionais')?.value || '';
             break;
         case 'reuniao':
             data.dataReuniao = document.getElementById('dataReuniao')?.value || '';
@@ -517,8 +446,10 @@ Consequências em caso de reincidência:
 
 ================================================================================
 
-O funcionário está ciente das implicações desta advertência e deverá assinar 
-este documento em duas vias, ficando uma com a empresa e outra em seu poder.
+O empregado declara ter tomado ciência deste registro, sem necessariamente 
+concordar com o conteúdo. Ressaltamos que o trabalhador mantém direito de 
+defesa e que todas as ações estão dentro dos limites previstos pela CLT. Este 
+documento deverá ser assinado em duas vias.
 
 __________________________________________
 Assinatura do Representante da Empresa
@@ -534,87 +465,6 @@ Data: ____/____/______
 
 __________________________________________
 Assinatura do Funcionário
-    `;
-}
-
-function generateAtestado(data) {
-    const dataInicioFormatada = formatDate(data.dataInicio);
-    const dataFimFormatada = formatDate(data.dataFim);
-    const periodo = dataInicioFormatada === dataFimFormatada 
-        ? `na data de ${dataInicioFormatada}`
-        : `no período de ${dataInicioFormatada} a ${dataFimFormatada}`;
-    
-    return `
-${data.empresaNome.toUpperCase()}
-${data.empresaEndereco}
-
-================================================================================
-                                  ATESTADO
-================================================================================
-
-Atesto para os devidos fins que o(a) Sr(a). ${data.funcionarioNome}, 
-ocupante do cargo de ${data.funcionarioCargo} nesta empresa, não compareceu 
-ao trabalho ${periodo} devido a:
-
-"${data.motivoAtestado || 'Assuntos pessoais que impossibilitaram a presença no trabalho.'}"
-
-Este documento serve como justificativa para a ausência e não implica em 
-qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
-acordo ou convenção coletiva.
-
-================================================================================
-
-Data: ${data.dataFormatada}
-
-__________________________________________
-Assinatura do Responsável
-
-Cargo: __________________________________________
-    `;
-}
-
-function generateRescisao(data) {
-    const valor = data.valorRescisao ? `R$ ${parseFloat(data.valorRescisao).toFixed(2).replace('.', ',')}` : 'a ser definido';
-    const dataPagamento = data.dataPagamento ? formatDate(data.dataPagamento) : '(a definir)';
-    
-    return `
-${data.empresaNome.toUpperCase()}
-${data.empresaEndereco}
-
-================================================================================
-                       ACORDO DE RESCISÃO CONTRATUAL
-================================================================================
-
-Entre ${data.empresaNome}, com sede em ${data.empresaEndereco}, doravante 
-denominada EMPRESA, e ${data.funcionarioNome}, portador(a) do CPF (informar 
-número) e Carteira de Trabalho (informar número), ocupante do cargo de 
-${data.funcionarioCargo}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
-o presente acordo de rescisão contratual, sob as seguintes condições:
-
-1. As partes, de comum acordo, resolvem o contrato de trabalho vigente.
-2. A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de ${valor}, 
-   correspondente a todos os direitos trabalhistas decorrentes da rescisão.
-3. Data para pagamento: ${dataPagamento}
-4. O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
-   acordo, renuncia a qualquer ação trabalhista referente ao período 
-   contratual.
-5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-   até a data do desligamento.
-${data.condicoesAdicionais ? `6. ${data.condicoesAdicionais}` : ''}
-
-As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
-vias de igual teor.
-
-================================================================================
-
-Data: ${data.dataFormatada}
-
-__________________________________________
-Representante Legal da Empresa
-Cargo: __________________________________
-
-__________________________________________
-${data.funcionarioNome}
     `;
 }
 
@@ -885,12 +735,6 @@ function loadExampleData() {
         motivoAdvertencia: 'Atrasos recorrentes no horário de entrada durante o mês de outubro.',
         dataOcorrencia: new Date().toISOString().split('T')[0],
         gravidade: 'media',
-        motivoAtestado: 'Consulta médica agendada com urgência.',
-        dataInicio: new Date().toISOString().split('T')[0],
-        dataFim: new Date().toISOString().split('T')[0],
-        valorRescisao: '5000.00',
-        dataPagamento: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        condicoesAdicionais: 'O funcionário se compromete a manter sigilo sobre informações confidenciais da empresa.',
         dataReuniao: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         horaReuniao: '14:00',
         localReuniao: 'Sala de Reuniões Principal',
@@ -925,22 +769,6 @@ function loadExampleData() {
                     document.getElementById('dataOcorrencia').value = exampleData.dataOcorrencia;
                 if (document.getElementById('gravidade')) 
                     document.getElementById('gravidade').value = exampleData.gravidade;
-                break;
-            case 'atestado':
-                if (document.getElementById('motivoAtestado')) 
-                    document.getElementById('motivoAtestado').value = exampleData.motivoAtestado;
-                if (document.getElementById('dataInicio')) 
-                    document.getElementById('dataInicio').value = exampleData.dataInicio;
-                if (document.getElementById('dataFim')) 
-                    document.getElementById('dataFim').value = exampleData.dataFim;
-                break;
-            case 'rescisao':
-                if (document.getElementById('valorRescisao')) 
-                    document.getElementById('valorRescisao').value = exampleData.valorRescisao;
-                if (document.getElementById('dataPagamento')) 
-                    document.getElementById('dataPagamento').value = exampleData.dataPagamento;
-                if (document.getElementById('condicoesAdicionais')) 
-                    document.getElementById('condicoesAdicionais').value = exampleData.condicoesAdicionais;
                 break;
             case 'reuniao':
                 if (document.getElementById('dataReuniao')) 

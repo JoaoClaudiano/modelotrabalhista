@@ -885,8 +885,10 @@ Consequências em caso de reincidência:
 
 ${'='.repeat(80)}
 
-O funcionário está ciente das implicações desta advertência e deverá assinar 
-este documento em duas vias, ficando uma com a empresa e outra em seu poder.
+O empregado declara ter tomado ciência deste registro, sem necessariamente 
+concordar com o conteúdo. Ressaltamos que o trabalhador mantém direito de 
+defesa e que todas as ações estão dentro dos limites previstos pela CLT. Este 
+documento deverá ser assinado em duas vias.
 
 ${'_'.repeat(42)}
 Assinatura do Representante da Empresa
@@ -901,91 +903,6 @@ Data: __/__/______
 
 ${'_'.repeat(42)}
 Assinatura do Funcionário`;
-    }
-
-    generateCertificate(data) {
-        const startDate = this.formatDate(data.certificateStart);
-        const endDate = this.formatDate(data.certificateEnd);
-        const period = startDate === endDate 
-            ? `na data de ${startDate}`
-            : `no período de ${startDate} a ${endDate}`;
-
-        return `${data.companyName.toUpperCase()}
-${data.companyAddress}
-
-${'='.repeat(80)}
-                                  ATESTADO
-${'='.repeat(80)}
-
-Atesto para os devidos fins que o(a) Sr(a). ${data.employeeName}, 
-ocupante do cargo de ${data.employeePosition} nesta empresa, não compareceu 
-ao trabalho ${period} devido a:
-
-"${data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.'}"
-
-Este documento serve como justificativa para a ausência e não implica em 
-qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
-acordo ou convenção coletiva.
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted}
-
-${'_'.repeat(42)}
-Assinatura do Responsável
-
-Cargo: ${'_'.repeat(42)}`;
-    }
-
-    generateSeveranceAgreement(data) {
-        const value = data.severanceValue ? `R$ ${parseFloat(data.severanceValue).toFixed(2).replace('.', ',')}` : 'a ser definido';
-        const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
-        const conditions = data.additionalConditions ? `6. ${data.additionalConditions}` : '';
-
-        let agreement = `${data.companyName.toUpperCase()}
-${data.companyAddress}
-
-${'='.repeat(80)}
-                       ACORDO DE RESCISÃO CONTRATUAL
-${'='.repeat(80)}
-
-Entre ${data.companyName}, com sede em ${data.companyAddress}, doravante 
-denominada EMPRESA, e ${data.employeeName}, portador(a) do CPF [INFORME AQUI] 
-e Carteira de Trabalho [INFORME AQUI], ocupante do cargo de 
-${data.employeePosition}, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
-o presente acordo de rescisão contratual, sob as seguintes condições:
-
-1. As partes, de comum acordo, resolvem o contrato de trabalho vigente.
-2. A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de ${value}, 
-   correspondente a todos os direitos trabalhistas decorrentes da rescisão.
-3. Data para pagamento: ${paymentDate}
-4. O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
-   acordo, renuncia a qualquer ação trabalhista referente ao período 
-   contratual.
-5. O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-   até a data do desligamento.`;
-
-        if (conditions) {
-            agreement += `\n${conditions}`;
-        }
-
-        agreement += `
-
-As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
-vias de igual teor.
-
-${'='.repeat(80)}
-
-Data: ${data.documentDateFormatted}
-
-${'_'.repeat(42)}
-Representante Legal da Empresa
-Cargo: ${'_'.repeat(40)}
-
-${'_'.repeat(42)}
-${data.employeeName}`;
-
-        return agreement;
     }
 
     generateMeetingConvocation(data) {
