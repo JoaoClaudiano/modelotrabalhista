@@ -11,19 +11,8 @@ class DocumentExporter {
             docx: false
         };
         
-        // Constantes de formatação
+        // Constantes de formatação DOCX
         this.FORMATTING = {
-            // PDF
-            EMPTY_LINE_SPACING_FACTOR: 0.5,
-            LINE_HEIGHT_MM: 7,
-            TITLE_FONT_SIZE: 12,
-            BODY_FONT_SIZE: 11,
-            SEPARATOR_PADDING_BEFORE: 2,
-            SEPARATOR_PADDING_AFTER_HEAVY: 5,
-            SEPARATOR_PADDING_AFTER_LIGHT: 4,
-            HEAVY_SEPARATOR_LINE_WIDTH: 0.5,
-            LIGHT_SEPARATOR_LINE_WIDTH: 0.3,
-            
             // DOCX (sizes in half-points: 22 = 11pt, 24 = 12pt, 28 = 14pt)
             DOCX_TITLE_SIZE: 28, // 14pt
             DOCX_BODY_SIZE: 22,  // 11pt
@@ -119,11 +108,7 @@ class DocumentExporter {
         this.init();
     }
     
-    // Converter pontos para half-points (usado pela biblioteca docx)
-    pointsToHalfPoints(points) {
-        return points * 2;
-    }
-    
+
     /**
      * Check if a line should be treated as a title
      * A line is considered a title if:
@@ -591,7 +576,6 @@ class DocumentExporter {
     }
 
     init() {
-        console.log('DocumentExporter inicializando...');
         // Don't load libraries immediately - load on demand
         // this.loadLibraries(); // REMOVED - libraries will be loaded when export is triggered
         this.setupEventListeners();
@@ -620,7 +604,6 @@ class DocumentExporter {
     loadJSPDF() {
         // Verificar se já existe um script carregando
         if (document.querySelector('script[src*="jspdf"]')) {
-            console.log('jsPDF já está sendo carregado');
             return;
         }
 
@@ -630,7 +613,6 @@ class DocumentExporter {
         script.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
         
         script.onload = () => {
-            console.log('✅ jsPDF carregado com sucesso');
             this.libsLoaded.jspdf = true;
             this.checkAllLibsLoaded();
         };
@@ -650,7 +632,6 @@ class DocumentExporter {
         script.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
         
         script.onload = () => {
-            console.log('✅ jsPDF carregado via fallback');
             this.libsLoaded.jspdf = true;
             this.checkAllLibsLoaded();
         };
@@ -667,7 +648,6 @@ class DocumentExporter {
     loadDocxJS() {
         // Verificar se já existe um script carregando
         if (document.querySelector('script[src*="docx"]')) {
-            console.log('docx já está sendo carregado');
             return;
         }
 
@@ -676,7 +656,6 @@ class DocumentExporter {
         script.innerHTML = `
             import * as docx from 'https://cdn.jsdelivr.net/npm/docx@7.8.0/+esm';
             window.docx = docx;
-            console.log('✅ docx.js carregado com sucesso (ESM)');
             
             // Disparar evento personalizado
             window.dispatchEvent(new CustomEvent('docxLoaded', { detail: docx }));
@@ -703,7 +682,6 @@ class DocumentExporter {
         script.integrity = 'sha384-+Q9XUOzYmnebUFYhYAgja0XBVfXUm8gKA6IyQqNzzgwauWOwIR5hBtCyJvMA2Q0x';
         
         script.onload = () => {
-            console.log('✅ docx.js carregado via fallback');
             this.libsLoaded.docx = true;
             this.checkAllLibsLoaded();
         };
@@ -718,10 +696,7 @@ class DocumentExporter {
     }
 
     checkAllLibsLoaded() {
-        console.log('Status das bibliotecas:', {
-            jspdf: this.libsLoaded.jspdf,
-            docx: this.libsLoaded.docx
-        });
+        // Libraries loaded check - status tracked in this.libsLoaded
     }
 
     setupEventListeners() {
@@ -773,7 +748,6 @@ class DocumentExporter {
         const pdfBtn = document.getElementById('pdfBtn');
         
         if (pdfBtn && !pdfBtn.hasAttribute('data-export-listener')) {
-            console.log('Anexando listener ao botão PDF');
             pdfBtn.setAttribute('data-export-listener', 'true');
             
             pdfBtn.addEventListener('click', async (e) => {
@@ -781,7 +755,6 @@ class DocumentExporter {
                 e.stopPropagation();
                 
                 if (pdfBtn.disabled) {
-                    console.log('Botão PDF desabilitado, ignorando clique');
                     return;
                 }
                 
@@ -791,8 +764,6 @@ class DocumentExporter {
                 pdfBtn.disabled = true;
                 
                 try {
-                    console.log('Iniciando geração automática de PDF...');
-                    
                     // Reset zoom before PDF export to ensure consistent formatting
                     const preview = document.getElementById('documentPreview');
                     let originalZoom = null;
@@ -831,7 +802,6 @@ class DocumentExporter {
         const printBtn = document.getElementById('printBtn');
         
         if (printBtn && !printBtn.hasAttribute('data-export-listener')) {
-            console.log('Anexando listener ao botão DOCX');
             printBtn.setAttribute('data-export-listener', 'true');
             
             // Atualizar texto e ícone do botão
@@ -844,7 +814,6 @@ class DocumentExporter {
                 e.stopPropagation();
                 
                 if (printBtn.disabled) {
-                    console.log('Botão DOCX desabilitado, ignorando clique');
                     return;
                 }
                 
@@ -855,7 +824,6 @@ class DocumentExporter {
                 printBtn.disabled = true;
                 
                 try {
-                    console.log('Iniciando geração de DOCX...');
                     const content = this.getDocumentContent();
                     
                     if (!content || content.trim() === '') {
@@ -881,7 +849,6 @@ class DocumentExporter {
         const copyBtn = document.getElementById('copyBtn');
         
         if (copyBtn && !copyBtn.hasAttribute('data-export-listener')) {
-            console.log('Anexando listener ao botão Copiar');
             copyBtn.setAttribute('data-export-listener', 'true');
             
             copyBtn.addEventListener('click', async (e) => {
@@ -889,7 +856,6 @@ class DocumentExporter {
                 e.stopPropagation();
                 
                 if (copyBtn.disabled) {
-                    console.log('Botão Copiar desabilitado, ignorando clique');
                     return;
                 }
                 
@@ -925,39 +891,7 @@ class DocumentExporter {
         }
     }
 
-    // Obter conteúdo HTML do documento
-    getDocumentHTML() {
-        // Prioridade: elemento específico do modelo
-        const contentSelectors = [
-            // Priority: actual selectors used in the app
-            '#documentPreview .document-content',
-            '#documentPreview',
-            // Legacy selectors for backward compatibility
-            '#modelo-text',
-            '#textoModelo',
-            '#documento-texto',
-            '#conteudoModelo',
-            '.modelo-texto',
-            '.documento-conteudo',
-            '#previewModelo',
-            '.preview-content'
-        ];
-        
-        for (const selector of contentSelectors) {
-            const element = document.querySelector(selector);
-            if (element) {
-                const html = element.innerHTML || '';
-                if (html.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
-                    console.log(`getDocumentHTML: Conteúdo HTML encontrado no seletor: ${selector}`);
-                    return html.trim();
-                }
-            }
-        }
-        
-        console.warn('getDocumentHTML: Nenhum conteúdo HTML encontrado');
-        return null;
-    }
-    
+
     /**
      * Get document text content for PDF generation
      * This method NEVER uses the preview DOM to ensure PDF is 100% vectorial
@@ -969,7 +903,6 @@ class DocumentExporter {
         if (window.app && typeof window.app.getDocumentContentForPDF === 'function') {
             const content = window.app.getDocumentContentForPDF();
             if (content && content.length > this.VALIDATION.MIN_CONTENT_LENGTH) {
-                console.log('✅ getDocumentTextForPDF: Using content from data model (NOT from preview DOM)');
                 return content;
             }
         }
@@ -1001,7 +934,6 @@ class DocumentExporter {
             if (element) {
                 const text = element.textContent || element.innerText || '';
                 if (text.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
-                    console.log(`getDocumentContent: Conteúdo encontrado no seletor: ${selector}`);
                     return text.trim();
                 }
             }
@@ -1012,7 +944,6 @@ class DocumentExporter {
         for (const element of previewElements) {
             const text = element.textContent || element.innerText || '';
             if (text.trim().length > 100) { // Conteúdo significativo
-                console.log('Conteúdo encontrado em elemento de preview');
                 return text.trim();
             }
         }
@@ -1038,7 +969,6 @@ class DocumentExporter {
         }
         
         if (bestContent) {
-            console.log('Conteúdo encontrado em elemento com mais texto');
             return bestContent;
         }
         
@@ -1046,34 +976,6 @@ class DocumentExporter {
         return 'Nenhum conteúdo disponível para exportação. Gere um modelo primeiro.';
     }
 
-    // Obter elemento do documento (retorna HTMLElement, não string)
-    getDocumentElement() {
-        const selectors = [
-            // Priority: actual selectors used in the app
-            '#documentPreview .document-content',
-            '#documentPreview',
-            // Legacy selectors for backward compatibility
-            '#modelo-text',
-            '#textoModelo',
-            '#documento-texto',
-            '#conteudoModelo',
-            '.modelo-texto',
-            '.documento-conteudo',
-            '#previewModelo',
-            '.preview-content'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.innerHTML.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
-                console.log(`getDocumentElement: Found element with selector: ${selector}`);
-                return element;
-            }
-        }
-        
-        console.warn('getDocumentElement: No suitable element found');
-        return null;
-    }
 
     // ==========================================
     // MÉTODOS DE EXPORTAÇÃO PDF (Novo Sistema)
@@ -1100,7 +1002,6 @@ class DocumentExporter {
             const documentTitle = this.MODEL_TITLES[modelId] || 'Documento Trabalhista';
             
             // 3. Sempre usar exportPDFVector para garantir texto 100% vetorial e selecionável
-            console.log(`✅ Gerando PDF vetorial: ${documentTitle}`);
             return await this.exportPDFVector(content, documentTitle, modelId);
             
         } catch (error) {
@@ -1183,7 +1084,6 @@ class DocumentExporter {
         try {
             // 1. Carregar jsPDF se necessário
             if (typeof window.jspdf === 'undefined') {
-                console.log('Carregando jsPDF...');
                 this.loadLibraries();
                 await new Promise((resolve, reject) => {
                     const checkInterval = setInterval(() => {
@@ -1467,7 +1367,6 @@ class DocumentExporter {
                 : 'PDF vetorial gerado com sucesso!';
             
             this.showNotification(message, 'success');
-            console.log(`✅ PDF gerado: ${title} com ${pageCount} página(s) usando estrutura semântica`);
             
             return { 
                 success: true, 
@@ -1483,15 +1382,6 @@ class DocumentExporter {
         }
     }
     
-    /**
-     * MANTENDO exportToPDFAuto por compatibilidade - redireciona para exportPDF
-     * @deprecated Use exportPDF() instead
-     */
-    async exportToPDFAuto(filename = 'ModeloTrabalhista') {
-        console.warn('exportToPDFAuto está obsoleto. Use exportPDF() diretamente.');
-        return await this.exportPDF(filename);
-    }
-
     /**
      * Exportar via impressão nativa (fallback para conteúdo longo)
      * Usa window.print() com estilos @media print
@@ -1615,7 +1505,6 @@ class DocumentExporter {
         try {
             // Load docx library on demand if not already loaded
             if (typeof window.docx === 'undefined' && !this.libsLoaded.docx) {
-                console.log('Loading docx.js on demand...');
                 this.loadLibraries();
                 // Wait for library to load with a longer timeout
                 await new Promise((resolve, reject) => {
@@ -1623,7 +1512,6 @@ class DocumentExporter {
                         if (typeof window.docx !== 'undefined') {
                             this.libsLoaded.docx = true;
                             clearInterval(checkInterval);
-                            console.log('✅ docx.js carregado com sucesso');
                             resolve();
                         }
                     }, 100);
@@ -1880,21 +1768,11 @@ class DocumentExporter {
         }, 3000);
     }
 
-    // Habilitar/desabilitar botões
-    enableExportButtons(enable = true) {
-        ['pdfBtn', 'printBtn', 'copyBtn'].forEach(id => {
-            const btn = document.getElementById(id);
-            if (btn) {
-                btn.disabled = !enable;
-            }
-        });
-    }
 }
 
 // Inicialização
 if (!window.documentExporter) {
     window.documentExporter = new DocumentExporter();
-    console.log('✅ DocumentExporter inicializado com sucesso!');
 }
 
 // Exportar para uso global
