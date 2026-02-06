@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "test": "node test-export.js",
     "cache-bust": "node build/cache-bust.js",
     "build": "npm run cache-bust",
     "generate-sitemap": "node scripts/generate-sitemap.js",
