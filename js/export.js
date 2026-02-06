@@ -131,7 +131,10 @@ class DocumentExporter {
                     if (text) {
                         // Normalize whitespace: collapse multiple spaces/newlines into single space
                         const normalizedText = text.replace(/\s+/g, ' ');
-                        if (normalizedText && normalizedText !== ' ' || (normalizedText === ' ' && parts.length > 0)) {
+                        // Add non-empty text or single space if there are already parts (to preserve spacing)
+                        const isNonEmpty = normalizedText.length > 0 && normalizedText !== ' ';
+                        const isSeparatingSpace = normalizedText === ' ' && parts.length > 0;
+                        if (isNonEmpty || isSeparatingSpace) {
                             parts.push({ text: normalizedText, bold: false });
                         }
                     }
