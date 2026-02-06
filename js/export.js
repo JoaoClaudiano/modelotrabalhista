@@ -271,12 +271,13 @@ class DocumentExporter {
      * @param {object} pdf - jsPDF instance
      * @param {object} block - Paragraph block with parts array
      * @param {number} yPosition - Current Y position
+     * @param {number} currentPageCount - Current page count
      * @param {object} config - PDF configuration
-     * @param {function} callback - Callback to update yPosition and pageCount
+     * @returns {object} Updated yPosition and pageCount
      */
-    renderParagraphWithFormatting(pdf, block, yPosition, config, callback) {
+    renderParagraphWithFormatting(pdf, block, yPosition, currentPageCount, config) {
         const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-        let pageCount = 1; // This should be tracked in the main function
+        let pageCount = currentPageCount;
         
         // Build the full text for line breaking
         const fullText = block.text;
@@ -290,6 +291,31 @@ class DocumentExporter {
         pdf.setFont('helvetica', 'normal'); // Set base font for measurement
         const lines = pdf.splitTextToSize(fullText, config.USABLE_WIDTH);
         
+        // Build position map for bold text
+        let textPosition = 0;
+        const boldRanges = [];
+        for (const part of block.parts) {
+            const start = textPosition;
+            const end = start + part.text.length;
+            if (part.bold) {
+                boldRanges.push({ start, end });
+            }
+            textPosition = end;
+        }
+        
+        // Helper to check if a character position is in a bold range
+        const isBold = (pos) => {
+            for (const range of boldRanges) {
+                if (pos >= range.start && pos < range.end) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        // Track position in full text
+        let fullTextPos = 0;
+        
         // Render each line
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
@@ -302,57 +328,85 @@ class DocumentExporter {
                 pageCount++;
             }
             
-            // Render line with formatting
-            // For simplicity, we'll detect bold parts by matching against the original parts
+            // Render line with proper formatting
             let xPos = config.MARGIN;
             
-            // Check if we should justify this line
+            // Skip whitespace at start of line
+            while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                fullTextPos++;
+            }
+            
+            // For justified text (not last line)
             if (shouldJustify && !isLastLine && line.trim().length > 0) {
-                // Justified rendering
                 const words = line.trim().split(/\s+/);
                 if (words.length > 1) {
                     // Calculate space width for justification
                     const wordWidths = [];
+                    let currentBold = isBold(fullTextPos);
+                    
                     for (const word of words) {
-                        // Check if word should be bold
-                        const shouldBeBold = block.parts.some(part => part.bold && part.text.includes(word));
-                        pdf.setFont('helvetica', shouldBeBold ? 'bold' : 'normal');
+                        pdf.setFont('helvetica', currentBold ? 'bold' : 'normal');
                         wordWidths.push(pdf.getTextWidth(word));
+                        // Check if formatting changes within this word
+                        fullTextPos += word.length;
+                        while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                            fullTextPos++;
+                        }
+                        currentBold = isBold(fullTextPos);
                     }
                     
                     const totalWordsWidth = wordWidths.reduce((sum, w) => sum + w, 0);
                     const availableSpace = config.USABLE_WIDTH - totalWordsWidth;
                     const spaceWidth = availableSpace / (words.length - 1);
                     
+                    // Reset position for rendering
+                    fullTextPos -= line.length;
+                    while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                        fullTextPos++;
+                    }
+                    
                     for (let j = 0; j < words.length; j++) {
                         const word = words[j];
-                        const shouldBeBold = block.parts.some(part => part.bold && part.text.includes(word));
-                        pdf.setFont('helvetica', shouldBeBold ? 'bold' : 'normal');
+                        const wordBold = isBold(fullTextPos);
+                        pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
                         pdf.text(word, xPos, yPosition);
                         xPos += wordWidths[j] + spaceWidth;
+                        fullTextPos += word.length;
+                        while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                            fullTextPos++;
+                        }
                     }
                 } else {
                     // Single word
-                    pdf.setFont('helvetica', 'normal');
+                    const wordBold = isBold(fullTextPos);
+                    pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
                     pdf.text(line, config.MARGIN, yPosition);
+                    fullTextPos += line.length;
                 }
             } else {
                 // Left-aligned rendering (last line or short paragraph)
-                // Render with proper formatting for bold parts
                 const words = line.trim().split(/\s+/);
                 for (const word of words) {
-                    const shouldBeBold = block.parts.some(part => part.bold && part.text.includes(word));
-                    pdf.setFont('helvetica', shouldBeBold ? 'bold' : 'normal');
+                    const wordBold = isBold(fullTextPos);
+                    pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
                     pdf.text(word, xPos, yPosition);
                     xPos += pdf.getTextWidth(word) + pdf.getTextWidth(' ');
+                    fullTextPos += word.length;
+                    while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                        fullTextPos++;
+                    }
                 }
             }
             
             yPosition += lineHeight;
+            
+            // Skip line break in full text
+            while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                fullTextPos++;
+            }
         }
         
-        // Call callback to update position
-        callback(yPosition, pageCount);
+        return { yPosition, pageCount };
     }
     
     /**
@@ -360,12 +414,13 @@ class DocumentExporter {
      * @param {object} pdf - jsPDF instance
      * @param {object} block - Field block with label and value
      * @param {number} yPosition - Current Y position
+     * @param {number} currentPageCount - Current page count
      * @param {object} config - PDF configuration
-     * @param {function} callback - Callback to update yPosition and pageCount
+     * @returns {object} Updated yPosition and pageCount
      */
-    renderFieldWithFormatting(pdf, block, yPosition, config, callback) {
+    renderFieldWithFormatting(pdf, block, yPosition, currentPageCount, config) {
         const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-        let pageCount = 1;
+        let pageCount = currentPageCount;
         
         // Build the full text for line breaking
         const fullText = `${block.label}: ${block.value}`;
@@ -407,8 +462,7 @@ class DocumentExporter {
             yPosition += lineHeight;
         }
         
-        // Call callback to update position
-        callback(yPosition, pageCount);
+        return { yPosition, pageCount };
     }
     
     // Desenhar linha horizontal decorativa
@@ -1144,10 +1198,9 @@ class DocumentExporter {
                         pdf.setFontSize(config.FONT_SIZE);
                         
                         // Render paragraph with mixed formatting (bold and normal)
-                        this.renderParagraphWithFormatting(pdf, block, yPosition, config, (newY, newPageCount) => {
-                            yPosition = newY;
-                            pageCount = newPageCount;
-                        });
+                        const paragraphResult = this.renderParagraphWithFormatting(pdf, block, yPosition, pageCount, config);
+                        yPosition = paragraphResult.yPosition;
+                        pageCount = paragraphResult.pageCount;
                         break;
                         
                     case 'field':
@@ -1159,10 +1212,9 @@ class DocumentExporter {
                         pdf.setFontSize(config.FONT_SIZE);
                         
                         // Render field with label (normal) and value (bold)
-                        this.renderFieldWithFormatting(pdf, block, yPosition, config, (newY, newPageCount) => {
-                            yPosition = newY;
-                            pageCount = newPageCount;
-                        });
+                        const fieldResult = this.renderFieldWithFormatting(pdf, block, yPosition, pageCount, config);
+                        yPosition = fieldResult.yPosition;
+                        pageCount = fieldResult.pageCount;
                         break;
                         
                     case 'list':
