@@ -3,6 +3,11 @@ class ModeloTrabalhistaApp {
     constructor() {
         this.currentModel = 'demissao';
         this.currentZoom = 100;
+        // Store the last generated document data and content for PDF export
+        // This ensures PDF generation uses the data model, not the preview DOM
+        this.lastGeneratedData = null;
+        this.lastGeneratedContent = null;
+        
         // Verificar se o logger está disponível
         if (window.appLogger) {
             window.appLogger.info('ModeloTrabalhistaApp inicializando...');
@@ -433,6 +438,11 @@ class ModeloTrabalhistaApp {
             try {
                 const data = this.collectFormData();
                 const documentContent = this.generateDocumentContent(data);
+                
+                // Store the generated data and content for PDF export
+                // This ensures PDF uses the data model, not the preview DOM
+                this.lastGeneratedData = data;
+                this.lastGeneratedContent = documentContent;
                 
                 this.displayDocument(documentContent);
                 this.enableActionButtons(true);
@@ -1448,6 +1458,37 @@ ${data.employeePosition}`;
         if (this.analytics && this.analytics.trackPageView) {
             this.analytics.trackPageView();
         }
+    }
+    
+    /**
+     * Get the last generated document content for PDF export
+     * This method provides access to the pure text content from the data model,
+     * ensuring PDF generation doesn't depend on the preview DOM
+     * @returns {string|null} The last generated document content as plain text
+     */
+    getDocumentContentForPDF() {
+        if (!this.lastGeneratedContent) {
+            console.warn('No document content available. Generate a document first.');
+            return null;
+        }
+        
+        // If content is HTML (from generator), extract text
+        if (this.lastGeneratedContent.trim().startsWith('<div')) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = this.lastGeneratedContent;
+            return tempDiv.textContent || tempDiv.innerText || '';
+        }
+        
+        // Otherwise return as-is (already plain text)
+        return this.lastGeneratedContent;
+    }
+    
+    /**
+     * Get the last generated document data for reference
+     * @returns {object|null} The last generated document data object
+     */
+    getLastGeneratedData() {
+        return this.lastGeneratedData;
     }
 }
 
