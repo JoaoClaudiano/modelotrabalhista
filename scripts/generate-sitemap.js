@@ -6,8 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// Base URL for the website
-const BASE_URL = 'https://joaoclaudiano.github.io/modelotrabalhista';
+// Base URL and path for the website
+const BASE_HOSTNAME = 'https://joaoclaudiano.github.io';
+const BASE_PATH = '/modelotrabalhista';
+const BASE_URL = BASE_HOSTNAME + BASE_PATH;
 
 // Function to get all HTML files
 function getHtmlFiles(dir, baseDir = dir) {
@@ -85,7 +87,7 @@ async function generateSitemap() {
       const fullPath = path.join(repoRoot, file);
       
       return {
-        url: url ? `/${url}` : '/',
+        url: url ? `${BASE_PATH}/${url}` : `${BASE_PATH}/`,
         changefreq: getChangeFreq(url),
         priority: getPriority(url),
         lastmod: getLastModified(fullPath)
@@ -101,7 +103,7 @@ async function generateSitemap() {
     });
     
     // Create a stream to write to
-    const stream = new SitemapStream({ hostname: BASE_URL });
+    const stream = new SitemapStream({ hostname: BASE_HOSTNAME });
     
     // Generate sitemap XML
     let xmlString = await streamToPromise(Readable.from(links).pipe(stream)).then(data => data.toString());
@@ -125,7 +127,7 @@ async function generateSitemap() {
     console.log(`📊 Total URLs: ${links.length}`);
     console.log('\n📄 Generated URLs:');
     links.forEach(link => {
-      console.log(`  - ${BASE_URL}${link.url} (priority: ${link.priority}, changefreq: ${link.changefreq})`);
+      console.log(`  - ${BASE_HOSTNAME}${link.url} (priority: ${link.priority}, changefreq: ${link.changefreq})`);
     });
     
   } catch (error) {
