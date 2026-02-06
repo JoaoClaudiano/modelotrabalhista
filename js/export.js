@@ -911,6 +911,38 @@ class DocumentExporter {
         return null;
     }
 
+    // Obter conteúdo HTML do documento
+    getDocumentHTML() {
+        // Prioridade: elemento específico do modelo
+        const contentSelectors = [
+            // Priority: actual selectors used in the app
+            '#documentPreview .document-content',
+            '#documentPreview',
+            // Legacy selectors for backward compatibility
+            '#modelo-text',
+            '#textoModelo',
+            '#documento-texto',
+            '#conteudoModelo',
+            '.modelo-texto',
+            '.documento-conteudo',
+            '#previewModelo',
+            '.preview-content'
+        ];
+        
+        for (const selector of contentSelectors) {
+            const element = document.querySelector(selector);
+            if (element) {
+                const html = element.innerHTML || '';
+                if (html.trim().length > this.VALIDATION.MIN_CONTENT_LENGTH) { // Validate minimum content
+                    return html.trim();
+                }
+            }
+        }
+        
+        console.warn('getDocumentHTML: Nenhum conteúdo HTML encontrado');
+        return null;
+    }
+
     // Obter conteúdo do documento
     getDocumentContent() {
         // Prioridade: elemento específico do modelo
