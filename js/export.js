@@ -209,25 +209,33 @@ class DocumentExporter {
             // Lists (ul elements)
             const ul = element.querySelector('ul');
             if (ul) {
+                // Check if there's a preceding paragraph (label for the list)
+                const allPs = element.querySelectorAll('p');
+                for (const p of allPs) {
+                    // Only add paragraph if it comes before the list
+                    if (p.parentNode === element && ul.parentNode === element) {
+                        const pPos = Array.from(element.children).indexOf(p);
+                        const ulPos = Array.from(element.children).indexOf(ul);
+                        if (pPos < ulPos) {
+                            const parts = extractTextWithFormatting(p);
+                            if (parts.length > 0) {
+                                structure.push({
+                                    type: 'paragraph',
+                                    parts: parts,
+                                    text: p.textContent.trim()
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Add the list items
                 const items = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
                 if (items.length > 0) {
                     structure.push({
                         type: 'list',
                         items: items
                     });
-                }
-                
-                // Also check if there's a preceding paragraph
-                const precedingP = element.querySelector('p');
-                if (precedingP && precedingP.compareDocumentPosition(ul) === Node.DOCUMENT_POSITION_FOLLOWING) {
-                    const parts = extractTextWithFormatting(precedingP);
-                    if (parts.length > 0) {
-                        structure.push({
-                            type: 'paragraph',
-                            parts: parts,
-                            text: precedingP.textContent.trim()
-                        });
-                    }
                 }
                 continue;
             }
@@ -242,14 +250,36 @@ class DocumentExporter {
                         const fullText = p.textContent.trim();
                         const colonMatch = fullText.match(/^([^:]+):\s*(.+)$/);
                         
-                        if (colonMatch && parts.some(part => part.bold)) {
-                            // This is a field with label and value
-                            structure.push({
-                                type: 'field',
-                                label: colonMatch[1].trim(),
-                                value: colonMatch[2].trim(),
-                                parts: parts
-                            });
+                        if (colonMatch) {
+                            // Check if bold formatting appears in the value part (after the colon)
+                            const colonIndex = fullText.indexOf(':');
+                            let hasBoldAfterColon = false;
+                            let textPos = 0;
+                            
+                            for (const part of parts) {
+                                if (part.bold && textPos + part.text.length > colonIndex) {
+                                    hasBoldAfterColon = true;
+                                    break;
+                                }
+                                textPos += part.text.length;
+                            }
+                            
+                            if (hasBoldAfterColon) {
+                                // This is a field with label and value
+                                structure.push({
+                                    type: 'field',
+                                    label: colonMatch[1].trim(),
+                                    value: colonMatch[2].trim(),
+                                    parts: parts
+                                });
+                            } else {
+                                // Regular paragraph
+                                structure.push({
+                                    type: 'paragraph',
+                                    parts: parts,
+                                    text: fullText
+                                });
+                            }
                         } else {
                             // Regular paragraph
                             structure.push({
@@ -331,8 +361,8 @@ class DocumentExporter {
             // Render line with proper formatting
             let xPos = config.MARGIN;
             
-            // Skip whitespace at start of line
-            while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+            // Skip whitespace at start of line (space, tab, newline)
+            while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
                 fullTextPos++;
             }
             
@@ -342,17 +372,17 @@ class DocumentExporter {
                 if (words.length > 1) {
                     // Calculate space width for justification
                     const wordWidths = [];
-                    let currentBold = isBold(fullTextPos);
+                    let lineStart = fullTextPos;
                     
                     for (const word of words) {
-                        pdf.setFont('helvetica', currentBold ? 'bold' : 'normal');
+                        const wordBold = isBold(fullTextPos);
+                        pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
                         wordWidths.push(pdf.getTextWidth(word));
-                        // Check if formatting changes within this word
                         fullTextPos += word.length;
-                        while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                        // Skip whitespace between words
+                        while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
                             fullTextPos++;
                         }
-                        currentBold = isBold(fullTextPos);
                     }
                     
                     const totalWordsWidth = wordWidths.reduce((sum, w) => sum + w, 0);
@@ -360,10 +390,7 @@ class DocumentExporter {
                     const spaceWidth = availableSpace / (words.length - 1);
                     
                     // Reset position for rendering
-                    fullTextPos -= line.length;
-                    while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
-                        fullTextPos++;
-                    }
+                    fullTextPos = lineStart;
                     
                     for (let j = 0; j < words.length; j++) {
                         const word = words[j];
@@ -372,7 +399,8 @@ class DocumentExporter {
                         pdf.text(word, xPos, yPosition);
                         xPos += wordWidths[j] + spaceWidth;
                         fullTextPos += word.length;
-                        while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                        // Skip whitespace between words
+                        while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
                             fullTextPos++;
                         }
                     }
@@ -392,7 +420,8 @@ class DocumentExporter {
                     pdf.text(word, xPos, yPosition);
                     xPos += pdf.getTextWidth(word) + pdf.getTextWidth(' ');
                     fullTextPos += word.length;
-                    while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+                    // Skip whitespace between words
+                    while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
                         fullTextPos++;
                     }
                 }
@@ -400,8 +429,8 @@ class DocumentExporter {
             
             yPosition += lineHeight;
             
-            // Skip line break in full text
-            while (fullTextPos < fullText.length && fullText[fullTextPos].trim() === '') {
+            // Skip line break and remaining whitespace
+            while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
                 fullTextPos++;
             }
         }
