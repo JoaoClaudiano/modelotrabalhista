@@ -648,13 +648,25 @@ class UIHelper {
     }
 
     applyZoom(element) {
-        element.style.transform = `scale(${this.currentZoom / 100})`;
-        element.style.transformOrigin = 'top left';
-        
-        const container = element.parentElement;
-        if (container) {
-            const originalHeight = element.scrollHeight;
-            container.style.height = `${originalHeight * (this.currentZoom / 100)}px`;
+        if (this.currentZoom === 100) {
+            // At 100% zoom, clear all zoom-related styles to show natural layout
+            element.style.transform = '';
+            element.style.transformOrigin = '';
+            
+            const container = element.parentElement;
+            if (container) {
+                container.style.height = '';
+            }
+        } else {
+            // Apply zoom transform for non-100% zoom levels
+            element.style.transform = `scale(${this.currentZoom / 100})`;
+            element.style.transformOrigin = 'top left';
+            
+            const container = element.parentElement;
+            if (container) {
+                const originalHeight = element.scrollHeight;
+                container.style.height = `${originalHeight * (this.currentZoom / 100)}px`;
+            }
         }
     }
 
