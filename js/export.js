@@ -57,7 +57,7 @@ class DocumentExporter {
             // Font settings (pt)
             FONT_SIZE: 11,              // Corpo do texto
             TITLE_FONT_SIZE: 12,        // Títulos
-            LINE_HEIGHT_FACTOR: 1.4,    // Fator de espaçamento entre linhas
+            LINE_HEIGHT_FACTOR: 1.5,    // Fator de espaçamento entre linhas (changed from 1.4 to 1.5)
             
             // Conversion factor: points to millimeters
             PT_TO_MM: 0.3527,           // 1pt = 1/72 inch = 0.3527mm
@@ -75,15 +75,19 @@ class DocumentExporter {
             // Decorative lines for document title
             TITLE_LINE_WIDTH: 0.4,        // Espessura das linhas (pt) - discreta
             TITLE_LINE_SPACING_BEFORE: 3, // Espaço antes da linha superior
-            TITLE_LINE_TO_TEXT: 2,        // Espaço entre linha e texto do título
+            TITLE_LINE_TO_TEXT: 4,        // Espaço entre linha e texto do título (increased from 2 to 4 to prevent overlap)
             TITLE_TEXT_TO_LINE: 2,        // Espaço entre texto do título e linha inferior
-            TITLE_LINE_SPACING_AFTER: 3,  // Espaço após linha inferior
+            TITLE_LINE_SPACING_AFTER: 5,  // Espaço após linha inferior (increased from 3 to 5 for better spacing before first paragraph)
             
             // Title detection
             TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título
             
             // Text justification
             JUSTIFY_MIN_LENGTH: 60,     // Mínimo de caracteres para justificar parágrafo
+            
+            // List formatting
+            LIST_INDENT: 5,              // Indentação para itens de lista (mm)
+            LIST_BULLET_CHAR: '•',       // Caractere de bullet point
             
             // Calculated usable area (getters dinâmicos)
             get USABLE_WIDTH() { return this.PAGE_WIDTH - (2 * this.MARGIN); },
@@ -122,15 +126,27 @@ class DocumentExporter {
             const parts = [];
             const processNode = (node) => {
                 if (node.nodeType === Node.TEXT_NODE) {
-                    const text = node.textContent.trim();
+                    // Don't trim - preserve spaces for accurate position mapping
+                    const text = node.textContent;
                     if (text) {
-                        parts.push({ text, bold: false });
+                        // Normalize whitespace: collapse multiple spaces/newlines into single space
+                        const normalizedText = text.replace(/\s+/g, ' ');
+                        // Add non-empty text or single space if there are already parts (to preserve spacing)
+                        const isNonEmpty = normalizedText.length > 0 && normalizedText !== ' ';
+                        const isSeparatingSpace = normalizedText === ' ' && parts.length > 0;
+                        if (isNonEmpty || isSeparatingSpace) {
+                            parts.push({ text: normalizedText, bold: false });
+                        }
                     }
                 } else if (node.nodeType === Node.ELEMENT_NODE) {
                     if (node.tagName === 'STRONG' || node.tagName === 'B') {
-                        const text = node.textContent.trim();
+                        // For bold elements, get the text content and normalize whitespace
+                        const text = node.textContent;
                         if (text) {
-                            parts.push({ text, bold: true });
+                            const normalizedText = text.replace(/\s+/g, ' ').trim();
+                            if (normalizedText) {
+                                parts.push({ text: normalizedText, bold: true });
+                            }
                         }
                     } else {
                         // Recursively process child nodes
@@ -219,10 +235,12 @@ class DocumentExporter {
                         if (pPos < ulPos) {
                             const parts = extractTextWithFormatting(p);
                             if (parts.length > 0) {
+                                // Build fullText from parts to ensure consistency
+                                const fullText = parts.map(part => part.text).join('').trim();
                                 structure.push({
                                     type: 'paragraph',
                                     parts: parts,
-                                    text: p.textContent.trim()
+                                    text: fullText
                                 });
                             }
                         }
@@ -246,8 +264,10 @@ class DocumentExporter {
                 paragraphs.forEach(p => {
                     const parts = extractTextWithFormatting(p);
                     if (parts.length > 0) {
+                        // Build fullText from parts to ensure consistency
+                        const fullText = parts.map(part => part.text).join('').trim();
+                        
                         // Check if this is a field (has label: value pattern)
-                        const fullText = p.textContent.trim();
                         const colonMatch = fullText.match(/^([^:]+):\s*(.+)$/);
                         
                         if (colonMatch) {
@@ -255,10 +275,10 @@ class DocumentExporter {
                             const colonIndex = fullText.indexOf(':');
                             let hasBoldAfterColon = false;
                             
-                            // Build position map accounting for original untrimmed content
-                            let fullTextBuilt = '';
+                            // Build position map
+                            let textPosition = 0;
                             for (const part of parts) {
-                                const partStart = fullTextBuilt.length;
+                                const partStart = textPosition;
                                 const partEnd = partStart + part.text.length;
                                 
                                 // Check if this bold part overlaps with text after colon
@@ -266,7 +286,7 @@ class DocumentExporter {
                                     hasBoldAfterColon = true;
                                     break;
                                 }
-                                fullTextBuilt += part.text;
+                                textPosition = partEnd;
                             }
                             
                             if (hasBoldAfterColon) {
@@ -1155,7 +1175,7 @@ class DocumentExporter {
                         
                     case 'companyAddress':
                         pdf.setFontSize(config.FONT_SIZE);
-                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFont('helvetica', 'bold');
                         
                         // Reduced spacing between name and address
                         yPosition += config.HEADER_NAME_TO_ADDRESS;
@@ -1255,11 +1275,34 @@ class DocumentExporter {
                         pdf.setFontSize(config.FONT_SIZE);
                         pdf.setFont('helvetica', 'normal');
                         
-                        // Render list items (not justified)
+                        // Calculate positions for list items
+                        const bulletX = config.MARGIN + config.LIST_INDENT;
+                        const textX = bulletX + pdf.getTextWidth(config.LIST_BULLET_CHAR + ' ');
+                        const listTextWidth = config.USABLE_WIDTH - config.LIST_INDENT - pdf.getTextWidth(config.LIST_BULLET_CHAR + ' ');
+                        
+                        // Render list items with bullet points and indentation
                         for (const item of block.items) {
-                            const itemLines = pdf.splitTextToSize(item, config.USABLE_WIDTH);
+                            // Check for page break before item
+                            if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
+                                pdf.addPage();
+                                yPosition = config.MARGIN;
+                                pageCount++;
+                            }
                             
-                            for (const itemLine of itemLines) {
+                            // Draw bullet point
+                            pdf.text(config.LIST_BULLET_CHAR, bulletX, yPosition);
+                            
+                            // Split item text to fit available width (accounting for indentation and bullet)
+                            const itemLines = pdf.splitTextToSize(item, listTextWidth);
+                            
+                            // Render first line at current position
+                            if (itemLines.length > 0) {
+                                pdf.text(itemLines[0], textX, yPosition);
+                                yPosition += lineHeight;
+                            }
+                            
+                            // Render continuation lines (indented, no bullet)
+                            for (let i = 1; i < itemLines.length; i++) {
                                 // Check for page break
                                 if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
                                     pdf.addPage();
@@ -1267,7 +1310,7 @@ class DocumentExporter {
                                     pageCount++;
                                 }
                                 
-                                pdf.text(itemLine, config.MARGIN, yPosition);
+                                pdf.text(itemLines[i], textX, yPosition);
                                 yPosition += lineHeight;
                             }
                         }
