@@ -959,7 +959,7 @@ class DocumentExporter {
                 pdf.setFont('helvetica', 'normal');
                 
                 // Adicionar espaço entre parágrafos (texto após texto, não após título ou linha vazia)
-                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN && nonEmptyLinesCount > 0) {
+                if (!previousLineWasTitle && !previousLineWasEmpty && yPosition > config.MARGIN) {
                     yPosition += config.PARAGRAPH_SPACING;
                 }
                 
@@ -988,14 +988,16 @@ class DocumentExporter {
                             // Calcular espaço entre palavras para justificar
                             const words = textLine.trim().split(/\s+/);
                             if (words.length > 1) {
-                                const textWidth = pdf.getTextWidth(words.join(''));
-                                const availableSpace = config.USABLE_WIDTH - textWidth;
+                                // Medir largura total das palavras (cache para eficiência)
+                                const wordWidths = words.map(word => pdf.getTextWidth(word));
+                                const totalWordsWidth = wordWidths.reduce((sum, width) => sum + width, 0);
+                                const availableSpace = config.USABLE_WIDTH - totalWordsWidth;
                                 const spaceWidth = availableSpace / (words.length - 1);
                                 
                                 let xPos = config.MARGIN;
                                 for (let k = 0; k < words.length; k++) {
                                     pdf.text(words[k], xPos, yPosition);
-                                    xPos += pdf.getTextWidth(words[k]) + spaceWidth;
+                                    xPos += wordWidths[k] + spaceWidth;
                                 }
                             } else {
                                 // Palavra única, sem justificação
