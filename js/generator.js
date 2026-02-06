@@ -711,11 +711,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE REEMBOLSO DE DESPESAS</h2>
@@ -779,11 +781,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">SOLICITAÇÃO DE BENEFÍCIOS</h2>
@@ -843,11 +847,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE LICENÇA MATERNIDADE/PATERNIDADE</h2>
@@ -911,11 +917,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE FLEXIBILIZAÇÃO DE JORNADA</h2>
@@ -973,11 +981,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">SOLICITAÇÃO DE INTERVALO PARA AMAMENTAÇÃO</h2>
@@ -1039,11 +1049,13 @@ class DocumentGenerator {
         const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
 
         return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <!-- Cabeçalho da empresa -->
     <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
         <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
         <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
     </div>
     
+    <!-- Título -->
     <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
         <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
         <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE AJUSTE DE HORÁRIO PARA PAIS/RESPONSÁVEIS</h2>
