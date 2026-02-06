@@ -41,12 +41,14 @@
         box-shadow: none !important;
         padding: 1cm !important;
         font-family: 'Times New Roman', serif !important;
-        font-size: 12pt !important;
-        line-height: 1.6 !important;
+        font-size: 11pt !important; /* Readable size, not too small */
+        line-height: 1.4 !important; /* Comfortable spacing */
         white-space: pre-wrap !important;
         min-height: auto !important;
         max-height: none !important;
         overflow: visible !important;
+        width: 210mm !important; /* A4 width */
+        max-width: 210mm !important;
     }
     
     /* Evitar quebra de página dentro de seções importantes */
