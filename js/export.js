@@ -108,10 +108,10 @@ class DocumentExporter {
     }
     
     // Detectar se é uma linha de cabeçalho (nome da empresa ou endereço)
-    // Cabeçalho aparece nas primeiras 3 linhas do documento
+    // Cabeçalho aparece nas primeiras 3 linhas do documento (índices 0, 1, 2)
     isHeaderLine(lineIndex, trimmedLine) {
-        // Apenas as primeiras 3 linhas não-vazias podem ser cabeçalho
-        if (lineIndex > 3) return false;
+        // Apenas as primeiras 3 linhas não-vazias podem ser cabeçalho (índices 0-2)
+        if (lineIndex >= 3) return false;
         
         // Cabeçalho não é título (não é todo uppercase com mais de alguns caracteres)
         // mas tem comprimento razoável
@@ -159,7 +159,8 @@ class DocumentExporter {
         const spaceWidth = pdf.getTextWidth(' ');
         const textWidth = pdf.getTextWidth(text);
         
-        // Se o texto já cabe na linha sem justificação, aplicar justificação
+        // Justificar apenas se o texto ocupa menos de 95% da largura disponível
+        // Isso evita esticar demais palavras em linhas já muito preenchidas
         if (textWidth < maxWidth * 0.95) {
             // Calcular espaço extra necessário para justificar
             const totalGaps = words.length - 1;
@@ -798,6 +799,7 @@ class DocumentExporter {
             let pageCount = 1;
             let previousLineWasEmpty = false;
             let previousLineWasTitle = false;
+            let nonEmptyLineCount = 0; // Track non-empty lines for header detection
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
@@ -813,7 +815,8 @@ class DocumentExporter {
                 }
                 
                 // Cabeçalho (nome da empresa e endereço) - centralizar na largura útil
-                if (this.isHeaderLine(i, trimmed)) {
+                // Usar nonEmptyLineCount para detectar corretamente mesmo com linhas vazias no início
+                if (this.isHeaderLine(nonEmptyLineCount, trimmed)) {
                     pdf.setFontSize(config.FONT_SIZE);
                     pdf.setFont('helvetica', 'normal');
                     
@@ -834,6 +837,7 @@ class DocumentExporter {
                     yPosition += lineHeight;
                     previousLineWasEmpty = false;
                     previousLineWasTitle = false;
+                    nonEmptyLineCount++;
                     continue;
                 }
                 
@@ -844,7 +848,8 @@ class DocumentExporter {
                     
                     // Calcular line-height do título usando constantes
                     const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    // Altura total: linha superior + espaçamento + título + espaçamento + linha inferior
+                    // Altura total para verificação de página: 
+                    // espaço acima (2mm) + altura do título + espaço abaixo (2mm) + espaço após (3mm)
                     const totalTitleHeight = config.TITLE_LINE_SPACING + titleLineHeight + config.TITLE_LINE_SPACING + config.TITLE_SPACING_AFTER;
                     
                     // Adicionar espaço antes do título (exceto no início da página ou após linha vazia)
@@ -876,6 +881,7 @@ class DocumentExporter {
                     
                     previousLineWasEmpty = false;
                     previousLineWasTitle = true;
+                    nonEmptyLineCount++;
                     continue;
                 }
                 
@@ -903,7 +909,8 @@ class DocumentExporter {
                         pageCount++;
                     }
                     
-                    // Justificar apenas parágrafos longos e não justificar última linha
+                    // Justificar apenas parágrafos longos que quebram em múltiplas linhas
+                    // Não justificar: última linha, parágrafos de linha única
                     if (shouldJustify && !isLastLine && textLines.length > 1) {
                         this.renderJustifiedText(pdf, textLine, config.MARGIN, yPosition, config.USABLE_WIDTH);
                     } else {
@@ -915,6 +922,7 @@ class DocumentExporter {
                 
                 previousLineWasEmpty = false;
                 previousLineWasTitle = false;
+                nonEmptyLineCount++;
             }
             
             // 4. Salvar PDF
