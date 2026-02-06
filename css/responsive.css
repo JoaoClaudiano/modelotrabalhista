@@ -252,6 +252,21 @@
         gap: 15px !important;
     }
     
+    /* Legal Info responsive */
+    .legal-info-section {
+        padding: var(--space-md) !important;
+        margin-top: var(--space-lg) !important;
+    }
+    
+    .legal-info-content {
+        gap: var(--space-sm) !important;
+    }
+    
+    .legal-explanation,
+    .legal-citation {
+        padding: var(--space-sm) !important;
+    }
+    
     .btn-primary,
     .btn-secondary,
     .btn-outline,

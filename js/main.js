@@ -33,6 +33,7 @@ class ModeloTrabalhistaApp {
         this.loadDraft();
         this.setupAccessibility();
         this.trackPageView();
+        this.updateLegalInfo();
     }
 
     setupEventListeners() {
@@ -51,6 +52,7 @@ class ModeloTrabalhistaApp {
             documentTypeSelect.addEventListener('change', (e) => {
                 this.currentModel = e.target.value;
                 this.updateDynamicFields();
+                this.updateLegalInfo();
                 this.updateSelectedCard();
                 this.saveDraft();
             });
@@ -189,6 +191,7 @@ class ModeloTrabalhistaApp {
             documentTypeSelect.value = model;
         }
         this.updateDynamicFields();
+        this.updateLegalInfo();
         this.updateSelectedCard();
         this.saveDraft();
         
@@ -606,6 +609,73 @@ class ModeloTrabalhistaApp {
         }
         if (this.ui.initAutoResizeTextareas) {
             this.ui.initAutoResizeTextareas();
+        }
+    }
+
+    updateLegalInfo() {
+        const legalInfoSection = document.getElementById('legalInfo');
+        const explanationElement = document.getElementById('legalExplanation');
+        const citationElement = document.getElementById('legalCitation');
+        
+        if (!legalInfoSection || !explanationElement || !citationElement) return;
+        
+        // Legal information for each template
+        const legalInfoData = {
+            'demissao': {
+                explanation: 'O pedido de demissão é o documento pelo qual o empregado manifesta sua vontade de rescindir o contrato de trabalho. O empregado deve cumprir o aviso prévio de 30 dias ou indenizar o empregador.',
+                citation: 'Art. 487 da CLT - O aviso prévio será de no mínimo 30 dias, devendo ser concedido pela parte que desejar rescindir o contrato.'
+            },
+            'ferias': {
+                explanation: 'Todo empregado tem direito a 30 dias de férias remuneradas após cada período de 12 meses de trabalho. As férias devem ser concedidas em até 12 meses após o período aquisitivo.',
+                citation: 'Arts. 129 e 134 da CLT - Todo empregado terá direito anualmente ao gozo de um período de férias, sem prejuízo da remuneração.'
+            },
+            'advertencia': {
+                explanation: 'A advertência é uma sanção disciplinar aplicada pelo empregador quando o empregado comete falta leve. É importante que seja registrada por escrito e assinada pelo empregado, servindo como comprovação em casos de recorrência.',
+                citation: 'Art. 482 da CLT - Constituem justa causa para rescisão do contrato de trabalho pelo empregador as seguintes faltas graves cometidas pelo empregado.'
+            },
+            'alteracao_jornada': {
+                explanation: 'Alterações na jornada de trabalho só podem ser feitas mediante acordo entre empregador e empregado, desde que não prejudiquem o trabalhador. A jornada normal de trabalho não pode exceder 8 horas diárias ou 44 horas semanais.',
+                citation: 'Art. 58 da CLT - A duração normal do trabalho não superior a 8 horas diárias e 44 horas semanais, facultada a compensação de horários.'
+            },
+            'reembolso': {
+                explanation: 'O empregador deve reembolsar despesas efetuadas pelo empregado em serviço da empresa, desde que previamente autorizadas ou necessárias ao exercício da função. É fundamental manter comprovantes das despesas.',
+                citation: 'Art. 2º da CLT - O empregador assume os riscos da atividade econômica, admite, assalaria e dirige a prestação pessoal de serviço.'
+            },
+            'beneficios': {
+                explanation: 'Benefícios como vale-transporte e vale-refeição são direitos previstos em lei. O vale-transporte é obrigatório quando o trabalhador utiliza transporte público. Outros benefícios podem ser estabelecidos por convenção coletiva ou política interna da empresa.',
+                citation: 'Lei 7.418/85 - Vale-transporte: O empregador, pessoa física ou jurídica, está obrigado a oferecer vale-transporte ao trabalhador para deslocamento residência-trabalho.'
+            },
+            'licenca_maternidade': {
+                explanation: 'A licença-maternidade tem duração de 120 dias, podendo ser prorrogada por mais 60 dias em empresas que aderem ao Programa Empresa Cidadã. A licença-paternidade é de 5 dias, podendo ser estendida para 20 dias no mesmo programa.',
+                citation: 'Art. 392 da CLT - A empregada gestante tem direito à licença-maternidade de 120 dias, sem prejuízo do emprego e do salário. Lei 11.770/08 prevê prorrogação.'
+            },
+            'flexibilizacao_jornada': {
+                explanation: 'A Reforma Trabalhista (Lei 13.467/17) permite maior flexibilização da jornada mediante acordo individual ou coletivo. Empregados com filhos menores de seis anos ou dependentes com deficiência podem ter prioridade na escolha de horários.',
+                citation: 'Art. 611-A da CLT - A convenção coletiva e o acordo coletivo de trabalho têm prevalência sobre a lei quando dispuserem sobre jornada de trabalho, respeitados os limites constitucionais.'
+            },
+            'intervalo_amamentacao': {
+                explanation: 'A empregada mãe tem direito a dois descansos especiais de meia hora cada um durante a jornada de trabalho, para amamentar seu filho até que este complete seis meses de idade. Este período pode ser estendido conforme orientação médica.',
+                citation: 'Art. 396 da CLT - Para amamentar seu filho, a mulher terá direito, durante a jornada de trabalho, a 2 descansos especiais de meia hora cada um.'
+            },
+            'ajuste_horario_pais': {
+                explanation: 'Pais e responsáveis têm direito de se ausentar do trabalho para acompanhar filhos de até 6 anos em consultas médicas, por até 2 dias por ano. Para casos especiais, podem negociar ajustes de horário com o empregador.',
+                citation: 'Art. 473, XI da CLT - O empregado poderá deixar de comparecer ao serviço sem prejuízo do salário para acompanhar consultas médicas e exames complementares durante o período de gravidez de sua esposa ou companheira.'
+            },
+            'reuniao': {
+                explanation: 'O empregador tem poder diretivo para convocar reuniões durante o horário de trabalho. Reuniões fora do expediente podem gerar horas extras. É importante formalizar convocações para garantir a presença e documentar a comunicação.',
+                citation: 'Art. 2º da CLT - O empregador tem o poder de direção sobre a prestação pessoal de serviço, podendo organizar a atividade laboral conforme suas necessidades.'
+            }
+        };
+        
+        // Get legal info for current model
+        const legalInfo = legalInfoData[this.currentModel];
+        
+        if (legalInfo) {
+            explanationElement.textContent = legalInfo.explanation;
+            citationElement.textContent = legalInfo.citation;
+            legalInfoSection.style.display = 'block';
+        } else {
+            legalInfoSection.style.display = 'none';
         }
     }
 

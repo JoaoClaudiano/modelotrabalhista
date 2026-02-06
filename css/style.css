@@ -579,6 +579,71 @@ textarea.form-control {
     background-color: #d97706;
 }
 
+/* Legal Information Section */
+.legal-info-section {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.legal-info-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    color: var(--primary-color);
+}
+
+.legal-info-header i {
+    font-size: 1.25rem;
+}
+
+.legal-info-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.legal-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.legal-explanation,
+.legal-citation {
+    background-color: var(--white-color);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.legal-explanation strong,
+.legal-citation strong {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+    font-size: 0.95rem;
+}
+
+.legal-explanation i,
+.legal-citation i {
+    color: var(--primary-color);
+}
+
+.legal-explanation p,
+.legal-citation p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
 /* Preview Card */
 .preview-header {
     display: flex;
