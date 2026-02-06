@@ -703,7 +703,7 @@ class DocumentExporter {
             const usableWidth = pageWidth - (2 * PDF_MARGIN_MM);
             const usableHeight = pageHeight - (2 * PDF_MARGIN_MM);
             
-            // Convert canvas pixels to mm (assuming 96 DPI: 1 inch = 25.4mm, 96px = 25.4mm)
+            // Convert canvas pixels to mm (assuming 96 DPI: 96 pixels = 1 inch = 25.4mm)
             const pxToMm = 25.4 / 96;
             const imgWidthMm = canvas.width * pxToMm;
             const imgHeightMm = canvas.height * pxToMm;
