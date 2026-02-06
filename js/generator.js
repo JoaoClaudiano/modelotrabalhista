@@ -10,11 +10,11 @@ class DocumentGenerator {
         // Estilos base para container do documento (otimizado para PDF de 1 página A4 e captura com html2canvas)
         // box-sizing: border-box - garante que padding não aumenta dimensões totais
         // page-break-inside: avoid - evita quebra dentro do container
-        // line-height: 1.5 - espaçamento padrão para corpo do texto
+        // line-height: 1.4 - espaçamento padrão para corpo do texto
         // padding: 20px - ajustado para melhor captura em PDF
         // background-color: white - garante fundo branco na captura
         // color: black - garante texto preto para melhor legibilidade
-        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.5; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; background-color: white; color: black;';
+        this.DOCUMENT_CONTAINER_STYLE = 'font-family: Arial, sans-serif; line-height: 1.4; width: 100%; margin: 0; padding: 20px; box-sizing: border-box; background-color: white; color: black;';
         
         // Array de meses em português para formatação de datas
         this.MONTHS_PT = [
@@ -233,32 +233,32 @@ class DocumentGenerator {
     </div>
     
     <!-- Parágrafo de identificação - line-height 1.5->1.3, margin 15px->8px -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.4;">Eu, <strong>${employeeName}</strong>, brasileiro(a), portador(a) do CPF <strong>${cpf}</strong> 
         e Carteira de Trabalho <strong>${ctps}</strong>, na função de <strong>${employeePosition}</strong>, 
         venho por meio deste comunicar minha decisão de pedir demissão do cargo que 
         ocupo nesta empresa.</p>
     </div>
     
     <!-- Lista de valores devidos - margins reduzidos (12px->8px), line-height 1.5->1.3 -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Solicito que sejam calculados os valores devidos referentes a:</p>
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
-            <li style="margin: 2px 0; line-height: 1.5;">Saldo de salário</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Férias proporcionais + 1/3 constitucional</li>
-            <li style="margin: 2px 0; line-height: 1.5;">13º salário proporcional</li>
-            <li style="margin: 2px 0; line-height: 1.5;">${noticePeriodText}</li>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Solicito que sejam calculados os valores devidos referentes a:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.4;">
+            <li style="margin: 2px 0; line-height: 1.4;">Saldo de salário</li>
+            <li style="margin: 2px 0; line-height: 1.4;">Férias proporcionais + 1/3 constitucional</li>
+            <li style="margin: 2px 0; line-height: 1.4;">13º salário proporcional</li>
+            <li style="margin: 2px 0; line-height: 1.4;">${noticePeriodText}</li>
         </ul>
     </div>
     
     <!-- Data de desligamento - margin 12px->8px -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Data efetiva do desligamento: <strong>${effectiveDate}</strong></p>
     </div>
     
     <!-- Declaração FGTS - margin 12px->8px, line-height 1.5->1.3 -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Declaro estar ciente de que, no pedido de demissão por iniciativa do empregado,
         não há direito à multa de 40% do FGTS nem ao seguro-desemprego, conforme 
         legislação trabalhista vigente. Os direitos trabalhistas limitam-se às verbas 
         mencionadas acima, salvo disposições específicas em convenção coletiva ou 
@@ -266,8 +266,8 @@ class DocumentGenerator {
     </div>
     
     <!-- Disponibilidade - margin 12px->8px -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Estou disponível para os procedimentos de desligamento conforme estabelecido 
         pela legislação trabalhista e normas internas da empresa.</p>
     </div>
     
@@ -276,7 +276,7 @@ class DocumentGenerator {
     
     <!-- Local e data - margin 15px->8px -->
     <div style="margin: 8px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+        <p style="margin: 0; line-height: 1.4;">${locationAndDate}</p>
     </div>
     
     <!-- Assinatura do funcionário - margins reduzidos (35px->20px, 20px->12px), page-break-inside: avoid -->
@@ -290,9 +290,9 @@ class DocumentGenerator {
     
     <!-- Seção de recebimento - margin 15px->8px, page-break-inside: avoid -->
     <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
-        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
-        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Data: __/__/______</p>
     </div>
 </div>`;
     }
@@ -336,25 +336,25 @@ class DocumentGenerator {
     </div>
     
     <!-- Texto principal -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, funcionário(a) desta empresa no cargo de 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.4;">Eu, <strong>${employeeName}</strong>, funcionário(a) desta empresa no cargo de 
         <strong>${employeePosition}</strong>, venho por meio deste solicitar o gozo de minhas 
         férias referentes ao período aquisitivo vigente.</p>
     </div>
     
     <!-- Período e dias -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Solicito que as férias sejam concedidas no seguinte período: <strong>${period}</strong></p>
-        <p style="margin: 0; line-height: 1.5;">Quantidade de dias: <strong>${days} dias</strong></p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Solicito que as férias sejam concedidas no seguinte período: <strong>${period}</strong></p>
+        <p style="margin: 0; line-height: 1.4;">Quantidade de dias: <strong>${days} dias</strong></p>
     </div>
     
     <!-- Declaração -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Declaro estar ciente de que, conforme legislação trabalhista:</p>
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
-            <li style="margin: 2px 0; line-height: 1.5;">As férias devem ser concedidas em até 12 meses após o período aquisitivo</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Receberei o valor correspondente com o adicional de 1/3 constitucional</li>
-            <li style="margin: 2px 0; line-height: 1.5;">O período de férias pode ser dividido conforme acordo entre as partes</li>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Declaro estar ciente de que, conforme legislação trabalhista:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.4;">
+            <li style="margin: 2px 0; line-height: 1.4;">As férias devem ser concedidas em até 12 meses após o período aquisitivo</li>
+            <li style="margin: 2px 0; line-height: 1.4;">Receberei o valor correspondente com o adicional de 1/3 constitucional</li>
+            <li style="margin: 2px 0; line-height: 1.4;">O período de férias pode ser dividido conforme acordo entre as partes</li>
         </ul>
     </div>
     
@@ -363,7 +363,7 @@ class DocumentGenerator {
     
     <!-- Data -->
     <div style="margin: 8px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+        <p style="margin: 0; line-height: 1.4;">${locationAndDate}</p>
     </div>
     
     <!-- Assinatura do funcionário -->
@@ -377,8 +377,8 @@ class DocumentGenerator {
     
     <!-- Parecer departamento -->
     <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Parecer do Departamento Pessoal: ___________________________________</p>
-        <p style="margin: 2px 0; line-height: 1.5;">Data de Agendamento: __/__/______</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Parecer do Departamento Pessoal: ___________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Data de Agendamento: __/__/______</p>
     </div>
 </div>`;
     }
@@ -410,11 +410,11 @@ class DocumentGenerator {
     </div>
     
     <!-- Dados do funcionário -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Para: <strong>${employeeName}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Cargo: <strong>${employeePosition}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Data da Ocorrência: <strong>${incidentDate}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Gravidade: <strong>${severityText}</strong></p>
+    <div style="margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.4;">Para: <strong>${employeeName}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Cargo: <strong>${employeePosition}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Data da Ocorrência: <strong>${incidentDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Gravidade: <strong>${severityText}</strong></p>
     </div>
     
     <!-- Subtítulo -->
@@ -425,23 +425,23 @@ class DocumentGenerator {
     </div>
     
     <!-- Texto principal -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">A direção da empresa vem, por meio deste documento, formalizar uma advertência por:</p>
-        <p style="margin: 6px 0; line-height: 1.5; font-style: italic;">"${warningReason}"</p>
-        <p style="margin: 6px 0 0 0; line-height: 1.5;">Esta advertência é emitida com base no regulamento interno da empresa e na 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.4;">A direção da empresa vem, por meio deste documento, formalizar uma advertência por:</p>
+        <p style="margin: 6px 0; line-height: 1.4; font-style: italic;">"${warningReason}"</p>
+        <p style="margin: 6px 0 0 0; line-height: 1.4;">Esta advertência é emitida com base no regulamento interno da empresa e na 
         legislação trabalhista vigente (CLT, art. 482). O objetivo desta medida 
         disciplinar é alertar sobre a necessidade de adequação de conduta e registrar 
         formalmente a ocorrência.</p>
     </div>
     
     <!-- Medidas disciplinares -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Medidas disciplinares progressivas previstas no regulamento interno:</p>
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
-            <li style="margin: 2px 0; line-height: 1.5;">Advertência verbal (orientação)</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Advertência escrita formal</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Suspensão temporária</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Em casos graves ou reincidências, possibilidade de dispensa por justa causa</li>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Medidas disciplinares progressivas previstas no regulamento interno:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.4;">
+            <li style="margin: 2px 0; line-height: 1.4;">Advertência verbal (orientação)</li>
+            <li style="margin: 2px 0; line-height: 1.4;">Advertência escrita formal</li>
+            <li style="margin: 2px 0; line-height: 1.4;">Suspensão temporária</li>
+            <li style="margin: 2px 0; line-height: 1.4;">Em casos graves ou reincidências, possibilidade de dispensa por justa causa</li>
         </ul>
     </div>
     
@@ -449,8 +449,8 @@ class DocumentGenerator {
     <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
     <!-- Ciência -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">O funcionário está ciente do conteúdo desta advertência. Este documento deverá ser assinado em duas vias.</p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">O funcionário está ciente do conteúdo desta advertência. Este documento deverá ser assinado em duas vias.</p>
     </div>
     
     <!-- Assinatura empresa -->
@@ -469,13 +469,13 @@ class DocumentGenerator {
     </div>
     
     <!-- Declaração de ciência -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Declaro ter recebido e compreendido o conteúdo desta advertência.</p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Declaro ter recebido e compreendido o conteúdo desta advertência.</p>
     </div>
     
     <!-- Data e assinatura funcionário -->
     <div style="margin: 8px 0; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+        <p style="margin: 2px 0; line-height: 1.4;">Data: __/__/______</p>
     </div>
     
     <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
@@ -515,20 +515,20 @@ class DocumentGenerator {
     </div>
     
     <!-- Texto principal -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Atesto para os devidos fins que o(a) Sr(a). <strong>${employeeName}</strong>, 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.4;">Atesto para os devidos fins que o(a) Sr(a). <strong>${employeeName}</strong>, 
         ocupante do cargo de <strong>${employeePosition}</strong> nesta empresa, não compareceu 
         ao trabalho <strong>${period}</strong> devido a:</p>
     </div>
     
     <!-- Motivo -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${certificateReason}"</p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4; font-style: italic;">"${certificateReason}"</p>
     </div>
     
     <!-- Observação -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Este documento serve como justificativa para a ausência e não implica em 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Este documento serve como justificativa para a ausência e não implica em 
         qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
         acordo ou convenção coletiva.</p>
     </div>
@@ -538,7 +538,7 @@ class DocumentGenerator {
     
     <!-- Data -->
     <div style="margin: 8px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+        <p style="margin: 0; line-height: 1.4;">${locationAndDate}</p>
     </div>
     
     <!-- Assinatura -->
@@ -579,8 +579,8 @@ class DocumentGenerator {
     </div>
     
     <!-- Partes do acordo -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Entre <strong>${companyName}</strong>, com sede em ${companyAddress}, doravante 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.4;">Entre <strong>${companyName}</strong>, com sede em ${companyAddress}, doravante 
         denominada EMPRESA, e <strong>${employeeName}</strong>, portador(a) do CPF <strong>${cpf}</strong> 
         e Carteira de Trabalho <strong>${ctps}</strong>, ocupante do cargo de 
         <strong>${employeePosition}</strong>, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
@@ -588,22 +588,22 @@ class DocumentGenerator {
     </div>
     
     <!-- Condições -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
-            <li style="margin: 2px 0; line-height: 1.5;">As partes, de comum acordo, resolvem o contrato de trabalho vigente.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de <strong>${value}</strong>, 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.4;">
+            <li style="margin: 2px 0; line-height: 1.4;">As partes, de comum acordo, resolvem o contrato de trabalho vigente.</li>
+            <li style="margin: 2px 0; line-height: 1.4;">A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de <strong>${value}</strong>, 
             correspondente a todos os direitos trabalhistas decorrentes da rescisão.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Data para pagamento: <strong>${paymentDate}</strong></li>
-            <li style="margin: 2px 0; line-height: 1.5;">O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
+            <li style="margin: 2px 0; line-height: 1.4;">Data para pagamento: <strong>${paymentDate}</strong></li>
+            <li style="margin: 2px 0; line-height: 1.4;">O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
             acordo, renuncia a qualquer ação trabalhista referente ao período contratual.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-            até a data do desligamento.</li>${conditions ? `<li style="margin: 2px 0; line-height: 1.5;">${this.escapeHtml(conditions.substring(3))}</li>` : ''}
+            <li style="margin: 2px 0; line-height: 1.4;">O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
+            até a data do desligamento.</li>${conditions ? `<li style="margin: 2px 0; line-height: 1.4;">${this.escapeHtml(conditions.substring(3))}</li>` : ''}
         </ul>
     </div>
     
     <!-- Declaração final -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
         vias de igual teor.</p>
     </div>
     
@@ -612,7 +612,7 @@ class DocumentGenerator {
     
     <!-- Data -->
     <div style="margin: 8px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+        <p style="margin: 0; line-height: 1.4;">${locationAndDate}</p>
     </div>
     
     <!-- Assinatura empresa -->
@@ -649,7 +649,7 @@ class DocumentGenerator {
             if (trimmed) {
                 // Remove numeração/bullets (números, letras, hífen, asterisco, bullet)
                 const content = trimmed.replace(/^[\d\w]+\.\s*|^[-*•]\s*/, '');
-                return `<li style="margin: 2px 0; line-height: 1.5;">${this.escapeHtml(content)}</li>`;
+                return `<li style="margin: 2px 0; line-height: 1.4;">${this.escapeHtml(content)}</li>`;
             }
             return '';
         }).filter(item => item).join('');
@@ -670,10 +670,10 @@ class DocumentGenerator {
     </div>
     
     <!-- Cabeçalho do documento -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Para: Todos os funcionários do departamento</p>
-        <p style="margin: 2px 0; line-height: 1.5;">De: <strong>${employeeName}</strong> - <strong>${employeePosition}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Data do Documento: ${locationAndDate}</p>
+    <div style="margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.4;">Para: Todos os funcionários do departamento</p>
+        <p style="margin: 2px 0; line-height: 1.4;">De: <strong>${employeeName}</strong> - <strong>${employeePosition}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Data do Documento: ${locationAndDate}</p>
     </div>
     
     <!-- Subtítulo -->
@@ -684,36 +684,36 @@ class DocumentGenerator {
     </div>
     
     <!-- Texto principal -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Convocamos todos os membros do departamento para uma reunião que será realizada:</p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Convocamos todos os membros do departamento para uma reunião que será realizada:</p>
     </div>
     
     <!-- Detalhes da reunião -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;">Data: <strong>${meetingDate}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Hora: <strong>${time}</strong></p>
-        <p style="margin: 2px 0; line-height: 1.5;">Local: <strong>${location}</strong></p>
+    <div style="margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.4;">Data: <strong>${meetingDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Hora: <strong>${time}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.4;">Local: <strong>${location}</strong></p>
     </div>
     
     <!-- Pauta da reunião -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Pauta da Reunião:</p>
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
+    <div style="margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Pauta da Reunião:</p>
+        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.4;">
             ${agendaItems}
         </ul>
     </div>
     
     <!-- Confirmação -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Solicitamos a confirmação de presença até 24 horas antes da reunião.</p>
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.4;">Solicitamos a confirmação de presença até 24 horas antes da reunião.</p>
     </div>
     
     <!-- Separador -->
     <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
     
     <!-- Assinatura -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;">Atenciosamente,</p>
+    <div style="margin: 8px 0; line-height: 1.4; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.4;">Atenciosamente,</p>
     </div>
     
     <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
