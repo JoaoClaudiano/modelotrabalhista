@@ -101,6 +101,21 @@ class DocumentExporter {
             UPPERCASE_CHARS: /^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ\s]+$/
         };
         
+        // Mapping of model IDs to proper document titles (from templates.json)
+        this.MODEL_TITLES = {
+            'demissao': 'Pedido de Demissão',
+            'ferias': 'Solicitação de Férias',
+            'advertencia': 'Advertência',
+            'alteracao_jornada': 'Pedido de Alteração de Jornada ou Turno',
+            'reembolso': 'Pedido de Reembolso de Despesas',
+            'beneficios': 'Solicitação de Benefícios',
+            'licenca_maternidade': 'Pedido de Licença Maternidade/Paternidade ou Prorrogação',
+            'flexibilizacao_jornada': 'Pedido de Flexibilização de Jornada por Motivo Familiar',
+            'intervalo_amamentacao': 'Solicitação de Intervalo para Amamentação',
+            'ajuste_horario_pais': 'Pedido de Licença ou Ajuste de Horário para Pais/Responsáveis',
+            'reuniao': 'Convocatória de Reunião'
+        };
+        
         this.init();
     }
     
@@ -764,7 +779,9 @@ class DocumentExporter {
                     }
                     
                     // Usar o novo orquestrador de PDF diretamente
-                    await this.exportPDF('ModeloTrabalhista');
+                    // Pass the current model to ensure proper PDF title
+                    const modelId = window.app && window.app.currentModel ? window.app.currentModel : 'demissao';
+                    await this.exportPDF(modelId);
                     
                     // Restore original zoom if it was changed
                     if (preview && window.ui && originalZoom !== null && originalZoom !== 100) {
@@ -1044,8 +1061,9 @@ class DocumentExporter {
     /**
      * Orquestrador principal de exportação PDF
      * Sempre usa jsPDF com texto vetorial para garantir texto selecionável
+     * @param {string} modelId - The model ID (e.g., 'demissao', 'ferias') to determine the PDF title
      */
-    async exportPDF(filename = 'ModeloTrabalhista') {
+    async exportPDF(modelId = 'demissao') {
         try {
             // 1. Obter conteúdo do documento a partir do modelo de dados (NÃO do DOM de preview)
             const content = this.getDocumentTextForPDF();
@@ -1053,9 +1071,12 @@ class DocumentExporter {
                 throw new Error('Conteúdo insuficiente para gerar PDF. Gere um documento primeiro.');
             }
             
-            // 2. Sempre usar exportPDFVector para garantir texto 100% vetorial e selecionável
-            console.log('✅ Gerando PDF vetorial com texto do modelo de dados');
-            return await this.exportPDFVector(content, filename);
+            // 2. Get the proper title for this model
+            const documentTitle = this.MODEL_TITLES[modelId] || 'Documento Trabalhista';
+            
+            // 3. Sempre usar exportPDFVector para garantir texto 100% vetorial e selecionável
+            console.log(`✅ Gerando PDF vetorial: ${documentTitle}`);
+            return await this.exportPDFVector(content, documentTitle, modelId);
             
         } catch (error) {
             console.error('Erro no orquestrador de PDF:', error);
@@ -1130,9 +1151,10 @@ class DocumentExporter {
      * NÃO extrai conteúdo do DOM de preview, garantindo PDF 100% vetorial.
      * 
      * @param {string} content - Texto puro do documento (do modelo de dados, não do DOM)
-     * @param {string} filename - Nome do arquivo PDF
+     * @param {string} title - Title for the PDF document (displayed in PDF viewers)
+     * @param {string} modelId - Model ID for generating a descriptive filename
      */
-    async exportPDFVector(content, filename = 'ModeloTrabalhista') {
+    async exportPDFVector(content, title = 'Documento Trabalhista', modelId = 'documento') {
         try {
             // 1. Carregar jsPDF se necessário
             if (typeof window.jspdf === 'undefined') {
@@ -1160,6 +1182,15 @@ class DocumentExporter {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             const config = this.PDF_CONFIG;
+            
+            // 2.5. Set PDF metadata properties
+            pdf.setProperties({
+                title: title,
+                subject: 'Documento Trabalhista',
+                author: 'ModeloTrabalhista.com.br',
+                keywords: 'trabalhista, documento, modelo',
+                creator: 'ModeloTrabalhista.com.br'
+            });
             
             // 3. Parse content into semantic structure
             const structure = this.parseDocumentToSemanticStructure(content);
@@ -1397,8 +1428,9 @@ class DocumentExporter {
                 previousBlockType = block.type;
             }
             
-            // 5. Salvar PDF
-            const safeFilename = filename.replace(/[^a-z0-9]/gi, '_');
+            // 5. Save PDF with descriptive filename
+            // Create a safe filename from the title (e.g., "Pedido_de_Demissao.pdf")
+            const safeFilename = title.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, '').replace(/\s+/g, '_');
             pdf.save(`${safeFilename}.pdf`);
             
             const message = pageCount > 1 
@@ -1406,7 +1438,7 @@ class DocumentExporter {
                 : 'PDF vetorial gerado com sucesso!';
             
             this.showNotification(message, 'success');
-            console.log(`✅ PDF gerado com ${pageCount} página(s) usando estrutura semântica`);
+            console.log(`✅ PDF gerado: ${title} com ${pageCount} página(s) usando estrutura semântica`);
             
             return { 
                 success: true, 
