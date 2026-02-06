@@ -736,14 +736,14 @@
                         <div class="preview-header">
                             <h3><i class="fas fa-search"></i> Pré-visualização</h3>
                             <div class="preview-controls">
-                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom">
-                                    <i class="fas fa-search-plus"></i>
+                                <button id="zoomInBtn" class="control-btn" title="Aumentar zoom" aria-label="Aumentar zoom">
+                                    <i class="fas fa-search-plus" aria-hidden="true"></i>
                                 </button>
-                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom">
-                                    <i class="fas fa-search-minus"></i>
+                                <button id="zoomOutBtn" class="control-btn" title="Diminuir zoom" aria-label="Diminuir zoom">
+                                    <i class="fas fa-search-minus" aria-hidden="true"></i>
                                 </button>
-                                <button id="resetZoomBtn" class="control-btn" title="Zoom original">
-                                    <i class="fas fa-sync-alt"></i>
+                                <button id="resetZoomBtn" class="control-btn" title="Zoom original" aria-label="Redefinir zoom para tamanho original">
+                                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -1200,24 +1200,45 @@
         })();
     </script>
     
-    <!-- VLIBRAS -->
+    <!-- VLIBRAS - Loaded after page load to improve FCP/LCP -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835" onerror="console.warn('VLibras script failed to load. Accessibility widget unavailable.')"></script>
     <script>
-        try {
-            if (window.VLibras && window.VLibras.Widget) {
-                new window.VLibras.Widget('https://vlibras.gov.br/app');
-            } else {
-                console.warn('VLibras Widget not available - script may have failed to load');
+        // Defer VLibras loading until after page is interactive
+        // Uses requestIdleCallback for better performance on slower connections
+        window.addEventListener('load', function() {
+            function loadVLibras() {
+                var script = document.createElement('script');
+                script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835';
+                script.onerror = function() {
+                    console.warn('VLibras script failed to load. Accessibility widget unavailable.');
+                };
+                script.onload = function() {
+                    try {
+                        if (window.VLibras && window.VLibras.Widget) {
+                            new window.VLibras.Widget('https://vlibras.gov.br/app');
+                        } else {
+                            console.warn('VLibras Widget not available - script may have failed to load');
+                        }
+                    } catch (error) {
+                        console.error('Error initializing VLibras:', error);
+                    }
+                };
+                document.body.appendChild(script);
             }
-        } catch (error) {
-            console.error('Error initializing VLibras:', error);
-        }
+            
+            // Use requestIdleCallback if available for adaptive timing, fallback to setTimeout
+            // Timeout of 5000ms allows slower connections more time before forcing load
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadVLibras, { timeout: 5000 });
+            } else {
+                setTimeout(loadVLibras, 2000);
+            }
+        });
     </script>
 
     <!-- Service Worker Registration -->

@@ -4,6 +4,9 @@ class AcessibilidadeManager {
     constructor() {
         this.prefix = 'modelotrabalhista_accessibility_';
         
+        // Selector for focusable elements - defined once for consistency
+        this.focusableElementsSelector = 'button, input, a, select, textarea, [tabindex]:not([tabindex="-1"])';
+        
         // Configurações padrão (sem Vlibras)
         this.defaultSettings = {
             theme: 'light',
@@ -99,9 +102,11 @@ class AcessibilidadeManager {
         const card = document.createElement('div');
         card.id = 'accessibility-card';
         card.className = 'accessibility-card';
-        card.setAttribute('aria-hidden', 'true');
+        // Don't set aria-hidden initially - let CSS handle visibility
+        // and manage aria-hidden dynamically based on visible state
         card.setAttribute('role', 'dialog');
         card.setAttribute('aria-label', 'Opções de acessibilidade');
+        card.setAttribute('aria-modal', 'false'); // It's not a modal dialog
         
         card.innerHTML = `
             <div class="accessibility-card-header">
@@ -176,6 +181,18 @@ class AcessibilidadeManager {
         `;
         
         document.body.appendChild(card);
+        
+        // Initially hide card and make focusable elements unfocusable
+        card.setAttribute('aria-hidden', 'true');
+        const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+        focusableElements.forEach(el => {
+            // Store original tabindex if it exists
+            if (el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1') {
+                el.setAttribute('data-original-tabindex', el.getAttribute('tabindex'));
+            }
+            el.setAttribute('tabindex', '-1');
+        });
+        
         this.setupCardEvents();
     }
 
@@ -186,12 +203,41 @@ class AcessibilidadeManager {
         if (this.cardVisible) {
             card.classList.remove('visible');
             button.classList.remove('active');
+            // Hide from accessibility tree when not visible
             card.setAttribute('aria-hidden', 'true');
+            // Remove focus trap when hidden - query all potentially focusable elements
+            const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+            focusableElements.forEach(el => {
+                // Only store tabindex if not already stored and not already -1
+                const currentTabindex = el.getAttribute('tabindex');
+                if (currentTabindex !== '-1' && !el.hasAttribute('data-original-tabindex')) {
+                    el.setAttribute('data-original-tabindex', currentTabindex || '0');
+                }
+                el.setAttribute('tabindex', '-1');
+            });
             this.cardVisible = false;
         } else {
             card.classList.add('visible');
             button.classList.add('active');
+            // Make accessible when visible
             card.setAttribute('aria-hidden', 'false');
+            // Restore focus ability when visible
+            const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+            focusableElements.forEach(el => {
+                // Restore original tabindex if it was stored
+                if (el.hasAttribute('data-original-tabindex')) {
+                    const originalValue = el.getAttribute('data-original-tabindex');
+                    if (originalValue === '0') {
+                        el.removeAttribute('tabindex');
+                    } else {
+                        el.setAttribute('tabindex', originalValue);
+                    }
+                    el.removeAttribute('data-original-tabindex');
+                } else {
+                    // Element didn't have stored tabindex, just remove it
+                    el.removeAttribute('tabindex');
+                }
+            });
             this.cardVisible = true;
         }
     }
