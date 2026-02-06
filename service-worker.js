@@ -55,7 +55,6 @@ function isCacheable(url) {
 const ESSENTIAL_RESOURCES = [
   '/modelotrabalhista/',
   '/modelotrabalhista/index.html',
-  '/modelotrabalhista/style.css',
   '/modelotrabalhista/css/style.css',
   '/modelotrabalhista/css/responsive.css',
   '/modelotrabalhista/assets/css/print.css',
