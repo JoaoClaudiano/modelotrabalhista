@@ -71,13 +71,6 @@ class DocumentExporter {
             // Title detection
             TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título
             
-            // Title decoration lines
-            TITLE_LINE_THICKNESS: 0.4,  // Espessura das linhas horizontais (mm)
-            TITLE_LINE_SPACING: 2,      // Espaço entre linha e título (mm)
-            
-            // Text justification
-            MIN_CHARS_FOR_JUSTIFY: 100, // Mínimo de caracteres para justificar parágrafo
-            
             // Calculated usable area (getters dinâmicos)
             get USABLE_WIDTH() { return this.PAGE_WIDTH - (2 * this.MARGIN); },
             get USABLE_HEIGHT() { return this.PAGE_HEIGHT - (2 * this.MARGIN); }
@@ -106,80 +99,10 @@ class DocumentExporter {
                trimmedLine === trimmedLine.toUpperCase() && 
                this.PATTERNS.UPPERCASE_CHARS.test(trimmedLine);
     }
-    
-    // Detectar se é uma linha de cabeçalho (nome da empresa ou endereço)
-    // Cabeçalho aparece nas primeiras 3 linhas do documento (índices 0, 1, 2)
-    isHeaderLine(lineIndex, trimmedLine) {
-        // Apenas as primeiras 3 linhas não-vazias podem ser cabeçalho (índices 0-2)
-        if (lineIndex >= 3) return false;
-        
-        // Cabeçalho não é título (não é todo uppercase com mais de alguns caracteres)
-        // mas tem comprimento razoável
-        const isNotTitle = !this.isTitleLine(trimmedLine);
-        const hasReasonableLength = trimmedLine.length > 5 && trimmedLine.length < 100;
-        
-        return isNotTitle && hasReasonableLength;
-    }
-    
-    // Detectar se o texto deve ser justificado (parágrafos longos)
-    shouldJustifyText(text) {
-        const trimmed = text.trim();
-        // Justificar apenas se:
-        // 1. Texto longo o suficiente (> MIN_CHARS_FOR_JUSTIFY)
-        // 2. Não é uma lista (não começa com marcadores)
-        // 3. Não é um título (não é uppercase)
-        const isList = /^[-•*]\s/.test(trimmed) || /^\d+\.\s/.test(trimmed);
-        const isTitle = trimmed === trimmed.toUpperCase() && this.PATTERNS.UPPERCASE_CHARS.test(trimmed);
-        
-        return trimmed.length >= this.PDF_CONFIG.MIN_CHARS_FOR_JUSTIFY && 
-               !isList && 
-               !isTitle;
-    }
-    
-    // Desenhar linha horizontal fina
-    drawHorizontalLine(pdf, yPosition, config) {
-        pdf.setLineWidth(config.TITLE_LINE_THICKNESS);
-        pdf.line(config.MARGIN, yPosition, config.MARGIN + config.USABLE_WIDTH, yPosition);
-    }
 
     // Sanitizar nome de arquivo
     sanitizeFilename(filename) {
         return filename.replace(/[^a-z0-9]/gi, '_');
-    }
-    
-    // Renderizar texto justificado
-    renderJustifiedText(pdf, text, xStart, yPosition, maxWidth) {
-        const words = text.split(' ');
-        if (words.length === 1) {
-            // Se é uma palavra só, não justifica
-            pdf.text(text, xStart, yPosition);
-            return;
-        }
-        
-        const spaceWidth = pdf.getTextWidth(' ');
-        const textWidth = pdf.getTextWidth(text);
-        
-        // Justificar apenas se o texto ocupa menos de 95% da largura disponível
-        // Isso evita esticar demais palavras em linhas já muito preenchidas
-        if (textWidth < maxWidth * 0.95) {
-            // Calcular espaço extra necessário para justificar
-            const totalGaps = words.length - 1;
-            const textWithoutSpaces = words.join('');
-            const textWithoutSpacesWidth = pdf.getTextWidth(textWithoutSpaces);
-            const extraSpace = (maxWidth - textWithoutSpacesWidth) / totalGaps;
-            
-            // Renderizar palavra por palavra com espaçamento ajustado
-            let currentX = xStart;
-            words.forEach((word, index) => {
-                pdf.text(word, currentX, yPosition);
-                if (index < words.length - 1) {
-                    currentX += pdf.getTextWidth(word) + extraSpace;
-                }
-            });
-        } else {
-            // Texto muito longo, renderizar sem justificação
-            pdf.text(text, xStart, yPosition);
-        }
     }
 
     init() {
@@ -799,7 +722,6 @@ class DocumentExporter {
             let pageCount = 1;
             let previousLineWasEmpty = false;
             let previousLineWasTitle = false;
-            let nonEmptyLineCount = 0; // Track non-empty lines for header detection
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
@@ -814,33 +736,6 @@ class DocumentExporter {
                     continue;
                 }
                 
-                // Cabeçalho (nome da empresa e endereço) - centralizar na largura útil
-                // Usar nonEmptyLineCount para detectar corretamente mesmo com linhas vazias no início
-                if (this.isHeaderLine(nonEmptyLineCount, trimmed)) {
-                    pdf.setFontSize(config.FONT_SIZE);
-                    pdf.setFont('helvetica', 'normal');
-                    
-                    const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    
-                    // Verificar se precisa de nova página
-                    if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
-                        pdf.addPage();
-                        yPosition = config.MARGIN;
-                        pageCount++;
-                    }
-                    
-                    // Centralizar na largura útil
-                    const textWidth = pdf.getTextWidth(trimmed);
-                    const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
-                    
-                    pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += lineHeight;
-                    previousLineWasEmpty = false;
-                    previousLineWasTitle = false;
-                    nonEmptyLineCount++;
-                    continue;
-                }
-                
                 // Título (uppercase)
                 if (this.isTitleLine(line)) {
                     pdf.setFontSize(config.TITLE_FONT_SIZE);
@@ -848,40 +743,28 @@ class DocumentExporter {
                     
                     // Calcular line-height do título usando constantes
                     const titleLineHeight = (config.TITLE_FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                    // Altura total para verificação de página: 
-                    // espaço acima (2mm) + altura do título + espaço abaixo (2mm) + espaço após (3mm)
-                    const totalTitleHeight = config.TITLE_LINE_SPACING + titleLineHeight + config.TITLE_LINE_SPACING + config.TITLE_SPACING_AFTER;
+                    const totalTitleHeight = titleLineHeight + config.TITLE_SPACING_AFTER;
                     
                     // Adicionar espaço antes do título (exceto no início da página ou após linha vazia)
                     if (yPosition > config.MARGIN && !previousLineWasEmpty) {
                         yPosition += config.TITLE_SPACING_BEFORE;
                     }
                     
-                    // Verificar se precisa de nova página (incluindo espaço para linhas horizontais)
+                    // Verificar se precisa de nova página
                     if (yPosition + totalTitleHeight > config.PAGE_HEIGHT - config.MARGIN) {
                         pdf.addPage();
                         yPosition = config.MARGIN;
                         pageCount++;
                     }
                     
-                    // Desenhar linha horizontal acima do título
-                    this.drawHorizontalLine(pdf, yPosition, config);
-                    yPosition += config.TITLE_LINE_SPACING;
-                    
-                    // Centralizar título DENTRO DA LARGURA ÚTIL
+                    // Centralizar título DENTRO DA LARGURA ÚTIL (correção crítica)
                     const textWidth = pdf.getTextWidth(trimmed);
                     const xPosition = config.MARGIN + (config.USABLE_WIDTH - textWidth) / 2;
                     
                     pdf.text(trimmed, xPosition, yPosition);
-                    yPosition += titleLineHeight + config.TITLE_LINE_SPACING;
-                    
-                    // Desenhar linha horizontal abaixo do título
-                    this.drawHorizontalLine(pdf, yPosition, config);
-                    yPosition += config.TITLE_SPACING_AFTER;
-                    
+                    yPosition += totalTitleHeight;
                     previousLineWasEmpty = false;
                     previousLineWasTitle = true;
-                    nonEmptyLineCount++;
                     continue;
                 }
                 
@@ -896,12 +779,8 @@ class DocumentExporter {
                 
                 const textLines = pdf.splitTextToSize(trimmed, config.USABLE_WIDTH);
                 const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
-                const shouldJustify = this.shouldJustifyText(trimmed);
                 
-                for (let j = 0; j < textLines.length; j++) {
-                    const textLine = textLines[j];
-                    const isLastLine = j === textLines.length - 1;
-                    
+                for (const textLine of textLines) {
                     // Verificar se precisa de nova página
                     if (yPosition + lineHeight > config.PAGE_HEIGHT - config.MARGIN) {
                         pdf.addPage();
@@ -909,20 +788,12 @@ class DocumentExporter {
                         pageCount++;
                     }
                     
-                    // Justificar apenas parágrafos longos que quebram em múltiplas linhas
-                    // Não justificar: última linha, parágrafos de linha única
-                    if (shouldJustify && !isLastLine && textLines.length > 1) {
-                        this.renderJustifiedText(pdf, textLine, config.MARGIN, yPosition, config.USABLE_WIDTH);
-                    } else {
-                        pdf.text(textLine, config.MARGIN, yPosition);
-                    }
-                    
+                    pdf.text(textLine, config.MARGIN, yPosition);
                     yPosition += lineHeight;
                 }
                 
                 previousLineWasEmpty = false;
                 previousLineWasTitle = false;
-                nonEmptyLineCount++;
             }
             
             // 4. Salvar PDF
