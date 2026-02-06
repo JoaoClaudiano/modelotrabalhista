@@ -43,7 +43,9 @@ class DocumentExporter {
             MIN_CONTENT_LENGTH: 50,
             // Timeout for library loading (in milliseconds)
             LIBRARY_LOAD_TIMEOUT: 10000, // 10 seconds
-            HTML2CANVAS_LOAD_TIMEOUT: 10000 // 10 seconds
+            HTML2CANVAS_LOAD_TIMEOUT: 10000, // 10 seconds
+            // Delay to allow browser layout engine to complete recalculation after CSS transform changes
+            DOM_UPDATE_DELAY_MS: 50
         };
         
         // Padrões regex para detecção
@@ -621,18 +623,32 @@ class DocumentExporter {
             }
 
             // 3. Capturar o elemento como imagem de alta qualidade com validação
+            // Save and remove CSS transforms before capture to ensure proper A4 sizing
+            const originalTransform = element.style.transform;
+            const originalTransformOrigin = element.style.transformOrigin;
+            const container = element.parentElement;
+            const originalContainerHeight = container ? container.style.height : null;
+            
             let canvas;
             try {
-                // Use getBoundingClientRect for more accurate dimensions (accounts for CSS transforms and zoom)
-                // Fallback to scrollWidth/scrollHeight if rect dimensions are 0 (e.g., element is not fully rendered)
-                const rect = element.getBoundingClientRect();
+                // Remove transform completely (not just reset to scale(1))
+                element.style.transform = '';
+                element.style.transformOrigin = '';
+                if (container) {
+                    container.style.height = '';
+                }
+                
+                // Small delay to allow DOM to update after removing transform
+                await new Promise(resolve => setTimeout(resolve, this.VALIDATION.DOM_UPDATE_DELAY_MS));
+                
+                // Use scrollWidth/scrollHeight for natural dimensions without transforms
                 canvas = await html2canvas(element, {
                     scale: 2, // Alta resolução
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    width: rect.width || element.scrollWidth,
-                    height: rect.height || element.scrollHeight
+                    width: element.scrollWidth,
+                    height: element.scrollHeight
                 });
                 
                 // Validate canvas was created successfully
@@ -642,6 +658,14 @@ class DocumentExporter {
             } catch (canvasError) {
                 console.error('Erro ao capturar elemento com html2canvas:', canvasError);
                 throw new Error(`Falha ao capturar conteúdo: ${canvasError.message}`);
+            } finally {
+                // Always restore original transform state
+                element.style.transform = originalTransform;
+                element.style.transformOrigin = originalTransformOrigin;
+                // Restore container height even if it was an empty string
+                if (container) {
+                    container.style.height = originalContainerHeight !== null ? originalContainerHeight : '';
+                }
             }
 
             // 4. Configurar PDF
