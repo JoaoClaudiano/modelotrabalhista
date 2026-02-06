@@ -446,8 +446,10 @@ Consequências em caso de reincidência:
 
 ================================================================================
 
-O funcionário está ciente das implicações desta advertência e deverá assinar 
-este documento em duas vias, ficando uma com a empresa e outra em seu poder.
+O empregado declara ter tomado ciência deste registro, sem necessariamente 
+concordar com o conteúdo. Ressaltamos que o trabalhador mantém direito de 
+defesa e que todas as ações estão dentro dos limites previstos pela CLT. Este 
+documento deverá ser assinado em duas vias.
 
 __________________________________________
 Assinatura do Representante da Empresa

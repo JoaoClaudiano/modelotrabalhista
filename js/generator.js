@@ -503,7 +503,7 @@ class DocumentGenerator {
     
     <!-- Ciência - increased margin for better spacing -->
     <div style="text-align: justify; margin: 12px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">O funcionário está ciente do conteúdo desta advertência. Este documento deverá ser assinado em duas vias.</p>
+        <p style="margin: 0; line-height: 1.5;">O empregado declara ter tomado ciência deste registro, sem necessariamente concordar com o conteúdo. Ressaltamos que o trabalhador mantém direito de defesa e que todas as ações estão dentro dos limites previstos pela CLT. Este documento deverá ser assinado em duas vias.</p>
     </div>
     
     <!-- Assinatura empresa - increased margins for better spacing -->
