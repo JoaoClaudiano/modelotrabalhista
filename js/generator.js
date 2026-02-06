@@ -684,6 +684,16 @@ class DocumentGenerator {
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
     </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+    </div>
 </div>`;
     }
 
@@ -743,6 +753,16 @@ class DocumentGenerator {
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
     </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+    </div>
 </div>`;
     }
 
@@ -795,6 +815,16 @@ class DocumentGenerator {
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
     </div>
 </div>`;
     }
@@ -855,6 +885,16 @@ class DocumentGenerator {
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
     </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+    </div>
 </div>`;
     }
 
@@ -907,6 +947,16 @@ class DocumentGenerator {
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
     </div>
 </div>`;
     }
@@ -963,6 +1013,16 @@ class DocumentGenerator {
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
     </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
+    </div>
 </div>`;
     }
 
@@ -1015,6 +1075,16 @@ class DocumentGenerator {
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+    
+    <!-- Separador -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <!-- Seção de recebimento -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
     </div>
 </div>`;
     }
