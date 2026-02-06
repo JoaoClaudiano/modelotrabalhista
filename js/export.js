@@ -1592,26 +1592,30 @@ class DocumentExporter {
             if (typeof window.docx === 'undefined' && !this.libsLoaded.docx) {
                 console.log('Loading docx.js on demand...');
                 this.loadLibraries();
-                // Wait for library to load
-                await new Promise((resolve) => {
+                // Wait for library to load with a longer timeout
+                await new Promise((resolve, reject) => {
                     const checkInterval = setInterval(() => {
                         if (typeof window.docx !== 'undefined') {
                             this.libsLoaded.docx = true;
                             clearInterval(checkInterval);
+                            console.log('✅ docx.js carregado com sucesso');
                             resolve();
                         }
                     }, 100);
-                    // Timeout after 10 seconds
+                    // Timeout after 15 seconds
                     setTimeout(() => {
                         clearInterval(checkInterval);
+                        if (typeof window.docx === 'undefined') {
+                            console.error('⚠️ Timeout ao carregar docx.js');
+                        }
                         resolve();
-                    }, 10000);
+                    }, 15000);
                 });
             }
             
-            // Se docx não estiver carregado, usar fallback
+            // Se docx não estiver carregado, retornar erro
             if (typeof window.docx === 'undefined') {
-                console.log('Usando fallback para DOCX');
+                console.error('docx.js não está disponível após tentativa de carregamento');
                 return this.exportToDOCXFallback(content, filename);
             }
 
@@ -1733,88 +1737,16 @@ class DocumentExporter {
             
         } catch (error) {
             console.error('Erro ao gerar DOCX:', error);
-            return this.exportToDOCXFallback(content, filename);
+            this.showNotification('Erro ao gerar DOCX: ' + error.message + '. Por favor, use a opção de exportar para PDF.', 'error');
+            return { success: false, error: error.message };
         }
     }
 
-    // Fallback para DOCX
+    // Fallback para DOCX - quando a biblioteca docx.js não está disponível
     exportToDOCXFallback(content, filename) {
-        try {
-            const htmlContent = `
-                <!DOCTYPE html>
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                      xmlns:w='urn:schemas-microsoft-com:office:word' 
-                      xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${filename}</title>
-                    <!--[if gte mso 9]>
-                    <xml>
-                        <w:WordDocument>
-                            <w:View>Print</w:View>
-                            <w:Zoom>100</w:Zoom>
-                            <w:DoNotOptimizeForBrowser/>
-                        </w:WordDocument>
-                    </xml>
-                    <![endif]-->
-                    <style>
-                        body {
-                            font-family: 'Arial', sans-serif;
-                            line-height: 1.8;
-                            margin: 2cm;
-                            font-size: 11pt;
-                        }
-                        .document {
-                            white-space: pre-wrap;
-                            word-wrap: break-word;
-                            font-family: 'Courier New', monospace;
-                            font-size: 11pt;
-                            line-height: 1.8;
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 2cm;
-                            border-bottom: 2px solid #007bff;
-                            padding-bottom: 1cm;
-                        }
-                        .footer {
-                            margin-top: 2cm;
-                            text-align: center;
-                            font-size: 10pt;
-                            color: #666;
-                            border-top: 1px solid #ddd;
-                            padding-top: 1cm;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="document">${content}</div>
-                </body>
-                </html>
-            `;
-            
-            const blob = new Blob([htmlContent], { 
-                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-            });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            const safeFilename = this.sanitizeFilename(filename);
-            a.download = `${safeFilename}.docx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            this.showNotification('Documento DOCX (fallback) gerado! Salve com extensão .docx', 'success');
-            return { success: true, filename: `${safeFilename}.docx` };
-            
-        } catch (error) {
-            console.error('Erro no fallback do DOCX:', error);
-            this.showNotification('Erro ao gerar DOCX. Use a opção de PDF.', 'error');
-            return { success: false, error: error.message };
-        }
+        console.error('Biblioteca docx.js não está disponível');
+        this.showNotification('Não foi possível carregar a biblioteca necessária para gerar DOCX. Por favor, use a opção de exportar para PDF.', 'error');
+        return { success: false, error: 'docx.js library not available' };
     }
 
     // Método para copiar para área de transferência
