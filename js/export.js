@@ -143,59 +143,98 @@ class DocumentExporter {
             return parts;
         };
         
-        // Process all top-level divs
-        const divs = tempDiv.querySelectorAll(':scope > div > div, :scope > div > ul, :scope > div > h2');
+        // Process the main container and its children
+        const mainContainer = tempDiv.querySelector('div') || tempDiv;
+        const children = Array.from(mainContainer.children);
         
-        divs.forEach((element, index) => {
-            // Check HTML comment before element to identify type
-            const comment = element.previousSibling;
+        for (let i = 0; i < children.length; i++) {
+            const element = children[i];
+            
+            // Check for HTML comment before element to identify type
             let commentText = '';
-            if (comment && comment.nodeType === Node.COMMENT_NODE) {
-                commentText = comment.textContent.trim().toLowerCase();
+            let prevSibling = element.previousSibling;
+            while (prevSibling) {
+                if (prevSibling.nodeType === Node.COMMENT_NODE) {
+                    commentText = prevSibling.textContent.trim().toLowerCase();
+                    break;
+                }
+                prevSibling = prevSibling.previousSibling;
             }
             
-            // Company name (header)
-            if (commentText.includes('cabeçalho') && index === 0) {
-                const nameDiv = element.querySelector('div:first-child');
-                const addressDiv = element.querySelector('div:nth-child(2)');
-                
-                if (nameDiv) {
+            // Company header (look for centered div with two child divs)
+            if (commentText.includes('cabeçalho') || (i === 0 && element.style.textAlign === 'center')) {
+                const divs = element.querySelectorAll('div');
+                if (divs.length >= 2) {
                     structure.push({
                         type: 'companyName',
-                        text: nameDiv.textContent.trim()
+                        text: divs[0].textContent.trim()
                     });
-                }
-                
-                if (addressDiv) {
                     structure.push({
                         type: 'companyAddress',
-                        text: addressDiv.textContent.trim()
+                        text: divs[1].textContent.trim()
                     });
+                    continue;
                 }
             }
-            // Document title (with decorative lines)
-            else if (element.tagName === 'H2' || commentText.includes('título')) {
-                const titleText = element.textContent.trim();
-                if (titleText) {
+            
+            // Document title (centered div with h2 and border divs)
+            if (commentText.includes('título')) {
+                const h2 = element.querySelector('h2');
+                if (h2) {
                     structure.push({
                         type: 'documentTitle',
-                        text: titleText
+                        text: h2.textContent.trim()
                     });
+                    continue;
                 }
             }
-            // Lists
-            else if (element.tagName === 'UL') {
-                const items = Array.from(element.querySelectorAll('li')).map(li => li.textContent.trim());
+            
+            // H2 tag directly
+            if (element.tagName === 'H2') {
+                structure.push({
+                    type: 'documentTitle',
+                    text: element.textContent.trim()
+                });
+                continue;
+            }
+            
+            // Check for separator (div with border-top)
+            if (element.style.borderTop && element.style.borderTop !== 'none' && element.style.borderTop !== '') {
+                structure.push({
+                    type: 'separator'
+                });
+                continue;
+            }
+            
+            // Lists (ul elements)
+            const ul = element.querySelector('ul');
+            if (ul) {
+                const items = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
                 if (items.length > 0) {
                     structure.push({
                         type: 'list',
                         items: items
                     });
                 }
+                
+                // Also check if there's a preceding paragraph
+                const precedingP = element.querySelector('p');
+                if (precedingP && precedingP.compareDocumentPosition(ul) === Node.DOCUMENT_POSITION_FOLLOWING) {
+                    const parts = extractTextWithFormatting(precedingP);
+                    if (parts.length > 0) {
+                        structure.push({
+                            type: 'paragraph',
+                            parts: parts,
+                            text: precedingP.textContent.trim()
+                        });
+                    }
+                }
+                continue;
             }
+            
             // Paragraphs with potential field values
-            else {
-                const paragraphs = element.querySelectorAll('p');
+            const paragraphs = element.querySelectorAll('p');
+            if (paragraphs.length > 0) {
                 paragraphs.forEach(p => {
                     const parts = extractTextWithFormatting(p);
                     if (parts.length > 0) {
@@ -221,15 +260,8 @@ class DocumentExporter {
                         }
                     }
                 });
-                
-                // Check for separator lines (border-top divs)
-                if (element.style.borderTop) {
-                    structure.push({
-                        type: 'separator'
-                    });
-                }
             }
-        });
+        }
         
         return structure;
     }
