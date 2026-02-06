@@ -4,6 +4,9 @@ class AcessibilidadeManager {
     constructor() {
         this.prefix = 'modelotrabalhista_accessibility_';
         
+        // Selector for focusable elements - defined once for consistency
+        this.focusableElementsSelector = 'button, input, a, select, textarea, [tabindex]:not([tabindex="-1"])';
+        
         // Configurações padrão (sem Vlibras)
         this.defaultSettings = {
             theme: 'light',
@@ -181,8 +184,14 @@ class AcessibilidadeManager {
         
         // Initially hide card and make focusable elements unfocusable
         card.setAttribute('aria-hidden', 'true');
-        const focusableElements = card.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
-        focusableElements.forEach(el => el.setAttribute('tabindex', '-1'));
+        const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+        focusableElements.forEach(el => {
+            // Store original tabindex if it exists
+            if (el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1') {
+                el.setAttribute('data-original-tabindex', el.getAttribute('tabindex'));
+            }
+            el.setAttribute('tabindex', '-1');
+        });
         
         this.setupCardEvents();
     }
@@ -196,9 +205,15 @@ class AcessibilidadeManager {
             button.classList.remove('active');
             // Hide from accessibility tree when not visible
             card.setAttribute('aria-hidden', 'true');
-            // Remove focus trap when hidden
-            const focusableElements = card.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
-            focusableElements.forEach(el => el.setAttribute('tabindex', '-1'));
+            // Remove focus trap when hidden - query all potentially focusable elements
+            const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+            focusableElements.forEach(el => {
+                // Store original tabindex if it exists and isn't already stored
+                if (el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1' && !el.hasAttribute('data-original-tabindex')) {
+                    el.setAttribute('data-original-tabindex', el.getAttribute('tabindex'));
+                }
+                el.setAttribute('tabindex', '-1');
+            });
             this.cardVisible = false;
         } else {
             card.classList.add('visible');
@@ -206,8 +221,16 @@ class AcessibilidadeManager {
             // Make accessible when visible
             card.setAttribute('aria-hidden', 'false');
             // Restore focus ability when visible
-            const focusableElements = card.querySelectorAll('button, input');
-            focusableElements.forEach(el => el.removeAttribute('tabindex'));
+            const focusableElements = card.querySelectorAll(this.focusableElementsSelector);
+            focusableElements.forEach(el => {
+                // Restore original tabindex if it was stored, otherwise remove tabindex attribute
+                if (el.hasAttribute('data-original-tabindex')) {
+                    el.setAttribute('tabindex', el.getAttribute('data-original-tabindex'));
+                    el.removeAttribute('data-original-tabindex');
+                } else {
+                    el.removeAttribute('tabindex');
+                }
+            });
             this.cardVisible = true;
         }
     }

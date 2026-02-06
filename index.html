@@ -48,6 +48,8 @@
     <link rel="preconnect" href="https://vlibras.gov.br">
     
     <!-- Preload critical fonts for better LCP/FCP -->
+    <!-- Font versions: Inter v13, Roboto v30 - Update if Google Fonts versions change -->
+    <!-- Verify latest versions at: https://fonts.google.com/specimen/Inter and https://fonts.google.com/specimen/Roboto -->
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2" crossorigin>
     
@@ -1143,8 +1145,9 @@
     </div>
     <script>
         // Defer VLibras loading until after page is interactive
+        // Uses requestIdleCallback for better performance on slower connections
         window.addEventListener('load', function() {
-            setTimeout(function() {
+            function loadVLibras() {
                 var script = document.createElement('script');
                 script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835';
                 script.onerror = function() {
@@ -1162,7 +1165,14 @@
                     }
                 };
                 document.body.appendChild(script);
-            }, 1500); // Load after 1.5s to prioritize main content
+            }
+            
+            // Use requestIdleCallback if available for adaptive timing, fallback to setTimeout
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadVLibras, { timeout: 2000 });
+            } else {
+                setTimeout(loadVLibras, 1500);
+            }
         });
     </script>
 
