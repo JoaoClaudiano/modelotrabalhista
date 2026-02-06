@@ -411,10 +411,10 @@ class DocumentGenerator {
     
     <!-- Dados do funcionário -->
     <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Para:</strong> ${employeeName}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Cargo:</strong> ${employeePosition}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Data da Ocorrência:</strong> ${incidentDate}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Gravidade:</strong> ${severityText}</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Para: <strong>${employeeName}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Cargo: <strong>${employeePosition}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data da Ocorrência: <strong>${incidentDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Gravidade: <strong>${severityText}</strong></p>
     </div>
     
     <!-- Subtítulo -->
@@ -671,9 +671,9 @@ class DocumentGenerator {
     
     <!-- Cabeçalho do documento -->
     <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Para:</strong> Todos os funcionários do departamento</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>De:</strong> ${employeeName} - ${employeePosition}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Data do Documento:</strong> ${locationAndDate}</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Para: Todos os funcionários do departamento</p>
+        <p style="margin: 2px 0; line-height: 1.5;">De: <strong>${employeeName}</strong> - <strong>${employeePosition}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data do Documento: ${locationAndDate}</p>
     </div>
     
     <!-- Subtítulo -->
@@ -690,14 +690,14 @@ class DocumentGenerator {
     
     <!-- Detalhes da reunião -->
     <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Data:</strong> ${meetingDate}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Hora:</strong> ${time}</p>
-        <p style="margin: 2px 0; line-height: 1.5;"><strong>Local:</strong> ${location}</p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data: <strong>${meetingDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Hora: <strong>${time}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Local: <strong>${location}</strong></p>
     </div>
     
     <!-- Pauta da reunião -->
     <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 4px 0; line-height: 1.5;"><strong>Pauta da Reunião:</strong></p>
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Pauta da Reunião:</p>
         <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
             ${agendaItems}
         </ul>
