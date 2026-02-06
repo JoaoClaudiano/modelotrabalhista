@@ -43,7 +43,9 @@ class DocumentExporter {
             MIN_CONTENT_LENGTH: 50,
             // Timeout for library loading (in milliseconds)
             LIBRARY_LOAD_TIMEOUT: 10000, // 10 seconds
-            HTML2CANVAS_LOAD_TIMEOUT: 10000 // 10 seconds
+            HTML2CANVAS_LOAD_TIMEOUT: 10000, // 10 seconds
+            // Delay to allow browser layout engine to complete recalculation after CSS transform changes
+            DOM_UPDATE_DELAY_MS: 50
         };
         
         // Padrões regex para detecção
@@ -637,7 +639,7 @@ class DocumentExporter {
                 }
                 
                 // Small delay to allow DOM to update after removing transform
-                await new Promise(resolve => setTimeout(resolve, 50));
+                await new Promise(resolve => setTimeout(resolve, this.VALIDATION.DOM_UPDATE_DELAY_MS));
                 
                 // Use scrollWidth/scrollHeight for natural dimensions without transforms
                 canvas = await html2canvas(element, {
