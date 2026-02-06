@@ -26,9 +26,14 @@ class DocumentGenerator {
             demissao: this.generateResignationLetter.bind(this),
             ferias: this.generateVacationRequest.bind(this),
             advertencia: this.generateWarningLetter.bind(this),
-            atestado: this.generateCertificate.bind(this),
-            rescisao: this.generateSeveranceAgreement.bind(this),
-            reuniao: this.generateMeetingConvocation.bind(this)
+            reuniao: this.generateMeetingConvocation.bind(this),
+            alteracao_jornada: this.generateShiftChangeRequest.bind(this),
+            reembolso: this.generateExpenseReimbursement.bind(this),
+            beneficios: this.generateBenefitsRequest.bind(this),
+            licenca_maternidade: this.generateMaternityLeave.bind(this),
+            flexibilizacao_jornada: this.generateFlexibleSchedule.bind(this),
+            intervalo_amamentacao: this.generateBreastfeedingInterval.bind(this),
+            ajuste_horario_pais: this.generateParentScheduleAdjustment.bind(this)
         };
         
         // Campos obrigatórios por tipo de documento
@@ -36,9 +41,14 @@ class DocumentGenerator {
             demissao: ['employeeName', 'employeePosition', 'companyName', 'effectiveDate', 'noticePeriod', 'CPF', 'CTPS'],
             ferias: ['employeeName', 'employeePosition', 'vacationPeriod', 'vacationDays'],
             advertencia: ['employeeName', 'employeePosition', 'incidentDate', 'warningReason', 'severity'],
-            atestado: ['employeeName', 'employeePosition', 'certificateStart', 'certificateEnd', 'certificateReason'],
-            rescisao: ['employeeName', 'employeePosition', 'companyName', 'severanceValue', 'paymentDate', 'CPF', 'CTPS'],
-            reuniao: ['meetingDate', 'meetingTime', 'meetingLocation', 'meetingAgenda']
+            reuniao: ['meetingDate', 'meetingTime', 'meetingLocation', 'meetingAgenda'],
+            alteracao_jornada: ['employeeName', 'employeePosition', 'sector', 'currentShift', 'desiredShift', 'justification', 'startDate'],
+            reembolso: ['employeeName', 'employeePosition', 'sector', 'expenseType', 'expenseDate', 'expenseValue', 'expenseReason'],
+            beneficios: ['employeeName', 'employeePosition', 'sector', 'benefitType', 'justification', 'startDate'],
+            licenca_maternidade: ['employeeName', 'employeePosition', 'sector', 'startDate', 'duration', 'leaveType'],
+            flexibilizacao_jornada: ['employeeName', 'employeePosition', 'sector', 'reason', 'period', 'flexibilizationType'],
+            intervalo_amamentacao: ['employeeName', 'employeePosition', 'sector', 'intervalPeriod'],
+            ajuste_horario_pais: ['employeeName', 'employeePosition', 'sector', 'adjustmentType', 'dates', 'reason']
         };
         
         // Metadados e instruções de preenchimento por documento
@@ -61,23 +71,53 @@ class DocumentGenerator {
                 instructions: 'Descreva claramente a conduta inadequada, a data da ocorrência e a gravidade. A advertência deve estar vinculada ao regulamento interno da empresa.',
                 legalNotice: 'A advertência é uma medida disciplinar que não implica automaticamente em demissão por justa causa. Serve como registro formal de conduta inadequada.'
             },
-            atestado: {
-                name: 'Atestado Informal',
-                description: 'Documento para atestar ausência ou justificar falta ao trabalho.',
-                instructions: 'Informe o período de ausência e o motivo. Este é um documento informal e não substitui atestados médicos quando necessário.',
-                legalNotice: 'Atestados médicos têm validade legal específica. Este documento serve apenas para registro interno de ausências justificadas não médicas.'
-            },
-            rescisao: {
-                name: 'Acordo de Rescisão',
-                description: 'Documento para formalizar acordo de rescisão contratual entre empregado e empregador.',
-                instructions: 'Informe todos os valores e condições do acordo. Ambas as partes devem estar cientes dos termos. Este documento não substitui assessoria jurídica.',
-                legalNotice: 'A rescisão por acordo possui regras específicas na CLT. Recomenda-se sempre consultar um advogado trabalhista para garantir que todos os direitos sejam respeitados.'
-            },
             reuniao: {
                 name: 'Convocatória de Reunião',
                 description: 'Documento para convocar formalmente reuniões com a equipe.',
                 instructions: 'Informe data, hora, local e pauta da reunião. Solicite confirmação de presença dos participantes.',
                 legalNotice: 'Este é um documento de comunicação interna. A presença em reuniões pode ser obrigatória conforme regras da empresa.'
+            },
+            alteracao_jornada: {
+                name: 'Pedido de Alteração de Jornada ou Turno',
+                description: 'Documento para solicitar mudança de turno ou jornada de trabalho.',
+                instructions: 'Informe o turno atual, o turno desejado, a justificativa e a data de início pretendida.',
+                legalNotice: 'A alteração de jornada depende de aprovação da empresa e deve respeitar os limites da CLT.'
+            },
+            reembolso: {
+                name: 'Pedido de Reembolso de Despesas',
+                description: 'Documento para solicitar reembolso de despesas administrativas ou profissionais.',
+                instructions: 'Informe o tipo de despesa, valor, data e anexe comprovantes quando possível.',
+                legalNotice: 'O reembolso está sujeito à política interna da empresa e à comprovação das despesas.'
+            },
+            beneficios: {
+                name: 'Solicitação de Benefícios',
+                description: 'Documento para solicitar benefícios como vale-refeição, transporte ou cursos.',
+                instructions: 'Especifique o tipo de benefício desejado, a justificativa e a data de início.',
+                legalNotice: 'A concessão de benefícios está sujeita à política da empresa e disponibilidade orçamentária.'
+            },
+            licenca_maternidade: {
+                name: 'Pedido de Licença Maternidade/Paternidade ou Prorrogação',
+                description: 'Documento para solicitar licença maternidade, paternidade ou prorrogação conforme CLT.',
+                instructions: 'Informe o tipo de licença, data de início e duração prevista conforme legislação.',
+                legalNotice: 'Licença maternidade: 120 dias (prorrogável para 180 dias). Licença paternidade: 5 dias (prorrogável para 20 dias no Programa Empresa Cidadã). Direitos garantidos pela CLT.'
+            },
+            flexibilizacao_jornada: {
+                name: 'Pedido de Flexibilização de Jornada por Motivo Familiar',
+                description: 'Documento para solicitar ajuste de horário por razões familiares.',
+                instructions: 'Descreva o motivo familiar, o período necessário e o tipo de flexibilização desejada.',
+                legalNotice: 'A flexibilização é uma solicitação administrativa e depende de aprovação da empresa.'
+            },
+            intervalo_amamentacao: {
+                name: 'Solicitação de Intervalo para Amamentação',
+                description: 'Documento para formalizar direito ao intervalo para amamentação.',
+                instructions: 'Informe o período do intervalo desejado. A mãe lactante tem direito a dois descansos especiais de meia hora cada.',
+                legalNotice: 'Direito garantido pelo art. 396 da CLT até que a criança complete 6 meses de idade.'
+            },
+            ajuste_horario_pais: {
+                name: 'Pedido de Licença ou Ajuste de Horário para Pais/Responsáveis',
+                description: 'Documento para solicitar ajuste de horário para acompanhamento de filhos.',
+                instructions: 'Especifique o tipo de ajuste necessário, as datas e o motivo relacionado aos filhos.',
+                legalNotice: 'Esta é uma solicitação administrativa que depende de aprovação da empresa.'
             }
         };
     }
@@ -122,15 +162,28 @@ class DocumentGenerator {
                 incidentDate: 'Data da Ocorrência',
                 warningReason: 'Motivo da Advertência',
                 severity: 'Gravidade',
-                certificateStart: 'Data de Início',
-                certificateEnd: 'Data de Término',
-                certificateReason: 'Motivo do Atestado',
-                severanceValue: 'Valor da Rescisão',
-                paymentDate: 'Data de Pagamento',
                 meetingDate: 'Data da Reunião',
                 meetingTime: 'Horário',
                 meetingLocation: 'Local',
-                meetingAgenda: 'Pauta da Reunião'
+                meetingAgenda: 'Pauta da Reunião',
+                sector: 'Setor',
+                currentShift: 'Turno Atual',
+                desiredShift: 'Turno Desejado',
+                justification: 'Justificativa',
+                startDate: 'Data de Início',
+                expenseType: 'Tipo de Despesa',
+                expenseDate: 'Data da Despesa',
+                expenseValue: 'Valor',
+                expenseReason: 'Motivo',
+                benefitType: 'Tipo de Benefício',
+                duration: 'Duração',
+                leaveType: 'Tipo de Licença',
+                reason: 'Motivo',
+                period: 'Período',
+                flexibilizationType: 'Tipo de Flexibilização',
+                intervalPeriod: 'Período de Intervalo',
+                adjustmentType: 'Tipo de Ajuste',
+                dates: 'Datas'
             };
             
             const missingFieldNames = missingFields.map(f => fieldNames[f] || f).join(', ');
@@ -485,152 +538,7 @@ class DocumentGenerator {
 </div>`;
     }
 
-    // 4. ATESTADO
-    generateCertificate(data) {
-        const startDate = this.formatDate(data.certificateStart);
-        const endDate = this.formatDate(data.certificateEnd);
-        const period = startDate === endDate 
-            ? `na data de ${startDate}`
-            : `no período de ${startDate} a ${endDate}`;
-        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
-        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
-        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
-        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
-        const certificateReason = this.escapeHtml(data.certificateReason || 'Assuntos pessoais que impossibilitaram a presença no trabalho.');
-        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
-
-        // Template otimizado para caber em EXATAMENTE 1 página A4
-        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
-    <!-- Cabeçalho da empresa -->
-    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
-        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
-        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
-    </div>
-    
-    <!-- Título -->
-    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
-        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
-        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">ATESTADO</h2>
-        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
-    </div>
-    
-    <!-- Texto principal -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Atesto para os devidos fins que o(a) Sr(a). <strong>${employeeName}</strong>, 
-        ocupante do cargo de <strong>${employeePosition}</strong> nesta empresa, não compareceu 
-        ao trabalho <strong>${period}</strong> devido a:</p>
-    </div>
-    
-    <!-- Motivo -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${certificateReason}"</p>
-    </div>
-    
-    <!-- Observação -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">Este documento serve como justificativa para a ausência e não implica em 
-        qualquer responsabilidade trabalhista adicional, exceto se estabelecido em 
-        acordo ou convenção coletiva.</p>
-    </div>
-    
-    <!-- Separador - increased margin to prevent overlap -->
-    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
-    
-    <!-- Data - increased margin for better spacing -->
-    <div style="margin: 12px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
-    </div>
-    
-    <!-- Assinatura - increased margins for better centering -->
-    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
-        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
-        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Responsável</p>
-        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
-    </div>
-</div>`;
-    }
-
-    // 5. ACORDO DE RESCISÃO
-    generateSeveranceAgreement(data) {
-        const value = data.severanceValue ? `R$ ${parseFloat(data.severanceValue).toFixed(2).replace('.', ',')}` : 'a ser definido';
-        const paymentDate = data.paymentDate ? this.formatDate(data.paymentDate) : '(a definir)';
-        const conditions = data.additionalConditions ? `\n6. ${data.additionalConditions}` : '';
-        const cpf = this.escapeHtml(data.CPF || '[INFORME CPF]');
-        const ctps = this.escapeHtml(data.CTPS || '[INFORME CTPS]');
-        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
-        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
-        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
-        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
-        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
-
-        // Template otimizado para caber em EXATAMENTE 1 página A4
-        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
-    <!-- Cabeçalho da empresa -->
-    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
-        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
-        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
-    </div>
-    
-    <!-- Título -->
-    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
-        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
-        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">ACORDO DE RESCISÃO CONTRATUAL</h2>
-        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
-    </div>
-    
-    <!-- Partes do acordo -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0 0 6px 0; line-height: 1.5;">Entre <strong>${companyName}</strong>, com sede em ${companyAddress}, doravante 
-        denominada EMPRESA, e <strong>${employeeName}</strong>, portador(a) do CPF <strong>${cpf}</strong> 
-        e Carteira de Trabalho <strong>${ctps}</strong>, ocupante do cargo de 
-        <strong>${employeePosition}</strong>, doravante denominado(a) FUNCIONÁRIO(A), celebra-se 
-        o presente acordo de rescisão contratual, sob as seguintes condições:</p>
-    </div>
-    
-    <!-- Condições -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <ul style="margin: 4px 0 0 18px; padding: 0; line-height: 1.5;">
-            <li style="margin: 2px 0; line-height: 1.5;">As partes, de comum acordo, resolvem o contrato de trabalho vigente.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">A EMPRESA pagará ao FUNCIONÁRIO(A) a importância de <strong>${value}</strong>, 
-            correspondente a todos os direitos trabalhistas decorrentes da rescisão.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">Data para pagamento: <strong>${paymentDate}</strong></li>
-            <li style="margin: 2px 0; line-height: 1.5;">O FUNCIONÁRIO(A) declara estar ciente de que, com a assinatura deste 
-            acordo, renuncia a qualquer ação trabalhista referente ao período contratual.</li>
-            <li style="margin: 2px 0; line-height: 1.5;">O FUNCIONÁRIO(A) deverá devolver todos os bens da empresa em seu poder 
-            até a data do desligamento.</li>${conditions ? `<li style="margin: 2px 0; line-height: 1.5;">${this.escapeHtml(conditions.substring(3))}</li>` : ''}
-        </ul>
-    </div>
-    
-    <!-- Declaração final -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">As partes declaram estar cientes do teor deste acordo e assinam-no em duas 
-        vias de igual teor.</p>
-    </div>
-    
-    <!-- Separador - increased margin to prevent overlap -->
-    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
-    
-    <!-- Data - increased margin for better spacing -->
-    <div style="margin: 12px 0; box-sizing: border-box;">
-        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
-    </div>
-    
-    <!-- Assinatura empresa - increased margins for better spacing -->
-    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
-        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
-        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Representante Legal da Empresa</p>
-        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
-    </div>
-    
-    <!-- Assinatura funcionário - increased margins for better spacing -->
-    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
-        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
-        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
-    </div>
-</div>`;
-    }
-
-    // 6. CONVOCATÓRIA DE REUNIÃO
+    // 4. CONVOCATÓRIA DE REUNIÃO
     generateMeetingConvocation(data) {
         const meetingDate = data.meetingDate ? this.formatDate(data.meetingDate) : '(a definir)';
         const time = data.meetingTime || '(horário a definir)';
@@ -717,6 +625,393 @@ class DocumentGenerator {
     </div>
     
     <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 5. PEDIDO DE ALTERAÇÃO DE JORNADA OU TURNO
+    generateShiftChangeRequest(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const currentShift = this.escapeHtml(data.currentShift || '[TURNO ATUAL]');
+        const desiredShift = this.escapeHtml(data.desiredShift || '[TURNO DESEJADO]');
+        const justification = this.escapeHtml(data.justification || '[JUSTIFICATIVA]');
+        const startDate = this.formatDate(data.startDate);
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE ALTERAÇÃO DE JORNADA OU TURNO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho por meio deste solicitar alteração de jornada de trabalho conforme detalhado abaixo:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Turno Atual: <strong>${currentShift}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Turno Desejado: <strong>${desiredShift}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data de Início Desejada: <strong>${startDate}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Justificativa:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${justification}"</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 6. PEDIDO DE REEMBOLSO DE DESPESAS
+    generateExpenseReimbursement(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const expenseType = this.escapeHtml(data.expenseType || '[TIPO DE DESPESA]');
+        const expenseDate = this.formatDate(data.expenseDate);
+        const expenseValue = data.expenseValue ? `R$ ${parseFloat(data.expenseValue).toFixed(2).replace('.', ',')}` : '[VALOR]';
+        const expenseReason = this.escapeHtml(data.expenseReason || '[MOTIVO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE REEMBOLSO DE DESPESAS</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar o reembolso de despesas conforme detalhado abaixo:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Tipo de Despesa: <strong>${expenseType}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data da Despesa: <strong>${expenseDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Valor: <strong>${expenseValue}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Motivo:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${expenseReason}"</p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">Declaro que a despesa foi realizada em benefício da empresa e que possuo os comprovantes necessários.</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 7. SOLICITAÇÃO DE BENEFÍCIOS
+    generateBenefitsRequest(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const benefitType = this.escapeHtml(data.benefitType || '[TIPO DE BENEFÍCIO]');
+        const justification = this.escapeHtml(data.justification || '[JUSTIFICATIVA]');
+        const startDate = this.formatDate(data.startDate);
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">SOLICITAÇÃO DE BENEFÍCIOS</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar o benefício conforme detalhado abaixo:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Tipo de Benefício: <strong>${benefitType}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data de Início Desejada: <strong>${startDate}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Justificativa:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${justification}"</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 8. PEDIDO DE LICENÇA MATERNIDADE/PATERNIDADE
+    generateMaternityLeave(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const startDate = this.formatDate(data.startDate);
+        const duration = this.escapeHtml(data.duration || '[DURAÇÃO]');
+        const leaveType = this.escapeHtml(data.leaveType || '[TIPO DE LICENÇA]');
+        const justification = data.justification ? this.escapeHtml(data.justification) : '';
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE LICENÇA MATERNIDADE/PATERNIDADE</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar licença conforme previsto na CLT:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Tipo de Licença: <strong>${leaveType}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Data de Início: <strong>${startDate}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Duração: <strong>${duration}</strong></p>
+    </div>
+    ${justification ? `
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Observações:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${justification}"</p>
+    </div>` : ''}
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5; font-size: 9pt;">Conforme CLT: Licença-maternidade 120 dias (prorrogável para 180); Licença-paternidade 5 dias (prorrogável para 20 no Programa Empresa Cidadã).</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 9. PEDIDO DE FLEXIBILIZAÇÃO DE JORNADA POR MOTIVO FAMILIAR
+    generateFlexibleSchedule(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const reason = this.escapeHtml(data.reason || '[MOTIVO]');
+        const period = this.escapeHtml(data.period || '[PERÍODO]');
+        const flexibilizationType = this.escapeHtml(data.flexibilizationType || '[TIPO DE FLEXIBILIZAÇÃO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE FLEXIBILIZAÇÃO DE JORNADA</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar flexibilização de jornada por motivo familiar:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Tipo de Flexibilização: <strong>${flexibilizationType}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Período: <strong>${period}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Motivo Familiar:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${reason}"</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 10. SOLICITAÇÃO DE INTERVALO PARA AMAMENTAÇÃO
+    generateBreastfeedingInterval(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const intervalPeriod = this.escapeHtml(data.intervalPeriod || '[PERÍODO DE INTERVALO]');
+        const observations = data.observations ? this.escapeHtml(data.observations) : '';
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">SOLICITAÇÃO DE INTERVALO PARA AMAMENTAÇÃO</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar intervalo para amamentação conforme previsto no art. 396 da CLT:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Período de Intervalo: <strong>${intervalPeriod}</strong></p>
+    </div>
+    ${observations ? `
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Observações:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${observations}"</p>
+    </div>` : ''}
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5; font-size: 9pt;">Art. 396 da CLT: Para amamentar seu filho até 6 meses de idade, a mulher terá direito, durante a jornada de trabalho, a dois descansos especiais de meia hora cada um.</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
+        <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
+        <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
+        <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
+    </div>
+</div>`;
+    }
+
+    // 11. PEDIDO DE AJUSTE DE HORÁRIO PARA PAIS/RESPONSÁVEIS
+    generateParentScheduleAdjustment(data) {
+        const companyName = this.escapeHtml(data.companyName ? data.companyName.toUpperCase() : '[NOME DA EMPRESA]');
+        const companyAddress = this.escapeHtml(data.companyAddress || '[ENDEREÇO DA EMPRESA]');
+        const employeeName = this.escapeHtml(data.employeeName || '[NOME DO FUNCIONÁRIO]');
+        const employeePosition = this.escapeHtml(data.employeePosition || '[CARGO]');
+        const sector = this.escapeHtml(data.sector || '[SETOR]');
+        const adjustmentType = this.escapeHtml(data.adjustmentType || '[TIPO DE AJUSTE]');
+        const dates = this.escapeHtml(data.dates || '[DATAS]');
+        const reason = this.escapeHtml(data.reason || '[MOTIVO]');
+        const locationAndDate = this.formatLocationAndDate(data.companyAddress, data.documentDateFormatted);
+
+        return `<div style="${this.DOCUMENT_CONTAINER_STYLE}">
+    <div style="text-align: center; margin-bottom: 8px; box-sizing: border-box;">
+        <div style="font-weight: bold; font-size: 10pt; margin: 0; line-height: 1.2;">${companyName}</div>
+        <div style="font-weight: bold; font-size: 9pt; margin: 0; line-height: 1.2;">${companyAddress}</div>
+    </div>
+    
+    <div style="text-align: center; margin: 12px 0 8px 0; box-sizing: border-box;">
+        <div style="border-top: 2px solid #000; margin-bottom: 6px;"></div>
+        <h2 style="margin: 6px 0; font-size: 12pt; font-weight: bold; line-height: 1.2;">PEDIDO DE AJUSTE DE HORÁRIO PARA PAIS/RESPONSÁVEIS</h2>
+        <div style="border-bottom: 2px solid #000; margin-top: 6px;"></div>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 6px 0; line-height: 1.5;">Eu, <strong>${employeeName}</strong>, ocupante do cargo de <strong>${employeePosition}</strong>, 
+        lotado(a) no setor <strong>${sector}</strong>, venho solicitar ajuste de horário para acompanhamento de filhos:</p>
+    </div>
+    
+    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 2px 0; line-height: 1.5;">Tipo de Ajuste: <strong>${adjustmentType}</strong></p>
+        <p style="margin: 2px 0; line-height: 1.5;">Datas: <strong>${dates}</strong></p>
+    </div>
+    
+    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+        <p style="margin: 0 0 4px 0; line-height: 1.5;">Motivo:</p>
+        <p style="margin: 0; line-height: 1.5; font-style: italic;">"${reason}"</p>
+    </div>
+    
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
+    
+    <div style="margin: 12px 0; box-sizing: border-box;">
+        <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
+    </div>
+    
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
@@ -890,23 +1185,55 @@ class DocumentGenerator {
                 examples.incidentDate = new Date().toISOString().split('T')[0];
                 examples.severity = 'media';
                 break;
-            case 'atestado':
-                examples.certificateReason = 'Consulta médica agendada com urgência.';
-                examples.certificateStart = new Date().toISOString().split('T')[0];
-                examples.certificateEnd = new Date().toISOString().split('T')[0];
-                break;
-            case 'rescisao':
-                examples.severanceValue = '5000.00';
-                examples.paymentDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                examples.additionalConditions = 'O funcionário se compromete a manter sigilo sobre informações confidenciais da empresa.';
-                examples.CPF = '123.456.789-00';
-                examples.CTPS = '12345 - Série 0001';
-                break;
             case 'reuniao':
                 examples.meetingDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                 examples.meetingTime = '14:00';
                 examples.meetingLocation = 'Sala de Reuniões Principal';
                 examples.meetingAgenda = '1. Abertura e boas-vindas\n2. Apresentação dos resultados do trimestre\n3. Discussão sobre novas metas\n4. Feedbacks da equipe\n5. Encerramento';
+                break;
+            case 'alteracao_jornada':
+                examples.sector = 'Administrativo';
+                examples.currentShift = 'Matutino (8h-12h e 14h-18h)';
+                examples.desiredShift = 'Vespertino (14h-22h)';
+                examples.justification = 'Necessidade de acompanhar filho em escola no período da manhã.';
+                examples.startDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                break;
+            case 'reembolso':
+                examples.sector = 'Vendas';
+                examples.expenseType = 'Combustível';
+                examples.expenseDate = new Date().toISOString().split('T')[0];
+                examples.expenseValue = '250.00';
+                examples.expenseReason = 'Visita a clientes fora da cidade conforme orientação do gestor.';
+                break;
+            case 'beneficios':
+                examples.sector = 'TI';
+                examples.benefitType = 'Vale-refeição';
+                examples.justification = 'Solicitação de inclusão no programa de benefícios da empresa.';
+                examples.startDate = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                break;
+            case 'licenca_maternidade':
+                examples.sector = 'Recursos Humanos';
+                examples.startDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                examples.duration = '120 dias';
+                examples.leaveType = 'Licença Maternidade';
+                examples.justification = 'Previsão de parto para o início do período solicitado.';
+                break;
+            case 'flexibilizacao_jornada':
+                examples.sector = 'Marketing';
+                examples.reason = 'Necessidade de levar filho(a) a tratamento médico regular.';
+                examples.period = '3 meses';
+                examples.flexibilizationType = 'Entrada às 9h e saída às 18h';
+                break;
+            case 'intervalo_amamentacao':
+                examples.sector = 'Financeiro';
+                examples.intervalPeriod = 'Dois intervalos de 30 minutos (10h e 15h)';
+                examples.observations = 'Bebê com 3 meses de idade.';
+                break;
+            case 'ajuste_horario_pais':
+                examples.sector = 'Operações';
+                examples.adjustmentType = 'Saída antecipada às quintas-feiras';
+                examples.dates = 'Todas as quintas-feiras até dezembro/2026';
+                examples.reason = 'Acompanhamento de filho em sessões de terapia.';
                 break;
             default:
                 examples.effectiveDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
