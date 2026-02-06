@@ -71,9 +71,12 @@ const ESSENTIAL_RESOURCES = [
   '/modelotrabalhista/assets/favicon-96x96.png'
 ];
 
+// Tracking para atualizações em background
+const updatingResources = new Set();
+
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Instalando v1.1...');
+  console.log('[Service Worker] Instalando...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -93,7 +96,7 @@ self.addEventListener('install', (event) => {
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Ativando v1.1...');
+  console.log('[Service Worker] Ativando...');
   
   event.waitUntil(
     caches.keys()
@@ -117,7 +120,14 @@ self.addEventListener('activate', (event) => {
 // Interceptação de requisições
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const url = new URL(request.url);
   
+  // Verifica se é cacheável
+  if (!isCacheable(request.url)) {
+    // Se não é cacheável, apenas faz a requisição normal
+    return;
+  }
+
   // Para navegação (HTML), usa network-first
   if (request.mode === 'navigate') {
     event.respondWith(
@@ -145,12 +155,6 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-  
-  // Verifica se é cacheável
-  if (!isCacheable(request.url)) {
-    // Se não é cacheável, apenas faz a requisição normal
-    return;
-  }
 
   // Para outros recursos (CSS, JS, etc), usa Stale-While-Revalidate
   // compatível com Cache Busting
@@ -164,14 +168,15 @@ self.addEventListener('fetch', (event) => {
               const responseToCache = networkResponse.clone();
               caches.open(CACHE_NAME)
                 .then((cache) => {
-                  // Cacheia a resposta
-                  cache.put(request, responseToCache);
+                  // Cacheia com a URL limpa (sem ?v=)
+                  const cleanUrl = getCleanUrl(request.url);
+                  cache.put(cleanUrl, responseToCache);
                 });
             }
             return networkResponse;
           })
           .catch(() => {
-            // Se falhar a requisição de rede, retorna null
+            // Se falhar a requisição de rede, não faz nada
             return null;
           });
         
@@ -181,7 +186,44 @@ self.addEventListener('fetch', (event) => {
         }
         
         // Se não tem cache, aguarda a requisição de rede
-        return fetchPromise || caches.match(request);
+        return fetchPromise;
+      })
+  );
+});
+              })
+              .catch(() => {
+                updatingResources.delete(requestUrl);
+              });
+          }
+          
+          return cachedResponse;
+        }
+
+        // Se não está no cache, busca da rede
+        return fetch(request)
+          .then((response) => {
+            // Cacheia apenas respostas válidas
+            if (!response || response.status !== 200 || response.type === 'error') {
+              return response;
+            }
+
+            // Clona a resposta antes de cachear
+            const responseToCache = response.clone();
+            
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                // Cacheia recursos estáticos usando a constante
+                if (request.url.match(CACHEABLE_EXTENSIONS)) {
+                  cache.put(request, responseToCache);
+                }
+              });
+
+            return response;
+          })
+          .catch(() => {
+            // Se falhar completamente, tenta buscar do cache
+            return caches.match(request);
+          });
       })
   );
 });
