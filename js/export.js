@@ -254,14 +254,19 @@ class DocumentExporter {
                             // Check if bold formatting appears in the value part (after the colon)
                             const colonIndex = fullText.indexOf(':');
                             let hasBoldAfterColon = false;
-                            let textPos = 0;
                             
+                            // Build position map accounting for original untrimmed content
+                            let fullTextBuilt = '';
                             for (const part of parts) {
-                                if (part.bold && textPos + part.text.length > colonIndex) {
+                                const partStart = fullTextBuilt.length;
+                                const partEnd = partStart + part.text.length;
+                                
+                                // Check if this bold part overlaps with text after colon
+                                if (part.bold && partEnd > colonIndex + 1) {
                                     hasBoldAfterColon = true;
                                     break;
                                 }
-                                textPos += part.text.length;
+                                fullTextBuilt += part.text;
                             }
                             
                             if (hasBoldAfterColon) {
@@ -308,6 +313,14 @@ class DocumentExporter {
     renderParagraphWithFormatting(pdf, block, yPosition, currentPageCount, config) {
         const lineHeight = (config.FONT_SIZE * config.PT_TO_MM) * config.LINE_HEIGHT_FACTOR;
         let pageCount = currentPageCount;
+        
+        // Helper function to skip whitespace
+        const skipWhitespace = (text, pos) => {
+            while (pos < text.length && /\s/.test(text[pos])) {
+                pos++;
+            }
+            return pos;
+        };
         
         // Build the full text for line breaking
         const fullText = block.text;
@@ -361,10 +374,8 @@ class DocumentExporter {
             // Render line with proper formatting
             let xPos = config.MARGIN;
             
-            // Skip whitespace at start of line (space, tab, newline)
-            while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
-                fullTextPos++;
-            }
+            // Skip whitespace at start of line
+            fullTextPos = skipWhitespace(fullText, fullTextPos);
             
             // For justified text (not last line)
             if (shouldJustify && !isLastLine && line.trim().length > 0) {
@@ -379,10 +390,7 @@ class DocumentExporter {
                         pdf.setFont('helvetica', wordBold ? 'bold' : 'normal');
                         wordWidths.push(pdf.getTextWidth(word));
                         fullTextPos += word.length;
-                        // Skip whitespace between words
-                        while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
-                            fullTextPos++;
-                        }
+                        fullTextPos = skipWhitespace(fullText, fullTextPos);
                     }
                     
                     const totalWordsWidth = wordWidths.reduce((sum, w) => sum + w, 0);
@@ -399,10 +407,7 @@ class DocumentExporter {
                         pdf.text(word, xPos, yPosition);
                         xPos += wordWidths[j] + spaceWidth;
                         fullTextPos += word.length;
-                        // Skip whitespace between words
-                        while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
-                            fullTextPos++;
-                        }
+                        fullTextPos = skipWhitespace(fullText, fullTextPos);
                     }
                 } else {
                     // Single word
@@ -420,19 +425,12 @@ class DocumentExporter {
                     pdf.text(word, xPos, yPosition);
                     xPos += pdf.getTextWidth(word) + pdf.getTextWidth(' ');
                     fullTextPos += word.length;
-                    // Skip whitespace between words
-                    while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
-                        fullTextPos++;
-                    }
+                    fullTextPos = skipWhitespace(fullText, fullTextPos);
                 }
             }
             
             yPosition += lineHeight;
-            
-            // Skip line break and remaining whitespace
-            while (fullTextPos < fullText.length && /\s/.test(fullText[fullTextPos])) {
-                fullTextPos++;
-            }
+            fullTextPos = skipWhitespace(fullText, fullTextPos);
         }
         
         return { yPosition, pageCount };
@@ -471,17 +469,19 @@ class DocumentExporter {
             let xPos = config.MARGIN;
             
             // Check if this line contains the colon (label part)
-            if (line.includes(':')) {
-                const parts = line.split(':');
+            const colonIndex = line.indexOf(':');
+            if (colonIndex !== -1) {
+                const label = line.substring(0, colonIndex + 1);
+                const value = line.substring(colonIndex + 1).trim();
                 
                 // Render label (normal)
                 pdf.setFont('helvetica', 'normal');
-                pdf.text(parts[0] + ':', xPos, yPosition);
-                xPos += pdf.getTextWidth(parts[0] + ': ');
+                pdf.text(label, xPos, yPosition);
+                xPos += pdf.getTextWidth(label + ' ');
                 
                 // Render value (bold)
                 pdf.setFont('helvetica', 'bold');
-                pdf.text(parts.slice(1).join(':').trim(), xPos, yPosition);
+                pdf.text(value, xPos, yPosition);
             } else {
                 // Continuation line - render as bold (part of value)
                 pdf.setFont('helvetica', 'bold');
