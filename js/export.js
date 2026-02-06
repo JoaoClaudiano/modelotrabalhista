@@ -11,7 +11,7 @@ class DocumentExporter {
             docx: false
         };
         
-        // Constantes de formatação DOCX
+        // DOCX formatting constants
         this.FORMATTING = {
             // DOCX (sizes in half-points: 22 = 11pt, 24 = 12pt, 28 = 14pt)
             DOCX_TITLE_SIZE: 28, // 14pt
@@ -108,7 +108,6 @@ class DocumentExporter {
         this.init();
     }
     
-
     /**
      * Check if a line should be treated as a title
      * A line is considered a title if:
@@ -614,7 +613,6 @@ class DocumentExporter {
         
         script.onload = () => {
             this.libsLoaded.jspdf = true;
-            this.checkAllLibsLoaded();
         };
         
         script.onerror = () => {
@@ -633,13 +631,11 @@ class DocumentExporter {
         
         script.onload = () => {
             this.libsLoaded.jspdf = true;
-            this.checkAllLibsLoaded();
         };
         
         script.onerror = () => {
             console.warn('⚠️  Falha ao carregar jsPDF de todos os CDNs, usando fallback nativo');
             this.libsLoaded.jspdf = true; // Marcar como carregado para usar fallback
-            this.checkAllLibsLoaded();
         };
         
         document.head.appendChild(script);
@@ -671,7 +667,6 @@ class DocumentExporter {
         // Também adicionar listener para o evento personalizado
         window.addEventListener('docxLoaded', (e) => {
             this.libsLoaded.docx = true;
-            this.checkAllLibsLoaded();
         });
     }
 
@@ -683,21 +678,14 @@ class DocumentExporter {
         
         script.onload = () => {
             this.libsLoaded.docx = true;
-            this.checkAllLibsLoaded();
         };
         
         script.onerror = () => {
             console.warn('⚠️  Falha ao carregar docx.js de todos os CDNs, usando fallback nativo');
             this.libsLoaded.docx = true; // Marcar como carregado para usar fallback
-            this.checkAllLibsLoaded();
         };
         
         document.head.appendChild(script);
-    }
-
-    checkAllLibsLoaded() {
-        // Empty implementation - library loading status is tracked via this.libsLoaded
-        // and checked by individual export methods when needed
     }
 
     setupEventListeners() {
