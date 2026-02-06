@@ -75,9 +75,9 @@ class DocumentExporter {
             // Decorative lines for document title
             TITLE_LINE_WIDTH: 0.4,        // Espessura das linhas (pt) - discreta
             TITLE_LINE_SPACING_BEFORE: 3, // Espaço antes da linha superior
-            TITLE_LINE_TO_TEXT: 4,        // Espaço entre linha e texto do título (increased from 2 to 4 to prevent overlap)
-            TITLE_TEXT_TO_LINE: 2,        // Espaço entre texto do título e linha inferior
-            TITLE_LINE_SPACING_AFTER: 5,  // Espaço após linha inferior (increased from 3 to 5 for better spacing before first paragraph)
+            TITLE_LINE_TO_TEXT: 3,        // Espaço entre linha e texto do título (equal spacing for vertical centering)
+            TITLE_TEXT_TO_LINE: 3,        // Espaço entre texto do título e linha inferior (equal spacing for vertical centering)
+            TITLE_LINE_SPACING_AFTER: 6,  // Espaço após linha inferior (increased to maintain proper spacing before first paragraph)
             
             // Title detection
             TITLE_CHAR_LIMIT: 60,       // Máximo de caracteres para considerar como título

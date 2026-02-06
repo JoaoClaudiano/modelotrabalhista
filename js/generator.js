@@ -271,25 +271,25 @@ class DocumentGenerator {
         pela legislação trabalhista e normas internas da empresa.</p>
     </div>
     
-    <!-- Separador - margin 20px->12px -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Local e data - margin 15px->8px -->
-    <div style="margin: 8px 0; box-sizing: border-box;">
+    <!-- Local e data - increased margin for better spacing -->
+    <div style="margin: 12px 0; box-sizing: border-box;">
         <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
     </div>
     
-    <!-- Assinatura do funcionário - margins reduzidos (35px->20px, 20px->12px), page-break-inside: avoid -->
-    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura do funcionário - increased margins for better centering, page-break-inside: avoid -->
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
     </div>
     
-    <!-- Separador - margin 20px->12px -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Seção de recebimento - margin 15px->8px, page-break-inside: avoid -->
-    <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Seção de recebimento - increased margin for better spacing below separator, page-break-inside: avoid -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
         <p style="margin: 2px 0; line-height: 1.5;">Recebido por: ___________________________________________</p>
         <p style="margin: 2px 0; line-height: 1.5;">Cargo: ___________________________________________________</p>
         <p style="margin: 2px 0; line-height: 1.5;">Data: __/__/______</p>
@@ -358,25 +358,25 @@ class DocumentGenerator {
         </ul>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Data -->
-    <div style="margin: 8px 0; box-sizing: border-box;">
+    <!-- Data - increased margin for better spacing -->
+    <div style="margin: 12px 0; box-sizing: border-box;">
         <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
     </div>
     
-    <!-- Assinatura do funcionário -->
-    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura do funcionário - increased margins for better centering -->
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Funcionário</p>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Parecer departamento -->
-    <div style="margin: 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Parecer departamento - increased margin for better spacing below separator -->
+    <div style="margin: 14px 0; page-break-inside: avoid; box-sizing: border-box;">
         <p style="margin: 2px 0; line-height: 1.5;">Parecer do Departamento Pessoal: ___________________________________</p>
         <p style="margin: 2px 0; line-height: 1.5;">Data de Agendamento: __/__/______</p>
     </div>
@@ -445,26 +445,26 @@ class DocumentGenerator {
         </ul>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Ciência -->
-    <div style="text-align: justify; margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+    <!-- Ciência - increased margin for better spacing -->
+    <div style="text-align: justify; margin: 12px 0; line-height: 1.5; box-sizing: border-box;">
         <p style="margin: 0; line-height: 1.5;">O funcionário está ciente do conteúdo desta advertência. Este documento deverá ser assinado em duas vias.</p>
     </div>
     
-    <!-- Assinatura empresa -->
-    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura empresa - increased margins for better spacing -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Representante da Empresa</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Subtítulo ciência -->
-    <div style="text-align: center; margin: 8px 0; box-sizing: border-box;">
+    <!-- Subtítulo ciência - increased margin for better spacing below separator -->
+    <div style="text-align: center; margin: 12px 0; box-sizing: border-box;">
         <h3 style="margin: 4px 0; font-size: 11pt; font-weight: bold; line-height: 1.2;">CIÊNCIA DO FUNCIONÁRIO</h3>
     </div>
     
@@ -533,16 +533,16 @@ class DocumentGenerator {
         acordo ou convenção coletiva.</p>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Data -->
-    <div style="margin: 8px 0; box-sizing: border-box;">
+    <!-- Data - increased margin for better spacing -->
+    <div style="margin: 12px 0; box-sizing: border-box;">
         <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
     </div>
     
-    <!-- Assinatura -->
-    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura - increased margins for better centering -->
+    <div style="margin: 28px 0 16px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Assinatura do Responsável</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
@@ -607,23 +607,23 @@ class DocumentGenerator {
         vias de igual teor.</p>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Data -->
-    <div style="margin: 8px 0; box-sizing: border-box;">
+    <!-- Data - increased margin for better spacing -->
+    <div style="margin: 12px 0; box-sizing: border-box;">
         <p style="margin: 0; line-height: 1.5;">${locationAndDate}</p>
     </div>
     
-    <!-- Assinatura empresa -->
-    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura empresa - increased margins for better spacing -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">Representante Legal da Empresa</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">Cargo: ____________________________</p>
     </div>
     
-    <!-- Assinatura funcionário -->
-    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <!-- Assinatura funcionário - increased margins for better spacing -->
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
     </div>
@@ -708,15 +708,15 @@ class DocumentGenerator {
         <p style="margin: 0; line-height: 1.5;">Solicitamos a confirmação de presença até 24 horas antes da reunião.</p>
     </div>
     
-    <!-- Separador -->
-    <div style="border-top: 2px solid #000; margin: 12px 0;"></div>
+    <!-- Separador - increased margin to prevent overlap -->
+    <div style="border-top: 2px solid #000; margin: 18px 0;"></div>
     
-    <!-- Assinatura -->
-    <div style="margin: 8px 0; line-height: 1.5; box-sizing: border-box;">
+    <!-- Assinatura - increased margin for better spacing -->
+    <div style="margin: 14px 0; line-height: 1.5; box-sizing: border-box;">
         <p style="margin: 0 0 4px 0; line-height: 1.5;">Atenciosamente,</p>
     </div>
     
-    <div style="margin: 15px 0 8px 0; page-break-inside: avoid; box-sizing: border-box;">
+    <div style="margin: 20px 0 12px 0; page-break-inside: avoid; box-sizing: border-box;">
         <div style="border-top: 1px solid #000; width: 280px; margin: 0 auto;"></div>
         <p style="text-align: center; margin-top: 4px; line-height: 1.2;">${employeeName}</p>
         <p style="text-align: center; margin: 2px 0; line-height: 1.2; font-size: 9pt;">${employeePosition}</p>
