@@ -1,11 +1,5 @@
 # Security Headers
 /*
-  # Content Security Policy (Enforcement Mode)
-  # Note: The browser may show an informational warning about 'upgrade-insecure-requests'
-  # being ignored in report-only mode. This is expected - we're using enforcement mode (not report-only),
-  # and the warning is just informing that the directive would be ignored if it were in report-only mode.
-  # The 'upgrade-insecure-requests' directive is correctly configured and working as intended.
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WcDkRV9XMmsQDNpHZrhtrVhxrMgvIQz5x/w8CQcWIwk=' 'sha256-uPET849BxZZ7eiRjsn6jFq+g/+fYKyzeJFOpnMuA3V8=' 'sha256-qgCaSei7gAH/7p0JVuskW2EdERj8AEFCkLgGlAag4H8=' 'sha256-fgjY0VP9pYvtYC3lnsNgYO7Yhq+VmvWhMdxP2Q/eJCU=' 'sha256-/M19IbDW79bvkhcM0/t09g1v/is4gIKq1Do5ZUARa2s=' 'sha256-YIPKgfYCIAv6gekIuR4PX4l5dEGEzMpJCDY/ulqeje8=' 'sha256-genydQ/lauyDIrfYRE3CtHQAnV9MOwP+s0Xu3nSFYSo=' 'sha256-FYO2K75L/uhOXY37a2XnYdgZ2jUjAPUitGGYgxl3Y2U=' 'sha256-hBIUfJSc6RSVcu/8w17noCIWVTUEmH3PB68/MHfZLDc=' https://cdnjs.cloudflare.com https://vlibras.gov.br https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' 'sha256-9r9Uvk/AF0OWWPGcavadvGAMTJmF2B0DdCtURHa1YCM=' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; media-src 'self'; frame-src https://vlibras.gov.br; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
