@@ -152,7 +152,8 @@ self.addEventListener('fetch', (event) => {
   
   // Verifica se é cacheável
   if (!isCacheable(request.url)) {
-    // Se não é cacheável, apenas faz a requisição normal
+    // Se não é cacheável, permite que o navegador faça a requisição normalmente
+    event.respondWith(fetch(request));
     return;
   }
 
