@@ -152,7 +152,7 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Preload styles loader - CSP compliant -->
+    <!-- Preload styles loader -->
     <script src="js/preload-styles.js?v=1770389835" defer></script>
     
     <!-- CSS -->
@@ -1138,7 +1138,7 @@
                             </button>
                         </div>
                     `;
-                    // Add event listener without inline onclick (CSP compliant)
+                    // Add event listener without inline onclick
                     const reloadBtn = document.getElementById('reload-page-btn');
                     if (reloadBtn) {
                         reloadBtn.addEventListener('click', function() {

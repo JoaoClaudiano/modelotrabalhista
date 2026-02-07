@@ -1,13 +1,13 @@
 /**
  * Preload Styles Helper
- * Loads stylesheets asynchronously without violating CSP by avoiding inline event handlers
+ * Loads stylesheets asynchronously by avoiding inline event handlers
  */
 (function() {
     'use strict';
     
     /**
      * Convert preload links to stylesheets
-     * This replaces the onload inline event handler approach with a CSP-compliant method
+     * This replaces the onload inline event handler approach with a cleaner method
      */
     function loadPreloadedStyles() {
         // Find all preload links that should become stylesheets
