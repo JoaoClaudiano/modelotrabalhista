@@ -14,6 +14,10 @@
     
     /**
      * Configuração de seletores e textos
+     * 
+     * Nota: Os seletores abaixo procuram por botões com IDs/classes específicos.
+     * Os botões atuais da página (#pdfBtn e #printBtn) são tratados por export.js.
+     * Este módulo está preparado para botões futuros que usem os seletores abaixo.
      */
     const CONFIG = {
         selectors: {
