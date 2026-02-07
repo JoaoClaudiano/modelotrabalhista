@@ -1,11 +1,32 @@
 // log.js - Sistema de monitoramento e logging para ModeloTrabalhista
 
+// ========== CONFIGURAÇÃO DE LOGS ==========
+// Flag para silenciar logs em produção
+// Detecta automaticamente se está em produção ou permite configuração manual
+const SILENCIAR_LOGS = (() => {
+    // Detectar ambiente de produção automaticamente
+    const isProduction = 
+        window.location.hostname !== 'localhost' && 
+        window.location.hostname !== '127.0.0.1' &&
+        !window.location.hostname.includes('.local') &&
+        window.location.protocol === 'https:';
+    
+    // Permitir override manual via localStorage (útil para debug)
+    const manualOverride = localStorage.getItem('SILENCIAR_LOGS');
+    if (manualOverride !== null) {
+        return manualOverride === 'true';
+    }
+    
+    return isProduction;
+})();
+
 class AppLogger {
     constructor() {
         this.version = '1.0';
         this.logs = [];
         this.errors = [];
         this.warnings = [];
+        this.silenciarLogs = SILENCIAR_LOGS;
         this.performance = {
             startTime: performance.now(),
             scripts: {},
@@ -31,7 +52,8 @@ class AppLogger {
             url: window.location.href,
             userAgent: navigator.userAgent,
             screen: `${window.screen.width}x${window.screen.height}`,
-            language: navigator.language
+            language: navigator.language,
+            silenciarLogs: this.silenciarLogs
         });
     }
     
@@ -304,16 +326,19 @@ class AppLogger {
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
-            originalConsole.log(...args);
+            if (!this.silenciarLogs) {
+                originalConsole.log(...args);
+            }
         };
         
-        // Sobrescrever console.error
+        // Sobrescrever console.error - NUNCA SILENCIAR
         console.error = (...args) => {
             this.errors.push({
                 type: 'error',
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
+            // console.error SEMPRE é exibido, independente do flag
             originalConsole.error(...args);
         };
         
@@ -324,7 +349,9 @@ class AppLogger {
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
-            originalConsole.warn(...args);
+            if (!this.silenciarLogs) {
+                originalConsole.warn(...args);
+            }
         };
         
         // Sobrescrever console.info
@@ -334,7 +361,9 @@ class AppLogger {
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
-            originalConsole.info(...args);
+            if (!this.silenciarLogs) {
+                originalConsole.info(...args);
+            }
         };
     }
     
@@ -347,7 +376,9 @@ class AppLogger {
             timestamp: new Date().toISOString()
         };
         this.logs.push(entry);
-        console.log(`[LOG] ${message}`, data);
+        if (!this.silenciarLogs) {
+            console.log(`[LOG] ${message}`, data);
+        }
         return entry;
     }
     
@@ -360,12 +391,14 @@ class AppLogger {
         };
         this.logs.push(entry);
         
-        // Melhorar formatação do console
-        console.groupCollapsed(`%c[INFO] ${message}`, 'color: #2196F3; font-weight: bold;');
-        if (Object.keys(data).length > 0) {
-            console.log('Detalhes:', data);
+        if (!this.silenciarLogs) {
+            // Melhorar formatação do console
+            console.groupCollapsed(`%c[INFO] ${message}`, 'color: #2196F3; font-weight: bold;');
+            if (Object.keys(data).length > 0) {
+                console.log('Detalhes:', data);
+            }
+            console.groupEnd();
         }
-        console.groupEnd();
         
         return entry;
     }
@@ -379,11 +412,13 @@ class AppLogger {
         };
         this.warnings.push(entry);
         
-        console.groupCollapsed(`%c[WARNING] ${message}`, 'color: #FF9800; font-weight: bold;');
-        if (Object.keys(data).length > 0) {
-            console.warn('Detalhes:', data);
+        if (!this.silenciarLogs) {
+            console.groupCollapsed(`%c[WARNING] ${message}`, 'color: #FF9800; font-weight: bold;');
+            if (Object.keys(data).length > 0) {
+                console.warn('Detalhes:', data);
+            }
+            console.groupEnd();
         }
-        console.groupEnd();
         
         return entry;
     }
@@ -397,6 +432,7 @@ class AppLogger {
         };
         this.errors.push(entry);
         
+        // console.error SEMPRE é exibido, independente do flag
         console.groupCollapsed(`%c[ERROR] ${message}`, 'color: #F44336; font-weight: bold;');
         if (Object.keys(data).length > 0) {
             console.error('Detalhes:', data);
@@ -462,59 +498,61 @@ class AppLogger {
         const status = this.getStatus();
         const scripts = Object.keys(this.performance.scripts);
         
-        console.groupCollapsed(`%c🩺 Health Check do Aplicativo - ${status}`, 
-            status === 'HEALTHY' ? 'color: #4CAF50; font-weight: bold;' :
-            status === 'WITH_WARNINGS' ? 'color: #FF9800; font-weight: bold;' :
-            status === 'WITH_ERRORS' ? 'color: #F44336; font-weight: bold;' :
-            'color: #9C27B0; font-weight: bold;');
-        
-        console.log(`📊 Status: ${status}`);
-        console.log(`📦 Scripts carregados: ${scripts.length}`);
-        console.log(`❌ Erros: ${this.errors.length}`);
-        console.log(`⚠️  Warnings: ${this.warnings.length}`);
-        
-        if (this.performance.pageLoadTime) {
-            console.log(`⏱️  Tempo de carregamento: ${this.performance.pageLoadTime.toFixed(2)}ms`);
-        }
-        
-        // Mostrar scripts carregados
-        if (scripts.length > 0) {
-            console.groupCollapsed('📁 Scripts carregados:');
-            scripts.forEach((script, index) => {
-                const data = this.performance.scripts[script];
-                console.log(`${index + 1}. ${script}: ${data.loaded ? '✅' : '❌'} ${data.loadTime ? `(${data.loadTime.toFixed(2)}ms)` : ''}`);
-            });
+        if (!this.silenciarLogs) {
+            console.groupCollapsed(`%c🩺 Health Check do Aplicativo - ${status}`, 
+                status === 'HEALTHY' ? 'color: #4CAF50; font-weight: bold;' :
+                status === 'WITH_WARNINGS' ? 'color: #FF9800; font-weight: bold;' :
+                status === 'WITH_ERRORS' ? 'color: #F44336; font-weight: bold;' :
+                'color: #9C27B0; font-weight: bold;');
+            
+            console.log(`📊 Status: ${status}`);
+            console.log(`📦 Scripts carregados: ${scripts.length}`);
+            console.log(`❌ Erros: ${this.errors.length}`);
+            console.log(`⚠️  Warnings: ${this.warnings.length}`);
+            
+            if (this.performance.pageLoadTime) {
+                console.log(`⏱️  Tempo de carregamento: ${this.performance.pageLoadTime.toFixed(2)}ms`);
+            }
+            
+            // Mostrar scripts carregados
+            if (scripts.length > 0) {
+                console.groupCollapsed('📁 Scripts carregados:');
+                scripts.forEach((script, index) => {
+                    const data = this.performance.scripts[script];
+                    console.log(`${index + 1}. ${script}: ${data.loaded ? '✅' : '❌'} ${data.loadTime ? `(${data.loadTime.toFixed(2)}ms)` : ''}`);
+                });
+                console.groupEnd();
+            }
+            
+            // Listar scripts esperados mas não carregados
+            const missingScripts = this.expectedScripts.filter(script => 
+                !this.performance.scripts[script]
+            );
+            
+            if (missingScripts.length > 0) {
+                console.warn('🔍 Scripts esperados mas não encontrados:', missingScripts);
+            }
+            
+            // Mostrar erros recentes se houver
+            if (this.errors.length > 0) {
+                console.groupCollapsed(`❌ Últimos ${Math.min(3, this.errors.length)} erros:`);
+                this.errors.slice(-3).forEach((error, index) => {
+                    console.log(`${index + 1}. ${error.message || 'Erro sem mensagem'}`);
+                });
+                console.groupEnd();
+            }
+            
+            // Mostrar warnings recentes se houver
+            if (this.warnings.length > 0) {
+                console.groupCollapsed(`⚠️  Últimos ${Math.min(3, this.warnings.length)} warnings:`);
+                this.warnings.slice(-3).forEach((warning, index) => {
+                    console.log(`${index + 1}. ${warning.message || 'Warning sem mensagem'}`);
+                });
+                console.groupEnd();
+            }
+            
             console.groupEnd();
         }
-        
-        // Listar scripts esperados mas não carregados
-        const missingScripts = this.expectedScripts.filter(script => 
-            !this.performance.scripts[script]
-        );
-        
-        if (missingScripts.length > 0) {
-            console.warn('🔍 Scripts esperados mas não encontrados:', missingScripts);
-        }
-        
-        // Mostrar erros recentes se houver
-        if (this.errors.length > 0) {
-            console.groupCollapsed(`❌ Últimos ${Math.min(3, this.errors.length)} erros:`);
-            this.errors.slice(-3).forEach((error, index) => {
-                console.log(`${index + 1}. ${error.message || 'Erro sem mensagem'}`);
-            });
-            console.groupEnd();
-        }
-        
-        // Mostrar warnings recentes se houver
-        if (this.warnings.length > 0) {
-            console.groupCollapsed(`⚠️  Últimos ${Math.min(3, this.warnings.length)} warnings:`);
-            this.warnings.slice(-3).forEach((warning, index) => {
-                console.log(`${index + 1}. ${warning.message || 'Warning sem mensagem'}`);
-            });
-            console.groupEnd();
-        }
-        
-        console.groupEnd();
         
         return {
             status,
@@ -581,6 +619,15 @@ class AppLogger {
     
     // ========== DEBUG ==========
     debug(scriptName) {
+        if (this.silenciarLogs) {
+            // Em modo silencioso, retornar dados sem console output
+            if (scriptName) {
+                return this.performance.scripts[scriptName] || null;
+            } else {
+                return this.performance.scripts;
+            }
+        }
+        
         if (scriptName) {
             const script = this.performance.scripts[scriptName];
             if (script) {
@@ -655,6 +702,26 @@ class AppLogger {
         }
     }
     
+    // ========== MÉTODOS PARA CONTROLAR SILENCIAMENTO ==========
+    setSilenciarLogs(value) {
+        this.silenciarLogs = !!value;
+        localStorage.setItem('SILENCIAR_LOGS', String(this.silenciarLogs));
+        
+        // Sempre mostrar no console quando alternar o modo
+        // Usando console.error para garantir visibilidade (nunca é silenciado)
+        console.error(`🔧 Logs ${this.silenciarLogs ? 'SILENCIADOS' : 'ATIVADOS'}`);
+        
+        return this.silenciarLogs;
+    }
+    
+    getSilenciarLogs() {
+        return this.silenciarLogs;
+    }
+    
+    toggleLogs() {
+        return this.setSilenciarLogs(!this.silenciarLogs);
+    }
+    
     // ========== DESTRUIÇÃO ==========
     destroy() {
         // Restaurar console original
@@ -699,12 +766,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         debug: (script) => window.appLogger.debug(script),
                         export: (format) => window.appLogger.exportLogs(format),
                         updateScripts: (scripts) => window.appLogger.updateExpectedScripts(scripts),
-                        detectScripts: () => window.appLogger.detectScripts()
+                        detectScripts: () => window.appLogger.detectScripts(),
+                        silenciarLogs: (value) => window.appLogger.setSilenciarLogs(value),
+                        toggleLogs: () => window.appLogger.toggleLogs(),
+                        getLogStatus: () => window.appLogger.getSilenciarLogs()
                     };
                     
-                    console.log('%c🔧 Debug tools disponíveis em window.debugApp', 'color: #4CAF50; font-weight: bold;');
-                    console.log('%c📝 Para verificar a saúde do app: debugApp.health()', 'color: #2196F3;');
-                    console.log('%c📊 Para ver relatório completo: debugApp.report()', 'color: #2196F3;');
+                    if (!window.appLogger.silenciarLogs) {
+                        console.log('%c🔧 Debug tools disponíveis em window.debugApp', 'color: #4CAF50; font-weight: bold;');
+                        console.log('%c📝 Para verificar a saúde do app: debugApp.health()', 'color: #2196F3;');
+                        console.log('%c📊 Para ver relatório completo: debugApp.report()', 'color: #2196F3;');
+                        console.log('%c🔇 Para silenciar/ativar logs: debugApp.toggleLogs()', 'color: #FF9800;');
+                        console.log(`%c📋 Logs atualmente: ${window.appLogger.silenciarLogs ? 'SILENCIADOS' : 'ATIVOS'}`, 
+                            `color: ${window.appLogger.silenciarLogs ? '#F44336' : '#4CAF50'}; font-weight: bold;`);
+                    }
                 }
             }
             
@@ -717,6 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 errors: [],
                 warnings: [],
                 performance: {},
+                silenciarLogs: false,
                 log: (msg, data) => console.log('[FALLBACK LOG]', msg, data),
                 error: (msg, data) => console.error('[FALLBACK ERROR]', msg, data),
                 warning: (msg, data) => console.warn('[FALLBACK WARNING]', msg, data),

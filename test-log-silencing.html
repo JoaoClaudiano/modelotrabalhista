@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Silenciamento de Logs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status.silenced {
+            background-color: #F44336;
+            color: white;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0b7dda;
+        }
+        button.danger {
+            background-color: #F44336;
+        }
+        button.danger:hover {
+            background-color: #da190b;
+        }
+        button.success {
+            background-color: #4CAF50;
+        }
+        button.success:hover {
+            background-color: #388e3c;
+        }
+        .info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+        .instruction {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Silenciamento de Logs</h1>
+        
+        <div id="status" class="status">
+            Status: <span id="statusText">Carregando...</span>
+        </div>
+        
+        <div class="info">
+            <strong>ℹ️ Informações:</strong>
+            <p>Este teste permite verificar o funcionamento do sistema de silenciamento de logs.</p>
+            <p>Ambiente: <strong id="environment">-</strong></p>
+            <p>Hostname: <strong id="hostname">-</strong></p>
+            <p>Protocol: <strong id="protocol">-</strong></p>
+        </div>
+        
+        <div class="instruction">
+            <strong>📋 Instruções:</strong>
+            <ol>
+                <li>Abra o Console do navegador (F12)</li>
+                <li>Clique nos botões abaixo para testar diferentes tipos de logs</li>
+                <li>Use o botão "Alternar Logs" para ligar/desligar o silenciamento</li>
+                <li>Verifique que <code>console.error</code> NUNCA é silenciado</li>
+            </ol>
+        </div>
+        
+        <h2>🎮 Controles</h2>
+        
+        <button onclick="testLogInfo()">📝 Teste console.log</button>
+        <button onclick="testLogWarn()">⚠️ Teste console.warn</button>
+        <button onclick="testLogError()">❌ Teste console.error</button>
+        <button onclick="testAppLogger()">📊 Teste AppLogger</button>
+        
+        <br><br>
+        
+        <button class="success" onclick="toggleLogs()">🔄 Alternar Logs (On/Off)</button>
+        <button onclick="checkHealth()">🩺 Health Check</button>
+        <button onclick="getReport()">📊 Ver Relatório</button>
+        
+        <br><br>
+        
+        <button class="danger" onclick="clearLocalStorage()">🗑️ Limpar localStorage</button>
+        <button onclick="reloadPage()">🔄 Recarregar Página</button>
+    </div>
+    
+    <script src="js/log.js"></script>
+    <script>
+        // Atualizar informações da página
+        function updatePageInfo() {
+            document.getElementById('hostname').textContent = window.location.hostname;
+            document.getElementById('protocol').textContent = window.location.protocol;
+            
+            const isLocal = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1';
+            document.getElementById('environment').textContent = isLocal ? 'Desenvolvimento' : 'Produção';
+        }
+        
+        // Atualizar status dos logs
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            
+            if (window.appLogger) {
+                const silenced = window.appLogger.getSilenciarLogs();
+                statusText.textContent = silenced ? 'LOGS SILENCIADOS' : 'LOGS ATIVOS';
+                statusDiv.className = silenced ? 'status silenced' : 'status active';
+            } else {
+                statusText.textContent = 'AppLogger não inicializado';
+                statusDiv.className = 'status';
+            }
+        }
+        
+        // Funções de teste
+        function testLogInfo() {
+            console.log('🔵 Teste de console.log - Este log deve ser silenciado em produção');
+            console.info('ℹ️ Teste de console.info - Este log deve ser silenciado em produção');
+        }
+        
+        function testLogWarn() {
+            console.warn('⚠️ Teste de console.warn - Este log deve ser silenciado em produção');
+        }
+        
+        function testLogError() {
+            console.error('❌ Teste de console.error - Este log NUNCA deve ser silenciado');
+        }
+        
+        function testAppLogger() {
+            if (window.appLogger) {
+                window.appLogger.log('📝 Teste de appLogger.log()');
+                window.appLogger.info('ℹ️ Teste de appLogger.info()');
+                window.appLogger.warning('⚠️ Teste de appLogger.warning()');
+                window.appLogger.error('❌ Teste de appLogger.error() - NUNCA silenciado');
+            } else {
+                alert('AppLogger ainda não foi inicializado. Aguarde um momento.');
+            }
+        }
+        
+        function toggleLogs() {
+            if (window.debugApp) {
+                window.debugApp.toggleLogs();
+                updateStatus();
+            } else if (window.appLogger) {
+                window.appLogger.toggleLogs();
+                updateStatus();
+            } else {
+                alert('AppLogger não disponível ainda');
+            }
+        }
+        
+        function checkHealth() {
+            if (window.debugApp) {
+                const health = window.debugApp.health();
+                console.log('Health check completo!', health);
+            } else if (window.appLogger) {
+                const health = window.appLogger.checkHealth();
+                console.log('Health check completo!', health);
+            } else {
+                alert('AppLogger não disponível ainda');
+            }
+        }
+        
+        function getReport() {
+            if (window.debugApp) {
+                const report = window.debugApp.report();
+                console.log('Relatório completo:', report);
+            } else if (window.appLogger) {
+                const report = window.appLogger.getReport();
+                console.log('Relatório completo:', report);
+            } else {
+                alert('AppLogger não disponível ainda');
+            }
+        }
+        
+        function clearLocalStorage() {
+            if (confirm('Deseja limpar o localStorage e recarregar?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+        
+        function reloadPage() {
+            location.reload();
+        }
+        
+        // Atualizar ao carregar
+        updatePageInfo();
+        
+        // Primeiro update manual após 1 segundo
+        setTimeout(updateStatus, 1000);
+    </script>
+</body>
+</html>
