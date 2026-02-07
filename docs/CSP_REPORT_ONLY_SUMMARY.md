@@ -36,20 +36,9 @@ Added to all HTML pages:
 - 6 pages in `pages/` directory
 - 30 articles in `artigos/` directory
 
-### 3. Hosting Configuration Updates
+### 3. Hosting Configuration
 
-**GitHub Pages (`_headers`):**
-```
-Content-Security-Policy-Report-Only: default-src 'self'; ...
-```
-
-**Firebase Hosting (`firebase.json`):**
-```json
-{
-  "key": "Content-Security-Policy-Report-Only",
-  "value": "default-src 'self'; ..."
-}
-```
+**Note:** The hosting configuration files (`_headers` and `firebase.json`) do not include `Content-Security-Policy-Report-Only` headers. Only the enforcing `Content-Security-Policy` header with `upgrade-insecure-requests` is configured at the hosting level. Report-Only CSP is implemented via meta tags in HTML files, which provides sufficient monitoring capability.
 
 ### 4. Documentation
 
