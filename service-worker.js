@@ -1,7 +1,7 @@
 // Service Worker para ModeloTrabalhista PWA
-// Versão 1.2.0 - Fix para carregamento de recursos externos
+// Versão 1.5.0 - Fix para CSP cache e recursos externos
 
-const CACHE_NAME = 'modelotrabalhista-v1.2';
+const CACHE_NAME = 'modelotrabalhista-v1.5';
 const OFFLINE_URL = '/index.html';
 
 // Regex para arquivos cacheáveis
@@ -38,7 +38,8 @@ function isCacheable(url) {
     'cdnjs.cloudflare.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'cdn.jsdelivr.net'
+    'cdn.jsdelivr.net',
+    'vlibras.gov.br'  // Adicionado para suporte ao VLibras
   ];
   
   // Verifica se é do mesmo domínio ou de um CDN confiável
@@ -81,7 +82,7 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.2...');
+  console.log('[Service Worker] Installing v1.5...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -101,7 +102,7 @@ self.addEventListener('install', (event) => {
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating v1.2...');
+  console.log('[Service Worker] Activating v1.5...');
   
   event.waitUntil(
     caches.keys()
@@ -117,6 +118,7 @@ self.addEventListener('activate', (event) => {
       })
       .then(() => {
         console.log('[Service Worker] Activation completed successfully');
+        console.log('[Service Worker] Old CSP-affected caches have been cleared');
         return self.clients.claim();
       })
   );

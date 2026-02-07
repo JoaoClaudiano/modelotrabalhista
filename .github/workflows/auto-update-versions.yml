@@ -1,0 +1,86 @@
+name: Auto Update Versions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.html'
+      - '**.js'
+      - '**.css'
+      - 'artigos/**'
+      - 'pages/**'
+      - 'js/**'
+      - 'css/**'
+      - 'service-worker.js'
+  workflow_dispatch:
+
+jobs:
+  update-versions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Check if versions need updating
+        id: check_version_files
+        run: |
+          # Check if this commit already has version updates
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" == *"Auto-update: Service Worker e cache-busting"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "⏭️ Este commit já contém atualizações de versão, pulando..."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "✅ Commit requer atualização de versões"
+          fi
+      
+      - name: Update Service Worker and cache-busting versions
+        if: steps.check_version_files.outputs.skip != 'true'
+        run: npm run update-versions
+      
+      - name: Check for changes
+        if: steps.check_version_files.outputs.skip != 'true'
+        id: check_changes
+        run: |
+          git diff --quiet service-worker.js || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet '*.html' || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push version updates
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add service-worker.js
+          git add '*.html' 'artigos/**/*.html' 'pages/**/*.html' 'exemplos-documentos/**/*.html' 2>/dev/null || true
+          git commit -m "🔄 Auto-update: Service Worker e cache-busting" || {
+            echo "ℹ️ Nothing to commit"
+            exit 0
+          }
+          git push || {
+            echo "⚠️ Push failed, may need manual intervention"
+            exit 1
+          }
+      
+      - name: Summary
+        if: steps.check_version_files.outputs.skip != 'true'
+        run: |
+          if [ "${{ steps.check_changes.outputs.changed }}" == "true" ]; then
+            echo "✅ Versões atualizadas e commitadas com sucesso!"
+          else
+            echo "ℹ️ Nenhuma mudança de versão necessária"
+          fi

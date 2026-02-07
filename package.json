@@ -1,12 +1,14 @@
 {
   "scripts": {
     "test": "node test-export.js",
-    "cache-bust": "node build/cache-bust.js",
-    "build": "npm run cache-bust",
+    "update-sw": "node scripts/update-service-worker-version.js",
+    "update-cache": "node scripts/update-cache-busting.js",
+    "update-versions": "node scripts/update-versions.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "generate-robots": "node scripts/generate-robots.js",
     "generate-all": "npm run generate-sitemap && npm run generate-robots",
-    "deploy": "npm run build && npm run generate-all",
+    "build": "npm run update-versions && npm run generate-all",
+    "deploy": "npm run build",
     "deploy:firebase": "npm run deploy && firebase deploy"
   },
   "devDependencies": {
