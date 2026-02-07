@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://joaoclaudiano.github.io/modelotrabalhista/sitemap.xml
+Sitemap: https://modelotrabalhista.pages.dev/sitemap.xml
 
 # Desabilitar crawling de áreas administrativas
 Disallow: /admin/
