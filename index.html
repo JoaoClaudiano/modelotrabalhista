@@ -2,9 +2,7 @@
 <html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <!-- Content Security Policy (fallback for environments without custom headers) -->
-    <!-- Note: 'frame-ancestors' is omitted as it's ignored in meta tags and set via HTTP headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://vlibras.gov.br https://cdn.jsdelivr.net; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://vlibras.gov.br https://cdn.jsdelivr.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModeloTrabalhista | Gerador de Documentos Trabalhistas Gratuito</title>
     <meta name="description" content="Gere pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas prontos em segundos. Modelos válidos e gratuitos.">
@@ -147,12 +145,12 @@
     <!-- Preload critical CSS -->
     <link rel="preload" href="css/style.css?v=1770389835" as="style">
     
-    <!-- Font Awesome - Load async with fallback to system icons if blocked -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835" media="print" onload="this.media='all';this.onload=null">
+    <!-- Font Awesome - Load with media=print trick for non-blocking -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770389835"></noscript>
     
-    <!-- Google Fonts - Load async with system font fallbacks -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" media="print" onload="this.media='all';this.onload=null">
+    <!-- Google Fonts with font-display swap for better performance -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
     
     <!-- CSS -->
@@ -175,27 +173,6 @@
             --font-body: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
             --space-lg: 2rem;
         }
-        
-        /* Fallback for Font Awesome icons when blocked */
-        /* Uses Unicode characters as fallbacks */
-        .fas::before, .far::before, .fab::before {
-            font-family: Arial, sans-serif;
-        }
-        .fa-file-alt::before { content: '📄'; }
-        .fa-check::before { content: '✓'; }
-        .fa-times::before { content: '✕'; }
-        .fa-download::before { content: '⬇'; }
-        .fa-copy::before { content: '📋'; }
-        .fa-print::before { content: '🖨'; }
-        .fa-plus::before { content: '+'; }
-        .fa-minus::before { content: '-'; }
-        .fa-arrow-up::before { content: '↑'; }
-        .fa-arrow-down::before { content: '↓'; }
-        .fa-search::before { content: '🔍'; }
-        .fa-bars::before { content: '☰'; }
-        .fa-user::before { content: '👤'; }
-        .fa-home::before { content: '🏠'; }
-        .fa-question-circle::before { content: '❓'; }
         
         /* Critical Reset */
         * {
@@ -1239,22 +1216,17 @@
                 var script = document.createElement('script');
                 script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835';
                 script.onerror = function() {
-                    // VLibras may be blocked by ad blockers or privacy extensions
-                    // This is expected behavior and not a critical error
-                    if (typeof console.info === 'function') {
-                        console.info('VLibras não pôde ser carregado (pode estar bloqueado por extensões de privacidade). O site continua funcionando normalmente.');
-                    }
+                    console.warn('VLibras script failed to load. Accessibility widget unavailable.');
                 };
                 script.onload = function() {
                     try {
                         if (window.VLibras && window.VLibras.Widget) {
                             new window.VLibras.Widget('https://vlibras.gov.br/app');
-                            console.log('VLibras carregado com sucesso');
                         } else {
-                            console.info('VLibras Widget não disponível');
+                            console.warn('VLibras Widget not available - script may have failed to load');
                         }
                     } catch (error) {
-                        console.info('Erro ao inicializar VLibras:', error.message);
+                        console.error('Error initializing VLibras:', error);
                     }
                 };
                 document.body.appendChild(script);
