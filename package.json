@@ -10,8 +10,7 @@
     "generate-robots": "node scripts/generate-robots.js",
     "generate-all": "npm run generate-sitemap && npm run generate-robots",
     "build": "npm run update-versions && npm run generate-all",
-    "deploy": "npm run build",
-    "deploy:firebase": "npm run deploy && firebase deploy"
+    "deploy": "npm run build"
   },
   "devDependencies": {
     "sitemap": "^9.0.0"
