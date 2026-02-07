@@ -48,7 +48,11 @@ function isCacheable(url) {
   // Verifica se tem extensão cacheável
   const hasExtension = CACHEABLE_EXTENSIONS.test(urlObj.pathname);
   
-  return isTrusted && hasExtension;
+  // Caso especial: Google Fonts CSS (pathname começa com /css)
+  const isGoogleFontsCSS = urlObj.hostname === 'fonts.googleapis.com' && 
+                           urlObj.pathname.startsWith('/css');
+  
+  return isTrusted && (hasExtension || isGoogleFontsCSS);
 }
 
 // Recursos essenciais para cache inicial
