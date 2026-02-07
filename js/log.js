@@ -687,7 +687,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // DEBUG: expor métodos em desenvolvimento
                 if (window.location.hostname.includes('localhost') || 
                     window.location.hostname.includes('127.0.0.1') ||
-                    window.location.hostname === 'joaoclaudiano.github.io') {
+                    window.location.hostname === 'joaoclaudiano.github.io' ||
+                    window.location.hostname === 'modelotrabalhista-2026.web.app') {
                     
                     window.debugApp = {
                         health: () => window.appLogger.checkHealth(),

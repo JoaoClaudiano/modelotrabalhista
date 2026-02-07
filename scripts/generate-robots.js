@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Base URL for the website
-const BASE_URL = 'https://modelotrabalhista.com.br';
+const BASE_URL = 'https://modelotrabalhista-2026.web.app';
 
 // Directories and files that should NOT be crawled
 const DISALLOW_PATTERNS = [

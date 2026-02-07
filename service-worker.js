@@ -2,7 +2,7 @@
 // Versão 1.1.0 - Com suporte a Cache Busting
 
 const CACHE_NAME = 'modelotrabalhista-v1.1';
-const OFFLINE_URL = '/modelotrabalhista/index.html';
+const OFFLINE_URL = '/index.html';
 
 // Regex para arquivos cacheáveis
 const CACHEABLE_EXTENSIONS = /\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json)$/;
@@ -53,26 +53,26 @@ function isCacheable(url) {
 
 // Recursos essenciais para cache inicial
 const ESSENTIAL_RESOURCES = [
-  '/modelotrabalhista/',
-  '/modelotrabalhista/index.html',
-  '/modelotrabalhista/css/style.css',
-  '/modelotrabalhista/css/responsive.css',
-  '/modelotrabalhista/assets/css/print.css',
-  '/modelotrabalhista/js/main.js',
-  '/modelotrabalhista/js/ui.js',
-  '/modelotrabalhista/js/generator.js',
-  '/modelotrabalhista/js/storage.js',
-  '/modelotrabalhista/js/export.js',
-  '/modelotrabalhista/js/log.js',
-  '/modelotrabalhista/js/analytics.js',
-  '/modelotrabalhista/js/acessibilidade.js',
-  '/modelotrabalhista/js/tour.js',
-  '/modelotrabalhista/models/templates.json',
-  '/modelotrabalhista/assets/manifest.json',
-  '/modelotrabalhista/assets/web-app-manifest-192x192.png',
-  '/modelotrabalhista/assets/web-app-manifest-512x512.png',
-  '/modelotrabalhista/assets/apple-touch-icon.png',
-  '/modelotrabalhista/assets/favicon-96x96.png'
+  '/',
+  '/index.html',
+  '/css/style.css',
+  '/css/responsive.css',
+  '/assets/css/print.css',
+  '/js/main.js',
+  '/js/ui.js',
+  '/js/generator.js',
+  '/js/storage.js',
+  '/js/export.js',
+  '/js/log.js',
+  '/js/analytics.js',
+  '/js/acessibilidade.js',
+  '/js/tour.js',
+  '/models/templates.json',
+  '/assets/manifest.json',
+  '/assets/web-app-manifest-192x192.png',
+  '/assets/web-app-manifest-512x512.png',
+  '/assets/apple-touch-icon.png',
+  '/assets/favicon-96x96.png'
 ];
 
 // Instalação do Service Worker
