@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Base URL for the website
+// Note: This is still needed for the Sitemap directive in robots.txt
+// However, all Disallow directives use relative paths
 const BASE_URL = 'https://modelotrabalhista-2026.web.app';
 
 // Directories and files that should NOT be crawled

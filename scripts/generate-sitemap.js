@@ -7,7 +7,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Base URL and path for the website
-const BASE_HOSTNAME = 'https://modelotrabalhista-2026.web.app';
+// Using root-relative paths for better portability across environments
+const BASE_HOSTNAME = 'https://modelotrabalhista-2026.web.app'; // For sitemap XML namespace
 const BASE_PATH = '';
 const BASE_URL = BASE_HOSTNAME + BASE_PATH;
 
