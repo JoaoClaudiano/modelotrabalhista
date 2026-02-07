@@ -4,7 +4,7 @@
     --primary-color: #2563eb;
     --primary-dark: #1d4ed8;
     --primary-light: #3b82f6;
-    --secondary-color: #0ea674;
+    --secondary-color: #0a7e58; /* Updated for WCAG AA compliance (5.07:1 contrast ratio with white) */
     --accent-color: #ca8208;
     --danger-color: #ef4444;
 
@@ -567,7 +567,7 @@ textarea.form-control {
 }
 
 .btn-success:hover {
-    background-color: #0da271;
+    background-color: #09714f;
 }
 
 .btn-accent {
