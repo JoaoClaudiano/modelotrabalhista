@@ -268,6 +268,33 @@
     </style>
 </head>
 <body>
+    <header class="main-header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-contract" aria-hidden="true"></i>
+                    <div>Modelo<span>Trabalhista</span></div>
+                </div>
+                
+                <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+                    <ul>
+                        <li><a href="/"><i class="fas fa-home" aria-hidden="true"></i> Início</a></li>
+                        <li><a href="/artigos/index.html"><i class="fas fa-newspaper" aria-hidden="true"></i> Artigos</a></li>
+                        <li><a href="/modelos/index.html"><i class="fas fa-file-alt" aria-hidden="true"></i> Modelos</a></li>
+                        <li><a href="/#gerador"><i class="fas fa-magic" aria-hidden="true"></i> Gerar</a></li>
+                        <li><a href="/#faq"><i class="fas fa-question-circle" aria-hidden="true"></i> FAQ</a></li>
+                    </ul>
+                </nav>
+                
+                <button class="mobile-menu-btn" aria-label="Abrir menu de navegação" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
     <div class="modelo-page">
         <header class="modelo-header">
             <h1>Modelo de Pedido de Demissão</h1>
@@ -410,6 +437,137 @@ Data: __/__/______</pre>
                 alert('Erro ao copiar o modelo. Por favor, tente novamente.');
             });
         }
+    </script>
+    </main>
+    
+    <footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <!-- Coluna 1: Logo e Descrição -->
+            <div class="footer-section footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-file-contract"></i>
+                    <h3>Modelo<span>Trabalhista</span></h3>
+                </div>
+                <p class="footer-description">
+                    Gerador gratuito de documentos trabalhistas. 
+                    Simples, rápido e seguro.
+                </p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook" class="social-link">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" aria-label="Twitter" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" aria-label="Instagram" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" aria-label="LinkedIn" class="social-link">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Coluna 2: Links Institucionais (NOVO) -->
+            <div class="footer-section">
+                <h4 class="footer-title">Institucional</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="/pages/sobre.html" class="footer-link">Sobre Nós</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/pages/contato.html" class="footer-link">Fale Conosco</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/pages/termos.html" class="footer-link">Termos de Uso</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/pages/privacidade.html" class="footer-link">Política de Privacidade</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/pages/disclaimer.html" class="footer-link">Aviso Legal (Disclaimer)</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Coluna 3: Modelos -->
+            <div class="footer-section">
+                <h4 class="footer-title">Modelos</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="/#gerador" data-model="demissao" class="footer-link">
+                            Pedido de Demissão
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/#gerador" data-model="ferias" class="footer-link">
+                            Solicitação de Férias
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/#gerador" data-model="advertencia" class="footer-link">
+                            Advertência
+                        </a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/#gerador" data-model="reuniao" class="footer-link">
+                            Convocatória
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Coluna 4: Links Úteis -->
+            <div class="footer-section">
+                <h4 class="footer-title">Navegação</h4>
+                <ul class="footer-links">
+                    <li class="footer-link-item">
+                        <a href="/" class="footer-link">Início</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/modelos/index.html" class="footer-link">Modelos</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/#gerador" class="footer-link">Gerador</a>
+                    </li>
+                    <li class="footer-link-item">
+                        <a href="/#faq" class="footer-link">Perguntas Frequentes (FAQ)</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Aviso de Acessibilidade, Cookies e Disclaimer em linha contínua -->
+        <div class="footer-notices">
+            <span class="notice-item">
+                <i class="fas fa-universal-access notice-icon"></i>
+                <span class="notice-text">Este site segue as diretrizes de acessibilidade digital</span>
+            </span>
+            <span class="notice-separator">•</span>
+            <span class="notice-item">
+                <i class="fas fa-cookie-bite notice-icon"></i>
+                <span class="notice-text">Utilizamos cookies em conformidade com a LGPD</span>
+            </span>
+            <span class="notice-separator">•</span>
+            <span class="notice-item">
+                <i class="fas fa-exclamation-triangle notice-icon"></i>
+                <span class="notice-text">Os modelos são fornecidos apenas para fins informativos. Consulte um advogado para orientação jurídica específica.</span>
+            </span>
+        </div>
+
+        <!-- Rodapé Inferior - Copyright -->
+        <div class="footer-bottom">
+            <p class="copyright">
+                &copy; <span id="current-year">2026</span> ModeloTrabalhista. Todos os direitos reservados.
+            </p>
+        </div>
+    </div>
+</footer>
+    
+    <script>
+        // Script para atualizar o ano no copyright automaticamente
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
