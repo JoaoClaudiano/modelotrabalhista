@@ -179,7 +179,7 @@ function updateHtmlFile(filePath) {
         // Converte para caminho absoluto
         // Calcula o caminho relativo do arquivo atual para a raiz
         const fileDir = path.dirname(filePath);
-        const rootDir = path.resolve('/home/runner/work/modelotrabalhista/modelotrabalhista');
+        const rootDir = path.resolve(process.cwd());
         const relativeToRoot = path.relative(rootDir, fileDir);
         
         let absolutePath;
@@ -209,7 +209,7 @@ function updateHtmlFile(filePath) {
         
         // Converte para caminho absoluto
         const fileDir = path.dirname(filePath);
-        const rootDir = path.resolve('/home/runner/work/modelotrabalhista/modelotrabalhista');
+        const rootDir = path.resolve(process.cwd());
         const relativeToRoot = path.relative(rootDir, fileDir);
         
         let absolutePath;
@@ -238,7 +238,7 @@ function updateHtmlFile(filePath) {
         
         // Converte para caminho absoluto
         const fileDir = path.dirname(filePath);
-        const rootDir = path.resolve('/home/runner/work/modelotrabalhista/modelotrabalhista');
+        const rootDir = path.resolve(process.cwd());
         const relativeToRoot = path.relative(rootDir, fileDir);
         
         let absolutePath;
@@ -267,7 +267,7 @@ function updateHtmlFile(filePath) {
         
         // Converte para caminho absoluto
         const fileDir = path.dirname(filePath);
-        const rootDir = path.resolve('/home/runner/work/modelotrabalhista/modelotrabalhista');
+        const rootDir = path.resolve(process.cwd());
         const relativeToRoot = path.relative(rootDir, fileDir);
         
         let absolutePath;
@@ -337,7 +337,7 @@ function main() {
     console.log(`📍 Novo domínio: ${NEW_DOMAIN}`);
     console.log(`📍 Domínio antigo: ${OLD_DOMAIN}\n`);
     
-    const rootDir = '/home/runner/work/modelotrabalhista/modelotrabalhista';
+    const rootDir = process.cwd();
     
     // Atualiza arquivos de configuração
     updateRobotsTxt(path.join(rootDir, 'robots.txt'));

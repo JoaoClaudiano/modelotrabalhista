@@ -88,7 +88,7 @@ if (fs.existsSync('migrate-to-cloudflare.js')) {
 // Resumo final
 console.log('\n' + '='.repeat(60));
 console.log(`✅ Testes Passados: ${passed}`);
-console.log(`❌ Testes Falhou: ${failed}`);
+console.log(`❌ Testes Falharam: ${failed}`);
 console.log('='.repeat(60));
 
 if (failed === 0) {
