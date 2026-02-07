@@ -9,10 +9,7 @@ Este diretório contém toda a documentação técnica do projeto ModeloTrabalhi
 #### Segurança
 - **ANALISE_SEGURANCA.md** - Análise de segurança do aplicativo
 - **SECURITY_ANALYSIS.md** - Relatório detalhado de análise de segurança
-- **CSP_DOCUMENTATION.md** - Documentação do Content Security Policy
-- **CSP_IMPLEMENTATION_SUMMARY.md** - Resumo da implementação CSP
-- **CSP_REPORTING_GUIDE.md** - Guia de relatórios de violação CSP
-- **CSP_REPORT_ONLY_SUMMARY.md** - Resumo do modo Report-Only do CSP
+- **SECURITY_SUMMARY.md** - Resumo de segurança e proteções implementadas
 
 #### Performance
 - **PERFORMANCE_README.md** - Guia de otimização de performance
@@ -90,7 +87,7 @@ Arquivos mantidos para referência histórica:
 
 1. **Para Desenvolvedores**: Consulte os guias de arquitetura e diagramas para entender a estrutura do código
 2. **Para Performance**: Veja os documentos de Web Core Vitals e otimização
-3. **Para Segurança**: Consulte as análises de segurança e documentação CSP
+3. **Para Segurança**: Consulte as análises de segurança e proteções implementadas
 4. **Para Troubleshooting**: Verifique os guias de verificação e análise de problemas
 
 ## 🔄 Manutenção
