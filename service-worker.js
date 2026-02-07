@@ -1,7 +1,7 @@
 // Service Worker para ModeloTrabalhista PWA
-// Versão 1.1.0 - Com suporte a Cache Busting
+// Versão 1.2.0 - Fix para carregamento de recursos externos
 
-const CACHE_NAME = 'modelotrabalhista-v1.1';
+const CACHE_NAME = 'modelotrabalhista-v1.2';
 const OFFLINE_URL = '/index.html';
 
 // Regex para arquivos cacheáveis
@@ -48,7 +48,11 @@ function isCacheable(url) {
   // Verifica se tem extensão cacheável
   const hasExtension = CACHEABLE_EXTENSIONS.test(urlObj.pathname);
   
-  return isTrusted && hasExtension;
+  // Caso especial: Google Fonts CSS (pathname começa com /css)
+  const isGoogleFontsCSS = urlObj.hostname === 'fonts.googleapis.com' && 
+                           urlObj.pathname.startsWith('/css');
+  
+  return isTrusted && (hasExtension || isGoogleFontsCSS);
 }
 
 // Recursos essenciais para cache inicial
@@ -77,7 +81,7 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Instalando v1.1...');
+  console.log('[Service Worker] Instalando v1.2...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -97,7 +101,7 @@ self.addEventListener('install', (event) => {
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Ativando v1.1...');
+  console.log('[Service Worker] Ativando v1.2...');
   
   event.waitUntil(
     caches.keys()
@@ -152,7 +156,8 @@ self.addEventListener('fetch', (event) => {
   
   // Verifica se é cacheável
   if (!isCacheable(request.url)) {
-    // Se não é cacheável, apenas faz a requisição normal
+    // Se não é cacheável, permite que o navegador faça a requisição normalmente
+    event.respondWith(fetch(request));
     return;
   }
 
