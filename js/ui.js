@@ -183,10 +183,10 @@ class UIHelper {
         notification.appendChild(closeBtn);
 
         const styles = {
-            success: { bg: '#10b981', icon: '#059669' },
+            success: { bg: '#0ea674', icon: '#0c8a5f' },
             error: { bg: '#ef4444', icon: '#dc2626' },
             info: { bg: '#3b82f6', icon: '#2563eb' },
-            warning: { bg: '#f59e0b', icon: '#d97706' }
+            warning: { bg: '#ca8208', icon: '#a86b07' }
         };
 
         const style = styles[type] || styles.info;
