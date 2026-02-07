@@ -711,7 +711,7 @@
 /* ============================================
    DARK MODE SUPPORT
    ============================================ */
-/* Disabled automatic dark mode based on device settings
+/* Disables automatic dark mode based on device settings
    Users can manually toggle dark mode via the accessibility menu
 @media (prefers-color-scheme: dark) {
     :root {
