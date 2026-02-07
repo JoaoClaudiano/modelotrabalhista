@@ -81,27 +81,27 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Instalando v1.2...');
+  console.log('[Service Worker] Installing v1.2...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Pré-cache de recursos essenciais');
+        console.log('[Service Worker] Pre-caching essential resources');
         return cache.addAll(ESSENTIAL_RESOURCES);
       })
       .then(() => {
-        console.log('[Service Worker] Instalação concluída');
+        console.log('[Service Worker] Installation completed successfully');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('[Service Worker] Erro ao instalar:', error);
+        console.error('[Service Worker] Installation error:', error.message || error);
       })
   );
 });
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Ativando v1.2...');
+  console.log('[Service Worker] Activating v1.2...');
   
   event.waitUntil(
     caches.keys()
@@ -109,14 +109,14 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log('[Service Worker] Removendo cache antigo:', cacheName);
+              console.log('[Service Worker] Removing old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('[Service Worker] Ativação concluída');
+        console.log('[Service Worker] Activation completed successfully');
         return self.clients.claim();
       })
   );
