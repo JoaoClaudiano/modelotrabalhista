@@ -1,0 +1,90 @@
+# Cloudflare Pages Redirects
+# Format: /source /destination [status]
+
+# Favicon redirect
+/favicon.ico /assets/favicon.ico 200
+
+# Article URL rewrites (clean URLs)
+/acidente-trabalho-pericia-inss-2026 /artigos/acidente-trabalho-pericia-inss-2026.html 200
+/acidente-trabalho-pericia-inss-2026.html /artigos/acidente-trabalho-pericia-inss-2026.html 200
+
+/adicional-noturno-2026 /artigos/adicional-noturno-2026.html 200
+/adicional-noturno-2026.html /artigos/adicional-noturno-2026.html 200
+
+/adicional-periculosidade-motoboy /artigos/adicional-periculosidade-motoboy.html 200
+/adicional-periculosidade-motoboy.html /artigos/adicional-periculosidade-motoboy.html 200
+
+/aviso-previo-indenizado-e-trabalhado /artigos/aviso-previo-indenizado-e-trabalhado.html 200
+/aviso-previo-indenizado-e-trabalhado.html /artigos/aviso-previo-indenizado-e-trabalhado.html 200
+
+/banco-horas-vs-extras-2026 /artigos/banco-horas-vs-extras-2026.html 200
+/banco-horas-vs-extras-2026.html /artigos/banco-horas-vs-extras-2026.html 200
+
+/burnout-doenca-ocupacional /artigos/burnout-doenca-ocupacional.html 200
+/burnout-doenca-ocupacional.html /artigos/burnout-doenca-ocupacional.html 200
+
+/clt-pj-calculadora-2026 /artigos/clt-pj-calculadora-2026.html 200
+/clt-pj-calculadora-2026.html /artigos/clt-pj-calculadora-2026.html 200
+
+/demissao-comum-acordo /artigos/demissao-comum-acordo.html 200
+/demissao-comum-acordo.html /artigos/demissao-comum-acordo.html 200
+
+/esocial-domestico-2026 /artigos/esocial-domestico-2026.html 200
+/esocial-domestico-2026.html /artigos/esocial-domestico-2026.html 200
+
+/estabilidade-gestante-2026 /artigos/estabilidade-gestante-2026.html 200
+/estabilidade-gestante-2026.html /artigos/estabilidade-gestante-2026.html 200
+
+/fgts-digital-2026 /artigos/fgts-digital-2026.html 200
+/fgts-digital-2026.html /artigos/fgts-digital-2026.html 200
+
+/hora-extra-home-office-2026 /artigos/hora-extra-home-office-2026.html 200
+/hora-extra-home-office-2026.html /artigos/hora-extra-home-office-2026.html 200
+
+/horas-extras-2026 /artigos/horas-extras-2026.html 200
+/horas-extras-2026.html /artigos/horas-extras-2026.html 200
+
+/intervalo-intrajornada-2026 /artigos/intervalo-intrajornada-2026.html 200
+/intervalo-intrajornada-2026.html /artigos/intervalo-intrajornada-2026.html 200
+
+/jovem-aprendiz-vs-estagiario-2026 /artigos/jovem-aprendiz-vs-estagiario-2026.html 200
+/jovem-aprendiz-vs-estagiario-2026.html /artigos/jovem-aprendiz-vs-estagiario-2026.html 200
+
+/licenca-paternidade-2026 /artigos/licenca-paternidade-2026.html 200
+/licenca-paternidade-2026.html /artigos/licenca-paternidade-2026.html 200
+
+/motorista-app-clt-stf-2026 /artigos/motorista-app-clt-stf-2026.html 200
+/motorista-app-clt-stf-2026.html /artigos/motorista-app-clt-stf-2026.html 200
+
+/multa-40-fgts /artigos/multa-40-fgts.html 200
+/multa-40-fgts.html /artigos/multa-40-fgts.html 200
+
+/pedido-demissao /artigos/pedido-demissao.html 200
+/pedido-demissao.html /artigos/pedido-demissao.html 200
+
+/pericia-inss-2026 /artigos/pericia-inss-2026.html 200
+/pericia-inss-2026.html /artigos/pericia-inss-2026.html 200
+
+/pis-pasep-2026 /artigos/pis-pasep-2026.html 200
+/pis-pasep-2026.html /artigos/pis-pasep-2026.html 200
+
+/recisao-indireta-justa-causa-aplicada-pelo-empregado /artigos/recisao-indireta-justa-causa-aplicada-pelo-empregado.html 200
+/recisao-indireta-justa-causa-aplicada-pelo-empregado.html /artigos/recisao-indireta-justa-causa-aplicada-pelo-empregado.html 200
+
+/salario-familia-2026 /artigos/salario-familia-2026.html 200
+/salario-familia-2026.html /artigos/salario-familia-2026.html 200
+
+/saque-aniversario-vs-rescisao /artigos/saque-aniversario-vs-rescisao.html 200
+/saque-aniversario-vs-rescisao.html /artigos/saque-aniversario-vs-rescisao.html 200
+
+/seguro-desemprego-2026 /artigos/seguro-desemprego-2026.html 200
+/seguro-desemprego-2026.html /artigos/seguro-desemprego-2026.html 200
+
+/tabela-inss-2026 /artigos/tabela-inss-2026.html 200
+/tabela-inss-2026.html /artigos/tabela-inss-2026.html 200
+
+/teletrabalho-híbrido-custos-2026 /artigos/teletrabalho-híbrido-custos-2026.html 200
+/teletrabalho-híbrido-custos-2026.html /artigos/teletrabalho-híbrido-custos-2026.html 200
+
+/trabalho-feriados /artigos/trabalho-feriados.html 200
+/trabalho-feriados.html /artigos/trabalho-feriados.html 200

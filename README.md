@@ -38,12 +38,12 @@ Uma aplicação web completa para geração automática de documentos trabalhist
 - **Segurança**:
   - Proteção contra XSS, clickjacking e outros ataques
   - Headers de segurança configurados
-  - Compatível com GitHub Pages e Firebase Hosting
+  - Compatível com Cloudflare Pages e GitHub Pages
 
 ## 🚀 Como Usar
 
 ### Opção 1: Online
-Acesse o site [ModeloTrabalhista](https://modelotrabalhista-2026.web.app/) e comece a usar!
+Acesse o site [ModeloTrabalhista](https://modelotrabalhista.pages.dev/) e comece a usar!
 
 ## 🔧 Desenvolvimento
 
@@ -51,10 +51,10 @@ Acesse o site [ModeloTrabalhista](https://modelotrabalhista-2026.web.app/) e com
 
 O site é automaticamente implantado sempre que há um push para o branch `main`:
 
-- **Firebase Hosting** - Deploy principal em produção
-- **GitHub Pages** - Deploy alternativo
+- **Cloudflare Pages** - Deploy principal em produção
+- **GitHub Pages** - Deploy alternativo para compatibilidade
 
-O site principal fica disponível em: [https://modelotrabalhista-2026.web.app/](https://modelotrabalhista-2026.web.app/)
+O site principal fica disponível em: [https://modelotrabalhista.pages.dev/](https://modelotrabalhista.pages.dev/)
 
 O site alternativo (GitHub Pages) fica disponível em: [https://joaoclaudiano.github.io/modelotrabalhista/](https://joaoclaudiano.github.io/modelotrabalhista/)
 
@@ -91,7 +91,9 @@ modelotrabalhista/
 ├── service-worker.js          # Service Worker para PWA
 ├── robots.txt                 # Instruções para motores de busca
 ├── sitemap.xml                # Mapa do site para SEO
-├── firebase.json              # Configuração do Firebase
+├── ads.txt                    # Google AdSense configuration
+├── _headers                   # HTTP headers para Cloudflare Pages
+├── _redirects                 # Redirects/rewrites para Cloudflare Pages
 ├── package.json               # Dependências e scripts NPM
 ├── LICENSE                    # Licença MIT
 ├── README.md                  # Este arquivo
