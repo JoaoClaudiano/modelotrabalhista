@@ -96,6 +96,124 @@
         ]
       }
     ],
+    "rewrites": [
+      {
+        "source": "/favicon.ico",
+        "destination": "/assets/favicon.ico"
+      },
+      {
+        "source": "/acidente-trabalho-pericia-inss-2026{.html,}",
+        "destination": "/artigos/acidente-trabalho-pericia-inss-2026.html"
+      },
+      {
+        "source": "/adicional-noturno-2026{.html,}",
+        "destination": "/artigos/adicional-noturno-2026.html"
+      },
+      {
+        "source": "/adicional-periculosidade-motoboy{.html,}",
+        "destination": "/artigos/adicional-periculosidade-motoboy.html"
+      },
+      {
+        "source": "/aviso-previo-indenizado-e-trabalhado{.html,}",
+        "destination": "/artigos/aviso-previo-indenizado-e-trabalhado.html"
+      },
+      {
+        "source": "/banco-horas-vs-extras-2026{.html,}",
+        "destination": "/artigos/banco-horas-vs-extras-2026.html"
+      },
+      {
+        "source": "/burnout-doenca-ocupacional{.html,}",
+        "destination": "/artigos/burnout-doenca-ocupacional.html"
+      },
+      {
+        "source": "/clt-pj-calculadora-2026{.html,}",
+        "destination": "/artigos/clt-pj-calculadora-2026.html"
+      },
+      {
+        "source": "/demissao-comum-acordo{.html,}",
+        "destination": "/artigos/demissao-comum-acordo.html"
+      },
+      {
+        "source": "/esocial-domestico-2026{.html,}",
+        "destination": "/artigos/esocial-domestico-2026.html"
+      },
+      {
+        "source": "/estabilidade-gestante-2026{.html,}",
+        "destination": "/artigos/estabilidade-gestante-2026.html"
+      },
+      {
+        "source": "/fgts-digital-2026{.html,}",
+        "destination": "/artigos/fgts-digital-2026.html"
+      },
+      {
+        "source": "/hora-extra-home-office-2026{.html,}",
+        "destination": "/artigos/hora-extra-home-office-2026.html"
+      },
+      {
+        "source": "/horas-extras-2026{.html,}",
+        "destination": "/artigos/horas-extras-2026.html"
+      },
+      {
+        "source": "/intervalo-intrajornada-2026{.html,}",
+        "destination": "/artigos/intervalo-intrajornada-2026.html"
+      },
+      {
+        "source": "/jovem-aprendiz-vs-estagiario-2026{.html,}",
+        "destination": "/artigos/jovem-aprendiz-vs-estagiario-2026.html"
+      },
+      {
+        "source": "/licenca-paternidade-2026{.html,}",
+        "destination": "/artigos/licenca-paternidade-2026.html"
+      },
+      {
+        "source": "/motorista-app-clt-stf-2026{.html,}",
+        "destination": "/artigos/motorista-app-clt-stf-2026.html"
+      },
+      {
+        "source": "/multa-40-fgts{.html,}",
+        "destination": "/artigos/multa-40-fgts.html"
+      },
+      {
+        "source": "/pedido-demissao{.html,}",
+        "destination": "/artigos/pedido-demissao.html"
+      },
+      {
+        "source": "/pericia-inss-2026{.html,}",
+        "destination": "/artigos/pericia-inss-2026.html"
+      },
+      {
+        "source": "/pis-pasep-2026{.html,}",
+        "destination": "/artigos/pis-pasep-2026.html"
+      },
+      {
+        "source": "/recisao-indireta-justa-causa-aplicada-pelo-empregado{.html,}",
+        "destination": "/artigos/recisao-indireta-justa-causa-aplicada-pelo-empregado.html"
+      },
+      {
+        "source": "/salario-familia-2026{.html,}",
+        "destination": "/artigos/salario-familia-2026.html"
+      },
+      {
+        "source": "/saque-aniversario-vs-rescisao{.html,}",
+        "destination": "/artigos/saque-aniversario-vs-rescisao.html"
+      },
+      {
+        "source": "/seguro-desemprego-2026{.html,}",
+        "destination": "/artigos/seguro-desemprego-2026.html"
+      },
+      {
+        "source": "/tabela-inss-2026{.html,}",
+        "destination": "/artigos/tabela-inss-2026.html"
+      },
+      {
+        "source": "/teletrabalho-híbrido-custos-2026{.html,}",
+        "destination": "/artigos/teletrabalho-híbrido-custos-2026.html"
+      },
+      {
+        "source": "/trabalho-feriados{.html,}",
+        "destination": "/artigos/trabalho-feriados.html"
+      }
+    ],
     "cleanUrls": true,
     "trailingSlash": false
   }
