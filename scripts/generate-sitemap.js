@@ -9,9 +9,19 @@ const { execSync } = require('child_process');
 // Base URL and path for the website
 // Using environment variable or default for better portability across environments
 // Set SITE_URL environment variable for custom domains (e.g., Cloudflare Pages)
-const BASE_HOSTNAME = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://modelotrabalhista-2026.web.app';
-const BASE_PATH = '';
-const BASE_URL = BASE_HOSTNAME + BASE_PATH;
+const SITE_URL = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://modelotrabalhista-2026.web.app';
+
+// Parse the URL to separate hostname and path
+let BASE_HOSTNAME = SITE_URL;
+let BASE_PATH = '';
+
+try {
+  const urlObj = new URL(SITE_URL);
+  BASE_HOSTNAME = `${urlObj.protocol}//${urlObj.host}`;
+  BASE_PATH = urlObj.pathname.replace(/\/$/, ''); // Remove trailing slash
+} catch (error) {
+  console.warn('Warning: Could not parse SITE_URL, using as-is:', error.message);
+}
 
 // Function to get all HTML files
 function getHtmlFiles(dir, baseDir = dir) {
