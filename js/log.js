@@ -708,9 +708,8 @@ class AppLogger {
         localStorage.setItem('SILENCIAR_LOGS', String(this.silenciarLogs));
         
         // Sempre mostrar no console quando alternar o modo
-        const originalLog = console.log;
-        originalLog(`%c🔧 Logs ${this.silenciarLogs ? 'SILENCIADOS' : 'ATIVADOS'}`, 
-            `color: ${this.silenciarLogs ? '#F44336' : '#4CAF50'}; font-weight: bold; font-size: 14px;`);
+        // Usando console.error para garantir visibilidade (nunca é silenciado)
+        console.error(`🔧 Logs ${this.silenciarLogs ? 'SILENCIADOS' : 'ATIVADOS'}`);
         
         return this.silenciarLogs;
     }

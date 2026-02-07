@@ -232,7 +232,7 @@ const SILENCIAR_LOGS = (() => {
 
 ## 📈 Impacto em Performance
 
-- **Overhead**: Mínimo (~0.1ms por log)
+- **Overhead**: Negligível - apenas uma verificação booleana por log
 - **Memória**: Logs são armazenados em arrays internos
 - **Console**: Não há chamadas ao console quando silenciado
 - **Produção**: Performance ligeiramente melhor com logs silenciados
