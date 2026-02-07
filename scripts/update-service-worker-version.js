@@ -15,7 +15,12 @@ function updateServiceWorkerVersion() {
     console.log('🔄 Atualizando versão do Service Worker...');
     
     // Read service worker file
-    let content = fs.readFileSync(SERVICE_WORKER_PATH, 'utf8');
+    let content;
+    try {
+      content = fs.readFileSync(SERVICE_WORKER_PATH, 'utf8');
+    } catch (readError) {
+      throw new Error(`Não foi possível ler service-worker.js: ${readError.message}`);
+    }
     
     // Extract current version from CACHE_NAME
     const cacheNameMatch = content.match(/const CACHE_NAME = '([^']+)'/);

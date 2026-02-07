@@ -66,9 +66,15 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add service-worker.js
-          git add '*.html' 'artigos/*.html' 'pages/*.html' 'exemplos-documentos/*.html' || true
-          git commit -m "🔄 Auto-update: Service Worker e cache-busting" || echo "Nothing to commit"
-          git push || echo "Nothing to push"
+          git add '*.html' 'artigos/**/*.html' 'pages/**/*.html' 'exemplos-documentos/**/*.html' 2>/dev/null || true
+          git commit -m "🔄 Auto-update: Service Worker e cache-busting" || {
+            echo "ℹ️ Nothing to commit"
+            exit 0
+          }
+          git push || {
+            echo "⚠️ Push failed, may need manual intervention"
+            exit 1
+          }
       
       - name: Summary
         if: steps.check_version_files.outputs.skip != 'true'

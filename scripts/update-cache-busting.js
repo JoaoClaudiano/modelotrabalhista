@@ -10,6 +10,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Get current timestamp
+// Note: All files in the same run get the same timestamp to ensure 
+// consistency across all HTML files in a single deployment
 const VERSION = Math.floor(Date.now() / 1000).toString();
 
 // Directories to search for HTML files
@@ -44,11 +46,11 @@ function getHtmlFiles(dir, baseDir = dir) {
         }
       } catch (err) {
         // Skip files that can't be accessed
-        console.warn(`⚠️  Não foi possível acessar: ${filePath}`);
+        console.warn(`⚠️  Não foi possível acessar ${filePath}: ${err.message}`);
       }
     });
   } catch (err) {
-    console.warn(`⚠️  Não foi possível ler diretório: ${dir}`);
+    console.warn(`⚠️  Não foi possível ler diretório ${dir}: ${err.message}`);
   }
   
   return results;
