@@ -1,9 +1,28 @@
+/**
+ * Google Site Verification Tag Insertion Script
+ * 
+ * Purpose: Automatically adds Google Site Verification meta tag to all HTML files
+ * in the repository for enabling Google Search Console verification.
+ * 
+ * Requirements: Node.js (no additional dependencies required)
+ * 
+ * Usage: 
+ *   1. Update the VERIFICATION_TAG constant with your actual verification code
+ *   2. Run: node add-google-verification.js
+ * 
+ * The script will:
+ *   - Find all HTML files in the repository (excluding node_modules)
+ *   - Add the verification tag after the viewport meta tag
+ *   - Skip files that already have the tag
+ *   - Report success/skip status for each file
+ */
+
 const fs = require('fs');
 const path = require('path');
 
 // Google Site Verification meta tag
-// TODO: Replace with actual verification code from Google Search Console
-const VERIFICATION_TAG = '    <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />\n';
+// Verification code from Google Search Console
+const VERIFICATION_CODE = 'B95cdpZnyF2xXeTjto-_lv9N8Vw1WHJR3p2NcF36-HI';
 
 // Find all HTML files
 function findHtmlFiles(dir, fileList = []) {
@@ -35,27 +54,33 @@ function addVerificationTag(filePath) {
         return false;
     }
     
-    // Find the viewport meta tag and add our tag after it
-    const viewportRegex = /(<meta name="viewport"[^>]*>)\n/;
+    // Find the viewport meta tag and detect its indentation
+    const viewportMatch = content.match(/^([ \t]*)<meta name="viewport"[^>]*>\n/m);
     
-    if (viewportRegex.test(content)) {
-        content = content.replace(viewportRegex, `$1\n${VERIFICATION_TAG}`);
+    if (viewportMatch) {
+        const indentation = viewportMatch[1]; // Capture the indentation
+        const tagWithIndent = `${indentation}<meta name="google-site-verification" content="${VERIFICATION_CODE}" />\n`;
+        content = content.replace(viewportMatch[0], `${viewportMatch[0]}${tagWithIndent}`);
         fs.writeFileSync(filePath, content, 'utf8');
         console.log(`  ✓ Added verification tag`);
         return true;
     } else {
         // If no viewport tag, try to add after charset
-        const charsetRegex = /(<meta charset="[^"]*">)\n/;
-        if (charsetRegex.test(content)) {
-            content = content.replace(charsetRegex, `$1\n${VERIFICATION_TAG}`);
+        const charsetMatch = content.match(/^([ \t]*)<meta charset="[^"]*">\n/m);
+        if (charsetMatch) {
+            const indentation = charsetMatch[1];
+            const tagWithIndent = `${indentation}<meta name="google-site-verification" content="${VERIFICATION_CODE}" />\n`;
+            content = content.replace(charsetMatch[0], `${charsetMatch[0]}${tagWithIndent}`);
             fs.writeFileSync(filePath, content, 'utf8');
             console.log(`  ✓ Added verification tag after charset`);
             return true;
         } else {
             // Last resort: add after <head>
-            const headRegex = /(<head>)\n/;
-            if (headRegex.test(content)) {
-                content = content.replace(headRegex, `$1\n${VERIFICATION_TAG}`);
+            const headMatch = content.match(/^([ \t]*)(<head>)\n/m);
+            if (headMatch) {
+                const indentation = headMatch[1] + '    '; // Add standard indent
+                const tagWithIndent = `${indentation}<meta name="google-site-verification" content="${VERIFICATION_CODE}" />\n`;
+                content = content.replace(headMatch[0], `${headMatch[0]}${tagWithIndent}`);
                 fs.writeFileSync(filePath, content, 'utf8');
                 console.log(`  ✓ Added verification tag after <head>`);
                 return true;
@@ -75,16 +100,13 @@ console.log(`Found ${htmlFiles.length} HTML files\n`);
 
 let successCount = 0;
 let skippedCount = 0;
-let errorCount = 0;
 
 htmlFiles.forEach(file => {
     const result = addVerificationTag(file);
     if (result === true) {
         successCount++;
-    } else if (result === false) {
-        skippedCount++;
     } else {
-        errorCount++;
+        skippedCount++;
     }
 });
 
@@ -92,5 +114,4 @@ console.log('\n--- Summary ---');
 console.log(`Total files: ${htmlFiles.length}`);
 console.log(`✓ Added: ${successCount}`);
 console.log(`⊘ Skipped (already exists): ${skippedCount}`);
-console.log(`✗ Errors: ${errorCount}`);
 console.log('\nDone!');
