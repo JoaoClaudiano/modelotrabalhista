@@ -1229,7 +1229,7 @@
         window.addEventListener('load', function() {
             function loadVLibras() {
                 try {
-                    var script = document.createElement('script');
+                    const script = document.createElement('script');
                     script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770389835';
                     script.onerror = function() {
                         console.warn('[VLibras] Script failed to load. Accessibility widget unavailable.');
@@ -1239,7 +1239,6 @@
                             if (window.VLibras && window.VLibras.Widget) {
                                 // Initialize VLibras widget with error handling
                                 new window.VLibras.Widget('https://vlibras.gov.br/app');
-                                console.log('[VLibras] Accessibility widget initialized successfully');
                             } else {
                                 console.warn('[VLibras] Widget not available - script may have failed to load properly');
                             }
