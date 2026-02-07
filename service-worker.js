@@ -1,7 +1,7 @@
 // Service Worker para ModeloTrabalhista PWA
-// Versão 1.10.0 - Fix para CSP cache e recursos externos
+// Versão 1.11.0 - Fix para CSP cache e recursos externos
 
-const CACHE_NAME = 'modelotrabalhista-v1.10';
+const CACHE_NAME = 'modelotrabalhista-v1.11';
 const OFFLINE_URL = '/index.html';
 
 // Regex para arquivos cacheáveis
@@ -82,7 +82,7 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.10...');
+  console.log('[Service Worker] Installing v1.11...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -102,7 +102,7 @@ self.addEventListener('install', (event) => {
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating v1.10...');
+  console.log('[Service Worker] Activating v1.11...');
   
   event.waitUntil(
     caches.keys()
