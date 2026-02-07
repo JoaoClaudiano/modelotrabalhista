@@ -197,8 +197,10 @@
             console.warn('[Export] DocumentExporter não encontrado - handlers não serão inicializados');
         }
         
-        if (!checks.lazyLoadingUtils) {
-            console.info('[Export] LazyLoadingUtils não encontrado - pré-carregamento automático não está ativo');
+        // LazyLoadingUtils is optional - system works without it
+        // This is expected behavior when using native browser lazy loading
+        if (!checks.lazyLoadingUtils && typeof console.debug === 'function') {
+            console.debug('[Export] LazyLoadingUtils não encontrado - usando lazy loading nativo do navegador');
         }
         
         return checks.documentExporter;
