@@ -60,6 +60,7 @@ function getLastModified(filePath) {
 function getPriority(url) {
   if (url === '' || url === 'index.html') return 1.0;
   if (url === 'artigos/' || url.startsWith('artigos/index')) return 0.9;
+  if (url.startsWith('modelos/')) return 0.85;
   if (url.startsWith('artigos/')) return 0.8;
   if (url.startsWith('pages/')) return 0.6;
   return 0.7;
@@ -69,6 +70,7 @@ function getPriority(url) {
 function getChangeFreq(url) {
   if (url === '' || url === 'index.html') return 'weekly';
   if (url === 'artigos/' || url.startsWith('artigos/index')) return 'weekly';
+  if (url.startsWith('modelos/')) return 'monthly';
   if (url.startsWith('artigos/')) return 'monthly';
   if (url.startsWith('pages/')) return 'monthly';
   return 'monthly';
