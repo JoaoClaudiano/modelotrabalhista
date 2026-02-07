@@ -99,7 +99,7 @@ Solicitação de ajuste de horário para acompanhamento de filhos:
 
 ## Como Usar
 
-1. **Acesse o gerador:** https://modelotrabalhista-2026.web.app/
+1. **Acesse o gerador:** https://modelotrabalhista.pages.dev/
 2. **Selecione o modelo** desejado
 3. **Preencha o formulário** com seus dados
 4. **Gere o documento** e exporte em PDF ou DOCX
