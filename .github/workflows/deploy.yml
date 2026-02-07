@@ -19,7 +19,14 @@ jobs:
           node-version: '20'
       
       - name: Install Firebase CLI
-        run: npm install -g firebase-tools
+        run: npm install -g firebase-tools@13.20.2
+      
+      - name: Verify Firebase Token
+        run: |
+          if [ -z "${{ secrets.FIREBASE_TOKEN }}" ]; then
+            echo "Error: FIREBASE_TOKEN secret is not set"
+            exit 1
+          fi
       
       - name: Deploy to Firebase Hosting
         env:
