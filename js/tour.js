@@ -586,7 +586,7 @@ class AppTour {
         message.className = 'tour-completion-message';
         message.innerHTML = `
             <div class="tour-completion-content">
-                <i class="fas fa-check-circle" style="color: #10b981; font-size: 3rem; margin-bottom: 1rem;"></i>
+                <i class="fas fa-check-circle" style="color: #0ea674; font-size: 3rem; margin-bottom: 1rem;"></i>
                 <h3>Tour Concluído!</h3>
                 <p>Agora você está pronto para criar seus documentos trabalhistas.</p>
                 <button class="tour-btn tour-btn-primary" id="tourCloseBtn" style="margin-top: 1rem;">

@@ -1730,7 +1730,7 @@ class DocumentExporter {
         document.querySelectorAll('.export-notification').forEach(el => el.remove());
         
         const icon = type === 'success' ? '✅' : '❌';
-        const color = type === 'success' ? '#10b981' : '#ef4444';
+        const color = type === 'success' ? '#0ea674' : '#ef4444';
         
         const notification = document.createElement('div');
         notification.className = 'export-notification';
