@@ -20,12 +20,21 @@ The site will automatically work at your `*.pages.dev` domain. The sitemap and r
 2. Build: `npm run build`
 3. Deploy files to your hosting
 
-### Deploy to Firebase Hosting
+### Deploy to GitHub Pages
 ```bash
-npm run deploy:firebase
+export SITE_URL=https://joaoclaudiano.github.io/modelotrabalhista
+npm run build
+# Then push to gh-pages branch or let GitHub Actions handle it
 ```
 
-No environment variables needed - uses Firebase URL by default.
+The site is configured to use GitHub Pages URL by default in the current build.
+
+### Deploy to Firebase Hosting
+```bash
+export SITE_URL=https://modelotrabalhista-2026.web.app
+npm run build
+firebase deploy
+```
 
 ## Environment Variables
 
@@ -101,9 +110,9 @@ Expected output:
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| Firebase Hosting | ✅ Tested | Default configuration |
+| GitHub Pages | ✅ Active | Currently deployed, set SITE_URL to https://joaoclaudiano.github.io/modelotrabalhista |
+| Firebase Hosting | ✅ Available | Alternative deployment, set SITE_URL before build |
 | Cloudflare Pages | ✅ Ready | Uses CF_PAGES_URL automatically |
-| GitHub Pages | ✅ Ready | Set SITE_URL before build |
 | Netlify | ✅ Ready | Set SITE_URL in build settings |
 | Custom Domain | ✅ Ready | Set SITE_URL before build |
 | localhost | ✅ Ready | Works without configuration |
