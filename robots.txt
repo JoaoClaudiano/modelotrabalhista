@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://modelotrabalhista.pages.dev/sitemap.xml
+Sitemap: https://modelotrabalhista-2026.web.app/sitemap.xml
 
 # Desabilitar crawling de áreas administrativas
 Disallow: /admin/
