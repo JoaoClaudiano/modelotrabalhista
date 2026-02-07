@@ -7,8 +7,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Base URL and path for the website
-const BASE_HOSTNAME = 'https://joaoclaudiano.github.io';
-const BASE_PATH = '/modelotrabalhista';
+const BASE_HOSTNAME = 'https://modelotrabalhista-2026.web.app';
+const BASE_PATH = '';
 const BASE_URL = BASE_HOSTNAME + BASE_PATH;
 
 // Function to get all HTML files

@@ -46,19 +46,20 @@ Uma aplicação web completa para geração automática de documentos trabalhist
 ## 🚀 Como Usar
 
 ### Opção 1: Online
-Acesse o site [modelotrabalhista.com.br](https://joaoclaudiano.github.io/modelotrabalhista/#home) e comece a usar!
+Acesse o site [ModeloTrabalhista](https://modelotrabalhista-2026.web.app/) e comece a usar!
 
 ## 🔧 Desenvolvimento
 
-### Deploy Automático para GitHub Pages
+### Deploy Automático
 
-O site é automaticamente implantado no GitHub Pages sempre que há um push para o branch `main`. O workflow de CI/CD:
+O site é automaticamente implantado sempre que há um push para o branch `main`:
 
-1. **Instalação de dependências** - Instala as dependências do Node.js
-2. **Geração de arquivos SEO** - Gera automaticamente sitemap.xml e robots.txt
-3. **Build e Deploy** - Faz upload dos arquivos e implanta no GitHub Pages
+- **Firebase Hosting** - Deploy principal em produção
+- **GitHub Pages** - Deploy alternativo
 
-O site fica disponível em: [https://joaoclaudiano.github.io/modelotrabalhista/](https://joaoclaudiano.github.io/modelotrabalhista/)
+O site principal fica disponível em: [https://modelotrabalhista-2026.web.app/](https://modelotrabalhista-2026.web.app/)
+
+O site alternativo (GitHub Pages) fica disponível em: [https://joaoclaudiano.github.io/modelotrabalhista/](https://joaoclaudiano.github.io/modelotrabalhista/)
 
 ### Gerar Sitemap e Robots.txt
 
