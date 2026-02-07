@@ -246,6 +246,12 @@
         <priority>0.8</priority>
     </url>
     <url>
+        <loc>https://modelotrabalhista.pages.dev/test-log-silencing</loc>
+        <lastmod>2026-02-07T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
         <loc>https://modelotrabalhista.pages.dev/pages/contato</loc>
         <lastmod>2026-02-07T00:00:00.000Z</lastmod>
         <changefreq>monthly</changefreq>
