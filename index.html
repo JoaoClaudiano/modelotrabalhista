@@ -1249,7 +1249,9 @@
                     try {
                         if (window.VLibras && window.VLibras.Widget) {
                             new window.VLibras.Widget('https://vlibras.gov.br/app');
-                            console.log('VLibras carregado com sucesso');
+                            if (typeof console.debug === 'function') {
+                                console.debug('VLibras carregado com sucesso');
+                            }
                         } else {
                             console.info('VLibras Widget não disponível');
                         }
