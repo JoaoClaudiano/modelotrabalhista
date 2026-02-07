@@ -7,7 +7,9 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Base URL and path for the website
-const BASE_HOSTNAME = 'https://modelotrabalhista-2026.web.app';
+// Using environment variable or default for better portability across environments
+// Set SITE_URL environment variable for custom domains (e.g., Cloudflare Pages)
+const BASE_HOSTNAME = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://modelotrabalhista-2026.web.app';
 const BASE_PATH = '';
 const BASE_URL = BASE_HOSTNAME + BASE_PATH;
 

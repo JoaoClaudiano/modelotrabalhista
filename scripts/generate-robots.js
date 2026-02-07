@@ -4,7 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Base URL for the website
-const BASE_URL = 'https://modelotrabalhista-2026.web.app';
+// Note: This is still needed for the Sitemap directive in robots.txt
+// However, all Disallow directives use relative paths
+// Set SITE_URL environment variable for custom domains (e.g., Cloudflare Pages)
+const BASE_URL = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://modelotrabalhista-2026.web.app';
 
 // Directories and files that should NOT be crawled
 const DISALLOW_PATTERNS = [

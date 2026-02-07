@@ -1,6 +1,8 @@
 {
   "scripts": {
     "test": "node test-export.js",
+    "test:urls": "node test-url-refactoring.js",
+    "test:all": "npm run test && npm run test:urls",
     "update-sw": "node scripts/update-service-worker-version.js",
     "update-cache": "node scripts/update-cache-busting.js",
     "update-versions": "node scripts/update-versions.js",
