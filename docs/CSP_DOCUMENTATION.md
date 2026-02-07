@@ -64,6 +64,8 @@ The Report-Only policy uses the same directives as the enforcing policy and repo
 - Browser console via `js/csp-reporter.js`
 - Developer tools Security panel
 
+**Note:** The `upgrade-insecure-requests` directive is intentionally omitted from the Report-Only policy. Per W3C CSP specification, this directive is ignored in report-only mode because it performs an action (upgrading HTTP to HTTPS) rather than monitoring violations. Including it would generate browser warnings without any functional benefit.
+
 **For detailed information on monitoring violations, see [CSP_REPORTING_GUIDE.md](CSP_REPORTING_GUIDE.md)**
 
 ### 3. Additional Security Headers
@@ -85,7 +87,7 @@ Every HTML file includes both enforcing and report-only CSP meta tags in the `<h
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 
 <!-- Report-Only CSP (reports violations without blocking) -->
-<meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://vlibras.gov.br; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
 ```
 
 **Files Updated:**
