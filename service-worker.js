@@ -38,7 +38,8 @@ function isCacheable(url) {
     'cdnjs.cloudflare.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'cdn.jsdelivr.net'
+    'cdn.jsdelivr.net',
+    'vlibras.gov.br'
   ];
   
   // Verifica se é do mesmo domínio ou de um CDN confiável
