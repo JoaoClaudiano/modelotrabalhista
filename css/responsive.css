@@ -711,6 +711,8 @@
 /* ============================================
    DARK MODE SUPPORT
    ============================================ */
+/* Disabled automatic dark mode based on device settings
+   Users can manually toggle dark mode via the accessibility menu
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-primary: #1a1a1a !important;
@@ -746,6 +748,7 @@
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3) !important;
     }
 }
+*/
 
 /* ============================================
    ANIMAÇÕES E TRANSITIONS PARA MOBILE
