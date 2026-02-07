@@ -167,6 +167,9 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479" as="style">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479"></noscript>
     
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Google Fonts with font-display swap for better performance -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
@@ -340,6 +343,174 @@
                 height: 40px;
             }
         }
+        
+        /* Simulador de Rescisão Inteligente Styles */
+        #simulador-inteligente {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+        }
+        
+        .generator-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 2rem;
+        }
+        
+        .simulator-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .simulator-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .infotip {
+            display: inline-block;
+            margin-left: 0.5rem;
+            color: var(--gray-light);
+            cursor: help;
+            position: relative;
+        }
+        
+        .infotip:hover {
+            color: var(--primary-color);
+        }
+        
+        .infotip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-color);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+            font-weight: normal;
+        }
+        
+        .infotip:hover::after {
+            opacity: 1;
+        }
+        
+        .infotip::before {
+            content: '';
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--dark-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .infotip:hover::before {
+            opacity: 1;
+        }
+        
+        .initial-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        
+        #comparisonChart {
+            max-height: 300px;
+            width: 100%;
+        }
+        
+        .total-highlight {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .highlight-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-description {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .generator-wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .simulator-card {
+                padding: 20px;
+            }
+            
+            .initial-message {
+                min-height: 300px;
+                padding: 2rem 1rem;
+            }
+            
+            .highlight-value {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -441,6 +612,87 @@
                     </div>
                     <div class="document-status">
                         <span class="status-badge">Pronto para usar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulador de Rescisão Inteligente -->
+    <section id="simulador-inteligente">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+                <h2>Simulador de Rescisão Inteligente</h2>
+                <p class="section-subtitle">Compare cenários de rescisão e veja quanto você pode receber</p>
+            </div>
+            
+            <div class="generator-wrapper">
+                <!-- Coluna Esquerda: Formulário -->
+                <div class="simulator-card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--dark-color);">Dados do Contrato</h3>
+                    
+                    <div class="form-group">
+                        <label for="salary">
+                            Salário Bruto (R$)
+                            <span class="infotip" data-tooltip="Informe o salário bruto mensal sem descontos">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <input type="number" id="salary" class="form-input" placeholder="Ex: 3500.00" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admissionDate">
+                            Data de Admissão
+                            <span class="infotip" data-tooltip="Data em que você começou a trabalhar na empresa">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <input type="date" id="admissionDate" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dismissalDate">
+                            Data de Saída
+                            <span class="infotip" data-tooltip="Data prevista ou efetiva de saída da empresa">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <input type="date" id="dismissalDate" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vacationBalance">
+                            Férias Vencidas (dias)
+                            <span class="infotip" data-tooltip="Número de dias de férias vencidas e não gozadas">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <input type="number" id="vacationBalance" class="form-input" placeholder="Ex: 30" min="0" max="30" value="0">
+                    </div>
+                    
+                    <button id="calculateBtn" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-calculator"></i> Calcular Rescisão
+                    </button>
+                </div>
+                
+                <!-- Coluna Direita: Resultado -->
+                <div class="simulator-card">
+                    <div id="initial-message" class="initial-message">
+                        <i class="fas fa-chart-bar" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--dark-color); margin-bottom: 0.5rem;">Preencha os dados</h3>
+                        <p style="color: var(--gray-color);">Complete o formulário ao lado para comparar os cenários de rescisão</p>
+                    </div>
+                    
+                    <div id="resultArea" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem; color: var(--dark-color);">Comparação de Cenários</h3>
+                        <canvas id="comparisonChart" style="max-height: 300px; margin-bottom: 2rem;"></canvas>
+                        
+                        <div id="totalHighlight" class="total-highlight">
+                            <div class="highlight-label">Demissão sem Justa Causa</div>
+                            <div class="highlight-value">R$ 0,00</div>
+                            <div class="highlight-description">Valor total a receber neste cenário</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1117,6 +1369,7 @@
     
     <!-- Feature modules (defer to load after core) -->
     <script src="/js/generator.js?v=1770454479" defer></script>
+    <script src="/script.js?v=1770454479" defer></script>
     <script src="/js/storage.js?v=1770454479" defer></script>
     <script src="/js/export.js?v=1770454479" defer></script>
     <script src="/js/utils/lazy-loading.js?v=1770454479" defer></script>
