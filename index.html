@@ -1509,50 +1509,19 @@
         })();
     </script>
     
-    <!-- VLIBRAS - Loaded after page load to improve FCP/LCP -->
+    <!-- VLibras -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
+    
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770454479"></script>
     <script>
-        // Defer VLibras loading until after page is interactive
-        // Uses requestIdleCallback for better performance on slower connections
-        window.addEventListener('load', function() {
-            function loadVLibras() {
-                try {
-                    const script = document.createElement('script');
-                    script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js?v=1770454479';
-                    script.onerror = function() {
-                        console.warn('[VLibras] Script failed to load. Accessibility widget unavailable.');
-                    };
-                    script.onload = function() {
-                        try {
-                            if (window.VLibras && window.VLibras.Widget) {
-                                // Initialize VLibras widget with error handling
-                                new window.VLibras.Widget('https://vlibras.gov.br/app');
-                            } else {
-                                console.warn('[VLibras] Widget not available - script may have failed to load properly');
-                            }
-                        } catch (error) {
-                            console.error('[VLibras] Error initializing widget:', error.message || error);
-                        }
-                    };
-                    document.body.appendChild(script);
-                } catch (error) {
-                    console.error('[VLibras] Error loading script:', error.message || error);
-                }
-            }
-            
-            // Use requestIdleCallback if available for adaptive timing, fallback to setTimeout
-            // Timeout of 5000ms allows slower connections more time before forcing load
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(loadVLibras, { timeout: 5000 });
-            } else {
-                setTimeout(loadVLibras, 2000);
-            }
-        });
+        // VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
 
     <!-- Service Worker Registration -->
