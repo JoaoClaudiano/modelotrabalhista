@@ -167,9 +167,9 @@
                 <nav class="main-nav">
                     <ul>
                         <li><a href="../index.html#home"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="/modelos/index.html" class="active"><i class="fas fa-file-alt"></i> Modelos</a></li>
-                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerador</a></li>
                         <li><a href="/artigos/index.html"><i class="fas fa-newspaper"></i> Artigos</a></li>
+                        <li><a href="/modelos/index.html" class="active"><i class="fas fa-file-alt"></i> Modelos</a></li>
+                        <li><a href="../index.html#gerador"><i class="fas fa-magic"></i> Gerar</a></li>
                         <li><a href="../index.html#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     </ul>
                 </nav>
@@ -205,13 +205,25 @@
                         <span>Download PDF</span>
                     </div>
                 </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="model-search" class="search-input" placeholder="Buscar modelos por título ou categoria..." aria-label="Buscar modelos">
+                        <button id="clear-search" class="clear-search-btn" style="display: none;" aria-label="Limpar busca">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="search-results-count" class="search-results-count" style="display: none;"></div>
+                </div>
             </header>
             
             
             <!-- Grid de Modelos -->
             <div class="articles-grid">
                 <!-- Modelo 1 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="rescisao demissao">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-file-signature"></i>
@@ -234,7 +246,7 @@
                 </article>
                 
                 <!-- Modelo 2 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="beneficios ferias">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-umbrella-beach"></i>
@@ -257,7 +269,7 @@
                 </article>
                 
                 <!-- Modelo 3 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="disciplinar advertencia">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -280,7 +292,7 @@
                 </article>
                 
                 <!-- Modelo 4 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="beneficios licenca maternidade paternidade">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-baby"></i>
@@ -303,7 +315,7 @@
                 </article>
                 
                 <!-- Modelo 5 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="jornada horario">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-clock"></i>
@@ -326,7 +338,7 @@
                 </article>
                 
                 <!-- Modelo 6 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="beneficios amamentacao">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-heart"></i>
@@ -349,7 +361,7 @@
                 </article>
                 
                 <!-- Modelo 7 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="financeiro reembolso">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-receipt"></i>
@@ -372,7 +384,7 @@
                 </article>
                 
                 <!-- Modelo 8 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="beneficios vale">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-hand-holding-heart"></i>
@@ -395,7 +407,7 @@
                 </article>
                 
                 <!-- Modelo 9 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="comunicacao reuniao">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-users"></i>
@@ -418,7 +430,7 @@
                 </article>
                 
                 <!-- Modelo 10 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="jornada horario pais">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-user-clock"></i>
@@ -441,7 +453,7 @@
                 </article>
                 
                 <!-- Modelo 11 -->
-                <article class="article-card">
+                <article class="article-card" data-categories="jornada flexibilizacao familiar">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-home"></i>
@@ -595,6 +607,90 @@
                         icon.classList.add('fa-bars');
                     }
                 }
+            }
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('model-search');
+        const clearSearchBtn = document.getElementById('clear-search');
+        const searchResultsCount = document.getElementById('search-results-count');
+        const modelsGrid = document.querySelector('.articles-grid');
+        let noResultsMessage = null;
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const models = document.querySelectorAll('.article-card');
+            let visibleCount = 0;
+            
+            // Show/hide clear button
+            clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+            
+            // Remove existing no-results message if any
+            if (noResultsMessage) {
+                noResultsMessage.remove();
+                noResultsMessage = null;
+            }
+            
+            if (searchTerm === '') {
+                // If search is empty, show all models
+                models.forEach(model => {
+                    model.style.display = 'block';
+                    visibleCount++;
+                });
+                
+                searchResultsCount.style.display = 'none';
+            } else {
+                // Perform search
+                models.forEach(model => {
+                    const title = model.querySelector('.card-title').textContent.toLowerCase();
+                    const excerpt = model.querySelector('.card-excerpt').textContent.toLowerCase();
+                    const categories = model.getAttribute('data-categories') || '';
+                    
+                    // Search in title, excerpt, and categories
+                    if (title.includes(searchTerm) || excerpt.includes(searchTerm) || categories.toLowerCase().includes(searchTerm)) {
+                        model.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        model.style.display = 'none';
+                    }
+                });
+                
+                // Show results count
+                if (visibleCount > 0) {
+                    searchResultsCount.textContent = `${visibleCount} modelo${visibleCount !== 1 ? 's' : ''} encontrado${visibleCount !== 1 ? 's' : ''}`;
+                    searchResultsCount.style.display = 'block';
+                } else {
+                    searchResultsCount.style.display = 'none';
+                    
+                    // Show no results message
+                    noResultsMessage = document.createElement('div');
+                    noResultsMessage.className = 'no-results-message';
+                    noResultsMessage.innerHTML = `
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum modelo encontrado</h3>
+                        <p>Não encontramos modelos com o termo "<strong>${searchTerm}</strong>".</p>
+                        <p>Tente buscar por outros termos.</p>
+                    `;
+                    modelsGrid.appendChild(noResultsMessage);
+                }
+            }
+        }
+        
+        // Search on input
+        searchInput.addEventListener('input', performSearch);
+        
+        // Clear search
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            performSearch();
+            searchInput.focus();
+        });
+        
+        // Clear search on Escape key
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchInput.value) {
+                searchInput.value = '';
+                performSearch();
             }
         });
         
@@ -800,6 +896,95 @@
         .stat-item span {
             font-weight: 600;
             color: var(--text-secondary);
+        }
+        
+        /* Search Container */
+        .search-container {
+            margin-top: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 12px 20px;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        
+        .search-icon {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-right: 12px;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: transparent;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .clear-search-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--transition);
+        }
+        
+        .clear-search-btn:hover {
+            background-color: var(--surface);
+            color: var(--primary);
+        }
+        
+        .search-results-count {
+            margin-top: var(--space-sm);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .no-results-message {
+            text-align: center;
+            padding: var(--space-xl);
+            color: var(--text-secondary);
+        }
+        
+        .no-results-message i {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+        
+        .no-results-message h3 {
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
         }
         
         /* Articles Grid */
@@ -1159,6 +1344,15 @@
             .hub-subtitle {
                 font-size: 1rem;
             }
+            
+            .search-container {
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            .search-input::placeholder {
+                font-size: 0.9rem;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1180,6 +1374,18 @@
                 width: 45px;
                 height: 45px;
                 font-size: 1rem;
+            }
+            
+            .search-box {
+                padding: 10px 15px;
+            }
+            
+            .search-input {
+                font-size: 0.95rem;
+            }
+            
+            .search-input::placeholder {
+                font-size: 0.85rem;
             }
         }
     </style>
