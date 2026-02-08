@@ -1509,7 +1509,7 @@
         })();
     </script>
     
-    <!-- VLibras -->
+    <!-- VLibras (deferred to improve FCP/LCP) -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
@@ -1517,11 +1517,21 @@
         </div>
     </div>
     
-    <!-- Scripts -->
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770454479"></script>
-    <script>
-        // VLibras
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    <!-- VLibras Script (defer for better performance) -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770454479" defer></script>
+    <script defer>
+        // Initialize VLibras widget after script loads
+        // defer ensures this runs after DOMContentLoaded and vlibras-plugin.js is loaded
+        if (window.VLibras && window.VLibras.Widget) {
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        } else {
+            // Fallback: wait for script to load
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.VLibras && window.VLibras.Widget) {
+                    new window.VLibras.Widget('https://vlibras.gov.br/app');
+                }
+            });
+        }
     </script>
 
     <!-- Service Worker Registration -->
