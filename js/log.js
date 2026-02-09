@@ -759,8 +759,8 @@ class AppLogger {
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar se o AppLogger está desabilitado
     if (DISABLE_APP_LOGGER) {
-        console.log('%c⚠️ AppLogger DESABILITADO', 'color: #FF9800; font-weight: bold;');
-        console.log('%cPara habilitar: localStorage.setItem("ENABLE_APP_LOGGER", "true") e recarregue a página', 'color: #9E9E9E;');
+        // AppLogger desabilitado por padrão
+        // Para habilitar: localStorage.setItem('ENABLE_APP_LOGGER', 'true')
         return; // Não inicializar
     }
     
