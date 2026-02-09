@@ -1499,7 +1499,13 @@
         
         // Verificar se há erros de carregamento
         window.addEventListener('error', function(e) {
-            // Erro ao carregar recurso (silent)
+            // Log apenas erros críticos (sempre visíveis para debug)
+            const isDevelopment = window.location.hostname === 'localhost' || 
+                                  window.location.hostname === '127.0.0.1';
+            
+            if (isDevelopment || e.target.src) {
+                console.error('Erro ao carregar recurso:', e);
+            }
             
             // Mostrar mensagem amigável se for um script crítico
             const criticalScripts = ['js/ui.js', 'js/main.js'];
@@ -1596,23 +1602,35 @@
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
+            // Detectar ambiente de desenvolvimento
+            const isDevelopment = window.location.hostname === 'localhost' || 
+                                  window.location.hostname === '127.0.0.1' ||
+                                  window.location.hostname.includes('.local');
+            
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        // Service Worker registered successfully
+                        // Log apenas em desenvolvimento
+                        if (isDevelopment) {
+                            console.log('[Service Worker] Registered successfully. Scope:', registration.scope);
+                        }
                         
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New version available (silent)
+                                    // Log apenas em desenvolvimento
+                                    if (isDevelopment) {
+                                        console.log('[Service Worker] New version available');
+                                    }
                                 }
                             });
                         });
                     })
                     .catch(function(error) {
-                        // Service Worker registration failed (silent)
+                        // Erros sempre logados (importante para debug em produção)
+                        console.error('[Service Worker] Registration failed:', error.message || error);
                     });
             });
         }
