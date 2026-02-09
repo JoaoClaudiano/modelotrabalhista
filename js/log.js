@@ -565,6 +565,8 @@ class AppLogger {
     
     // ========== DEBUG ==========
     debug(scriptName) {
+        // Always return script data without console output (production-ready)
+        // In silent mode or normal mode, behavior is the same: return data without logging
         if (this.silenciarLogs) {
             // Em modo silencioso, retornar dados sem console output
             if (scriptName) {
@@ -584,7 +586,7 @@ class AppLogger {
                 return null;
             }
         } else {
-            // Debug all scripts - removed console output for production
+            // Debug all scripts - removed console output for production, return data
             return this.performance.scripts;
         }
     }
