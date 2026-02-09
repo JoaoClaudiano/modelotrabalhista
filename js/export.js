@@ -2,6 +2,7 @@
 class DocumentExporter {
     constructor() {
         this.mutationObserver = null; // Armazenar referência para limpeza
+        this.debounceTimer = null; // Timer para debounce de mutation observer
         this.libsLoaded = {
             jspdf: false,
             docx: false
@@ -695,36 +696,55 @@ class DocumentExporter {
         } else {
             this.attachExportButtons();
         }
-        
-        // Também tentar anexar após um pequeno delay
-        setTimeout(() => this.attachExportButtons(), 1000);
     }
 
     setupMutationObserver() {
-        // Observar mudanças no DOM para quando botões forem adicionados dinamicamente
+        // Otimização: Observar apenas container específico ao invés de document.body inteiro
+        // Isso reduz drasticamente o número de mutações detectadas
+        const previewContainer = document.getElementById('documentPreview') || document.getElementById('preview');
+        const controlsContainer = document.querySelector('.preview-controls');
+        
         // Desconectar observer anterior se existir
         if (this.mutationObserver) {
             this.mutationObserver.disconnect();
         }
         
+        // Limpar timer anterior para evitar execuções múltiplas
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = null;
+        }
+        
         this.mutationObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList' || mutation.type === 'attributes') {
-                    this.attachExportButtons();
-                }
-            });
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                this.attachExportButtons();
+            }, 100); // Aguardar 100ms de inatividade antes de re-anexar
         });
 
-        this.mutationObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['id', 'class', 'disabled']
-        });
+        // Observar apenas containers relevantes, não document.body inteiro
+        if (previewContainer) {
+            this.mutationObserver.observe(previewContainer, {
+                childList: true,
+                subtree: false, // Não precisa observar toda a subárvore
+                attributes: false // Não precisa observar mudanças de atributos
+            });
+        }
+        
+        if (controlsContainer) {
+            this.mutationObserver.observe(controlsContainer, {
+                childList: true,
+                subtree: false
+            });
+        }
     }
     
     // Método para desconectar o observer e evitar memory leak
     cleanup() {
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = null;
+        }
         if (this.mutationObserver) {
             this.mutationObserver.disconnect();
             this.mutationObserver = null;
