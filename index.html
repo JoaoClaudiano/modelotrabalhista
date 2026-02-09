@@ -451,6 +451,62 @@
             opacity: 1;
         }
         
+        /* Badge with pulsating ping */
+        .salary-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10b981;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 12px;
+            position: relative;
+            vertical-align: middle;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        .ping-indicator {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 12px;
+            height: 12px;
+        }
+        
+        .ping-indicator::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #34d399;
+            border-radius: 50%;
+            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        
+        .ping-indicator::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        @keyframes ping {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            75%, 100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
         .initial-message {
             text-align: center;
             padding: 3rem 2rem;
@@ -510,6 +566,13 @@
             
             .highlight-value {
                 font-size: 2rem;
+            }
+            
+            .salary-badge {
+                display: flex;
+                margin-top: 12px;
+                width: fit-content;
+                margin-inline: auto;
             }
         }
     </style>
@@ -623,7 +686,13 @@
     <section id="simulador-inteligente">
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
-                <h2>Simulador de Rescisão Inteligente</h2>
+                <h2>
+                    Simulador de Rescisão Inteligente
+                    <span class="salary-badge">
+                        <span class="ping-indicator"></span>
+                        Salário Mínimo Atual = R$ 1.621
+                    </span>
+                </h2>
                 <p class="section-subtitle">Compare cenários de rescisão e veja quanto você pode receber</p>
             </div>
             
@@ -1378,12 +1447,27 @@
     
     <!-- Non-critical modules (async to not block rendering) -->
     <script src="/js/analytics.js?v=1770454479" async></script>
-    <script src="/js/acessibilidade.js?v=1770454479" async></script>
-    
     <!-- Tour.js loaded on-demand (lazy loaded after page is fully loaded) -->
     <script>
+        // Flag para desabilitar o tour
+        // Para habilitar: localStorage.setItem('ENABLE_APP_TOUR', 'true')
+        const DISABLE_APP_TOUR = (() => {
+            const enableOverride = localStorage.getItem('ENABLE_APP_TOUR');
+            if (enableOverride === 'true') {
+                return false; // Não desabilitar se explicitamente habilitado
+            }
+            return true; // Por padrão, desabilitar o tour
+        })();
+        
         // Lazy load tour.js after page is fully loaded
         window.addEventListener('load', function() {
+            // Verificar se o tour está desabilitado
+            if (DISABLE_APP_TOUR) {
+                // AppTour desabilitado por padrão
+                // Para habilitar: localStorage.setItem('ENABLE_APP_TOUR', 'true')
+                return; // Não carregar o tour
+            }
+            
             setTimeout(function() {
                 const tourScript = document.createElement('script');
                 tourScript.src = 'js/tour.js';
