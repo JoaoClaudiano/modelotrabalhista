@@ -2,6 +2,7 @@
 class DocumentExporter {
     constructor() {
         this.mutationObserver = null; // Armazenar referência para limpeza
+        this.debounceTimer = null; // Timer para debounce de mutation observer
         this.libsLoaded = {
             jspdf: false,
             docx: false
@@ -708,12 +709,15 @@ class DocumentExporter {
             this.mutationObserver.disconnect();
         }
         
-        // Debounce para evitar chamadas excessivas
-        let debounceTimer;
+        // Limpar timer anterior para evitar execuções múltiplas
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = null;
+        }
         
         this.mutationObserver = new MutationObserver((mutations) => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
                 this.attachExportButtons();
             }, 100); // Aguardar 100ms de inatividade antes de re-anexar
         });
@@ -737,6 +741,10 @@ class DocumentExporter {
     
     // Método para desconectar o observer e evitar memory leak
     cleanup() {
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = null;
+        }
         if (this.mutationObserver) {
             this.mutationObserver.disconnect();
             this.mutationObserver = null;

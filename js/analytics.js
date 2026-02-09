@@ -8,6 +8,7 @@ class AnalyticsTracker {
         this.eventsQueue = [];
         this.isSending = false;
         this.userId = this.getUserId();
+        this.queueInterval = null; // Referência para o interval para limpeza
         
         // Integração com log.js - verificar se já existe logger
         if (window.appLogger) {
@@ -51,6 +52,16 @@ class AnalyticsTracker {
                 }
             }
         });
+    }
+    
+    // Método para limpeza de recursos (chamado em beforeunload ou quando necessário)
+    cleanup() {
+        if (this.queueInterval) {
+            clearInterval(this.queueInterval);
+            this.queueInterval = null;
+        }
+        // Processar fila final antes de limpar
+        this.processQueue();
     }
 
     // ========== TRACKING DE EVENTOS ==========

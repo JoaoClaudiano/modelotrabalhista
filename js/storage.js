@@ -107,8 +107,10 @@ class StorageManager {
 
     getAllDrafts() {
         const drafts = [];
-        // Usar cache de keys ao invés de varrer todo localStorage
-        for (const model of this.draftKeys) {
+        // Usar snapshot do Set para evitar problemas ao modificar durante iteração
+        const draftKeySnapshot = [...this.draftKeys];
+        
+        for (const model of draftKeySnapshot) {
             const key = `${this.prefix}draft_${model}`;
             try {
                 const item = localStorage.getItem(key);
