@@ -905,9 +905,9 @@
         z-index: 998 !important;
     }
     
-    /* When mobile menu is active, hide or reposition UserWay */
-    .main-nav ul.active ~ #userway_container,
-    body.menu-open #userway_container {
+    /* When mobile menu is active, lower UserWay z-index */
+    body.menu-open #userway_container,
+    body.menu-open [id^="userway"] {
         z-index: 900 !important;
     }
 }

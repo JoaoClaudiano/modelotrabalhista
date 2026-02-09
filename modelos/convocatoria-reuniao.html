@@ -642,19 +642,10 @@ Assinatura: _________________________________</pre>
                 console.log('[UserWay] Widget loaded on user interaction');
             }
             
-            // Load on first user interaction (click, touch, scroll, or keypress)
+            // Load on first user interaction - using 'once: true' for automatic cleanup
             const events = ['click', 'touchstart', 'scroll', 'keydown'];
-            const loadOnce = function() {
-                loadUserWay();
-                // Remove listeners after first load
-                events.forEach(event => {
-                    document.removeEventListener(event, loadOnce, { passive: true });
-                });
-            };
-            
-            // Add event listeners for lazy loading
             events.forEach(event => {
-                document.addEventListener(event, loadOnce, { passive: true, once: true });
+                document.addEventListener(event, loadUserWay, { passive: true, once: true });
             });
             
             // Fallback: Load after 3 seconds if no interaction
