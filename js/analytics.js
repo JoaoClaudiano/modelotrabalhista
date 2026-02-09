@@ -462,12 +462,7 @@ class AnalyticsTracker {
             }
         });
         
-        // NOVO: Rastrear uso do Vlibras
-        document.addEventListener('vlibras_used', (e) => {
-            this.trackEvent('vlibras_activated', {
-                action: e.detail?.action || 'toggle'
-            });
-        });
+        // VLibras removed - event listener no longer needed
     }
 
     // ========== MÉTODOS ADICIONAIS PARA INTEGRAÇÃO ==========

@@ -1499,7 +1499,7 @@
         
         // Verificar se há erros de carregamento
         window.addEventListener('error', function(e) {
-            console.error('Erro ao carregar recurso:', e);
+            // Erro ao carregar recurso (silent)
             
             // Mostrar mensagem amigável se for um script crítico
             const criticalScripts = ['js/ui.js', 'js/main.js'];
