@@ -1618,13 +1618,25 @@
         }
     </script>
 
+    <!-- UserWay Accessibility Widget -->
+    <script>
+        (function(d){
+            var s = d.createElement("script");
+            s.setAttribute("data-account", "xGAXRewind");
+            s.setAttribute("src", "https://cdn.userway.org/widget.js");
+            (d.body || d.head).appendChild(s);
+        })(document);
+    </script>
+
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        console.log('[Service Worker] Registered successfully. Scope:', registration.scope);
+                        if (window.appLogger) {
+                            window.appLogger.info('[Service Worker] Registered successfully. Scope: ' + registration.scope);
+                        }
                         
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
@@ -1632,7 +1644,9 @@
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // New version available
-                                    console.log('[Service Worker] New version available');
+                                    if (window.appLogger) {
+                                        window.appLogger.info('[Service Worker] New version available');
+                                    }
                                 }
                             });
                         });
