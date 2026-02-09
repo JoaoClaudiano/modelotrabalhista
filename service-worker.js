@@ -20,14 +20,10 @@ const isDevelopment = () => {
 // Helper para logs condicionais
 const swLog = {
   info: (...args) => {
-    if (isDevelopment()) {
-      console.log('[Service Worker]', ...args);
-    }
+    // Logs removidos para produção
   },
   warn: (...args) => {
-    if (isDevelopment()) {
-      console.warn('[Service Worker]', ...args);
-    }
+    // Warnings removidos para produção
   },
   error: (...args) => {
     // Erros são sempre logados, mesmo em produção (importante para debug)

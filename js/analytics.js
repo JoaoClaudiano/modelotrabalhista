@@ -65,14 +65,8 @@ class AnalyticsTracker {
             this.sendEvent(event);
         }
 
-        // Log em desenvolvimento (integrado com log.js)
-        if (this.isDevelopment()) {
-            if (window.appLogger) {
-                window.appLogger.info(`[Analytics] ${eventName}`, properties);
-            } else {
-                console.log(`[Analytics] ${eventName}:`, event.properties);
-            }
-        }
+        // Log em desenvolvimento (integrado com log.js) - removido para produção
+        // Logs de analytics não são mais exibidos no console
 
         return event;
     }

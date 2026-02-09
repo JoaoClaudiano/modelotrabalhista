@@ -63,7 +63,7 @@
             
             // Prevenir múltiplas exportações simultâneas
             if (state.isExporting) {
-                console.warn('[Export] Exportação já em andamento');
+                // Export already in progress - silently ignore
                 return;
             }
             
@@ -113,7 +113,7 @@
             }
         });
         
-        console.log(`[Export] Handler adicionado para exportação ${format}`);
+        // Handler added - no console output for production
     }
     
     /**
@@ -174,7 +174,7 @@
      * Inicializa handlers para todos os botões de exportação
      */
     function initExportHandlers() {
-        console.log('[Export] Inicializando handlers de exportação...');
+        // Initializing export handlers - removed console output for production
         
         // Botões PDF
         const pdfButtons = document.querySelectorAll(CONFIG.selectors.exportPDF);
@@ -184,7 +184,7 @@
         const docxButtons = document.querySelectorAll(CONFIG.selectors.exportDOCX);
         docxButtons.forEach(button => addExportHandler(button, 'DOCX'));
         
-        console.log(`[Export] ${pdfButtons.length} botão(s) PDF e ${docxButtons.length} botão(s) DOCX configurados`);
+        // Export handlers configured - removed console output for production
     }
     
     /**
@@ -198,11 +198,11 @@
         };
         
         if (!checks.documentExporter) {
-            console.warn('[Export] DocumentExporter não encontrado - handlers não serão inicializados');
+            // DocumentExporter not found - handlers won't be initialized
         }
         
         if (!checks.lazyLoadingUtils) {
-            console.info('[Export] LazyLoadingUtils não encontrado - pré-carregamento automático não está ativo');
+            // LazyLoadingUtils not found - automatic preloading not active
         }
         
         return checks.documentExporter;
@@ -218,7 +218,7 @@
         
         initExportHandlers();
         
-        console.log('[Export] ✅ Sistema de exportação com lazy loading inicializado');
+        // Export system initialized - removed console output for production
     }
     
     // Auto-inicializar
