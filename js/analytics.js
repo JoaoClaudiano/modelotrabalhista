@@ -8,7 +8,6 @@ class AnalyticsTracker {
         this.eventsQueue = [];
         this.isSending = false;
         this.userId = this.getUserId();
-        this.queueInterval = null; // Referência para o interval para limpeza
         
         // Integração com log.js - verificar se já existe logger
         if (window.appLogger) {
@@ -25,43 +24,8 @@ class AnalyticsTracker {
         this.loadQueue();
         this.processQueue();
         
-        // Otimização: Usar Page Visibility API para pausar processamento quando página está oculta
-        this.setupVisibilityListener();
-        
-        // Enviar eventos pendentes periodicamente (somente quando visível)
-        this.queueInterval = setInterval(() => {
-            if (!document.hidden) {
-                this.processQueue();
-            }
-        }, 30000);
-    }
-    
-    // Otimização: Page Visibility API para economizar bateria e recursos
-    setupVisibilityListener() {
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // Página escondida - processar fila antes de pausar
-                this.processQueue();
-                if (window.appLogger) {
-                    window.appLogger.info('[Analytics] Página oculta, pausando processamento');
-                }
-            } else {
-                // Página visível novamente
-                if (window.appLogger) {
-                    window.appLogger.info('[Analytics] Página visível, retomando processamento');
-                }
-            }
-        });
-    }
-    
-    // Método para limpeza de recursos (chamado em beforeunload ou quando necessário)
-    cleanup() {
-        if (this.queueInterval) {
-            clearInterval(this.queueInterval);
-            this.queueInterval = null;
-        }
-        // Processar fila final antes de limpar
-        this.processQueue();
+        // Enviar eventos pendentes periodicamente
+        setInterval(() => this.processQueue(), 30000);
     }
 
     // ========== TRACKING DE EVENTOS ==========

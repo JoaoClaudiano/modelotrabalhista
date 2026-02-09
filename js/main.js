@@ -1422,19 +1422,15 @@ ${data.employeePosition}`;
     }
 
     setupFAQ() {
-        // Cache FAQ elements para evitar querySelectorAll repetido
-        const faqQuestions = document.querySelectorAll('.faq-question');
-        const faqAnswers = document.querySelectorAll('.faq-answer');
-        
-        faqQuestions.forEach((question, index) => {
+        document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
                 const answer = question.nextElementSibling;
                 const icon = question.querySelector('i');
                 const isOpening = !answer.classList.contains('active');
                 
-                // Otimização: Fechar todas as outras respostas usando o array cacheado
-                faqAnswers.forEach(otherAnswer => {
-                    if (otherAnswer !== answer && otherAnswer.classList.contains('active')) {
+                // Close all other answers
+                document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
+                    if (otherAnswer !== answer) {
                         otherAnswer.classList.remove('active');
                         const otherIcon = otherAnswer.previousElementSibling.querySelector('i');
                         if (otherIcon) {
