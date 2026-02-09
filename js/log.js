@@ -339,9 +339,7 @@ class AppLogger {
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
-            if (!this.silenciarLogs) {
-                originalConsole.log(...args);
-            }
+            // Logs removidos para produção - não chamamos originalConsole.log
         };
         
         // Sobrescrever console.error - NUNCA SILENCIAR
@@ -374,9 +372,7 @@ class AppLogger {
                 message: args.join(' '),
                 timestamp: new Date().toISOString()
             });
-            if (!this.silenciarLogs) {
-                originalConsole.info(...args);
-            }
+            // Info logs removidos para produção - não chamamos originalConsole.info
         };
     }
     
@@ -389,9 +385,7 @@ class AppLogger {
             timestamp: new Date().toISOString()
         };
         this.logs.push(entry);
-        if (!this.silenciarLogs) {
-            console.log(`[LOG] ${message}`, data);
-        }
+        // Logs removidos para produção
         return entry;
     }
     
@@ -404,14 +398,7 @@ class AppLogger {
         };
         this.logs.push(entry);
         
-        if (!this.silenciarLogs) {
-            // Melhorar formatação do console
-            console.groupCollapsed(`%c[INFO] ${message}`, 'color: #2196F3; font-weight: bold;');
-            if (Object.keys(data).length > 0) {
-                console.log('Detalhes:', data);
-            }
-            console.groupEnd();
-        }
+        // Info logs removidos para produção
         
         return entry;
     }
@@ -511,61 +498,7 @@ class AppLogger {
         const status = this.getStatus();
         const scripts = Object.keys(this.performance.scripts);
         
-        if (!this.silenciarLogs) {
-            console.groupCollapsed(`%c🩺 Health Check do Aplicativo - ${status}`, 
-                status === 'HEALTHY' ? 'color: #4CAF50; font-weight: bold;' :
-                status === 'WITH_WARNINGS' ? 'color: #FF9800; font-weight: bold;' :
-                status === 'WITH_ERRORS' ? 'color: #F44336; font-weight: bold;' :
-                'color: #9C27B0; font-weight: bold;');
-            
-            console.log(`📊 Status: ${status}`);
-            console.log(`📦 Scripts carregados: ${scripts.length}`);
-            console.log(`❌ Erros: ${this.errors.length}`);
-            console.log(`⚠️  Warnings: ${this.warnings.length}`);
-            
-            if (this.performance.pageLoadTime) {
-                console.log(`⏱️  Tempo de carregamento: ${this.performance.pageLoadTime.toFixed(2)}ms`);
-            }
-            
-            // Mostrar scripts carregados
-            if (scripts.length > 0) {
-                console.groupCollapsed('📁 Scripts carregados:');
-                scripts.forEach((script, index) => {
-                    const data = this.performance.scripts[script];
-                    console.log(`${index + 1}. ${script}: ${data.loaded ? '✅' : '❌'} ${data.loadTime ? `(${data.loadTime.toFixed(2)}ms)` : ''}`);
-                });
-                console.groupEnd();
-            }
-            
-            // Listar scripts esperados mas não carregados
-            const missingScripts = this.expectedScripts.filter(script => 
-                !this.performance.scripts[script]
-            );
-            
-            if (missingScripts.length > 0) {
-                console.warn('🔍 Scripts esperados mas não encontrados:', missingScripts);
-            }
-            
-            // Mostrar erros recentes se houver
-            if (this.errors.length > 0) {
-                console.groupCollapsed(`❌ Últimos ${Math.min(3, this.errors.length)} erros:`);
-                this.errors.slice(-3).forEach((error, index) => {
-                    console.log(`${index + 1}. ${error.message || 'Erro sem mensagem'}`);
-                });
-                console.groupEnd();
-            }
-            
-            // Mostrar warnings recentes se houver
-            if (this.warnings.length > 0) {
-                console.groupCollapsed(`⚠️  Últimos ${Math.min(3, this.warnings.length)} warnings:`);
-                this.warnings.slice(-3).forEach((warning, index) => {
-                    console.log(`${index + 1}. ${warning.message || 'Warning sem mensagem'}`);
-                });
-                console.groupEnd();
-            }
-            
-            console.groupEnd();
-        }
+        // Health check info - removed console output for production
         
         return {
             status,
@@ -644,24 +577,15 @@ class AppLogger {
         if (scriptName) {
             const script = this.performance.scripts[scriptName];
             if (script) {
-                console.group(`🔍 Debug: ${scriptName}`);
-                console.log('Status:', script.loaded ? '✅ Carregado' : '❌ Falhou');
-                console.log('Tempo de carregamento:', script.loadTime ? `${script.loadTime.toFixed(2)}ms` : 'N/A');
-                console.log('Tamanho:', script.size);
-                console.groupEnd();
+                // Debug info - removed console output for production
                 return script;
             } else {
-                console.warn(`Script ${scriptName} não encontrado no monitoramento`);
+                // Script not found - removed console output for production
                 return null;
             }
         } else {
-            // Debug de todos os scripts
-            console.group('📊 Debug de todos os scripts');
-            Object.entries(this.performance.scripts).forEach(([name, data]) => {
-                console.log(`${name}:`, data.loaded ? '✅' : '❌', 
-                          data.loadTime ? `${data.loadTime.toFixed(2)}ms` : '');
-            });
-            console.groupEnd();
+            // Debug all scripts - removed console output for production
+            return this.performance.scripts;
         }
     }
     
@@ -739,6 +663,7 @@ class AppLogger {
     destroy() {
         // Restaurar console original
         if (console.__original__) {
+            // Restaurando console original - sem logs para produção
             console.log = console.__original__.log;
             console.error = console.__original__.error;
             console.warn = console.__original__.warn;
@@ -792,14 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         getLogStatus: () => window.appLogger.getSilenciarLogs()
                     };
                     
-                    if (!window.appLogger.silenciarLogs) {
-                        console.log('%c🔧 Debug tools disponíveis em window.debugApp', 'color: #4CAF50; font-weight: bold;');
-                        console.log('%c📝 Para verificar a saúde do app: debugApp.health()', 'color: #2196F3;');
-                        console.log('%c📊 Para ver relatório completo: debugApp.report()', 'color: #2196F3;');
-                        console.log('%c🔇 Para silenciar/ativar logs: debugApp.toggleLogs()', 'color: #FF9800;');
-                        console.log(`%c📋 Logs atualmente: ${window.appLogger.silenciarLogs ? 'SILENCIADOS' : 'ATIVOS'}`, 
-                            `color: ${window.appLogger.silenciarLogs ? '#F44336' : '#4CAF50'}; font-weight: bold;`);
-                    }
+                    // Debug tools available - removed console output for production
                 }
             }
             
@@ -813,10 +731,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 warnings: [],
                 performance: {},
                 silenciarLogs: false,
-                log: (msg, data) => console.log('[FALLBACK LOG]', msg, data),
+                log: (msg, data) => {}, // Removed for production
                 error: (msg, data) => console.error('[FALLBACK ERROR]', msg, data),
-                warning: (msg, data) => console.warn('[FALLBACK WARNING]', msg, data),
-                info: (msg, data) => console.info('[FALLBACK INFO]', msg, data),
+                warning: (msg, data) => {}, // Removed for production
+                info: (msg, data) => {}, // Removed for production
                 checkHealth: () => ({ status: 'FALLBACK_MODE', healthy: false })
             };
         }

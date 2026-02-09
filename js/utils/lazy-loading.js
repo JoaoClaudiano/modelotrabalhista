@@ -19,14 +19,10 @@ const isDevelopment = () => {
 // Helper para logs condicionais
 const lazyLog = {
     info: (...args) => {
-        if (isDevelopment()) {
-            console.log('[Lazy Loading]', ...args);
-        }
+        // Logs removidos para produção
     },
     warn: (...args) => {
-        if (isDevelopment()) {
-            console.warn('[Lazy Loading]', ...args);
-        }
+        // Warnings removidos para produção
     },
     error: (...args) => {
         // Erros são sempre logados
