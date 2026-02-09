@@ -69,7 +69,7 @@ const ESSENTIAL_RESOURCES = [
   '/js/storage.js',
   '/js/export.js',
   '/js/log.js',
-  '/js/analytics.js',
+  // '/js/analytics.js', // DISABLED: Analytics removed from cache
   '/js/acessibilidade.js',
   '/js/tour.js',
   '/models/templates.json',
