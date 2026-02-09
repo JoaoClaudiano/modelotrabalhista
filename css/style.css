@@ -1358,10 +1358,18 @@ section:not(.hero) {
     contain-intrinsic-size: auto 800px;
 }
 
-/* Reduce repaint/reflow on hover effects */
+/* Reduce repaint/reflow on hover effects - only during interaction */
+.model-card:hover,
+.model-card:focus-within,
+.feature-card:hover,
+.feature-card:focus-within {
+    will-change: transform;
+}
+
+/* Reset will-change after animation to save memory */
 .model-card,
 .feature-card {
-    will-change: transform;
+    will-change: auto;
 }
 
 /* Optimize animation performance for reduced motion preference */

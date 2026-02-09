@@ -1503,9 +1503,6 @@ ${data.employeePosition}`;
             });
         }, { passive: false }); // Must be false to use preventDefault
     }
-            });
-        });
-    }
 
     setupAccessibility() {
         if (!this.accessibility) return;
