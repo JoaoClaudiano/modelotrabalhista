@@ -1,7 +1,7 @@
 // Service Worker para ModeloTrabalhista PWA
-// Versão 1.25.0 - Fix para CSP cache e recursos externos
+// Versão 1.26.0 - Fix para CSP cache e recursos externos
 
-const CACHE_NAME = 'modelotrabalhista-v1.25';
+const CACHE_NAME = 'modelotrabalhista-v1.26';
 const OFFLINE_URL = '/index.html';
 
 // Regex para arquivos cacheáveis
