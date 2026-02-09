@@ -396,14 +396,34 @@ Data: __/__/______</pre>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 
-    <!-- UserWay Accessibility Widget -->
+    <!-- UserWay Accessibility Widget - Lazy Loading Implementation -->
     <script>
-        (function(d){
-            var s = d.createElement("script");
-            s.setAttribute("data-account", "kvF469tVWe");
-            s.setAttribute("src", "https://cdn.userway.org/widget.js");
-            (d.body || d.head).appendChild(s);
-        })(document);
+        // Lazy load UserWay widget on first user interaction
+        (function() {
+            let userWayLoaded = false;
+            
+            function loadUserWay() {
+                if (userWayLoaded) return;
+                userWayLoaded = true;
+                
+                var s = document.createElement("script");
+                s.setAttribute("data-account", "kvF469tVWe");
+                s.setAttribute("src", "https://cdn.userway.org/widget.js");
+                (document.body || document.head).appendChild(s);
+                
+                // Log when loaded (for debugging)
+                console.log('[UserWay] Widget loaded on user interaction');
+            }
+            
+            // Load on first user interaction - using 'once: true' for automatic cleanup
+            const events = ['click', 'touchstart', 'scroll', 'keydown'];
+            events.forEach(event => {
+                document.addEventListener(event, loadUserWay, { passive: true, once: true });
+            });
+            
+            // Fallback: Load after 3 seconds if no interaction
+            setTimeout(loadUserWay, 3000);
+        })();
     </script>
 
 </body>

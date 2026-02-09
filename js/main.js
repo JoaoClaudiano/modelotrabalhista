@@ -1472,28 +1472,36 @@ ${data.employeePosition}`;
     }
 
     setupSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
+        // Optimize INP: Use event delegation with passive listener for better performance
+        document.addEventListener('click', (e) => {
+            // Check if clicked element is an anchor with hash href
+            const anchor = e.target.closest('a[href^="#"]');
+            if (!anchor) return;
+            
+            const targetId = anchor.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) return;
+            
+            e.preventDefault();
+            
+            // Use requestAnimationFrame for smoother, non-blocking scroll
+            requestAnimationFrame(() => {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
                 
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    
-                    // Focus on target for keyboard users
+                // Debounce focus to avoid blocking main thread
+                // Focus on target for keyboard users after scroll completes
+                if (targetElement.tabIndex >= 0) {
                     setTimeout(() => {
-                        if (targetElement.tabIndex >= 0) {
-                            targetElement.focus();
-                        }
-                    }, 1000);
+                        targetElement.focus();
+                    }, 300); // Reduced from 1000ms for better responsiveness
                 }
             });
-        });
+        }, { passive: false }); // Must be false to use preventDefault
     }
 
     setupAccessibility() {

@@ -146,6 +146,14 @@ p {
     display: flex;
     list-style: none;
     gap: var(--space-lg);
+    /* Fix CLS: Set explicit height to prevent layout shift */
+    min-height: 48px;
+}
+
+.main-nav li {
+    /* Fix CLS: Reserve space for nav items */
+    display: flex;
+    align-items: center;
 }
 
 .main-nav a {
@@ -158,6 +166,8 @@ p {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     transition: all var(--transition-fast);
+    /* Fix CLS: Set explicit height */
+    min-height: 40px;
 }
 
 .main-nav a:hover,
@@ -265,6 +275,9 @@ p {
 
 .hero-image {
     position: relative;
+    /* Fix CLS: Reserve space with aspect ratio */
+    aspect-ratio: 4 / 3;
+    min-height: 400px;
 }
 
 .document-preview-card {
@@ -276,6 +289,9 @@ p {
     animation: float 3s ease-in-out infinite;
     max-height: 500px;
     overflow: hidden;
+    /* Fix CLS: Set explicit dimensions */
+    min-height: 400px;
+    width: 100%;
 }
 
 @keyframes float {
@@ -1317,103 +1333,52 @@ textarea.auto-resize {
     }
 }
 
+
+
 /* ==========================================
-   SKELETON SCREEN WITH SHIMMER EFFECT
+   PERFORMANCE OPTIMIZATIONS FOR CORE WEB VITALS
    ========================================== */
 
-/* Base skeleton class with shimmer animation */
-.skeleton {
-    background: linear-gradient(
-        90deg,
-        var(--light-color) 0%,
-        #e0e0e0 20%,
-        var(--light-color) 40%,
-        var(--light-color) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s ease-in-out infinite;
-    border-radius: var(--border-radius-sm);
-    cursor: default;
-    pointer-events: none;
-    user-select: none;
-    /* Força a animação na GPU para melhor performance */
-    will-change: background-position;
-    transform: translateZ(0);
-    backface-visibility: hidden;
+/* Optimize rendering of sections below fold */
+section:not(.hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
 }
 
-/* Garante que o texto interno fique transparente */
-.skeleton * {
-    color: transparent !important;
-    opacity: 0 !important;
-    pointer-events: none;
+/* Ensure critical hero section always renders */
+.hero {
+    content-visibility: visible;
 }
 
-/* Animação de shimmer otimizada para GPU */
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
+/* Optimize large lists/grids */
+.models-grid,
+.features-grid,
+.faq-list {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
 }
 
-/* Classe para transição suave quando o conteúdo carregar */
-.skeleton-loaded {
-    animation: fadeIn 0.4s ease-in;
+/* Reduce repaint/reflow on hover effects - only during interaction */
+.model-card:hover,
+.model-card:focus-within,
+.feature-card:hover,
+.feature-card:focus-within {
+    will-change: transform;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+/* Reset will-change after animation to save memory */
+.model-card,
+.feature-card {
+    will-change: auto;
 }
 
-/* Variações de skeleton para diferentes elementos */
-.skeleton-text {
-    height: 1em;
-    margin-bottom: 0.5em;
-}
-
-.skeleton-title {
-    height: 1.5em;
-    margin-bottom: 0.75em;
-    width: 60%;
-}
-
-.skeleton-avatar {
-    border-radius: 50%;
-}
-
-.skeleton-card {
-    border-radius: var(--border-radius);
-}
-
-.skeleton-button {
-    height: 40px;
-    border-radius: var(--border-radius-sm);
-}
-
-.skeleton-image {
-    border-radius: var(--border-radius-sm);
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Reduz motion para usuários com preferência de acessibilidade */
+/* Optimize animation performance for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-    .skeleton {
-        animation: none;
-        background: var(--light-color);
-    }
-    
-    .skeleton-loaded {
-        animation: none;
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
-

@@ -7,7 +7,7 @@
 class SkeletonManager {
     constructor() {
         this.loadingElements = new Set();
-        this.transitionDuration = 400; // Duração da transição em ms
+        this.transitionDuration = 150; // Duração da transição em ms (otimizado para performance)
     }
 
     /**
