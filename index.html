@@ -1433,7 +1433,10 @@
 
     <!-- JavaScript -->
     <!-- Core modules (defer for optimal performance) -->
-    <!-- log.js disabled for performance -->
+    <!-- log.js disabled for performance optimization -->
+    <!-- Note: AppLogger functionality is unavailable when log.js is disabled.
+         This means conditional logging checks like 'if (window.appLogger)' will skip logging.
+         To re-enable: <script src="/js/log.js?v=1770454479" defer></script> -->
     <script src="/js/ui.js?v=1770454479" defer></script>
     <script src="/js/main.js?v=1770454479" defer></script>
     

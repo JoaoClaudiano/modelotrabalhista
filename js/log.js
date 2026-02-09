@@ -2,7 +2,15 @@
 
 // ========== CONFIGURAÇÃO DE LOGS ==========
 // Flag para DESABILITAR completamente o sistema de logs
-// Para desabilitar, defina localStorage.setItem('DISABLE_APP_LOGGER', 'true')
+// IMPORTANTE: O logger está HABILITADO por padrão para permitir silenciamento automático em produção
+// 
+// Comportamento padrão (DISABLE_APP_LOGGER = false):
+// - Em desenvolvimento: Logs são mostrados no console
+// - Em produção: Logs são silenciados automaticamente (exceto console.error)
+// 
+// Para desabilitar completamente o logger (não recomendado):
+// localStorage.setItem('DISABLE_APP_LOGGER', 'true')
+// location.reload();
 const DISABLE_APP_LOGGER = (() => {
     // Verificar se há override para desabilitar via localStorage
     const disableOverride = localStorage.getItem('DISABLE_APP_LOGGER');
