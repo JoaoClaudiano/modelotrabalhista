@@ -76,3 +76,4 @@ secrets.json
 .firebaserc
 firebase-debug.log
 firestore-debug.log
+add-userway-widget.js

@@ -1827,13 +1827,26 @@
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                        if (window.appLogger) {
+                            window.appLogger.info('[Service Worker] Registered successfully. Scope: ' + registration.scope);
+                        }
                     })
                     .catch(function(error) {
-                        console.log('Erro ao registrar Service Worker:', error);
+                        console.error('[Service Worker] Registration failed:', error.message || error);
                     });
             });
         }
     </script>
+
+    <!-- UserWay Accessibility Widget -->
+    <script>
+        (function(d){
+            var s = d.createElement("script");
+            s.setAttribute("data-account", "kvF469tVWe");
+            s.setAttribute("src", "https://cdn.userway.org/widget.js");
+            (d.body || d.head).appendChild(s);
+        })(document);
+    </script>
+
 </body>
 </html>
