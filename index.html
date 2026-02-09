@@ -170,8 +170,8 @@
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     
-    <!-- Google Fonts with optimized async loading for better LCP -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
+    <!-- Google Fonts with font-display swap for better performance -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
     
     <!-- Preload styles loader -->
@@ -181,11 +181,10 @@
     <link rel="stylesheet" href="/css/style.css?v=1770454479">
     <link rel="stylesheet" href="/css/responsive.css?v=1770454479" media="screen and (max-width: 768px)">
     
-    <!-- Preload critical resources for better LCP -->
+    <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js?v=1770454479" as="script">
     <link rel="preload" href="js/ui.js?v=1770454479" as="script">
     <link rel="preload" href="js/generator.js?v=1770454479" as="script">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
     
     <!-- Critical CSS - Inline for fastest render -->
     <style>
@@ -1434,7 +1433,7 @@
 
     <!-- JavaScript -->
     <!-- Core modules (defer for optimal performance) -->
-    <!-- log.js disabled for performance -->
+    <script src="/js/log.js?v=1770454479" defer></script>
     <script src="/js/ui.js?v=1770454479" defer></script>
     <script src="/js/main.js?v=1770454479" defer></script>
     
@@ -1447,8 +1446,7 @@
     <script src="/js/export-handlers.js?v=1770454479" defer></script>
     
     <!-- Non-critical modules (async to not block rendering) -->
-    <!-- DISABLED: Analytics temporarily disabled for performance testing -->
-    <!-- <script src="/js/analytics.js?v=1770454479" async></script> -->
+    <script src="/js/analytics.js?v=1770454479" async></script>
     <!-- Tour.js loaded on-demand (lazy loaded after page is fully loaded) -->
     <script>
         // Flag para desabilitar o tour
@@ -1620,45 +1618,13 @@
         }
     </script>
 
-    <!-- UserWay Accessibility Widget - Lazy Loading Implementation -->
-    <script>
-        // Lazy load UserWay widget on first user interaction
-        (function() {
-            let userWayLoaded = false;
-            
-            function loadUserWay() {
-                if (userWayLoaded) return;
-                userWayLoaded = true;
-                
-                var s = document.createElement("script");
-                s.setAttribute("data-account", "kvF469tVWe");
-                s.setAttribute("src", "https://cdn.userway.org/widget.js");
-                (document.body || document.head).appendChild(s);
-                
-                // Log when loaded (for debugging)
-                console.log('[UserWay] Widget loaded on user interaction');
-            }
-            
-            // Load on first user interaction - using 'once: true' for automatic cleanup
-            const events = ['click', 'touchstart', 'scroll', 'keydown'];
-            events.forEach(event => {
-                document.addEventListener(event, loadUserWay, { passive: true, once: true });
-            });
-            
-            // Fallback: Load after 3 seconds if no interaction
-            setTimeout(loadUserWay, 3000);
-        })();
-    </script>
-
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        if (window.appLogger) {
-                            window.appLogger.info('[Service Worker] Registered successfully. Scope: ' + registration.scope);
-                        }
+                        console.log('[Service Worker] Registered successfully. Scope:', registration.scope);
                         
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
@@ -1666,9 +1632,7 @@
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // New version available
-                                    if (window.appLogger) {
-                                        window.appLogger.info('[Service Worker] New version available');
-                                    }
+                                    console.log('[Service Worker] New version available');
                                 }
                             });
                         });
