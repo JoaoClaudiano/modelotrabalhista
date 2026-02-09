@@ -152,6 +152,11 @@ function renderChart(data) {
         },
         options: {
             responsive: true,
+            layout: {
+                padding: {
+                    top: 30
+                }
+            },
             plugins: {
                 legend: { display: false },
                 datalabels: {
