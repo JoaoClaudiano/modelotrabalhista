@@ -7,6 +7,34 @@ const OFFLINE_URL = '/index.html';
 // Regex para arquivos cacheáveis
 const CACHEABLE_EXTENSIONS = /\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|json)$/;
 
+// ========== LOGGING HELPERS (Best Practice) ==========
+// Detecta se está em ambiente de desenvolvimento
+const isDevelopment = () => {
+  // Service Workers não têm acesso direto a location.hostname
+  // Mas podemos verificar através dos clients
+  return self.registration.scope.includes('localhost') || 
+         self.registration.scope.includes('127.0.0.1') ||
+         self.registration.scope.includes('.local');
+};
+
+// Helper para logs condicionais
+const swLog = {
+  info: (...args) => {
+    if (isDevelopment()) {
+      console.log('[Service Worker]', ...args);
+    }
+  },
+  warn: (...args) => {
+    if (isDevelopment()) {
+      console.warn('[Service Worker]', ...args);
+    }
+  },
+  error: (...args) => {
+    // Erros são sempre logados, mesmo em produção (importante para debug)
+    console.error('[Service Worker]', ...args);
+  }
+};
+
 /**
  * Remove query strings de versão (?v=...) para normalização de cache
  * Isso permite que o SW reconheça o mesmo arquivo mesmo com versões diferentes
@@ -20,7 +48,7 @@ function getCleanUrl(url) {
     urlObj.searchParams.delete('v');
     return urlObj.toString();
   } catch (error) {
-    console.warn('[Service Worker] URL inválida:', url, error);
+    // URL inválida - retornar URL original
     return url; // Retorna URL original se falhar
   }
 }
@@ -38,8 +66,7 @@ function isCacheable(url) {
     'cdnjs.cloudflare.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'cdn.jsdelivr.net',
-    'vlibras.gov.br'  // Adicionado para suporte ao VLibras
+    'cdn.jsdelivr.net'
   ];
   
   // Verifica se é do mesmo domínio ou de um CDN confiável
@@ -82,27 +109,27 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.22...');
+  swLog.info('Installing v1.22...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Pre-caching essential resources');
+        swLog.info('Pre-caching essential resources');
         return cache.addAll(ESSENTIAL_RESOURCES);
       })
       .then(() => {
-        console.log('[Service Worker] Installation completed successfully');
+        swLog.info('Installation completed successfully');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('[Service Worker] Installation error:', error.message || error);
+        swLog.error('Installation error:', error.message || error);
       })
   );
 });
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating v1.22...');
+  swLog.info('Activating v1.22...');
   
   event.waitUntil(
     caches.keys()
@@ -110,15 +137,15 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log('[Service Worker] Removing old cache:', cacheName);
+              swLog.info('Removing old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('[Service Worker] Activation completed successfully');
-        console.log('[Service Worker] Old CSP-affected caches have been cleared');
+        swLog.info('Activation completed successfully');
+        swLog.info('Old CSP-affected caches have been cleared');
         return self.clients.claim();
       })
   );

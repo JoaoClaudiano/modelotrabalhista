@@ -8,6 +8,32 @@
  * @author ModeloTrabalhista Performance Team
  */
 
+// ========== LOGGING HELPERS (Best Practice) ==========
+// Detectar ambiente de desenvolvimento
+const isDevelopment = () => {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1' ||
+           window.location.hostname.includes('.local');
+};
+
+// Helper para logs condicionais
+const lazyLog = {
+    info: (...args) => {
+        if (isDevelopment()) {
+            console.log('[Lazy Loading]', ...args);
+        }
+    },
+    warn: (...args) => {
+        if (isDevelopment()) {
+            console.warn('[Lazy Loading]', ...args);
+        }
+    },
+    error: (...args) => {
+        // Erros são sempre logados
+        console.error('[Lazy Loading]', ...args);
+    }
+};
+
 /**
  * Pré-carrega bibliotecas de exportação quando botões aparecem na viewport
  * Implementa estratégia de carregamento just-in-time para melhorar TTI
@@ -36,7 +62,7 @@ class ExportLibraryPreloader {
     init() {
         // Verificar suporte a Intersection Observer
         if (!('IntersectionObserver' in window)) {
-            console.warn('[Lazy Loading] IntersectionObserver não suportado, usando fallback');
+            lazyLog.warn('IntersectionObserver não suportado, usando fallback');
             this.fallbackInit();
             return;
         }
@@ -45,11 +71,11 @@ class ExportLibraryPreloader {
         const exportButtons = this.findExportButtons();
         
         if (exportButtons.length === 0) {
-            console.log('[Lazy Loading] Nenhum botão de exportação encontrado');
+            lazyLog.info('Nenhum botão de exportação encontrado');
             return;
         }
         
-        console.log(`[Lazy Loading] Observando ${exportButtons.length} botão(s) de exportação`);
+        lazyLog.info(`Observando ${exportButtons.length} botão(s) de exportação`);
         
         // Criar observer
         this.observer = new IntersectionObserver(
@@ -108,19 +134,19 @@ class ExportLibraryPreloader {
         }
         
         this.loading = true;
-        console.log('[Lazy Loading] Iniciando pré-carregamento de bibliotecas de exportação...');
+        lazyLog.info('Iniciando pré-carregamento de bibliotecas de exportação...');
         
         try {
             // Verificar se a instância documentExporter está disponível
             if (window.documentExporter && typeof window.documentExporter.loadLibraries === 'function') {
                 await window.documentExporter.loadLibraries();
-                console.log('[Lazy Loading] ✅ Bibliotecas pré-carregadas com sucesso');
+                lazyLog.info('✅ Bibliotecas pré-carregadas com sucesso');
                 this.preloaded = true;
             } else {
-                console.warn('[Lazy Loading] documentExporter ainda não foi inicializado');
+                lazyLog.warn('documentExporter ainda não foi inicializado');
             }
         } catch (error) {
-            console.warn('[Lazy Loading] ⚠️ Erro ao pré-carregar bibliotecas:', error);
+            lazyLog.warn('⚠️ Erro ao pré-carregar bibliotecas:', error);
         } finally {
             this.loading = false;
             
@@ -170,11 +196,11 @@ class ImageLazyLoader {
     init() {
         // Verificar suporte nativo
         if ('loading' in HTMLImageElement.prototype) {
-            console.log('[Lazy Loading] Usando loading="lazy" nativo do navegador');
+            lazyLog.info('Usando loading="lazy" nativo do navegador');
             return; // Navegador suporta nativamente
         }
         
-        console.log('[Lazy Loading] Implementando polyfill para lazy loading de imagens');
+        lazyLog.info('Implementando polyfill para lazy loading de imagens');
         
         // Encontrar imagens com data-src
         this.images = Array.from(document.querySelectorAll('img[data-src]'));
@@ -255,16 +281,16 @@ class DynamicModuleLoader {
             return this.loadedModules.get(moduleName);
         }
         
-        console.log(`[Dynamic Import] Carregando módulo: ${moduleName}`);
+        lazyLog.info(`Carregando módulo: ${moduleName}`);
         
         try {
             const module = await import(modulePath);
             this.loadedModules.set(moduleName, module);
-            console.log(`[Dynamic Import] ✅ Módulo ${moduleName} carregado`);
+            lazyLog.info(`✅ Módulo ${moduleName} carregado`);
             return module;
         } catch (error) {
             const errorMsg = `Falha ao carregar módulo '${moduleName}' de '${modulePath}': ${error.message}`;
-            console.error(`[Dynamic Import] ❌ ${errorMsg}`);
+            lazyLog.error(`❌ ${errorMsg}`);
             throw new Error(errorMsg);
         }
     }
@@ -307,7 +333,7 @@ function initLazyLoading() {
         dynamicLoader: new DynamicModuleLoader()
     };
     
-    console.log('[Lazy Loading] ✅ Utilitários inicializados');
+    lazyLog.info('✅ Utilitários inicializados');
 }
 
 // Auto-inicializar quando DOM estiver pronto
