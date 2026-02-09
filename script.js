@@ -152,8 +152,25 @@ function renderChart(data) {
         },
         options: {
             responsive: true,
+            layout: {
+                padding: {
+                    top: 30
+                }
+            },
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(value) {
+                        return formatCurrency(value);
+                    },
+                    color: '#1e293b',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
             },
             scales: {
                 y: { 
