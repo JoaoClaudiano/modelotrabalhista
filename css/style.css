@@ -1361,7 +1361,7 @@ textarea.auto-resize {
 
 /* Classe para transição suave quando o conteúdo carregar */
 .skeleton-loaded {
-    animation: fadeIn 0.4s ease-in;
+    animation: fadeIn 0.15s ease-in;
 }
 
 @keyframes fadeIn {
