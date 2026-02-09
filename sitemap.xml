@@ -258,6 +258,12 @@
         <priority>0.7</priority>
     </url>
     <url>
+        <loc>https://modelotrabalhista.pages.dev/Gensw_bf9dae9d2b794e5</loc>
+        <lastmod>2026-02-09T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
         <loc>https://modelotrabalhista.pages.dev/test-implementation</loc>
         <lastmod>2026-02-09T00:00:00.000Z</lastmod>
         <changefreq>monthly</changefreq>
