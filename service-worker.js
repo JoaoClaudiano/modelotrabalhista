@@ -20,7 +20,7 @@ function getCleanUrl(url) {
     urlObj.searchParams.delete('v');
     return urlObj.toString();
   } catch (error) {
-    console.warn('[Service Worker] URL inválida:', url, error);
+    // URL inválida - retornar URL original
     return url; // Retorna URL original se falhar
   }
 }
@@ -38,8 +38,7 @@ function isCacheable(url) {
     'cdnjs.cloudflare.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'cdn.jsdelivr.net',
-    'vlibras.gov.br'  // Adicionado para suporte ao VLibras
+    'cdn.jsdelivr.net'
   ];
   
   // Verifica se é do mesmo domínio ou de um CDN confiável
@@ -82,27 +81,27 @@ const ESSENTIAL_RESOURCES = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.22...');
+  // Installing v1.22...
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Pre-caching essential resources');
+        // Pre-caching essential resources
         return cache.addAll(ESSENTIAL_RESOURCES);
       })
       .then(() => {
-        console.log('[Service Worker] Installation completed successfully');
+        // Installation completed successfully
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('[Service Worker] Installation error:', error.message || error);
+        // Installation error (silent)
       })
   );
 });
 
 // Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating v1.22...');
+  // Activating v1.22...
   
   event.waitUntil(
     caches.keys()
@@ -110,15 +109,15 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log('[Service Worker] Removing old cache:', cacheName);
+              // Removing old cache
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('[Service Worker] Activation completed successfully');
-        console.log('[Service Worker] Old CSP-affected caches have been cleared');
+        // Activation completed successfully
+        // Old CSP-affected caches have been cleared
         return self.clients.claim();
       })
   );

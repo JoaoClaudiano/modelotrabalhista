@@ -663,65 +663,30 @@ class AnalyticsTracker {
     }
 }
 
-// Inicializar automaticamente (com opt-out check) - MODIFICADO
-document.addEventListener('DOMContentLoaded', () => {
-    // Aguardar um pouco para o log.js carregar primeiro
-    setTimeout(() => {
-        if (!localStorage.getItem('modelotrabalhista_analytics_opt_out')) {
-            try {
-                window.analytics = new AnalyticsTracker();
-                
-                // Log no logger se disponível
-                if (window.appLogger) {
-                    window.appLogger.info('AnalyticsTracker inicializado com sucesso');
-                }
-                
-                // Expor métodos globais para debugging
-                if (window.location.hostname === 'localhost' || 
-                    window.location.hostname.includes('127.0.0.1')) {
-                    window.debugAnalytics = {
-                        getReports: () => window.analytics.getReports(),
-                        getHealth: () => window.analytics.checkHealth(),
-                        clearData: () => window.analytics.clearUserData(),
-                        optOut: () => window.analytics.optOut(),
-                        optIn: () => window.analytics.optIn(),
-                        testError: () => window.analytics.trackError(new Error('Erro de teste')),
-                        testEvent: () => window.analytics.trackEvent('test_event', { test: true })
-                    };
-                    
-                    if (window.appLogger) {
-                        window.appLogger.info('Debug tools do analytics disponíveis em window.debugAnalytics');
-                    }
-                }
-                
-                // Integração com log.js: enviar métricas de performance
-                if (window.appLogger && window.appLogger.performance && window.appLogger.performance.pageLoadTime) {
-                    setTimeout(() => {
-                        window.analytics.trackPerformance({
-                            loadTime: window.appLogger.performance.pageLoadTime,
-                            timing: window.appLogger.performance.timing
-                        });
-                    }, 2000);
-                }
-                
-            } catch (error) {
-                console.error('Falha ao inicializar AnalyticsTracker:', error);
-                
-                // Registrar no logger se disponível
-                if (window.appLogger) {
-                    window.appLogger.error('Falha ao inicializar AnalyticsTracker', {
-                        error: error.message,
-                        stack: error.stack
-                    });
-                }
-            }
-        } else {
-            if (window.appLogger) {
-                window.appLogger.info('AnalyticsTracker opt-out ativo - não inicializado');
-            }
-        }
-    }, 500); // Aguarda 500ms para garantir que log.js carregou
-});
+// ANALYTICS DISABLED
+// Analytics has been disabled as per requirement.
+// To re-enable, remove this comment block and restore the original initialization code.
 
-// Exportar para uso global
+// Set opt-out flag to prevent any accidental initialization
+localStorage.setItem('modelotrabalhista_analytics_opt_out', 'true');
+
+// Export AnalyticsTracker class for compatibility (but don't initialize)
 window.AnalyticsTracker = AnalyticsTracker;
+
+// Provide a stub analytics object to prevent errors in code that references window.analytics
+window.analytics = {
+    trackEvent: () => {},
+    trackPageView: () => {},
+    trackDocumentGenerated: () => {},
+    trackModelSelected: () => {},
+    trackFormInteraction: () => {},
+    trackError: () => {},
+    trackUserAction: () => {},
+    trackPerformance: () => {},
+    trackScriptLoad: () => {},
+    trackAppHealth: () => {},
+    optOut: () => {},
+    optIn: () => {},
+    getReports: () => ({}),
+    checkHealth: () => ({ status: 'disabled' })
+};

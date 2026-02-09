@@ -1593,52 +1593,26 @@
         })();
     </script>
     
-    <!-- VLibras (deferred to improve FCP/LCP) -->
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-    </div>
-    
-    <!-- VLibras Script (defer for better performance) -->
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js?v=1770454479" defer></script>
-    <script defer>
-        // Initialize VLibras widget after script loads
-        // defer ensures this runs after DOMContentLoaded and vlibras-plugin.js is loaded
-        if (window.VLibras && window.VLibras.Widget) {
-            new window.VLibras.Widget('https://vlibras.gov.br/app');
-        } else {
-            // Fallback: wait for script to load
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.VLibras && window.VLibras.Widget) {
-                    new window.VLibras.Widget('https://vlibras.gov.br/app');
-                }
-            });
-        }
-    </script>
-
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        console.log('[Service Worker] Registered successfully. Scope:', registration.scope);
+                        // Service Worker registered successfully
                         
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New version available
-                                    console.log('[Service Worker] New version available');
+                                    // New version available (silent)
                                 }
                             });
                         });
                     })
                     .catch(function(error) {
-                        console.error('[Service Worker] Registration failed:', error.message || error);
+                        // Service Worker registration failed (silent)
                     });
             });
         }

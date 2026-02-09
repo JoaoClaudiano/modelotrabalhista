@@ -115,18 +115,9 @@
             .action-buttons { flex-direction: column; }
             .btn { width: 100%; justify-content: center; }
         }
-    </style>
-    <!-- VLibras Widget (Lazy Loaded) -->
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" defer></script>
-    <script>
+    </style><script>
       window.addEventListener('load', function() {
         setTimeout(function() {
-          if (window.VLibras && window.VLibras.Widget) {
-            new window.VLibras.Widget('https://vlibras.gov.br/app');
-          }
-        }, 1000);
-      });
-    </script>
 
 </head>
 <body>
