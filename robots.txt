@@ -12,9 +12,9 @@ Disallow: /node_modules/
 Disallow: /assets/temp/
 
 # Bloquear arquivos técnicos (wildcards - amplamente suportado)
-Disallow: *.json
-Disallow: *.js
-Disallow: *.css
+Allow: *.json
+Allow: *.js
+Allow: *.css
 
 # Bloquear arquivos específicos
 Disallow: /template.html
