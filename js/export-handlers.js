@@ -113,7 +113,9 @@
             }
         });
         
-        console.log(`[Export] Handler adicionado para exportação ${format}`);
+        if (window.appLogger) {
+            window.appLogger.info(`[Export] Handler adicionado para exportação ${format}`);
+        }
     }
     
     /**
@@ -174,7 +176,9 @@
      * Inicializa handlers para todos os botões de exportação
      */
     function initExportHandlers() {
-        console.log('[Export] Inicializando handlers de exportação...');
+        if (window.appLogger) {
+            window.appLogger.info('[Export] Inicializando handlers de exportação...');
+        }
         
         // Botões PDF
         const pdfButtons = document.querySelectorAll(CONFIG.selectors.exportPDF);
@@ -184,7 +188,9 @@
         const docxButtons = document.querySelectorAll(CONFIG.selectors.exportDOCX);
         docxButtons.forEach(button => addExportHandler(button, 'DOCX'));
         
-        console.log(`[Export] ${pdfButtons.length} botão(s) PDF e ${docxButtons.length} botão(s) DOCX configurados`);
+        if (window.appLogger) {
+            window.appLogger.info(`[Export] ${pdfButtons.length} botão(s) PDF e ${docxButtons.length} botão(s) DOCX configurados`);
+        }
     }
     
     /**
@@ -218,7 +224,9 @@
         
         initExportHandlers();
         
-        console.log('[Export] ✅ Sistema de exportação com lazy loading inicializado');
+        if (window.appLogger) {
+            window.appLogger.info('[Export] ✅ Sistema de exportação com lazy loading inicializado');
+        }
     }
     
     // Auto-inicializar

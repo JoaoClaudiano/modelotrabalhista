@@ -2,16 +2,16 @@
 
 // ========== CONFIGURAÇÃO DE LOGS ==========
 // Flag para DESABILITAR completamente o sistema de logs
-// Para re-habilitar, defina localStorage.setItem('ENABLE_APP_LOGGER', 'true')
+// Para desabilitar, defina localStorage.setItem('DISABLE_APP_LOGGER', 'true')
 const DISABLE_APP_LOGGER = (() => {
-    // Verificar se há override para habilitar via localStorage
-    const enableOverride = localStorage.getItem('ENABLE_APP_LOGGER');
-    if (enableOverride === 'true') {
-        return false; // Não desabilitar se explicitamente habilitado
+    // Verificar se há override para desabilitar via localStorage
+    const disableOverride = localStorage.getItem('DISABLE_APP_LOGGER');
+    if (disableOverride === 'true') {
+        return true; // Desabilitar se explicitamente desabilitado
     }
     
-    // Por padrão, desabilitar o logger
-    return true;
+    // Por padrão, habilitar o logger para que possa silenciar logs em produção
+    return false;
 })();
 
 // Flag para silenciar logs em produção
@@ -759,8 +759,8 @@ class AppLogger {
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar se o AppLogger está desabilitado
     if (DISABLE_APP_LOGGER) {
-        // AppLogger desabilitado por padrão
-        // Para habilitar: localStorage.setItem('ENABLE_APP_LOGGER', 'true')
+        // AppLogger desabilitado manualmente
+        // Para desabilitar: localStorage.setItem('DISABLE_APP_LOGGER', 'true')
         return; // Não inicializar
     }
     
