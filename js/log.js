@@ -1,6 +1,19 @@
 // log.js - Sistema de monitoramento e logging para ModeloTrabalhista
 
 // ========== CONFIGURAÇÃO DE LOGS ==========
+// Flag para DESABILITAR completamente o sistema de logs
+// Para re-habilitar, defina localStorage.setItem('ENABLE_APP_LOGGER', 'true')
+const DISABLE_APP_LOGGER = (() => {
+    // Verificar se há override para habilitar via localStorage
+    const enableOverride = localStorage.getItem('ENABLE_APP_LOGGER');
+    if (enableOverride === 'true') {
+        return false; // Não desabilitar se explicitamente habilitado
+    }
+    
+    // Por padrão, desabilitar o logger
+    return true;
+})();
+
 // Flag para silenciar logs em produção
 // Detecta automaticamente se está em produção ou permite configuração manual
 const SILENCIAR_LOGS = (() => {
@@ -744,6 +757,13 @@ class AppLogger {
 
 // Inicialização automática
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar se o AppLogger está desabilitado
+    if (DISABLE_APP_LOGGER) {
+        console.log('%c⚠️ AppLogger DESABILITADO', 'color: #FF9800; font-weight: bold;');
+        console.log('%cPara habilitar: localStorage.setItem("ENABLE_APP_LOGGER", "true") e recarregue a página', 'color: #9E9E9E;');
+        return; // Não inicializar
+    }
+    
     // Aguardar um pouco mais para garantir que todos os scripts começaram a carregar
     setTimeout(() => {
         try {

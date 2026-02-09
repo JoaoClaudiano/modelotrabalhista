@@ -1450,8 +1450,25 @@
     
     <!-- Tour.js loaded on-demand (lazy loaded after page is fully loaded) -->
     <script>
+        // Flag para desabilitar o tour
+        // Para habilitar: localStorage.setItem('ENABLE_APP_TOUR', 'true')
+        const DISABLE_APP_TOUR = (() => {
+            const enableOverride = localStorage.getItem('ENABLE_APP_TOUR');
+            if (enableOverride === 'true') {
+                return false; // Não desabilitar se explicitamente habilitado
+            }
+            return true; // Por padrão, desabilitar o tour
+        })();
+        
         // Lazy load tour.js after page is fully loaded
         window.addEventListener('load', function() {
+            // Verificar se o tour está desabilitado
+            if (DISABLE_APP_TOUR) {
+                console.log('%c⚠️ AppTour DESABILITADO', 'color: #FF9800; font-weight: bold;');
+                console.log('%cPara habilitar: localStorage.setItem("ENABLE_APP_TOUR", "true") e recarregue a página', 'color: #9E9E9E;');
+                return; // Não carregar o tour
+            }
+            
             setTimeout(function() {
                 const tourScript = document.createElement('script');
                 tourScript.src = 'js/tour.js';
