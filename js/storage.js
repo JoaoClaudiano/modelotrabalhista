@@ -5,8 +5,6 @@ class StorageManager {
         this.prefix = 'modelotrabalhista_';
         this.maxHistoryItems = 50;
         this.maxDrafts = 10;
-        // Cache para tracking de drafts - evita varredura de localStorage
-        this.draftKeys = null;
         this.init();
     }
 
@@ -20,31 +18,8 @@ class StorageManager {
             this.setDefaultSettings();
         }
         
-        // Inicializar cache de draft keys
-        this._initDraftCache();
-        
-        // Limpeza inicial de dados antigos - diferida para não bloquear inicialização
-        setTimeout(() => this.cleanupOldItems(), 0);
-    }
-    
-    // Inicializar cache de chaves de draft para evitar varreduras repetidas
-    _initDraftCache() {
-        try {
-            const cached = localStorage.getItem(`${this.prefix}draft_keys`);
-            this.draftKeys = cached ? new Set(JSON.parse(cached)) : new Set();
-        } catch (e) {
-            console.error('Erro ao carregar cache de drafts:', e);
-            this.draftKeys = new Set();
-        }
-    }
-    
-    // Salvar cache de chaves de draft
-    _saveDraftCache() {
-        try {
-            localStorage.setItem(`${this.prefix}draft_keys`, JSON.stringify([...this.draftKeys]));
-        } catch (e) {
-            console.error('Erro ao salvar cache de drafts:', e);
-        }
+        // Limpeza inicial de dados antigos
+        this.cleanupOldItems();
     }
 
     // ========== DADOS DO FORMULÁRIO ==========
@@ -56,9 +31,6 @@ class StorageManager {
                 savedAt: new Date().toISOString(),
                 model
             }));
-            // Atualizar cache de drafts
-            this.draftKeys.add(model);
-            this._saveDraftCache();
             return true;
         } catch (e) {
             // Tratar erro de quota excedida
@@ -71,9 +43,6 @@ class StorageManager {
                         savedAt: new Date().toISOString(),
                         model
                     }));
-                    // Atualizar cache de drafts
-                    this.draftKeys.add(model);
-                    this._saveDraftCache();
                     return true;
                 } catch (retryError) {
                     console.error('Erro ao salvar rascunho após limpeza:', retryError);
@@ -99,39 +68,26 @@ class StorageManager {
     clearDraft(model) {
         const key = `${this.prefix}draft_${model}`;
         localStorage.removeItem(key);
-        // Atualizar cache de drafts
-        this.draftKeys.delete(model);
-        this._saveDraftCache();
         return true;
     }
 
     getAllDrafts() {
         const drafts = [];
-        // Usar snapshot do Set para evitar problemas ao modificar durante iteração
-        const draftKeySnapshot = [...this.draftKeys];
-        
-        for (const model of draftKeySnapshot) {
-            const key = `${this.prefix}draft_${model}`;
-            try {
-                const item = localStorage.getItem(key);
-                if (item) {
-                    const draft = JSON.parse(item);
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            // Adicionar verificação de null para prevenir erros
+            if (key && key.startsWith(`${this.prefix}draft_`)) {
+                try {
+                    const draft = JSON.parse(localStorage.getItem(key));
                     drafts.push({
                         ...draft,
-                        key: model
+                        key: key.replace(`${this.prefix}draft_`, '')
                     });
-                } else {
-                    // Remover do cache se não existe mais
-                    this.draftKeys.delete(model);
+                } catch (e) {
+                    console.error('Erro ao parsear rascunho:', e);
                 }
-            } catch (e) {
-                console.error('Erro ao parsear rascunho:', e);
-                // Remover do cache se corrupto
-                this.draftKeys.delete(model);
             }
         }
-        // Salvar cache atualizado se houver mudanças
-        this._saveDraftCache();
         return drafts;
     }
 
@@ -414,22 +370,14 @@ class StorageManager {
 
     getStorageUsage() {
         let total = 0;
-        // Otimização: Calcular apenas chaves com nosso prefixo
-        const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
+            // Adicionar verificação de null
             if (key && key.startsWith(this.prefix)) {
-                keys.push(key);
-            }
-        }
-        
-        // Agora calcular o tamanho apenas das chaves relevantes
-        keys.forEach(key => {
-            const value = localStorage.getItem(key);
-            if (value) {
+                const value = localStorage.getItem(key);
                 total += (key.length + value.length) * 2; // Aproximação em bytes
             }
-        });
+        }
         
         return {
             bytes: total,

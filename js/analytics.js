@@ -1,4 +1,33 @@
 // analytics.js - Sistema de analytics aprimorado e integrado com log.js
+// DISABLED: Analytics is currently disabled for performance optimization
+// This file is kept in the repository for future reference but will not execute
+
+// Early return to prevent initialization
+if (true) { // Set to false to re-enable analytics
+    console.info('[Analytics] Analytics is currently disabled for performance optimization');
+    
+    // Export empty stubs to prevent errors in code that references analytics
+    window.AnalyticsTracker = class AnalyticsTrackerStub {
+        trackEvent() { return null; }
+        trackPageView() { return null; }
+        trackDocumentGenerated() { return null; }
+        trackModelSelected() { return null; }
+        trackFormInteraction() { return null; }
+        trackError() { return null; }
+        trackUserAction() { return null; }
+        trackPerformance() { return null; }
+        trackScriptLoad() { return null; }
+        trackAppHealth() { return null; }
+        getReports() { return { summary: {}, events: {}, documents: {} }; }
+        checkHealth() { return { status: 'disabled' }; }
+        optOut() { return null; }
+        optIn() { return null; }
+        clearUserData() { return null; }
+    };
+    
+    // Prevent further execution
+    throw new Error('Analytics disabled - execution halted');
+}
 
 class AnalyticsTracker {
     constructor() {
@@ -8,7 +37,6 @@ class AnalyticsTracker {
         this.eventsQueue = [];
         this.isSending = false;
         this.userId = this.getUserId();
-        this.queueInterval = null; // Referência para o interval para limpeza
         
         // Integração com log.js - verificar se já existe logger
         if (window.appLogger) {
@@ -25,43 +53,8 @@ class AnalyticsTracker {
         this.loadQueue();
         this.processQueue();
         
-        // Otimização: Usar Page Visibility API para pausar processamento quando página está oculta
-        this.setupVisibilityListener();
-        
-        // Enviar eventos pendentes periodicamente (somente quando visível)
-        this.queueInterval = setInterval(() => {
-            if (!document.hidden) {
-                this.processQueue();
-            }
-        }, 30000);
-    }
-    
-    // Otimização: Page Visibility API para economizar bateria e recursos
-    setupVisibilityListener() {
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // Página escondida - processar fila antes de pausar
-                this.processQueue();
-                if (window.appLogger) {
-                    window.appLogger.info('[Analytics] Página oculta, pausando processamento');
-                }
-            } else {
-                // Página visível novamente
-                if (window.appLogger) {
-                    window.appLogger.info('[Analytics] Página visível, retomando processamento');
-                }
-            }
-        });
-    }
-    
-    // Método para limpeza de recursos (chamado em beforeunload ou quando necessário)
-    cleanup() {
-        if (this.queueInterval) {
-            clearInterval(this.queueInterval);
-            this.queueInterval = null;
-        }
-        // Processar fila final antes de limpar
-        this.processQueue();
+        // Enviar eventos pendentes periodicamente
+        setInterval(() => this.processQueue(), 30000);
     }
 
     // ========== TRACKING DE EVENTOS ==========
