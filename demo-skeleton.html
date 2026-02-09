@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Sistema de Skeleton Screen | ModeloTrabalhista</title>
+    <meta name="description" content="Demonstração do sistema global de Skeleton Screen com Shimmer Effect">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://modelotrabalhista.pages.dev/demo-skeleton.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96x96.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <style>
+        /* Estilos específicos da demo */
+        .demo-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .demo-section {
+            margin-bottom: 3rem;
+        }
+        
+        .demo-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .demo-section p {
+            color: var(--gray-color);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* Estilos do Card de Perfil */
+        .profile-card {
+            background: var(--white-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: transform var(--transition-normal);
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            object-fit: cover;
+            background: var(--light-color);
+        }
+        
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            /* Define altura fixa para evitar Layout Shift */
+            min-height: 1.5rem;
+        }
+        
+        .profile-description {
+            font-size: 0.95rem;
+            color: var(--gray-color);
+            line-height: 1.5;
+            /* Define altura mínima para evitar Layout Shift */
+            min-height: 3rem;
+        }
+        
+        .profile-email {
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            margin-top: 0.75rem;
+            min-height: 1.25rem;
+        }
+        
+        /* Controles da Demo */
+        .demo-controls {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .demo-controls button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background var(--transition-fast);
+        }
+        
+        .demo-controls button:hover {
+            background: var(--primary-dark);
+        }
+        
+        .demo-controls button:active {
+            transform: scale(0.98);
+        }
+        
+        .demo-controls button.secondary {
+            background: var(--secondary-color);
+        }
+        
+        .demo-controls button.secondary:hover {
+            background: #086847;
+        }
+        
+        /* Code example */
+        .code-example {
+            background: var(--dark-color);
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-sm);
+            overflow-x: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+        
+        .code-example .comment {
+            color: #6272a4;
+        }
+        
+        .code-example .keyword {
+            color: #ff79c6;
+        }
+        
+        .code-example .string {
+            color: #f1fa8c;
+        }
+        
+        .code-example .function {
+            color: #50fa7b;
+        }
+        
+        /* Hero Section */
+        .demo-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 3rem;
+        }
+        
+        .demo-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-hero p {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-hero h1 {
+                font-size: 1.75rem;
+            }
+            
+            .demo-controls {
+                flex-direction: column;
+            }
+            
+            .demo-controls button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Hero -->
+    <div class="demo-container">
+        <div class="demo-hero">
+            <h1>🎨 Sistema de Skeleton Screen</h1>
+            <p>Demonstração do sistema global de Skeleton Screen com Shimmer Effect usando apenas CSS Puro e JavaScript Vanilla</p>
+        </div>
+        
+        <!-- Controles da Demo -->
+        <div class="demo-controls">
+            <button onclick="simulateLoading()">🔄 Simular Carregamento</button>
+            <button onclick="hideAllSkeletons()" class="secondary">✅ Mostrar Conteúdo</button>
+            <button onclick="resetDemo()">🔁 Resetar Demo</button>
+        </div>
+        
+        <!-- Seção 1: Exemplo de Cards de Perfil -->
+        <div class="demo-section">
+            <h2>📋 Exemplo: Cards de Perfil</h2>
+            <p>
+                Demonstração de como aplicar o skeleton screen em cards de perfil contendo avatar circular, 
+                nome, descrição e email. Os elementos mantêm seu tamanho real para evitar Layout Shift (CLS).
+            </p>
+            
+            <div class="demo-grid">
+                <!-- Card 1 -->
+                <div class="profile-card">
+                    <img 
+                        id="avatar1" 
+                        class="profile-avatar skeleton skeleton-avatar" 
+                        alt="Avatar de João Silva"
+                        data-src="https://i.pravatar.cc/150?img=12"
+                    >
+                    <h3 id="name1" class="profile-name skeleton skeleton-title">João Silva</h3>
+                    <p id="description1" class="profile-description skeleton skeleton-text">
+                        Desenvolvedor Full Stack com 5 anos de experiência em React, Node.js e TypeScript.
+                    </p>
+                    <p id="email1" class="profile-email skeleton skeleton-text">joao.silva@example.com</p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="profile-card">
+                    <img 
+                        id="avatar2" 
+                        class="profile-avatar skeleton skeleton-avatar" 
+                        alt="Avatar de Maria Santos"
+                        data-src="https://i.pravatar.cc/150?img=27"
+                    >
+                    <h3 id="name2" class="profile-name skeleton skeleton-title">Maria Santos</h3>
+                    <p id="description2" class="profile-description skeleton skeleton-text">
+                        Designer UX/UI especializada em design systems e interfaces acessíveis.
+                    </p>
+                    <p id="email2" class="profile-email skeleton skeleton-text">maria.santos@example.com</p>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="profile-card">
+                    <img 
+                        id="avatar3" 
+                        class="profile-avatar skeleton skeleton-avatar" 
+                        alt="Avatar de Pedro Costa"
+                        data-src="https://i.pravatar.cc/150?img=33"
+                    >
+                    <h3 id="name3" class="profile-name skeleton skeleton-title">Pedro Costa</h3>
+                    <p id="description3" class="profile-description skeleton skeleton-text">
+                        Engenheiro DevOps com expertise em AWS, Docker, Kubernetes e CI/CD.
+                    </p>
+                    <p id="email3" class="profile-email skeleton skeleton-text">pedro.costa@example.com</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção 2: Como Usar -->
+        <div class="demo-section">
+            <h2>💻 Como Usar</h2>
+            <p>
+                O sistema é extremamente simples de usar. Basta adicionar a classe <code>.skeleton</code> 
+                aos elementos que deseja exibir como loading state.
+            </p>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">1. HTML com Classes Skeleton</h3>
+            <div class="code-example">
+<span class="comment">&lt;!-- Adicione a classe .skeleton aos elementos durante o loading --&gt;</span>
+<span class="keyword">&lt;div</span> class=<span class="string">"profile-card"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;img</span> class=<span class="string">"profile-avatar skeleton skeleton-avatar"</span> alt=<span class="string">"Avatar"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;h3</span> class=<span class="string">"profile-name skeleton skeleton-title"</span><span class="keyword">&gt;</span>Nome<span class="keyword">&lt;/h3&gt;</span>
+    <span class="keyword">&lt;p</span> class=<span class="string">"profile-description skeleton skeleton-text"</span><span class="keyword">&gt;</span>Descrição<span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/div&gt;</span>
+            </div>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">2. JavaScript - Remover Skeleton</h3>
+            <div class="code-example">
+<span class="comment">// Remover skeleton de elementos específicos</span>
+<span class="function">hideSkeleton</span>(<span class="string">'.profile-avatar'</span>);
+
+<span class="comment">// Remover skeleton com delay</span>
+<span class="function">hideSkeleton</span>(<span class="string">'.profile-name'</span>, <span class="keyword">500</span>);
+
+<span class="comment">// Remover skeleton de todos os elementos</span>
+<span class="function">hideAllSkeletons</span>();
+
+<span class="comment">// Usar com carregamento assíncrono</span>
+<span class="keyword">await</span> <span class="function">loadWithSkeleton</span>(<span class="string">'.profile-card'</span>, <span class="keyword">async</span> () => {
+    <span class="keyword">const</span> data = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">'/api/profile'</span>);
+    <span class="comment">// Processar dados...</span>
+});
+            </div>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">3. Classes CSS Disponíveis</h3>
+            <div class="code-example">
+<span class="comment">/* Classes base */</span>
+.<span class="keyword">skeleton</span>          <span class="comment">/* Aplica o efeito shimmer */</span>
+.<span class="keyword">skeleton-loaded</span>   <span class="comment">/* Transição de fade-in */</span>
+
+<span class="comment">/* Classes utilitárias */</span>
+.<span class="keyword">skeleton-text</span>     <span class="comment">/* Para linhas de texto */</span>
+.<span class="keyword">skeleton-title</span>    <span class="comment">/* Para títulos */</span>
+.<span class="keyword">skeleton-avatar</span>   <span class="comment">/* Para avatares circulares */</span>
+.<span class="keyword">skeleton-card</span>     <span class="comment">/* Para cards */</span>
+.<span class="keyword">skeleton-button</span>   <span class="comment">/* Para botões */</span>
+.<span class="keyword">skeleton-image</span>    <span class="comment">/* Para imagens */</span>
+            </div>
+        </div>
+        
+        <!-- Seção 3: Características -->
+        <div class="demo-section">
+            <h2>✨ Características</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--border-radius);">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">⚡ Performance</h3>
+                    <p style="color: var(--gray-color); font-size: 0.9rem;">
+                        Animação otimizada para GPU usando transform e will-change
+                    </p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--border-radius);">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">🎯 Versatilidade</h3>
+                    <p style="color: var(--gray-color); font-size: 0.9rem;">
+                        Aplicável a qualquer elemento (div, span, img, button)
+                    </p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--border-radius);">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">♿ Acessibilidade</h3>
+                    <p style="color: var(--gray-color); font-size: 0.9rem;">
+                        Respeita preferência de reduced-motion do usuário
+                    </p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--border-radius);">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">📏 Zero Layout Shift</h3>
+                    <p style="color: var(--gray-color); font-size: 0.9rem;">
+                        Mantém dimensões reais para evitar CLS
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/utils/skeleton.js"></script>
+    <script>
+        // Função para simular carregamento de dados de uma API
+        function simulateLoading() {
+            // Mostra skeleton em todos os elementos
+            showSkeleton('.profile-avatar');
+            showSkeleton('.profile-name');
+            showSkeleton('.profile-description');
+            showSkeleton('.profile-email');
+            
+            // Simula carregamento de dados com delays diferentes
+            setTimeout(() => {
+                // Remove skeleton dos avatares primeiro
+                document.querySelectorAll('[data-src]').forEach(img => {
+                    img.src = img.getAttribute('data-src');
+                });
+                hideSkeleton('.profile-avatar');
+            }, 800);
+            
+            setTimeout(() => {
+                // Remove skeleton dos nomes
+                hideSkeleton('.profile-name');
+            }, 1200);
+            
+            setTimeout(() => {
+                // Remove skeleton das descrições
+                hideSkeleton('.profile-description');
+            }, 1600);
+            
+            setTimeout(() => {
+                // Remove skeleton dos emails
+                hideSkeleton('.profile-email');
+            }, 2000);
+        }
+        
+        // Função para resetar a demo
+        function resetDemo() {
+            // Remove o src das imagens
+            document.querySelectorAll('[data-src]').forEach(img => {
+                img.src = '';
+            });
+            
+            // Adiciona skeleton novamente
+            simulateLoading();
+        }
+        
+        // Inicializa a demo quando a página carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            // Simula carregamento inicial após um pequeno delay
+            setTimeout(() => {
+                simulateLoading();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
