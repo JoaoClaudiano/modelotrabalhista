@@ -1396,46 +1396,13 @@
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        if (window.appLogger) {
-                            window.appLogger.info('[Service Worker] Registered successfully. Scope: ' + registration.scope);
-                        }
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
                     })
                     .catch(function(error) {
-                        console.error('[Service Worker] Registration failed:', error.message || error);
+                        console.log('Erro ao registrar Service Worker:', error);
                     });
             });
         }
     </script>
-
-    <!-- UserWay Accessibility Widget - Lazy Loading Implementation -->
-    <script>
-        // Lazy load UserWay widget on first user interaction
-        (function() {
-            let userWayLoaded = false;
-            
-            function loadUserWay() {
-                if (userWayLoaded) return;
-                userWayLoaded = true;
-                
-                var s = document.createElement("script");
-                s.setAttribute("data-account", "kvF469tVWe");
-                s.setAttribute("src", "https://cdn.userway.org/widget.js");
-                (document.body || document.head).appendChild(s);
-                
-                // Log when loaded (for debugging)
-                console.log('[UserWay] Widget loaded on user interaction');
-            }
-            
-            // Load on first user interaction - using 'once: true' for automatic cleanup
-            const events = ['click', 'touchstart', 'scroll', 'keydown'];
-            events.forEach(event => {
-                document.addEventListener(event, loadUserWay, { passive: true, once: true });
-            });
-            
-            // Fallback: Load after 3 seconds if no interaction
-            setTimeout(loadUserWay, 3000);
-        })();
-    </script>
-
 </body>
 </html>

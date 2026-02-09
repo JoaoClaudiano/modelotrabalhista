@@ -45,15 +45,11 @@ class ExportLibraryPreloader {
         const exportButtons = this.findExportButtons();
         
         if (exportButtons.length === 0) {
-            if (window.appLogger) {
-                window.appLogger.info('[Lazy Loading] Nenhum botão de exportação encontrado');
-            }
+            console.log('[Lazy Loading] Nenhum botão de exportação encontrado');
             return;
         }
         
-        if (window.appLogger) {
-            window.appLogger.info(`[Lazy Loading] Observando ${exportButtons.length} botão(s) de exportação`);
-        }
+        console.log(`[Lazy Loading] Observando ${exportButtons.length} botão(s) de exportação`);
         
         // Criar observer
         this.observer = new IntersectionObserver(
@@ -112,17 +108,13 @@ class ExportLibraryPreloader {
         }
         
         this.loading = true;
-        if (window.appLogger) {
-            window.appLogger.info('[Lazy Loading] Iniciando pré-carregamento de bibliotecas de exportação...');
-        }
+        console.log('[Lazy Loading] Iniciando pré-carregamento de bibliotecas de exportação...');
         
         try {
             // Verificar se a instância documentExporter está disponível
             if (window.documentExporter && typeof window.documentExporter.loadLibraries === 'function') {
                 await window.documentExporter.loadLibraries();
-                if (window.appLogger) {
-                    window.appLogger.info('[Lazy Loading] ✅ Bibliotecas pré-carregadas com sucesso');
-                }
+                console.log('[Lazy Loading] ✅ Bibliotecas pré-carregadas com sucesso');
                 this.preloaded = true;
             } else {
                 console.warn('[Lazy Loading] documentExporter ainda não foi inicializado');
@@ -178,15 +170,11 @@ class ImageLazyLoader {
     init() {
         // Verificar suporte nativo
         if ('loading' in HTMLImageElement.prototype) {
-            if (window.appLogger) {
-                window.appLogger.info('[Lazy Loading] Usando loading="lazy" nativo do navegador');
-            }
+            console.log('[Lazy Loading] Usando loading="lazy" nativo do navegador');
             return; // Navegador suporta nativamente
         }
         
-        if (window.appLogger) {
-            window.appLogger.info('[Lazy Loading] Implementando polyfill para lazy loading de imagens');
-        }
+        console.log('[Lazy Loading] Implementando polyfill para lazy loading de imagens');
         
         // Encontrar imagens com data-src
         this.images = Array.from(document.querySelectorAll('img[data-src]'));
@@ -267,16 +255,12 @@ class DynamicModuleLoader {
             return this.loadedModules.get(moduleName);
         }
         
-        if (window.appLogger) {
-            window.appLogger.info(`[Dynamic Import] Carregando módulo: ${moduleName}`);
-        }
+        console.log(`[Dynamic Import] Carregando módulo: ${moduleName}`);
         
         try {
             const module = await import(modulePath);
             this.loadedModules.set(moduleName, module);
-            if (window.appLogger) {
-                window.appLogger.info(`[Dynamic Import] ✅ Módulo ${moduleName} carregado`);
-            }
+            console.log(`[Dynamic Import] ✅ Módulo ${moduleName} carregado`);
             return module;
         } catch (error) {
             const errorMsg = `Falha ao carregar módulo '${moduleName}' de '${modulePath}': ${error.message}`;
@@ -323,9 +307,7 @@ function initLazyLoading() {
         dynamicLoader: new DynamicModuleLoader()
     };
     
-    if (window.appLogger) {
-        window.appLogger.info('[Lazy Loading] ✅ Utilitários inicializados');
-    }
+    console.log('[Lazy Loading] ✅ Utilitários inicializados');
 }
 
 // Auto-inicializar quando DOM estiver pronto
