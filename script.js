@@ -153,7 +153,19 @@ function renderChart(data) {
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(value) {
+                        return formatCurrency(value);
+                    },
+                    color: '#1e293b',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
             },
             scales: {
                 y: { 
