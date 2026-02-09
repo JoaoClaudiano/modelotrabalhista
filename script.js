@@ -73,6 +73,18 @@ function calculateScenario(salary, start, end, vacVencidas, type) {
     const vacationDue = (vacVencidas / 30) * salary;
     const oneThird = (vacationProp + vacationDue) / 3;
 
+    // Initialize breakdown object
+    const breakdown = {
+        salaryBalance: salaryBalance,
+        vacationDue: vacationDue,
+        vacationProp: vacationProp,
+        oneThird: oneThird,
+        thirteenth: 0,
+        notice: 0,
+        fgtsFine: 0,
+        total: 0
+    };
+
     let total = salaryBalance + vacationDue + vacationProp + oneThird;
 
     // 4. Regras Específicas de cada Tipo de Demissão
@@ -86,10 +98,14 @@ function calculateScenario(salary, start, end, vacVencidas, type) {
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
         const fgtsFine = fgtsAccumulated * 0.40;
         
+        breakdown.thirteenth = thirteenth;
+        breakdown.notice = noticeValue;
+        breakdown.fgtsFine = fgtsFine;
         total += thirteenth + noticeValue + fgtsFine;
     } 
     else if (type === 'resignation') {
         // Pedido de demissão: recebe 13º, mas não tem aviso nem multa FGTS
+        breakdown.thirteenth = thirteenth;
         total += thirteenth;
     }
     else if (type === 'withCause') {
@@ -97,7 +113,8 @@ function calculateScenario(salary, start, end, vacVencidas, type) {
         total = salaryBalance + vacationDue;
     }
 
-    return total;
+    breakdown.total = total;
+    return breakdown;
 }
 
 /**
@@ -111,12 +128,10 @@ function updateUI(scenarios) {
     if (initialMsg) initialMsg.style.display = 'none';
     if (resultArea) resultArea.style.display = 'block';
 
-    // Destaque do valor principal (Sem Justa Causa)
+    // Mostra o detalhamento do cenário Sem Justa Causa por padrão
     const highlight = document.getElementById('totalHighlight');
     if (highlight) {
-        highlight.innerHTML = `
-            Sem Justa Causa: <span style="color: #2563eb;">${formatCurrency(scenarios.withoutCause)}</span>
-        `;
+        highlight.innerHTML = generateDetailedBreakdown(scenarios.withoutCause, 'Demissão sem Justa Causa');
     }
 
     renderChart(scenarios);
@@ -125,6 +140,61 @@ function updateUI(scenarios) {
     if (window.innerWidth < 768) {
         resultArea.scrollIntoView({ behavior: 'smooth' });
     }
+}
+
+/**
+ * Gera o HTML do detalhamento completo do cálculo
+ */
+function generateDetailedBreakdown(breakdown, title) {
+    let items = [];
+    
+    if (breakdown.salaryBalance > 0) {
+        items.push({ label: 'Saldo de Salário', value: breakdown.salaryBalance });
+    }
+    if (breakdown.vacationDue > 0) {
+        items.push({ label: 'Férias Vencidas', value: breakdown.vacationDue });
+    }
+    if (breakdown.vacationProp > 0) {
+        items.push({ label: 'Férias Proporcionais', value: breakdown.vacationProp });
+    }
+    if (breakdown.oneThird > 0) {
+        items.push({ label: '1/3 de Férias', value: breakdown.oneThird });
+    }
+    if (breakdown.thirteenth > 0) {
+        items.push({ label: '13º Salário Proporcional', value: breakdown.thirteenth });
+    }
+    if (breakdown.notice > 0) {
+        items.push({ label: 'Aviso Prévio Indenizado', value: breakdown.notice });
+    }
+    if (breakdown.fgtsFine > 0) {
+        items.push({ label: 'Multa 40% FGTS', value: breakdown.fgtsFine });
+    }
+
+    let html = `
+        <div class="breakdown-header">
+            <h4>${title}</h4>
+        </div>
+        <div class="breakdown-items">
+    `;
+    
+    items.forEach(item => {
+        html += `
+            <div class="breakdown-item">
+                <span class="breakdown-label">${item.label}</span>
+                <span class="breakdown-value">${formatCurrency(item.value)}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+        </div>
+        <div class="breakdown-total">
+            <span class="breakdown-label">Total a Receber</span>
+            <span class="breakdown-value">${formatCurrency(breakdown.total)}</span>
+        </div>
+    `;
+    
+    return html;
 }
 
 /**
@@ -145,7 +215,7 @@ function renderChart(data) {
             labels: ['Sem Justa Causa', 'Pedido', 'Justa Causa'],
             datasets: [{
                 label: 'Total a Receber',
-                data: [data.withoutCause, data.resignation, data.withCause],
+                data: [data.withoutCause.total, data.resignation.total, data.withCause.total],
                 backgroundColor: ['#2563eb', '#64748b', '#ef4444'], // Azul, Cinza, Vermelho
                 borderRadius: 8
             }]
