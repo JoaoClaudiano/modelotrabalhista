@@ -1050,6 +1050,7 @@ textarea.form-control {
     
     .mobile-menu-btn {
         display: flex;
+        margin-right: -0.5rem;
     }
     
     .models-grid {
