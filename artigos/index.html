@@ -1407,6 +1407,13 @@
         /* Estilos específicos para o hub de artigos */
         .articles-hub {
             padding: var(--space-xl) 0;
+            /* Fix CLS: Reserve space for content */
+            min-height: 100vh;
+        }
+        
+        .articles-hub .container {
+            /* Fix CLS: Set explicit min-height to prevent layout shift */
+            min-height: 800px;
         }
         
         .hub-header {

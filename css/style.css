@@ -146,6 +146,14 @@ p {
     display: flex;
     list-style: none;
     gap: var(--space-lg);
+    /* Fix CLS: Set explicit height to prevent layout shift */
+    min-height: 48px;
+}
+
+.main-nav li {
+    /* Fix CLS: Reserve space for nav items */
+    display: flex;
+    align-items: center;
 }
 
 .main-nav a {
@@ -158,6 +166,8 @@ p {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     transition: all var(--transition-fast);
+    /* Fix CLS: Set explicit height */
+    min-height: 40px;
 }
 
 .main-nav a:hover,
@@ -265,6 +275,9 @@ p {
 
 .hero-image {
     position: relative;
+    /* Fix CLS: Reserve space with aspect ratio */
+    aspect-ratio: 4 / 3;
+    min-height: 400px;
 }
 
 .document-preview-card {
@@ -276,6 +289,9 @@ p {
     animation: float 3s ease-in-out infinite;
     max-height: 500px;
     overflow: hidden;
+    /* Fix CLS: Set explicit dimensions */
+    min-height: 400px;
+    width: 100%;
 }
 
 @keyframes float {
@@ -1318,3 +1334,43 @@ textarea.auto-resize {
 }
 
 
+
+/* ==========================================
+   PERFORMANCE OPTIMIZATIONS FOR CORE WEB VITALS
+   ========================================== */
+
+/* Optimize rendering of sections below fold */
+section:not(.hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+}
+
+/* Ensure critical hero section always renders */
+.hero {
+    content-visibility: visible;
+}
+
+/* Optimize large lists/grids */
+.models-grid,
+.features-grid,
+.faq-list {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
+}
+
+/* Reduce repaint/reflow on hover effects */
+.model-card,
+.feature-card {
+    will-change: transform;
+}
+
+/* Optimize animation performance for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

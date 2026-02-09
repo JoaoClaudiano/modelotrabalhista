@@ -172,6 +172,7 @@
     
     <!-- Google Fonts with font-display swap for better performance -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
     
     <!-- Preload styles loader -->
@@ -181,10 +182,11 @@
     <link rel="stylesheet" href="/css/style.css?v=1770454479">
     <link rel="stylesheet" href="/css/responsive.css?v=1770454479" media="screen and (max-width: 768px)">
     
-    <!-- Preload critical resources -->
+    <!-- Preload critical resources for better LCP -->
     <link rel="preload" href="js/main.js?v=1770454479" as="script">
     <link rel="preload" href="js/ui.js?v=1770454479" as="script">
     <link rel="preload" href="js/generator.js?v=1770454479" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Critical CSS - Inline for fastest render -->
     <style>
