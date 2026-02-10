@@ -6,6 +6,7 @@ This document describes the optimizations implemented to improve Core Web Vitals
 ## Problem Statement
 1. **Long Tasks Issue**: AdSense scripts (show_ads_impl.js) and gtag.js were generating "Long Tasks" exceeding 5000ms, blocking the main thread and freezing the browser.
 2. **LCP Delay**: The responsive.css file and FontAwesome fonts (fa-solid-900.woff2) were delaying Largest Contentful Paint.
+3. **FOUC Issue**: With responsive.css loading asynchronously, there was a brief Flash of Unstyled Content where the header/menu appeared unstyled.
 
 ## Solutions Implemented
 
@@ -94,6 +95,124 @@ When updating critical styles, both files must be kept in sync.
       as="font" type="font/woff2" crossorigin>
 ```
 
+### 4. FOUC Prevention for Header/Menu ✅
+
+#### Problem Identified
+When responsive.css loads asynchronously, there can be a brief Flash of Unstyled Content (FOUC) where the header and navigation menu appear without proper styling. This creates a poor user experience with visual "jumping" as styles are applied.
+
+#### What Changed
+- Extracted all critical header and navigation styles from style.css
+- Inlined these styles directly in the `<head>` section of index.html
+- Added complete responsive navigation styles for mobile and tablet breakpoints
+- Updated critical-responsive.css source file to include navigation styles
+
+#### Technical Details
+
+**Inlined Base Header Styles (All Devices):**
+```css
+/* Base Header Styles - Prevent FOUC */
+.main-header {
+    background-color: var(--white-color);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: var(--space-sm) 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: var(--space-lg);
+}
+
+.mobile-menu-btn {
+    display: none;
+    /* Hidden by default on desktop */
+}
+```
+
+**Inlined Mobile Navigation Styles:**
+```css
+@media (max-width: 480px) {
+    .mobile-menu-btn {
+        display: block !important;
+        font-size: 1.3rem !important;
+        padding: 8px !important;
+        background: transparent !important;
+        border: 2px solid var(--primary-color) !important;
+    }
+    
+    .main-nav ul {
+        position: fixed !important;
+        top: 70px !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: calc(100vh - 70px) !important;
+        background: var(--white-color) !important;
+        flex-direction: column !important;
+        transition: left 0.3s ease !important;
+        z-index: 999 !important;
+    }
+    
+    .main-nav ul.active {
+        left: 0 !important;
+    }
+}
+```
+
+**Inlined Tablet Navigation Styles:**
+```css
+@media (min-width: 481px) and (max-width: 768px) {
+    .main-nav ul {
+        display: none !important;
+    }
+    
+    .mobile-menu-btn {
+        display: block !important;
+        font-size: 1.5rem !important;
+    }
+}
+```
+
+#### Files Modified
+- `index.html` - Added ~90 lines of inline header/menu CSS
+- `css/critical-responsive.css` - Updated with complete navigation styles
+
+#### Before vs After
+
+**Before (With FOUC):**
+- Header appears as plain HTML for a few milliseconds
+- Links show as blue underlined text
+- No sticky positioning
+- Navigation appears vertical/unstyled
+- Visual "jump" when responsive.css loads
+
+**After (FOUC Fixed):**
+- Header renders styled immediately
+- Proper flexbox layout from first paint
+- Sticky positioning works from start
+- Navigation properly positioned
+- No visual jumping or flashing
+
+#### Scope
+This fix only applies to `index.html` as it's the only page loading responsive.css asynchronously. Other pages (modelos/, pages/, artigos/) load style.css synchronously and don't experience FOUC.
+
 ## Performance Impact
 
 ### Metrics Improvement (Expected)
@@ -136,6 +255,18 @@ When updating critical styles, both files must be kept in sync.
 - [x] Responsive styles apply correctly
 - [x] FontAwesome icons render properly
 - [x] No JavaScript console errors
+- [x] Header renders styled from first paint (no FOUC)
+- [x] Mobile navigation works correctly
+- [x] Tablet navigation works correctly
+
+### FOUC Testing
+To verify no Flash of Unstyled Content:
+1. Open index.html in Chrome DevTools
+2. Go to Network tab → Throttling → "Slow 3G"
+3. Hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+4. Observe the header during page load
+5. Expected: Header should appear fully styled immediately
+6. Expected: No visual "jumping" or style changes when responsive.css loads
 
 ### Performance Testing
 Use Chrome DevTools or PageSpeed Insights:
@@ -209,7 +340,15 @@ Enable console logging by opening DevTools. Look for these messages:
 
 ## Changelog
 
-### Version 1.0.0 (2026-02-10)
+### Version 1.1.0 (2026-02-10) - FOUC Fix
+- ✅ Added inline header/menu styles to prevent Flash of Unstyled Content
+- ✅ Inlined ~90 lines of critical header CSS in index.html
+- ✅ Added complete mobile navigation styles (fixed positioning, transitions)
+- ✅ Added tablet navigation styles (hide desktop nav, show mobile button)
+- ✅ Updated css/critical-responsive.css with navigation styles
+- ✅ Verified no FOUC occurs on page load with slow network throttling
+
+### Version 1.0.0 (2026-02-10) - Initial Release
 - ✅ Implemented lazy loading for AdSense and Google Analytics
 - ✅ Inlined critical responsive CSS
 - ✅ Optimized FontAwesome loading
@@ -218,16 +357,18 @@ Enable console logging by opening DevTools. Look for these messages:
 
 ## Credits & References
 
-- **Problem identified by**: User requirement for CNS optimization
+- **Problem identified by**: User requirement for CWV optimization and FOUC prevention
 - **Implementation by**: GitHub Copilot AI Agent
 - **Testing**: Automated + Manual validation
 - **References**:
   - [Web.dev Core Web Vitals](https://web.dev/vitals/)
   - [Google PageSpeed Insights](https://pagespeed.web.dev/)
   - [Lazy Loading Best Practices](https://web.dev/lazy-loading/)
+  - [Critical CSS Best Practices](https://web.dev/extract-critical-css/)
+  - [FOUC Prevention Techniques](https://webkit.org/blog/66/the-fouc-problem/)
 
 ---
 
 **Last Updated**: 2026-02-10
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Status**: ✅ Production Ready
