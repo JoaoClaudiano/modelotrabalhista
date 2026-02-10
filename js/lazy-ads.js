@@ -33,6 +33,11 @@
         // Create dataLayer if not exists
         window.dataLayer = window.dataLayer || [];
         
+        // Define gtag function before script loads using rest parameters
+        window.gtag = function(...args) {
+            window.dataLayer.push(args);
+        };
+        
         // Load gtag script
         const gtagScript = document.createElement('script');
         gtagScript.async = true;
@@ -41,14 +46,9 @@
         
         // Initialize gtag after script loads
         gtagScript.onload = function() {
-            // Use the gtag function provided by the loaded script
-            if (window.gtag) {
-                window.gtag('js', new Date());
-                window.gtag('config', 'G-TV6810LM29');
-                console.log('[Lazy Ads] Google Analytics loaded and configured');
-            } else {
-                console.warn('[Lazy Ads] gtag function not available after script load');
-            }
+            window.gtag('js', new Date());
+            window.gtag('config', 'G-TV6810LM29');
+            console.log('[Lazy Ads] Google Analytics loaded and configured');
         };
     }
     

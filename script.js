@@ -6,6 +6,52 @@
 let myChart = null;
 let currentScenarios = null; // Store scenarios globally for chart interaction
 let selectedScenario = 'withoutCause'; // Default selected scenario
+let chartJsLoaded = false; // Flag to track Chart.js loading
+
+/**
+ * Lazy load Chart.js library
+ * Only loads when user clicks calculate button
+ */
+function loadChartJs() {
+    return new Promise((resolve, reject) => {
+        if (chartJsLoaded) {
+            resolve();
+            return;
+        }
+        
+        // Load Chart.js with version pinning for security and stability
+        const chartScript = document.createElement('script');
+        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1';
+        chartScript.async = true;
+        
+        chartScript.onload = function() {
+            // Load Chart.js datalabels plugin with version pinning
+            const pluginScript = document.createElement('script');
+            pluginScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0';
+            pluginScript.async = true;
+            
+            pluginScript.onload = function() {
+                chartJsLoaded = true;
+                console.log('[Lazy Load] Chart.js and plugins loaded successfully');
+                resolve();
+            };
+            
+            pluginScript.onerror = function() {
+                console.error('[Lazy Load] Failed to load Chart.js plugin');
+                reject(new Error('Failed to load Chart.js plugin'));
+            };
+            
+            document.head.appendChild(pluginScript);
+        };
+        
+        chartScript.onerror = function() {
+            console.error('[Lazy Load] Failed to load Chart.js');
+            reject(new Error('Failed to load Chart.js'));
+        };
+        
+        document.head.appendChild(chartScript);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Configurar datas padrão (Admissão há 1 ano, Saída hoje)
@@ -26,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Função principal que dispara os cálculos e atualiza o gráfico
  */
-function calculateSeverance() {
+async function calculateSeverance() {
     const salary = parseFloat(document.getElementById('salary').value);
     const admissionDate = new Date(document.getElementById('admissionDate').value);
     const dismissalDate = new Date(document.getElementById('dismissalDate').value);
@@ -42,6 +88,13 @@ function calculateSeverance() {
     if (dismissalDate <= admissionDate) {
         alert("A data de saída deve ser posterior à data de admissão.");
         return;
+    }
+
+    // Lazy load Chart.js before calculating
+    try {
+        await loadChartJs();
+    } catch (error) {
+        console.error('[Lazy Load] Failed to load Chart.js, proceeding without chart:', error);
     }
 
     // Calculamos os 3 cenários simultaneamente para o gráfico
@@ -229,6 +282,12 @@ function generateDetailedBreakdown(breakdown, title) {
 function renderChart(data) {
     const canvas = document.getElementById('comparisonChart');
     if (!canvas) return;
+    
+    // Check if Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+        console.warn('[Chart] Chart.js not loaded yet, skipping chart render');
+        return;
+    }
     
     const ctx = canvas.getContext('2d');
     

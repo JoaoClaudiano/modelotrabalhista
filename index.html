@@ -325,9 +325,7 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479" as="style">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479"></noscript>
     
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script>
+    <!-- Chart.js for data visualization - Lazy loaded when needed -->
     
     <!-- Google Fonts with font-display swap for better performance -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" as="style">
@@ -682,8 +680,13 @@
             min-height: 400px;
         }
         
+        #resultArea {
+            min-height: 400px;
+        }
+        
         #comparisonChart {
             max-height: 300px;
+            min-height: 300px;
             width: 100%;
         }
         
