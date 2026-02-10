@@ -660,14 +660,14 @@ class UIHelper {
         } else {
             // Read layout properties first (before writing)
             const container = element.parentElement;
-            const originalHeight = container ? element.scrollHeight : 0;
+            const originalHeight = element && container ? element.scrollHeight : 0;
             
             // Apply zoom transform for non-100% zoom levels
             element.style.transform = `scale(${this.currentZoom / 100})`;
             element.style.transformOrigin = 'top left';
             
             // Apply container height after reading (prevents forced reflow)
-            if (container) {
+            if (container && originalHeight > 0) {
                 container.style.height = `${originalHeight * (this.currentZoom / 100)}px`;
             }
         }
