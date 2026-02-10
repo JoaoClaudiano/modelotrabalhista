@@ -4,6 +4,8 @@
  */
 
 let myChart = null;
+let currentScenarios = null; // Store scenarios globally for chart interaction
+let selectedScenario = 'withoutCause'; // Default selected scenario
 
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Configurar datas padrão (Admissão há 1 ano, Saída hoje)
@@ -29,6 +31,7 @@ function calculateSeverance() {
     const admissionDate = new Date(document.getElementById('admissionDate').value);
     const dismissalDate = new Date(document.getElementById('dismissalDate').value);
     const vacationBalance = parseInt(document.getElementById('vacationBalance').value) || 0;
+    const willWorkNotice = document.getElementById('noticeToggle')?.checked ?? false;
 
     // Validação básica
     if (!salary || isNaN(admissionDate) || isNaN(dismissalDate)) {
@@ -43,10 +46,16 @@ function calculateSeverance() {
 
     // Calculamos os 3 cenários simultaneamente para o gráfico
     const scenarios = {
-        withoutCause: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'withoutCause'),
-        resignation: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'resignation'),
-        withCause: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'withCause')
+        withoutCause: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'withoutCause', willWorkNotice),
+        resignation: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'resignation', willWorkNotice),
+        withCause: calculateScenario(salary, admissionDate, dismissalDate, vacationBalance, 'withCause', willWorkNotice)
     };
+    
+    // Store scenarios globally for chart interaction
+    currentScenarios = scenarios;
+    
+    // Reset to default scenario
+    selectedScenario = 'withoutCause';
 
     updateUI(scenarios);
 }
@@ -54,7 +63,7 @@ function calculateSeverance() {
 /**
  * Motor de Cálculo baseado na CLT vigente
  */
-function calculateScenario(salary, start, end, vacVencidas, type) {
+function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice = false) {
     const salaryPerDay = salary / 30;
     
     // 1. Saldo de Salário (dias trabalhados no mês da saída)
@@ -92,7 +101,9 @@ function calculateScenario(salary, start, end, vacVencidas, type) {
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
-        const noticeValue = (salary / 30) * Math.min(noticeDays, 90);
+        // If employee will work the notice, they receive salary (not indemnified aviso prévio)
+        // If not working notice, they receive aviso prévio indenizado
+        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
@@ -100,6 +111,7 @@ function calculateScenario(salary, start, end, vacVencidas, type) {
         
         breakdown.thirteenth = thirteenth;
         breakdown.notice = noticeValue;
+        breakdown.noticeWorked = willWorkNotice;
         breakdown.fgtsFine = fgtsFine;
         total += thirteenth + noticeValue + fgtsFine;
     } 
@@ -166,6 +178,9 @@ function generateDetailedBreakdown(breakdown, title) {
     if (breakdown.notice > 0) {
         items.push({ label: 'Aviso Prévio Indenizado', value: breakdown.notice });
     }
+    if (breakdown.noticeWorked) {
+        items.push({ label: 'Aviso Prévio', value: 0, note: 'Será trabalhado' });
+    }
     if (breakdown.fgtsFine > 0) {
         items.push({ label: 'Multa 40% FGTS', value: breakdown.fgtsFine });
     }
@@ -178,10 +193,11 @@ function generateDetailedBreakdown(breakdown, title) {
     `;
     
     items.forEach(item => {
+        const valueDisplay = item.note ? `<span style="color: #64748b; font-size: 0.85rem;">${item.note}</span>` : formatCurrency(item.value);
         html += `
             <div class="breakdown-item">
                 <span class="breakdown-label">${item.label}</span>
-                <span class="breakdown-value">${formatCurrency(item.value)}</span>
+                <span class="breakdown-value">${valueDisplay}</span>
             </div>
         `;
     });
@@ -251,9 +267,47 @@ function renderChart(data) {
                         }
                     }
                 }
+            },
+            onClick: function(event, activeElements) {
+                if (activeElements.length > 0) {
+                    const index = activeElements[0].index;
+                    updateSelectedScenario(index);
+                }
+            },
+            onHover: function(event, activeElements) {
+                const canvas = event.native.target;
+                if (activeElements.length > 0) {
+                    canvas.classList.add('interactive');
+                } else {
+                    canvas.classList.remove('interactive');
+                }
             }
         }
     });
+}
+
+/**
+ * Update the selected scenario based on chart click
+ */
+function updateSelectedScenario(index) {
+    if (!currentScenarios) return;
+    
+    const scenarioMap = {
+        0: { key: 'withoutCause', title: 'Demissão sem Justa Causa' },
+        1: { key: 'resignation', title: 'Pedido de Demissão' },
+        2: { key: 'withCause', title: 'Demissão com Justa Causa' }
+    };
+    
+    const scenario = scenarioMap[index];
+    if (!scenario) return;
+    
+    selectedScenario = scenario.key;
+    
+    // Update the breakdown card
+    const highlight = document.getElementById('totalHighlight');
+    if (highlight) {
+        highlight.innerHTML = generateDetailedBreakdown(currentScenarios[scenario.key], scenario.title);
+    }
 }
 
 function formatCurrency(value) {
