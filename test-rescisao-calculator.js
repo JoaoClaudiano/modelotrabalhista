@@ -51,7 +51,7 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
-        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
+        const noticeValue = willWorkNotice ? (salaryPerDay * Math.min(noticeDays, 90)) : 0;
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
@@ -184,7 +184,7 @@ noticeTests.forEach((test, index) => {
         endDate,
         0,
         'withoutCause',
-        false
+        true
     );
     
     const expectedValue = (3000 / 30) * test.expectedDays;
