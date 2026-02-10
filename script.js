@@ -70,13 +70,18 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
     const salaryBalance = end.getDate() * salaryPerDay;
 
     // 2. 13º Proporcional (Regra: 15 dias ou mais = +1/12)
-    let months13 = end.getMonth(); 
-    if (end.getDate() >= 15) months13++; 
-    const thirteenth = (salary / 12) * months13;
+    // Corrigido: Janeiro = mês 0, mas para cálculo do 13º contamos como 1/12
+    // Se trabalhou 15+ dias no mês, conta o mês completo
+    let months13 = end.getMonth() + 1; // Converte 0-11 para 1-12 (jan=1, dez=12)
+    if (end.getDate() < 15) months13--; // Se trabalhou <15 dias no mês de saída, não conta
+    const thirteenth = (salary / 12) * Math.max(0, Math.min(months13, 12));
 
     // 3. Férias Proporcionais
     const diffMonthsTotal = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-    const propMonthsVac = (end.getDate() >= start.getDate() || end.getDate() >= 15) ? (diffMonthsTotal % 12) + 1 : (diffMonthsTotal % 12);
+    // Corrigido: Conta avos de férias no período aquisitivo atual (máx 12/12)
+    // Se trabalhou 15+ dias no mês, conta como mês completo
+    let propMonthsVac = diffMonthsTotal % 12;
+    if (end.getDate() >= 15) propMonthsVac++;
     
     const vacationProp = (salary / 12) * Math.min(propMonthsVac, 12);
     const vacationDue = (vacVencidas / 30) * salary;
@@ -106,6 +111,7 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
+        // Nota: Este é um cálculo aproximado. Valores reais podem variar
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
         const fgtsFine = fgtsAccumulated * 0.40;
         
@@ -121,8 +127,12 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         total += thirteenth;
     }
     else if (type === 'withCause') {
-        // Justa causa: Perde quase tudo, recebe apenas saldo e férias vencidas
-        total = salaryBalance + vacationDue;
+        // Justa causa: Perde quase tudo
+        // Recebe apenas: saldo de salário + férias vencidas (se houver) + 1/3 das férias vencidas
+        // NÃO recebe: férias proporcionais, 13º, aviso prévio, multa FGTS
+        breakdown.vacationProp = 0;
+        breakdown.oneThird = vacationDue > 0 ? vacationDue / 3 : 0;
+        total = salaryBalance + vacationDue + breakdown.oneThird;
     }
 
     breakdown.total = total;
