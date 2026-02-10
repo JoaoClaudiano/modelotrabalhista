@@ -19,15 +19,15 @@ function loadChartJs() {
             return;
         }
         
-        // Load Chart.js
+        // Load Chart.js with version pinning for security and stability
         const chartScript = document.createElement('script');
-        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1';
         chartScript.async = true;
         
         chartScript.onload = function() {
-            // Load Chart.js datalabels plugin
+            // Load Chart.js datalabels plugin with version pinning
             const pluginScript = document.createElement('script');
-            pluginScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2';
+            pluginScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0';
             pluginScript.async = true;
             
             pluginScript.onload = function() {

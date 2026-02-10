@@ -33,11 +33,10 @@
         // Create dataLayer if not exists
         window.dataLayer = window.dataLayer || [];
         
-        // Define gtag function before script loads
-        function gtag() {
-            window.dataLayer.push(arguments);
-        }
-        window.gtag = gtag;
+        // Define gtag function before script loads using rest parameters
+        window.gtag = function(...args) {
+            window.dataLayer.push(args);
+        };
         
         // Load gtag script
         const gtagScript = document.createElement('script');
