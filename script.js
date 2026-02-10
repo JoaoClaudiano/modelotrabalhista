@@ -31,7 +31,7 @@ function calculateSeverance() {
     const admissionDate = new Date(document.getElementById('admissionDate').value);
     const dismissalDate = new Date(document.getElementById('dismissalDate').value);
     const vacationBalance = parseInt(document.getElementById('vacationBalance').value) || 0;
-    const willWorkNotice = document.getElementById('noticeToggle')?.checked || false;
+    const willWorkNotice = document.getElementById('noticeToggle')?.checked ?? false;
 
     // Validação básica
     if (!salary || isNaN(admissionDate) || isNaN(dismissalDate)) {
@@ -103,7 +103,7 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         const noticeDays = 30 + (years * 3);
         // If employee will work the notice, they receive salary (not indemnified aviso prévio)
         // If not working notice, they receive aviso prévio indenizado
-        const noticeValue = willWorkNotice ? 0 : ((salary / 30) * Math.min(noticeDays, 90));
+        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
@@ -275,7 +275,12 @@ function renderChart(data) {
                 }
             },
             onHover: function(event, activeElements) {
-                event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                const canvas = event.native.target;
+                if (activeElements.length > 0) {
+                    canvas.classList.add('interactive');
+                } else {
+                    canvas.classList.remove('interactive');
+                }
             }
         }
     });
