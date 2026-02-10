@@ -32,7 +32,6 @@
     function loadGoogleAnalytics() {
         // Create dataLayer if not exists
         window.dataLayer = window.dataLayer || [];
-        window.gtag = function(){dataLayer.push(arguments);};
         
         // Load gtag script
         const gtagScript = document.createElement('script');
@@ -40,24 +39,29 @@
         gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-TV6810LM29';
         document.head.appendChild(gtagScript);
         
-        // Initialize gtag
+        // Initialize gtag after script loads
         gtagScript.onload = function() {
-            gtag('js', new Date());
-            gtag('config', 'G-TV6810LM29');
-            console.log('[Lazy Ads] Google Analytics loaded');
+            // Use the gtag function provided by the loaded script
+            if (window.gtag) {
+                window.gtag('js', new Date());
+                window.gtag('config', 'G-TV6810LM29');
+                console.log('[Lazy Ads] Google Analytics loaded and configured');
+            } else {
+                console.warn('[Lazy Ads] gtag function not available after script load');
+            }
         };
     }
     
     /**
-     * Handle scroll event
+     * Handle scroll event - loads scripts 3 seconds after FIRST scroll
      */
     function handleScroll() {
-        // Clear any existing timeout
+        // Only process the first scroll event
         if (scrollTimeout) {
-            clearTimeout(scrollTimeout);
+            return; // Already started, ignore subsequent scrolls
         }
         
-        // Set timeout to load ads 3 seconds after scroll stops
+        // Set timeout to load ads 3 seconds after FIRST scroll
         scrollTimeout = setTimeout(function() {
             loadAdSense();
             loadGoogleAnalytics();
