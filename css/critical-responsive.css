@@ -5,6 +5,9 @@
  * 
  * The !important flags are necessary to ensure these critical styles
  * take precedence while the full responsive.css loads asynchronously
+ * 
+ * IMPORTANT: Base header/menu styles are also inlined separately in index.html
+ * to prevent FOUC (Flash of Unstyled Content)
  */
 
 /* Telas muito pequenas (até 360px) - Critical only */
@@ -55,6 +58,39 @@
         display: block !important;
         font-size: 1.3rem !important;
         padding: 8px !important;
+        background: transparent !important;
+        border: 2px solid var(--primary-color) !important;
+        border-radius: 6px !important;
+        color: var(--primary-color) !important;
+    }
+    
+    /* Mobile Navigation - Critical */
+    .main-nav ul {
+        position: fixed !important;
+        top: 70px !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: calc(100vh - 70px) !important;
+        background: var(--white-color) !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        transition: left 0.3s ease !important;
+        z-index: 999 !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+    }
+    
+    .main-nav ul.active {
+        left: 0 !important;
+    }
+    
+    .main-nav a {
+        padding: 15px !important;
+        border-bottom: 1px solid var(--light-color) !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .logo i {
+        font-size: 1.5rem !important;
     }
     
     /* Hero Section Mobile - Critical */
@@ -81,6 +117,16 @@
     
     .header-content {
         padding: 15px 0 !important;
+    }
+    
+    /* Tablet Navigation - Hide desktop nav, show mobile button */
+    .main-nav ul {
+        display: none !important;
+    }
+    
+    .mobile-menu-btn {
+        display: block !important;
+        font-size: 1.5rem !important;
     }
     
     .hero .container {

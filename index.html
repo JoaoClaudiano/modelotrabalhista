@@ -890,6 +890,92 @@
         }
         
         /* ============================================
+           CRITICAL HEADER/MENU CSS - Prevent FOUC
+           Essential header and navigation styles inlined to prevent
+           Flash of Unstyled Content before responsive.css loads
+           ============================================ */
+        
+        /* Base Header Styles - All Devices */
+        .main-header {
+            background-color: var(--white-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            text-decoration: none;
+        }
+        
+        .logo i {
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+        
+        .logo span {
+            color: var(--primary-color);
+        }
+        
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: var(--space-lg);
+        }
+        
+        .main-nav a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: all var(--transition-fast);
+        }
+        
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            cursor: pointer;
+            padding: 0.75rem;
+            min-width: 48px;
+            min-height: 48px;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-sm);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .mobile-menu-btn:hover,
+        .mobile-menu-btn:active {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        /* ============================================
            CRITICAL RESPONSIVE CSS - Inlined for LCP
            NOTE: This CSS is duplicated from css/critical-responsive.css
            Keep both files in sync when making changes to critical styles
@@ -945,6 +1031,39 @@
                 display: block !important;
                 font-size: 1.3rem !important;
                 padding: 8px !important;
+                background: transparent !important;
+                border: 2px solid var(--primary-color) !important;
+                border-radius: 6px !important;
+                color: var(--primary-color) !important;
+            }
+            
+            /* Mobile Navigation - Critical */
+            .main-nav ul {
+                position: fixed !important;
+                top: 70px !important;
+                left: -100% !important;
+                width: 100% !important;
+                height: calc(100vh - 70px) !important;
+                background: var(--white-color) !important;
+                flex-direction: column !important;
+                padding: 20px !important;
+                transition: left 0.3s ease !important;
+                z-index: 999 !important;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+            }
+            
+            .main-nav ul.active {
+                left: 0 !important;
+            }
+            
+            .main-nav a {
+                padding: 15px !important;
+                border-bottom: 1px solid var(--light-color) !important;
+                font-size: 1.1rem !important;
+            }
+            
+            .logo i {
+                font-size: 1.5rem !important;
             }
             
             /* Hero Section Mobile - Critical */
@@ -971,6 +1090,16 @@
             
             .header-content {
                 padding: 15px 0 !important;
+            }
+            
+            /* Tablet Navigation - Hide desktop nav, show mobile button */
+            .main-nav ul {
+                display: none !important;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+                font-size: 1.5rem !important;
             }
             
             .hero .container {
