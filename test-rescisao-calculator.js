@@ -40,8 +40,10 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         oneThird: oneThird,
         thirteenth: 0,
         notice: 0,
+        noticeSalary: 0,
         fgtsFine: 0,
-        total: 0
+        total: 0,
+        totalWithNoticeSalary: 0
     };
 
     let total = salaryBalance + vacationDue + vacationProp + oneThird;
@@ -51,7 +53,11 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
-        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
+        const maxNoticeDays = Math.min(noticeDays, 90);
+        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * maxNoticeDays);
+        
+        // Calculate salary for worked notice period (separate from rescission payment)
+        const noticeSalary = willWorkNotice ? (salaryPerDay * maxNoticeDays) : 0;
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         const fgtsAccumulated = (salary * 0.08) * diffMonthsTotal;
@@ -59,7 +65,9 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         
         breakdown.thirteenth = thirteenth;
         breakdown.notice = noticeValue;
+        breakdown.noticeSalary = noticeSalary;
         breakdown.noticeWorked = willWorkNotice;
+        breakdown.noticeDays = maxNoticeDays;
         breakdown.fgtsFine = fgtsFine;
         total += thirteenth + noticeValue + fgtsFine;
     } 
@@ -77,6 +85,7 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
     }
 
     breakdown.total = total;
+    breakdown.totalWithNoticeSalary = total + breakdown.noticeSalary;
     return breakdown;
 }
 
@@ -223,5 +232,34 @@ vacationTests.forEach((test, index) => {
     console.log(`     ${Math.abs(result.vacationProp - expectedValue) < 0.01 ? '✓ OK' : '✗ ERRO'}`);
 });
 console.log('✓ Teste 6 concluído\n');
+
+// Teste 7: Aviso prévio trabalhado - verificar salário separado
+console.log('Teste 7: Verificação de salário do aviso prévio trabalhado');
+const noticeWorkedTests = [
+    { willWork: true, expectedNoticeSalary: 3000, expectedNoticeValue: 0 },
+    { willWork: false, expectedNoticeSalary: 0, expectedNoticeValue: 3000 }
+];
+
+noticeWorkedTests.forEach((test, index) => {
+    const result = calculateScenario(
+        3000,
+        new Date('2026-01-01'),
+        new Date('2026-02-01'), // 1 mês de trabalho
+        0,
+        'withoutCause',
+        test.willWork
+    );
+    
+    console.log(`  ${index + 1}. ${test.willWork ? 'Vai trabalhar' : 'Não vai trabalhar'} aviso prévio:`);
+    console.log(`     Aviso prévio indenizado esperado: R$ ${test.expectedNoticeValue.toFixed(2)}`);
+    console.log(`     Aviso prévio indenizado calculado: R$ ${result.notice.toFixed(2)}`);
+    console.log(`     ${Math.abs(result.notice - test.expectedNoticeValue) < 0.01 ? '✓ OK' : '✗ ERRO'}`);
+    console.log(`     Salário aviso trabalhado esperado: R$ ${test.expectedNoticeSalary.toFixed(2)}`);
+    console.log(`     Salário aviso trabalhado calculado: R$ ${result.noticeSalary.toFixed(2)}`);
+    console.log(`     ${Math.abs(result.noticeSalary - test.expectedNoticeSalary) < 0.01 ? '✓ OK' : '✗ ERRO'}`);
+    console.log(`     Total rescisão: R$ ${result.total.toFixed(2)}`);
+    console.log(`     Total com salário do aviso: R$ ${result.totalWithNoticeSalary.toFixed(2)}`);
+});
+console.log('✓ Teste 7 concluído\n');
 
 console.log('=== TODOS OS TESTES CONCLUÍDOS ===');
