@@ -79,8 +79,8 @@ const test4 = calculateScenarioOriginal(3000, new Date('2025-01-15'), new Date('
 console.log('Teste 4: Saída em 10/Dezembro/2026');
 console.log('  Mês: 11 (dezembro), Dia: 10 (<15)');
 console.log('  months13 = 11 (sem incremento)');
-console.log('  13º calculado:', test4.thirteenth.toFixed(2), '(esperado: 3000.00)');
-console.log('  Diferença:', (3000 - test4.thirteenth).toFixed(2));
+console.log('  13º calculado:', test4.thirteenth.toFixed(2), '(esperado: 2750.00 - 11 meses)');
+console.log('  Diferença:', (2750 - test4.thirteenth).toFixed(2));
 
 console.log('\n=== CONCLUSÃO ===');
 console.log('O código original usa end.getMonth() que retorna 0-11 para Jan-Dez.');

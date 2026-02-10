@@ -112,10 +112,10 @@ const test2 = calculateScenario(
     false
 );
 console.log('Resultado:', test2);
-console.log('13º esperado: R$ 2.500 (1 mês de janeiro) =', (2500/12 * 1).toFixed(2));
+console.log('13º esperado: R$ 0 (saída em 01/jan com <15 dias) =', (2500/12 * 0).toFixed(2));
 console.log('13º calculado:', test2.thirteenth.toFixed(2));
-console.log('Deve receber: saldo + férias prop. + 1/3 + 13º');
-console.log('NÃO deve receber: aviso prévio, multa FGTS');
+console.log('Deve receber: saldo + férias prop. + 1/3');
+console.log('NÃO deve receber: 13º (não trabalhou 15+ dias), aviso prévio, multa FGTS');
 console.log('✓ Teste 2 concluído\n');
 
 // Teste 3: Demissão com justa causa
