@@ -7,19 +7,9 @@
     <meta name="description" content="Gere pedidos de demissão, solicitações de férias, advertências e outros documentos trabalhistas prontos em segundos. Inclui Simulador de Rescisão Inteligente para calcular seus direitos. Modelos válidos e gratuitos.">
     <meta name="keywords" content="modelo trabalhista, pedido de demissão, solicitação de férias, advertência, documento trabalhista, modelo pronto gratuito, licença maternidade, licença paternidade, amamentação CLT, alteração de jornada, reembolso despesas, benefícios trabalhistas, simulador rescisão, calculadora rescisão trabalhista, cálculo verbas rescisórias, quanto vou receber na rescisão, direitos trabalhistas rescisão, aviso prévio, férias proporcionais, 13º proporcional, multa 40% FGTS">
     <meta name="author" content="ModeloTrabalhista">
-    <!-- Google Analytics GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TV6810LM29"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-TV6810LM29');
-    </script>
     
-    <!-- Google AdSense Account -->
+    <!-- Google AdSense Account Meta -->
     <meta name="google-adsense-account" content="ca-pub-2518079690291956">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2518079690291956"
-     crossorigin="anonymous"></script>
     
     <!-- Google Site Verification -->
     <meta name="google-site-verification" content="B95cdpZnyF2xXeTjto-_lv9N8Vw1WHJR3p2NcF36-HI" />
@@ -330,7 +320,8 @@
     <!-- Preload critical CSS -->
     <link rel="preload" href="/css/style.css?v=1770454479" as="style">
     
-    <!-- Font Awesome - Load with preload for non-blocking -->
+    <!-- Font Awesome - Optimized loading with font-display swap -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479" as="style">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1770454479"></noscript>
     
@@ -345,9 +336,15 @@
     <!-- Preload styles loader -->
     <script src="/js/preload-styles.js?v=1770454479" defer></script>
     
+    <!-- Lazy load AdSense and Analytics (after scroll) -->
+    <script src="/js/lazy-ads.js?v=1770454479" defer></script>
+    
     <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css?v=1770454479">
-    <link rel="stylesheet" href="/css/responsive.css?v=1770454479" media="screen and (max-width: 768px)">
+    
+    <!-- Load responsive.css asynchronously - not critical for initial render -->
+    <link rel="preload" href="/css/responsive.css?v=1770454479" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/responsive.css?v=1770454479"></noscript>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="js/main.js?v=1770454479" as="script">
@@ -890,6 +887,95 @@
         
         #comparisonChart.interactive {
             cursor: pointer;
+        }
+        
+        /* ============================================
+           CRITICAL RESPONSIVE CSS - Inlined for LCP
+           ============================================ */
+        
+        /* Telas muito pequenas (até 360px) - Critical only */
+        @media (max-width: 360px) {
+            .container {
+                padding: 0 12px !important;
+            }
+            
+            .logo h1 {
+                font-size: 1.2rem !important;
+            }
+            
+            .hero h2 {
+                font-size: 1.8rem !important;
+                line-height: 1.2 !important;
+            }
+        }
+
+        /* Smartphones (até 480px) - Critical only */
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.75rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .container {
+                padding: 0 16px !important;
+            }
+            
+            /* Header Mobile - Critical */
+            .header-content {
+                padding: 10px 0 !important;
+            }
+            
+            .logo {
+                font-size: 1.2rem !important;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+                font-size: 1.3rem !important;
+                padding: 8px !important;
+            }
+            
+            /* Hero Section Mobile - Critical */
+            .hero {
+                padding: 40px 0 !important;
+            }
+            
+            .hero .container {
+                grid-template-columns: 1fr !important;
+                text-align: center !important;
+            }
+            
+            .hero h2 {
+                font-size: 2rem !important;
+                line-height: 1.3 !important;
+            }
+        }
+
+        /* Tablets (481px - 768px) - Critical only */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                padding: 0 20px !important;
+            }
+            
+            .header-content {
+                padding: 15px 0 !important;
+            }
+            
+            .hero .container {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem !important;
+            }
         }
     </style>
 </head>
