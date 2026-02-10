@@ -95,11 +95,12 @@
                 icon.setAttribute('data-fallback-applied', 'true');
                 fallbackCount++;
             } else if (iconClass) {
-                // Icon not in fallback map - use generic symbol
-                icon.textContent = '•';
+                // Icon not in fallback map - use descriptive generic symbol
+                icon.textContent = '⚙️';
                 icon.style.fontFamily = 'inherit';
                 icon.style.fontStyle = 'normal';
                 icon.setAttribute('data-fallback-applied', 'true');
+                icon.setAttribute('title', 'Icon: ' + iconClass);
                 fallbackCount++;
             }
         });
@@ -111,20 +112,59 @@
     
     /**
      * Check and apply fallbacks if needed
+     * Uses Font Awesome stylesheet load event for better timing
      */
     function checkAndApplyFallbacks() {
-        // Wait a bit for Font Awesome to load
-        setTimeout(() => {
-            if (!isFontAwesomeLoaded()) {
-                console.warn('Font Awesome not detected - applying fallback icons');
-                applyIconFallbacks();
-                
-                // Add a class to body for CSS adjustments if needed
-                document.body.classList.add('icon-fallback-active');
-            } else {
-                console.info('Font Awesome loaded successfully');
-            }
-        }, 1000);
+        // Check if Font Awesome stylesheet is loaded
+        const fontAwesomeLinks = Array.from(document.querySelectorAll('link[href*="font-awesome"]'));
+        
+        if (fontAwesomeLinks.length > 0) {
+            // Font Awesome link found - wait for it to load
+            let loaded = false;
+            const timeout = setTimeout(() => {
+                if (!loaded) {
+                    checkFontAwesome();
+                }
+            }, 2000); // 2 second timeout
+            
+            fontAwesomeLinks.forEach(link => {
+                if (link.sheet) {
+                    // Already loaded
+                    clearTimeout(timeout);
+                    loaded = true;
+                    checkFontAwesome();
+                } else {
+                    link.addEventListener('load', () => {
+                        clearTimeout(timeout);
+                        loaded = true;
+                        checkFontAwesome();
+                    });
+                    link.addEventListener('error', () => {
+                        clearTimeout(timeout);
+                        loaded = true;
+                        console.warn('Font Awesome failed to load from CDN - applying fallback icons');
+                        applyIconFallbacks();
+                        document.body.classList.add('icon-fallback-active');
+                    });
+                }
+            });
+        } else {
+            // No Font Awesome link found - check immediately
+            checkFontAwesome();
+        }
+    }
+    
+    /**
+     * Check Font Awesome and apply fallbacks if needed
+     */
+    function checkFontAwesome() {
+        if (!isFontAwesomeLoaded()) {
+            console.warn('Font Awesome not detected - applying fallback icons');
+            applyIconFallbacks();
+            document.body.classList.add('icon-fallback-active');
+        } else {
+            console.info('Font Awesome loaded successfully');
+        }
     }
     
     // Execute when DOM is ready
@@ -133,12 +173,4 @@
     } else {
         checkAndApplyFallbacks();
     }
-    
-    // Also check on window load (in case Font Awesome loads late)
-    window.addEventListener('load', () => {
-        // Only recheck if fallbacks were not already applied
-        if (!document.body.classList.contains('icon-fallback-active')) {
-            setTimeout(checkAndApplyFallbacks, 500);
-        }
-    });
 })();
