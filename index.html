@@ -812,6 +812,76 @@
                 margin-inline: auto;
             }
         }
+        
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .toggle-label {
+            font-size: 0.95rem;
+            color: var(--dark-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+        
+        .toggle-switch input:focus + .toggle-slider {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -977,6 +1047,19 @@
                             </span>
                         </label>
                         <input type="number" id="vacationBalance" class="form-input" placeholder="Ex: 30" min="0" max="60" value="0">
+                    </div>
+                    
+                    <div class="toggle-container">
+                        <label class="toggle-label" for="noticeToggle">
+                            Vai cumprir aviso prévio?
+                            <span class="infotip" data-tooltip="Se você vai trabalhar os 30 dias de aviso prévio ou será dispensado imediatamente">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="noticeToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                     
                     <button id="calculateBtn" class="btn-primary" style="width: 100%; margin-top: 1rem;">
