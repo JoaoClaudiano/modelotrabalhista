@@ -106,8 +106,8 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
-        // If employee will work the notice, add the aviso prévio value to the calculation
-        // If not working notice, don't add it
+        // User requested: Add aviso prévio value when toggle is ON (vai cumprir)
+        // Don't add when toggle is OFF (não vai cumprir)
         const noticeValue = willWorkNotice ? (salaryPerDay * Math.min(noticeDays, 90)) : 0;
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
