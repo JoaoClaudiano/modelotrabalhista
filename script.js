@@ -205,9 +205,6 @@ function generateDetailedBreakdown(breakdown, title) {
             isNoticeSalary: true
         });
     }
-    if (breakdown.noticeWorked && breakdown.noticeSalary === 0) {
-        items.push({ label: 'Aviso Prévio', value: 0, note: 'Será trabalhado' });
-    }
     if (breakdown.fgtsFine > 0) {
         items.push({ label: 'Multa 40% FGTS', value: breakdown.fgtsFine });
     }
