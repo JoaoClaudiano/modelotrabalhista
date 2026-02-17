@@ -95,8 +95,10 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         oneThird: oneThird,
         thirteenth: 0,
         notice: 0,
+        noticeSalary: 0,
         fgtsFine: 0,
-        total: 0
+        total: 0,
+        totalWithNoticeSalary: 0
     };
 
     let total = salaryBalance + vacationDue + vacationProp + oneThird;
@@ -106,9 +108,14 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
+        const maxNoticeDays = Math.min(noticeDays, 90);
+        
         // If employee will work the notice, they receive salary (not indemnified aviso prévio)
         // If not working notice, they receive aviso prévio indenizado
-        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
+        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * maxNoticeDays);
+        
+        // Calculate salary for worked notice period (separate from rescission payment)
+        const noticeSalary = willWorkNotice ? (salaryPerDay * maxNoticeDays) : 0;
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         // Nota: Este é um cálculo aproximado. Valores reais podem variar
@@ -117,7 +124,9 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         
         breakdown.thirteenth = thirteenth;
         breakdown.notice = noticeValue;
+        breakdown.noticeSalary = noticeSalary;
         breakdown.noticeWorked = willWorkNotice;
+        breakdown.noticeDays = maxNoticeDays;
         breakdown.fgtsFine = fgtsFine;
         total += thirteenth + noticeValue + fgtsFine;
     } 
@@ -136,6 +145,7 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
     }
 
     breakdown.total = total;
+    breakdown.totalWithNoticeSalary = total + breakdown.noticeSalary;
     return breakdown;
 }
 
@@ -188,8 +198,12 @@ function generateDetailedBreakdown(breakdown, title) {
     if (breakdown.notice > 0) {
         items.push({ label: 'Aviso Prévio Indenizado', value: breakdown.notice });
     }
-    if (breakdown.noticeWorked) {
-        items.push({ label: 'Aviso Prévio', value: 0, note: 'Será trabalhado' });
+    if (breakdown.noticeSalary > 0) {
+        items.push({ 
+            label: `Salário do Aviso Prévio Trabalhado (${breakdown.noticeDays} dias)`, 
+            value: breakdown.noticeSalary,
+            isNoticeSalary: true
+        });
     }
     if (breakdown.fgtsFine > 0) {
         items.push({ label: 'Multa 40% FGTS', value: breakdown.fgtsFine });
@@ -204,8 +218,9 @@ function generateDetailedBreakdown(breakdown, title) {
     
     items.forEach(item => {
         const valueDisplay = item.note ? `<span style="color: #64748b; font-size: 0.85rem;">${item.note}</span>` : formatCurrency(item.value);
+        const itemClass = item.isNoticeSalary ? 'breakdown-item notice-salary-item' : 'breakdown-item';
         html += `
-            <div class="breakdown-item">
+            <div class="${itemClass}">
                 <span class="breakdown-label">${item.label}</span>
                 <span class="breakdown-value">${valueDisplay}</span>
             </div>
@@ -215,10 +230,29 @@ function generateDetailedBreakdown(breakdown, title) {
     html += `
         </div>
         <div class="breakdown-total">
-            <span class="breakdown-label">Total a Receber</span>
+            <span class="breakdown-label">Total da Rescisão</span>
             <span class="breakdown-value">${formatCurrency(breakdown.total)}</span>
         </div>
     `;
+    
+    // Show total with notice salary if applicable
+    if (breakdown.noticeSalary > 0) {
+        html += `
+            <div class="breakdown-total-with-notice">
+                <span class="breakdown-label">
+                    Total a Receber no Mês
+                    <span class="infotip-inline" title="Inclui verbas rescisórias + salário do aviso prévio trabalhado">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
+                </span>
+                <span class="breakdown-value">${formatCurrency(breakdown.totalWithNoticeSalary)}</span>
+            </div>
+            <div class="breakdown-note">
+                <i class="fas fa-info-circle"></i>
+                <span>O salário do aviso prévio trabalhado é recebido como pagamento normal durante o período, não como verba rescisória.</span>
+            </div>
+        `;
+    }
     
     return html;
 }

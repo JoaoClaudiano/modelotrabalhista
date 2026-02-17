@@ -756,6 +756,73 @@
             font-weight: 700;
         }
         
+        .notice-salary-item {
+            background-color: rgba(37, 99, 235, 0.1);
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            border-bottom: none !important;
+        }
+        
+        .breakdown-total-with-notice {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-top: 0.5rem;
+            border-top: 2px solid rgba(37, 99, 235, 0.3);
+            background-color: rgba(37, 99, 235, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .breakdown-total-with-notice .breakdown-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .breakdown-total-with-notice .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .breakdown-note {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(37, 99, 235, 0.05);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .breakdown-note i {
+            color: var(--primary-color);
+            margin-top: 0.2rem;
+        }
+        
+        .infotip-inline {
+            display: inline-flex;
+            align-items: center;
+            cursor: help;
+        }
+        
+        .infotip-inline i {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+        
+        .infotip-inline:hover i {
+            opacity: 1;
+        }
+        
         .highlight-label {
             font-size: 0.9rem;
             opacity: 0.9;
@@ -1060,8 +1127,8 @@
                     
                     <div class="toggle-container">
                         <label class="toggle-label" for="noticeToggle">
-                            Vai cumprir aviso prévio?
-                            <span class="infotip" data-tooltip="Se você vai trabalhar os 30 dias de aviso prévio ou será dispensado imediatamente">
+                            Vai trabalhar durante o aviso prévio?
+                            <span class="infotip" data-tooltip="Se marcado, você trabalhará durante o período de aviso prévio e receberá salário normal. Se desmarcado, será dispensado imediatamente e receberá aviso prévio indenizado.">
                                 <i class="fas fa-info-circle"></i>
                             </span>
                         </label>
