@@ -106,9 +106,9 @@ function calculateScenario(salary, start, end, vacVencidas, type, willWorkNotice
         // Aviso Prévio Lei 12.506 (3 dias por ano trabalhado)
         const years = Math.floor(diffMonthsTotal / 12);
         const noticeDays = 30 + (years * 3);
-        // If employee will work the notice, they receive salary (not indemnified aviso prévio)
-        // If not working notice, they receive aviso prévio indenizado
-        const noticeValue = willWorkNotice ? 0 : (salaryPerDay * Math.min(noticeDays, 90));
+        // User requested: Add aviso prévio value when toggle is ON (vai cumprir)
+        // Don't add when toggle is OFF (não vai cumprir)
+        const noticeValue = willWorkNotice ? (salaryPerDay * Math.min(noticeDays, 90)) : 0;
         
         // FGTS (Simulação simplificada de acúmulo + multa 40%)
         // Nota: Este é um cálculo aproximado. Valores reais podem variar
@@ -186,10 +186,10 @@ function generateDetailedBreakdown(breakdown, title) {
         items.push({ label: '13º Salário Proporcional', value: breakdown.thirteenth });
     }
     if (breakdown.notice > 0) {
-        items.push({ label: 'Aviso Prévio Indenizado', value: breakdown.notice });
+        items.push({ label: 'Aviso Prévio', value: breakdown.notice });
     }
-    if (breakdown.noticeWorked) {
-        items.push({ label: 'Aviso Prévio', value: 0, note: 'Será trabalhado' });
+    if (breakdown.noticeWorked === false && breakdown.notice === 0) {
+        items.push({ label: 'Aviso Prévio', value: 0, note: 'Não será cumprido' });
     }
     if (breakdown.fgtsFine > 0) {
         items.push({ label: 'Multa 40% FGTS', value: breakdown.fgtsFine });
